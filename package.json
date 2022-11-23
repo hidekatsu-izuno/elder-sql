@@ -11,8 +11,7 @@
     "version.major": "standard-version --release-as major",
     "version.minor": "standard-version --release-as minor",
     "version.patch": "standard-version --release-as patch",
-    "release": "git push --follow-tags origin main && npm publish",
-    "esql": "esql"
+    "release": "git push --follow-tags origin main && npm publish"
   },
   "files": [
     "src/",

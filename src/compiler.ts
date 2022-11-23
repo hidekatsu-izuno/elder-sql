@@ -6,13 +6,16 @@ export class ElderSqlCompiler {
   }
 
   compile(filePath: string) {
-    return new ElderSqlCompileResult()
+    return new ElderSqlCompileResult("", {})
   }
 }
 
 export class ElderSqlCompileResult {
-  js: string
-  map: object
+  constructor(
+    public js: string,
+    public map: object,
+  ) {
+  }
 }
 
 export class ElderSqlError extends Error {

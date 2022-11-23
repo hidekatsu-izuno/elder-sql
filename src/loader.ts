@@ -1,6 +1,6 @@
 import { ElderSqlCompiler, ElderSqlError } from "./compiler"
 
-export default function loader(source: any) {
+export default function loader(this: any, source: any) {
   const options = this.getOptions({
     "title": "Elder-SQL Loader options",
     "type": "object",
@@ -16,6 +16,10 @@ export default function loader(source: any) {
 
     callback(null, result.js, useSourceMap && result.map)
   } catch (err) {
-    callback(new ElderSqlError(err))
+    if (err instanceof Error) {
+      callback(new ElderSqlError(err))
+    } else {
+      callback(err)
+    }
   }  
 }
