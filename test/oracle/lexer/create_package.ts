@@ -1227,7 +1227,7 @@ export const expected = [
   new Token(TokenType.Dot, ".", 3293),
   new Token(TokenType.Dot, ".", 3294),
   new Token(TokenType.Identifier, "n", 3295),
-  new Token(TokenType.Identifier, "LOOP", 3297, [
+  new Token([TokenType.Identifier, Keyword.LOOP], "LOOP", 3297, [
     new Token(TokenType.WhiteSpace, " ", 3296)
   ]),
   new Token(Keyword.FETCH, "FETCH", 3311, [
@@ -1248,11 +1248,11 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", 3342),
     new Token(TokenType.WhiteSpace, "      ", 3343)
   ]),
-  new Token(TokenType.Identifier, "LOOP", 3353, [
+  new Token([TokenType.Identifier, Keyword.LOOP], "LOOP", 3353, [
     new Token(TokenType.WhiteSpace, " ", 3352)
   ]),
   new Token(TokenType.SemiColon, ";", 3357),
-  new Token(TokenType.Identifier, "CLOSE", 3365, [
+  new Token([TokenType.Identifier, Keyword.CLOSE], "CLOSE", 3365, [
     new Token(TokenType.LineBreak, "\n", 3358),
     new Token(TokenType.WhiteSpace, "      ", 3359)
   ]),

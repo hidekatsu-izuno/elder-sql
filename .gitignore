@@ -83,6 +83,7 @@ typings/
 dist
 lib
 types
+/temp.txt
 
 # Gatsby files
 .cache/

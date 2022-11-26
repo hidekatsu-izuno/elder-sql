@@ -145,7 +145,7 @@ export abstract class Lexer {
   }
 }
 
-export type ParseFunction = (input: string, options: Record<string, any>) => Node
+export type ParseFunction = (input: string, options?: Record<string, any>) => Node
 
 export abstract class Parser {
   protected pos = 0

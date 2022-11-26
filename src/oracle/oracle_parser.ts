@@ -1,4 +1,3 @@
-import { dequote } from "@/util"
 import {
   TokenType,
   Token,
@@ -9,6 +8,7 @@ import {
   AggregateParseError,
   ParseFunction,
 } from "../parser"
+import { dequote } from "../util"
 
 const KeywordMap = new Map<string, Keyword>()
 export class Keyword extends TokenType {

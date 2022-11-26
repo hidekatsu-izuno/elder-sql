@@ -11,7 +11,7 @@ describe("test oracle lexer", () => {
     const tokens = new OracleLexer().lex(module.actual)
 
     if (target === "") {
-      fs.writeFileSync("node.txt", toJSString(tokens))
+      fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 
     expect(tokens).toStrictEqual(module.expected)
