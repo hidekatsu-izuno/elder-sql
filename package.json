@@ -13,7 +13,8 @@
     "version.minor": "standard-version --release-as minor",
     "version.minor.alpha": "standard-version --release-as minor --prerelease alpha",
     "version.patch": "standard-version --release-as patch",
-    "release": "git push --follow-tags origin main && npm publish"
+    "release": "git push --follow-tags origin main && npm publish",
+    "release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
   },
   "files": [
     "src/",
