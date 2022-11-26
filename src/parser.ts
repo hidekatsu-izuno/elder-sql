@@ -1,5 +1,5 @@
 export class TokenType {
-  static EOF = new TokenType("EOF")
+  static Eof = new TokenType("Eof")
   static Command = new TokenType("Command")
   static Delimiter = new TokenType("Delimiter")
   static SemiColon = new TokenType("SemiColon")
@@ -37,8 +37,7 @@ export class Token {
   constructor(
     type: TokenType | [TokenType, TokenType],
     public text: string,
-    public start: number = -1,
-    public end: number = -1,
+    public pos: number = -1,
     public before: Token[] = [],
   ) {
     if (Array.isArray(type)) {
@@ -110,7 +109,7 @@ export abstract class Lexer {
         re.lastIndex = pos
         const m = re.exec(input)
         if (m) {
-          token = new Token(pattern.type, m[0], pos, re.lastIndex)
+          token = new Token(pattern.type, m[0], pos)
           pos = re.lastIndex
           break
         }
@@ -130,8 +129,7 @@ export abstract class Lexer {
       }
     }
 
-    const eofToken = 
-    tokens.push(new Token(TokenType.EOF, "", pos, pos))
+    tokens.push(new Token(TokenType.Eof, "", pos, before))
     return tokens
   }
 
@@ -206,7 +204,7 @@ export abstract class Parser {
 
   createParseError(message?: string) {
     const token = this.token()
-    const lines = this.input.substring(0, token?.start || 0).split(/\r\n?|\n/g)
+    const lines = this.input.substring(0, token?.pos || 0).split(/\r\n?|\n/g)
     let last = lines[lines.length-1]
     const rows = lines.length + 1
     const cols = last.length

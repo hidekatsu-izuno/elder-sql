@@ -285,7 +285,7 @@ export class Sqlite3Parser extends Parser {
     loop: while (this.token()) {
       try {
         if (!this.peekIf(TokenType.SemiColon)) {
-          if (this.peekIf(TokenType.EOF)) {
+          if (this.peekIf(TokenType.Eof)) {
             root.add(this.token(-1))
             break loop
           } else if (this.peekIf(TokenType.Command)) {
@@ -345,7 +345,7 @@ export class Sqlite3Parser extends Parser {
       stmt.add(new Node("name", token.text).add(token))
     } else {
       const tokens = []
-      tokens.push(new Token(TokenType.Identifier, token.text.substring(0, sep), token.start, token.start + sep))
+      tokens.push(new Token(TokenType.Identifier, token.text.substring(0, sep), token.pos))
 
       const input = token.text.substring(sep)
       const re = /([ \t]+)|"([^"]*)"|'([^']*)'|([^ \t"']+)/y
@@ -355,7 +355,7 @@ export class Sqlite3Parser extends Parser {
         const m = re.exec(input)
         if (m) {
           const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-          tokens.push(new Token(type, m[0], re.lastIndex, re.lastIndex + m[0].length))
+          tokens.push(new Token(type, m[0], re.lastIndex))
           pos = re.lastIndex
         }
       }
@@ -592,6 +592,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -600,20 +601,31 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.USING)
       stmt.add(this.token(-1))
 
-      stmt.add(this.identifier("module_name"))
+      const moduleNode = new Node("module")
+      moduleNode.add(this.identifier("name"))
       if (this.consumeIf(TokenType.LeftParen)) {
-        stmt.add(this.token(-1))
+        moduleNode.add(this.token(-1))
         while (this.token()) {
-          stmt.add(this.moduleArg())
+          const moduleArg = new Node("arg")
+          while (
+            this.token() &&
+            !this.peekIf(TokenType.Comma) &&
+            !this.peekIf(TokenType.RightParen)
+          ) {
+            this.consume()
+            moduleArg.add(this.token(-1))
+          }
+          moduleNode.add(moduleArg)
           if (this.consumeIf(TokenType.Comma)) {
-            stmt.add(this.token(-1))
+            moduleNode.add(this.token(-1))
           } else {
             break
           }
         }
         this.consume(TokenType.RightParen)
-        stmt.add(this.token(-1))
+        moduleNode.add(this.token(-1))
       }
+      stmt.add(moduleNode)
     } else if (this.consumeIf(TokenType.LeftParen)) {
       stmt.add(this.token(-1))
       stmt.add(this.tableColumn())
@@ -673,6 +685,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -705,6 +718,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -732,6 +746,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -809,6 +824,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -823,6 +839,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -837,6 +854,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -851,6 +869,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -871,6 +890,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -880,6 +900,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -899,6 +920,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -944,6 +966,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -957,6 +980,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -970,6 +994,7 @@ export class Sqlite3Parser extends Parser {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -1088,140 +1113,122 @@ export class Sqlite3Parser extends Parser {
   }
 
   private columnConstraint() {
-    const node = new Node("constraint")
+    const node = new Node("")
     if (this.consumeIf(Keyword.CONSTRAINT)) {
       node.add(this.token(-1))
       node.add(this.identifier("name"))
     }
     if (this.consumeIf(Keyword.PRIMARY)) {
       this.consume(Keyword.KEY)
-      const constraintNode = new Node("primary key")
-      constraintNode.add(this.token(-2), this.token(-1))
+      node.name = "primary key"
+      node.add(this.token(-2), this.token(-1))
 
       if (this.consumeIf(Keyword.ASC)) {
-        constraintNode.add(new Node("asc").add(this.token(-2), this.token(-1)))
+        node.add(new Node("asc").add(this.token(-2), this.token(-1)))
       } else if (this.consumeIf(Keyword.DESC)) {
-        constraintNode.add(new Node("desc").add(this.token(-2), this.token(-1)))
+        node.add(new Node("desc").add(this.token(-2), this.token(-1)))
       }
       if (this.consumeIf(Keyword.ON)) {
         this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+        node.add(this.token(-2), this.token(-1))
+        node.add(this.conflictAction())
       }
       if (this.consumeIf(Keyword.AUTOINCREMENT)) {
-        constraintNode.add(new Node("autoincrement").add(this.token(-1)))
+        node.add(new Node("autoincrement").add(this.token(-1)))
       }
-
-      node.add(constraintNode)
     } else if (this.consumeIf(Keyword.NOT)) {
       this.consume(Keyword.NULL)
 
-      const constraintNode = new Node("not null")
-      constraintNode.add(this.token(-2), this.token(-1))
+      node.name = "not null"
+      node.add(this.token(-2), this.token(-1))
 
       if (this.consumeIf(Keyword.ON)) {
         this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+        node.add(this.token(-2), this.token(-1))
+        node.add(this.conflictAction())
       }
-
-      node.add(constraintNode)
     } else if (this.consumeIf(Keyword.NULL)) {
-      const constraintNode = new Node("null")
-      constraintNode.add(this.token(-1))
+      node.name = "null"
+      node.add(this.token(-1))
 
       if (this.consumeIf(Keyword.ON)) {
         this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+        node.add(this.token(-2), this.token(-1))
+        node.add(this.conflictAction())
       }
-
-      node.add(constraintNode)
     } else if (this.consumeIf(Keyword.UNIQUE)) {
-      const constraintNode = new Node("unique")
-      constraintNode.add(this.token(-1))
+      node.name = "unique"
+      node.add(this.token(-1))
 
       if (this.consumeIf(Keyword.ON)) {
         this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+        node.add(this.token(-2), this.token(-1))
+        node.add(this.conflictAction())
       }
-
-      node.add(constraintNode)
     } else if (this.consumeIf(Keyword.CHECK)) {
-      const constraintNode = new Node("check")
-      constraintNode.add(this.token(-1))
+      node.name = "check"
+      node.add(this.token(-1))
 
       this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
-      constraintNode.add(this.expression())
+      node.add(this.token(-1))
+      node.add(this.expression())
       this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
-      node.add(constraintNode)
+      node.add(this.token(-1))
     } else if (this.consumeIf(Keyword.DEFAULT)) {
-      const constraintNode = new Node("default")
-      constraintNode.add(this.token(-1))
+      node.name = "default"
+      node.add(this.token(-1))
 
       if (this.consumeIf(TokenType.LeftParen)) {
-        constraintNode.add(this.token(-1))
-        constraintNode.add(this.expression())
+        node.add(this.token(-1))
+        node.add(this.expression())
         this.consume(TokenType.RightParen)
-        constraintNode.add(this.token(-1))
+        node.add(this.token(-1))
       } else {
-        constraintNode.add(this.expression())
+        node.add(this.expression())
       }
-
-      node.add(constraintNode)
     } else if (this.consumeIf(Keyword.COLLATE)) {
-      const constraintNode = new Node("collate")
-      constraintNode.add(this.token(-1))
+      node.name = "collate"
+      node.add(this.token(-1))
 
-      constraintNode.add(this.identifier("collate_name"))
-
-      node.add(constraintNode)
+      node.add(this.identifier("collate_name"))
     } else if (this.consumeIf(Keyword.REFERENCES)) {
-      const constraintNode = new Node("references")
-      constraintNode.add(this.token(-1))
+      node.name = "references"
+      node.add(this.token(-1))
 
-      constraintNode.add(this.identifier("table_name"))
+      node.add(this.identifier("table_name"))
 
       this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
+      node.add(this.token(-1))
       while (this.token()) {
-        constraintNode.add(this.identifier("column_name"))
+        node.add(this.identifier("column_name"))
         if (this.consumeIf(TokenType.Comma)) {
-          constraintNode.add(this.token(-1))
+          node.add(this.token(-1))
         } else {
           break
         }
       }
       this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
-      node.add(constraintNode)
+      node.add(this.token(-1))
     } else if (this.peekIf(Keyword.GENERATED) || this.peekIf(Keyword.AS)) {
-      const constraintNode = new Node("generated always")
+      node.name = "generated always"
       if (this.consumeIf(Keyword.GENERATED)) {
         this.consume(Keyword.ALWAYS)
-        constraintNode.add(this.token(-2), this.token(-1))
+        node.add(this.token(-2), this.token(-1))
       }
       this.consume(Keyword.AS)
-      constraintNode.add(this.token(-1))
+      node.add(this.token(-1))
 
       this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
-      constraintNode.add(this.expression())
+      node.add(this.token(-1))
+      node.add(this.expression())
       this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
+      node.add(this.token(-1))
 
       if (this.consumeIf(Keyword.STORED)) {
-        constraintNode.add(new Node("stored").add(this.token(-1)))
+        node.add(new Node("stored").add(this.token(-1)))
       } else if (this.consumeIf(Keyword.VIRTUAL)) {
-        constraintNode.add(new Node("virtual").add(this.token(-1)))
+        node.add(new Node("virtual").add(this.token(-1)))
       }
-
-      node.add(constraintNode)
     } else {
       throw this.createParseError()
     }
@@ -1324,20 +1331,22 @@ export class Sqlite3Parser extends Parser {
   }
 
   private dataType() {
-    const node = new Node("data_type")
+    const node = new Node("type")
 
-    const typeNames = []
-    node.add(this.identifier("name"))
-    typeNames.push((node.children[node.children.length - 1] as Node).value)
+    const name = new Node("name")
+    let identifier = this.identifier("")
+    name.add(...identifier.children)
+    name.value = identifier.value
     while (
       this.peekIf(TokenType.QuotedIdentifier) ||
       this.peekIf(TokenType.QuotedValue) ||
       this.peekIf(TokenType.Identifier)
     ) {
-      node.add(this.identifier("name"))
-      typeNames.push((node.children[node.children.length - 1] as Node).value)
+      identifier = this.identifier("")
+      name.add(...identifier.children)
+      name.value = " " + identifier.value
     }
-    node.value = typeNames.join(" ")
+    node.add(name)
 
     if (this.consumeIf(TokenType.LeftParen)) {
       node.add(this.numberValue("length"))
@@ -1364,19 +1373,6 @@ export class Sqlite3Parser extends Parser {
     } else {
       throw this.createParseError()
     }
-  }
-
-  private moduleArg() {
-    const node = new Node("module_arg")
-    while (
-      this.token() &&
-      !this.peekIf(TokenType.Comma) &&
-      !this.peekIf(TokenType.RightParen)
-    ) {
-      this.consume()
-      node.add(this.token(-1))
-    }
-    return node;
   }
 
   private indexColumn() {
