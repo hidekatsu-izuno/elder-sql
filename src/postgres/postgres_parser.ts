@@ -335,18 +335,19 @@ export class PostgresParser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.peekIf(TokenType.Eof)) {
-          this.consume()
+        if (this.consumeIf(TokenType.Eof)) {
           root.add(this.token(-1))
           break
-        } else if (this.peekIf(TokenType.SemiColon)) {
-          this.consume()
+        } else if (this.consumeIf(TokenType.SemiColon)) {
           root.add(this.token(-1))
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
         } else {
           root.add(this.statement())
-          if (this.consumeIf(TokenType.SemiColon)) {
+          if (this.consumeIf(TokenType.Eof)) {
+            root.add(this.token(-1))
+            break
+          } else if (this.consumeIf(TokenType.SemiColon)) {
             root.add(this.token(-1))
           } else {
             break
@@ -354,6 +355,9 @@ export class PostgresParser extends Parser {
         }
       } catch (e) {
         if (e instanceof ParseError) {
+          if (e.node) {
+            root.add(e.node)
+          }
           errors.push(e)
         } else {
           throw e

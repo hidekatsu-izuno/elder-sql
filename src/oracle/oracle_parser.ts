@@ -258,8 +258,7 @@ export class OracleParser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.peekIf(TokenType.Eof)) {
-          this.consume()
+        if (this.consumeIf(TokenType.Eof)) {
           root.add(this.token(-1))
           break
         } else if (this.peekIf(TokenType.Delimiter) || this.peekIf(TokenType.SemiColon)) {
@@ -270,7 +269,10 @@ export class OracleParser extends Parser {
         } else {
           const stmt = this.statement()
           root.add(stmt)
-          if (this.consumeIf(TokenType.Delimiter)) {
+          if (this.consumeIf(TokenType.Eof)) {
+            root.add(this.token(-1))
+            break
+          } else if (this.consumeIf(TokenType.Delimiter)) {
             root.add(this.token(-1))
           } else if (!OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)) {
             root.add(this.token(-1))
@@ -280,6 +282,9 @@ export class OracleParser extends Parser {
         }
       } catch (e) {
         if (e instanceof ParseError) {
+          if (e.node) {
+            root.add(e.node)
+          }
           errors.push(e)
         } else {
           throw e
