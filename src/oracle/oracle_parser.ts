@@ -250,33 +250,29 @@ export class OracleParser extends Parser {
 
     while (this.token()) {
       try {
-        if (!this.peekIf(TokenType.SemiColon)) {
-          if (this.peekIf(TokenType.Eof)) {
+        if (this.peekIf(TokenType.Eof)) {
+          this.consume()
+          root.add(this.token(-1))
+          break
+        } else if (this.peekIf(TokenType.Delimiter) || this.peekIf(TokenType.SemiColon)) {
+          this.consume()
+          root.add(this.token(-1))
+        } else if (this.peekIf(TokenType.Command)) {
+          root.add(this.command())
+        } else {
+          const stmt = this.statement()
+          root.add(stmt)
+          if (this.consumeIf(TokenType.Delimiter) || (
+            !OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)
+          )) {
             root.add(this.token(-1))
-            break
-          } else if (this.peekIf(TokenType.Command)) {
-            root.add(this.command())
           } else {
-            const stmt = this.statement()
-            root.add(stmt)
-            if (this.consumeIf(TokenType.Delimiter) || (
-              !OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)
-            )) {
-              root.add(this.token(-1))
-            } else {
-              break
-            }
+            break
           }
         }
       } catch (e) {
         if (e instanceof ParseError) {
           errors.push(e)
-
-          // skip tokens
-          while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-            this.consume()
-            root.add(this.token(-1))
-          }
         } else {
           throw e
         }
@@ -312,36 +308,48 @@ export class OracleParser extends Parser {
   statement() {
     const stmt = new Node("")
 
-    let explainPlan
-    if (this.consumeIf(Keyword.EXPLAIN)) {
-      this.consume(Keyword.PLAN)
-      explainPlan = new Node("explain plan").add(this.token(-2), this.token(-1))
+    try {
+      let explainPlan
+      if (this.consumeIf(Keyword.EXPLAIN)) {
+        this.consume(Keyword.PLAN)
+        explainPlan = new Node("explain plan").add(this.token(-2), this.token(-1))
 
-      if (this.consumeIf(Keyword.SET)) {
+        if (this.consumeIf(Keyword.SET)) {
+          explainPlan.add(this.token(-1))
+          this.consume(Keyword.STATEMENT_ID, Keyword.OPE_EQ, TokenType.String)
+          explainPlan.add(this.token(-3), this.token(-2), this.token(-1))
+        }
+
+        if (this.consumeIf(Keyword.INTO)) {
+          explainPlan.add(this.token(-1))
+
+        }
+
+        this.consume(Keyword.FOR)
         explainPlan.add(this.token(-1))
-        this.consume(Keyword.STATEMENT_ID, Keyword.OPE_EQ, TokenType.String)
-        explainPlan.add(this.token(-3), this.token(-2), this.token(-1))
       }
 
-      if (this.consumeIf(Keyword.INTO)) {
-        explainPlan.add(this.token(-1))
-
+      if (this.consumeIf(Keyword.CREATE)) {
+        stmt.add(this.token(-1))
       }
 
-      this.consume(Keyword.FOR)
-      explainPlan.add(this.token(-1))
-    }
+      if (!stmt.name) {
+        throw this.createParseError()
+      }
 
-    if (this.consumeIf(Keyword.CREATE)) {
-      stmt.add(this.token(-1))
-    }
-
-    if (!stmt.name) {
-      throw this.createParseError()
-    }
-
-    if (explainPlan) {
-      return explainPlan.add(stmt)
+      if (explainPlan) {
+        return explainPlan.add(stmt)
+      }
+    } catch (err) {
+      if (err instanceof ParseError) {
+        // skip tokens
+        while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+          this.consume()
+          stmt.add(this.token(-1))
+        }
+        err.node = stmt
+      }      
+      throw err
     }
 
     return stmt

@@ -16,8 +16,11 @@ export class TokenType {
   static Dot = new TokenType("Dot")
   static Operator = new TokenType("Operator")
   static Number = new TokenType("Number")
+  static Size = new TokenType("Size")
   static String = new TokenType("String")
   static BindVariable = new TokenType("BindVariable")
+  static SessionVariable = new TokenType("SessionVariable")
+  static UserVariable = new TokenType("UserVariable")
   static QuotedValue = new TokenType("QuotedValue")
   static QuotedIdentifier = new TokenType("QuotedIdentifier")
   static Identifier = new TokenType("Identifier")
@@ -233,6 +236,8 @@ export class AggregateParseError extends Error {
 }
 
 export class ParseError extends Error {
+  node?: Node
+
   constructor(
     public message: string,
     public fileName: string,

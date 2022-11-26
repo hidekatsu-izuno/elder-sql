@@ -284,30 +284,26 @@ export class Sqlite3Parser extends Parser {
 
     while (this.token()) {
       try {
-        if (!this.peekIf(TokenType.SemiColon)) {
-          if (this.peekIf(TokenType.Eof)) {
+        if (this.peekIf(TokenType.Eof)) {
+          this.consume()
+          root.add(this.token(-1))
+          break
+        } else if (this.peekIf(TokenType.SemiColon)) {
+          this.consume()
+          root.add(this.token(-1))
+        } else if (this.peekIf(TokenType.Command)) {
+          root.add(this.command())
+        } else {
+          root.add(this.statement())
+          if (this.consumeIf(TokenType.SemiColon)) {
             root.add(this.token(-1))
-            break
-          } else if (this.peekIf(TokenType.Command)) {
-            root.add(this.command())
           } else {
-            root.add(this.statement())
-            if (this.consumeIf(TokenType.SemiColon)) {
-              root.add(this.token(-1))
-            } else {
-              break
-            }
+            break
           }
         }
       } catch (e) {
         if (e instanceof ParseError) {
           errors.push(e)
-
-          // skip tokens
-          while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-            this.consume()
-            root.add(this.token(-1))
-          }
         } else {
           throw e
         }
@@ -344,31 +340,31 @@ export class Sqlite3Parser extends Parser {
     if (sep === -1) {
       stmt.add(new Node("name", token.text).add(token))
     } else {
-      const tokens = []
-      tokens.push(new Token(TokenType.Identifier, token.text.substring(0, sep), token.pos))
+      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), token.pos, token.before)
+      stmt.add(new Node("name", nameToken.text).add(nameToken))
 
-      const input = token.text.substring(sep)
-      const re = /([ \t]+)|"([^"]*)"|'([^']*)'|([^ \t"']+)/y
+      const args = token.text.substring(sep)
+      const argTokens = []
+      const re = /([ \t]+)|("[^"]*"|'[^']*')|([^ \t"']+)/y
       let pos = 0
-      while (pos < input.length) {
+      while (pos < args.length) {
         re.lastIndex = pos
-        const m = re.exec(input)
+        const m = re.exec(args)
         if (m) {
           const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-          tokens.push(new Token(type, m[0], re.lastIndex))
+          argTokens.push(new Token(type, m[0], re.lastIndex))
           pos = re.lastIndex
         }
       }
 
       const before = new Array<Token>()
-      for (let i = 0; i < tokens.length; i++) {
-        const prev = tokens[tokens.length - 1]
-        if (token.type.options.skip) {
-          before.push(token)
+      for (const argToken of argTokens) {
+        if (argToken.type.options.skip) {
+          before.push(argToken)
         } else {
-          token.before.push(...before)
+          argToken.before.push(...before)
           before.length = 0
-          stmt.add(new Node(i === 0 ? "name" : "arg").add(tokens[i]))
+          stmt.add(new Node("arg", dequote(argToken.text)).add(argToken))
         }
       }
     }
@@ -379,23 +375,44 @@ export class Sqlite3Parser extends Parser {
   statement(): Node {
     const stmt = new Node("")
 
-    let explain
-    if (this.consumeIf(Keyword.EXPLAIN)) {
-      explain = new Node("explain").add(this.token(-1))
-      if (this.consumeIf(Keyword.QUERY)) {
-        this.consume(Keyword.PLAN)
-        explain.add(new Node("query plan").add(this.token(-2), this.token(-1)))
+    try {
+      let explain
+      if (this.consumeIf(Keyword.EXPLAIN)) {
+        explain = new Node("explain").add(this.token(-1))
+        if (this.consumeIf(Keyword.QUERY)) {
+          this.consume(Keyword.PLAN)
+          explain.add(new Node("query plan").add(this.token(-2), this.token(-1)))
+        }
       }
-    }
 
-    if (this.consumeIf(Keyword.CREATE)) {
-      stmt.add(this.token(-1))
-      if (
-        this.consumeIf(Keyword.TEMPORARY) ||
-        this.consumeIf(Keyword.TEMP)
-      ) {
-        stmt.add(new Node("temporary").add(this.token(-1)))
-        if (this.consumeIf(Keyword.TABLE)) {
+      if (this.consumeIf(Keyword.CREATE)) {
+        stmt.add(this.token(-1))
+        if (
+          this.consumeIf(Keyword.TEMPORARY) ||
+          this.consumeIf(Keyword.TEMP)
+        ) {
+          stmt.add(new Node("temporary").add(this.token(-1)))
+          if (this.consumeIf(Keyword.TABLE)) {
+            stmt.add(this.token(-1))
+            stmt.name = "create table"
+            this.parseCreateTableStatement(stmt)
+          } else if (this.consumeIf(Keyword.VIEW)) {
+            stmt.add(this.token(-1))
+            stmt.name = "create view"
+            this.parseCreateViewStatement(stmt)
+          } else if (this.consumeIf(Keyword.TRIGGER)) {
+            stmt.add(this.token(-1))
+            stmt.name = "create trigger"
+            this.parseCreateTriggerStatement(stmt)
+          }
+        } else if (this.consumeIf(Keyword.VIRTUAL)) {
+          stmt.add(new Node("virtual").add(this.token(-1)))
+          if (this.consumeIf(Keyword.TABLE)) {
+            stmt.add(this.token(-1))
+            stmt.name = "create table"
+            this.parseCreateTableStatement(stmt)
+          }
+        } else if (this.consumeIf(Keyword.TABLE)) {
           stmt.add(this.token(-1))
           stmt.name = "create table"
           this.parseCreateTableStatement(stmt)
@@ -407,177 +424,168 @@ export class Sqlite3Parser extends Parser {
           stmt.add(this.token(-1))
           stmt.name = "create trigger"
           this.parseCreateTriggerStatement(stmt)
-        }
-      } else if (this.consumeIf(Keyword.VIRTUAL)) {
-        stmt.add(new Node("virtual").add(this.token(-1)))
-        if (this.consumeIf(Keyword.TABLE)) {
-          stmt.add(this.token(-1))
-          stmt.name = "create table"
-          this.parseCreateTableStatement(stmt)
-        }
-      } else if (this.consumeIf(Keyword.TABLE)) {
-        stmt.add(this.token(-1))
-        stmt.name = "create table"
-        this.parseCreateTableStatement(stmt)
-      } else if (this.consumeIf(Keyword.VIEW)) {
-        stmt.add(this.token(-1))
-        stmt.name = "create view"
-        this.parseCreateViewStatement(stmt)
-      } else if (this.consumeIf(Keyword.TRIGGER)) {
-        stmt.add(this.token(-1))
-        stmt.name = "create trigger"
-        this.parseCreateTriggerStatement(stmt)
-      } else if (this.consumeIf(Keyword.UNIQUE)) {
-        stmt.add(new Node("unique").add(this.token(-1)))
-        if (this.consumeIf(Keyword.INDEX)) {
+        } else if (this.consumeIf(Keyword.UNIQUE)) {
+          stmt.add(new Node("unique").add(this.token(-1)))
+          if (this.consumeIf(Keyword.INDEX)) {
+            stmt.add(this.token(-1))
+            stmt.name = "create index"
+            this.parseCreateIndexStatement(stmt)
+          }
+        } else if (this.consumeIf(Keyword.INDEX)) {
           stmt.add(this.token(-1))
           stmt.name = "create index"
           this.parseCreateIndexStatement(stmt)
         }
-      } else if (this.consumeIf(Keyword.INDEX)) {
+      } else if (this.consumeIf(Keyword.ALTER)) {
         stmt.add(this.token(-1))
-        stmt.name = "create index"
-        this.parseCreateIndexStatement(stmt)
-      }
-    } else if (this.consumeIf(Keyword.ALTER)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.TABLE)) {
-        stmt.add(this.token(-1))
-        stmt.name = "alter table"
-        this.parseAlterTableStatement(stmt)
-      }
-    } else if (this.consumeIf(Keyword.DROP)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.TABLE)) {
-        stmt.add(this.token(-1))
-        stmt.name = "drop table"
-        this.parseDropTableStatement(stmt)
-      } else if (this.consumeIf(Keyword.VIEW)) {
-        stmt.add(this.token(-1))
-        stmt.name = "drop view"
-        this.parseDropViewStatement(stmt)
-      } else if (this.consumeIf(Keyword.TRIGGER)) {
-        stmt.add(this.token(-1))
-        stmt.name = "drop trigger"
-        this.parseDropTriggerStatement(stmt)
-      } else if (this.consumeIf(Keyword.INDEX)) {
-        stmt.add(this.token(-1))
-        stmt.name = "drop index"
-        this.parseDropIndexStatement(stmt)
-      }
-    } else if (this.consumeIf(Keyword.ATTACH)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.DATABASE)) {
-        stmt.add(this.token(-1))
-        stmt.name = "attach database"
-        this.parseAttachDatabaseStatement(stmt)
-      }
-    } else if (this.consumeIf(Keyword.DETACH)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.DATABASE)) {
-        stmt.add(this.token(-1))
-        stmt.name = "detach database"
-        this.parseDetachDatabaseStatement(stmt)
-      }
-    } else if (this.consumeIf(Keyword.ANALYZE)) {
-      stmt.add(this.token(-1))
-      stmt.name = "analyze"
-      this.parseAnalyzeStatement(stmt)
-    } else if (this.consumeIf(Keyword.REINDEX)) {
-      stmt.add(this.token(-1))
-      stmt.name = "reindex"
-      this.parseReindexStatement(stmt)
-    } else if (this.consumeIf(Keyword.VACUUM)) {
-      stmt.add(this.token(-1))
-      stmt.name = "vacuum"
-      this.parseVacuumStatement(stmt)
-    } else if (this.consumeIf(Keyword.PRAGMA)) {
-      stmt.add(this.token(-1))
-      stmt.name = "pragma"
-      this.parsePragmaStatement(stmt)
-    } else if (this.consumeIf(Keyword.BEGIN)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.DEFERRED)) {
-        stmt.add(new Node("deferred").add(this.token(-1)))
-      } else if (this.consumeIf(Keyword.IMMEDIATE)) {
-        stmt.add(new Node("immediate").add(this.token(-1)))
-      } else if (this.consumeIf(Keyword.EXCLUSIVE)) {
-        stmt.add(new Node("exclusive").add(this.token(-1)))
-      }
-      if (this.consumeIf(Keyword.TRANSACTION)) {
-        stmt.add(this.token(-1))
-      }
-      stmt.name = "begin transaction"
-      this.parseBeginTransactionStatement(stmt)
-    } else if (this.consumeIf(Keyword.SAVEPOINT)) {
-      stmt.add(this.token(-1))
-      stmt.name = "savepoint"
-      this.parseSavepointStatement(stmt)
-    } else if (this.consumeIf(Keyword.RELEASE)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.SAVEPOINT)) {
-        stmt.add(this.token(-1))
-      }
-      stmt.name = "release savepoint"
-      this.parseReleaseSavepointStatement(stmt)
-    } else if (this.consumeIf(Keyword.COMMIT) || this.consumeIf(Keyword.END)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.TRANSACTION)) {
-        stmt.add(this.token(-1))
-      }
-      stmt.name = "commit transaction"
-      this.parseCommitTransactionStatement(stmt)
-    } else if (this.consumeIf(Keyword.ROLLBACK)) {
-      stmt.add(this.token(-1))
-      if (this.consumeIf(Keyword.TRANSACTION)) {
-        stmt.add(this.token(-1))
-      }
-      stmt.name = "rollback transaction"
-      this.parseRollbackTransactionStatement(stmt)
-    } else {
-      if (this.peekIf(Keyword.WITH)) {
-        stmt.add(this.withClause())
-      }
-      if (this.consumeIf(Keyword.INSERT)) {
-        stmt.add(this.token(-1))
-        stmt.name = "insert"
-
-        if (this.consumeIf(Keyword.OR)) {
+        if (this.consumeIf(Keyword.TABLE)) {
           stmt.add(this.token(-1))
-          stmt.add(this.conflictAction())
+          stmt.name = "alter table"
+          this.parseAlterTableStatement(stmt)
         }
-        this.parseInsertStatement(stmt)
-      } else if (this.consumeIf(Keyword.REPLACE)) {
-        stmt.add(new Node("replace").add(this.token(-1)))
-        stmt.name = "insert"
-        this.parseInsertStatement(stmt)
-      } else if (this.consumeIf(Keyword.UPDATE)) {
+      } else if (this.consumeIf(Keyword.DROP)) {
         stmt.add(this.token(-1))
-        stmt.name = "update"
-        if (this.consumeIf(Keyword.OR)) {
+        if (this.consumeIf(Keyword.TABLE)) {
           stmt.add(this.token(-1))
-          stmt.add(this.conflictAction())
+          stmt.name = "drop table"
+          this.parseDropTableStatement(stmt)
+        } else if (this.consumeIf(Keyword.VIEW)) {
+          stmt.add(this.token(-1))
+          stmt.name = "drop view"
+          this.parseDropViewStatement(stmt)
+        } else if (this.consumeIf(Keyword.TRIGGER)) {
+          stmt.add(this.token(-1))
+          stmt.name = "drop trigger"
+          this.parseDropTriggerStatement(stmt)
+        } else if (this.consumeIf(Keyword.INDEX)) {
+          stmt.add(this.token(-1))
+          stmt.name = "drop index"
+          this.parseDropIndexStatement(stmt)
         }
-        this.parseUpdateStatement(stmt)
-      } else if (this.consumeIf(Keyword.DELETE)) {
-        this.consume(Keyword.FROM)
-        stmt.add(this.token(-2), this.token(-1))
-        stmt.name = "delete"
-        this.parseDeleteStatement(stmt)
-      } else if (this.peekIf(Keyword.SELECT)) {
-        const selectNode = this.selectClause()
-        stmt.name = selectNode.name
-        stmt.value = selectNode.value
-        stmt.children.push(...selectNode.children)
+      } else if (this.consumeIf(Keyword.ATTACH)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.DATABASE)) {
+          stmt.add(this.token(-1))
+          stmt.name = "attach database"
+          this.parseAttachDatabaseStatement(stmt)
+        }
+      } else if (this.consumeIf(Keyword.DETACH)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.DATABASE)) {
+          stmt.add(this.token(-1))
+          stmt.name = "detach database"
+          this.parseDetachDatabaseStatement(stmt)
+        }
+      } else if (this.consumeIf(Keyword.ANALYZE)) {
+        stmt.add(this.token(-1))
+        stmt.name = "analyze"
+        this.parseAnalyzeStatement(stmt)
+      } else if (this.consumeIf(Keyword.REINDEX)) {
+        stmt.add(this.token(-1))
+        stmt.name = "reindex"
+        this.parseReindexStatement(stmt)
+      } else if (this.consumeIf(Keyword.VACUUM)) {
+        stmt.add(this.token(-1))
+        stmt.name = "vacuum"
+        this.parseVacuumStatement(stmt)
+      } else if (this.consumeIf(Keyword.PRAGMA)) {
+        stmt.add(this.token(-1))
+        stmt.name = "pragma"
+        this.parsePragmaStatement(stmt)
+      } else if (this.consumeIf(Keyword.BEGIN)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.DEFERRED)) {
+          stmt.add(new Node("deferred").add(this.token(-1)))
+        } else if (this.consumeIf(Keyword.IMMEDIATE)) {
+          stmt.add(new Node("immediate").add(this.token(-1)))
+        } else if (this.consumeIf(Keyword.EXCLUSIVE)) {
+          stmt.add(new Node("exclusive").add(this.token(-1)))
+        }
+        if (this.consumeIf(Keyword.TRANSACTION)) {
+          stmt.add(this.token(-1))
+        }
+        stmt.name = "begin transaction"
+        this.parseBeginTransactionStatement(stmt)
+      } else if (this.consumeIf(Keyword.SAVEPOINT)) {
+        stmt.add(this.token(-1))
+        stmt.name = "savepoint"
+        this.parseSavepointStatement(stmt)
+      } else if (this.consumeIf(Keyword.RELEASE)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.SAVEPOINT)) {
+          stmt.add(this.token(-1))
+        }
+        stmt.name = "release savepoint"
+        this.parseReleaseSavepointStatement(stmt)
+      } else if (this.consumeIf(Keyword.COMMIT) || this.consumeIf(Keyword.END)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.TRANSACTION)) {
+          stmt.add(this.token(-1))
+        }
+        stmt.name = "commit transaction"
+        this.parseCommitTransactionStatement(stmt)
+      } else if (this.consumeIf(Keyword.ROLLBACK)) {
+        stmt.add(this.token(-1))
+        if (this.consumeIf(Keyword.TRANSACTION)) {
+          stmt.add(this.token(-1))
+        }
+        stmt.name = "rollback transaction"
+        this.parseRollbackTransactionStatement(stmt)
+      } else {
+        if (this.peekIf(Keyword.WITH)) {
+          stmt.add(this.withClause())
+        }
+        if (this.consumeIf(Keyword.INSERT)) {
+          stmt.add(this.token(-1))
+          stmt.name = "insert"
+
+          if (this.consumeIf(Keyword.OR)) {
+            stmt.add(this.token(-1))
+            stmt.add(this.conflictAction())
+          }
+          this.parseInsertStatement(stmt)
+        } else if (this.consumeIf(Keyword.REPLACE)) {
+          stmt.add(new Node("replace").add(this.token(-1)))
+          stmt.name = "insert"
+          this.parseInsertStatement(stmt)
+        } else if (this.consumeIf(Keyword.UPDATE)) {
+          stmt.add(this.token(-1))
+          stmt.name = "update"
+          if (this.consumeIf(Keyword.OR)) {
+            stmt.add(this.token(-1))
+            stmt.add(this.conflictAction())
+          }
+          this.parseUpdateStatement(stmt)
+        } else if (this.consumeIf(Keyword.DELETE)) {
+          this.consume(Keyword.FROM)
+          stmt.add(this.token(-2), this.token(-1))
+          stmt.name = "delete"
+          this.parseDeleteStatement(stmt)
+        } else if (this.peekIf(Keyword.SELECT)) {
+          const selectNode = this.selectClause()
+          stmt.name = selectNode.name
+          stmt.value = selectNode.value
+          stmt.children.push(...selectNode.children)
+        }
       }
-    }
 
-    if (!stmt.name) {
-      throw this.createParseError()
-    }
-
-    if (explain) {
-      return explain.add(stmt)
+      if (!stmt.name) {
+        throw this.createParseError()
+      }
+  
+      if (explain) {
+        return explain.add(stmt)
+      }
+    } catch (err) {
+      if (err instanceof ParseError) {
+        // skip tokens
+        while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+          this.consume()
+          stmt.add(this.token(-1))
+        }
+        err.node = stmt
+      }      
+      throw err
     }
 
     return stmt
