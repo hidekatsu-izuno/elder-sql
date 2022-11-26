@@ -7,6 +7,7 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
+  ParseFunction,
 } from "../parser"
 
 const KeywordMap = new Map<string, Keyword>()
@@ -208,7 +209,7 @@ export class Keyword extends TokenType {
     public name: string,
     public options: { [key: string]: any } = {}
   ) {
-    super(name, options)
+    super(name, { ...options, keyword: true })
     KeywordMap.set(options.value ?? name, this)
   }
 }
@@ -271,11 +272,16 @@ export class Sqlite3Lexer extends Lexer {
 }
 
 export class Sqlite3Parser extends Parser {
+  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
+    const tokens = new Sqlite3Lexer(options).lex(input)
+    return new Sqlite3Parser(tokens, options).root()
+  }
+
   constructor(
-    input: string,
-    options: { [key: string]: any } = {},
+    tokens: Token[],
+    options: Record<string, any> = {},
   ) {
-    super(input, new Sqlite3Lexer(options), options)
+    super(tokens, options)
   }
 
   root(): Node {

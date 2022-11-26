@@ -1,3 +1,4 @@
+import { dequote } from "@/util"
 import {
   TokenType,
   Token,
@@ -6,6 +7,7 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
+  ParseFunction,
 } from "../parser"
 
 const KeywordMap = new Map<string, Keyword>()
@@ -84,6 +86,7 @@ export class Keyword extends TokenType {
   static LONG = new Keyword("LONG", { reserved: true })
   static LOOP = new Keyword("LOOP")
   static MAXEXTENTS = new Keyword("MAXEXTENTS", { reserved: true })
+  static MERGE = new Keyword("MERGE")
   static MINUS = new Keyword("MINUS", { reserved: true })
   static MLSLABEL = new Keyword("MLSLABEL", { reserved: true })
   static MODE = new Keyword("MODE", { reserved: true })
@@ -160,9 +163,9 @@ export class Keyword extends TokenType {
 
   constructor(
     public name: string,
-    public options: { [key: string]: any } = {}
+    public options: Record<string, any> = {}
   ) {
-    super(name, options)
+    super(name, { ...options, keyword: true })
     KeywordMap.set(options.value ?? name, this)
   }
 }
@@ -171,7 +174,7 @@ export class OracleLexer extends Lexer {
   private reserved = new Set<Keyword>()
 
   constructor(
-    private options: { [key: string]: any } = {}
+    private options: Record<string, any> = {}
   ) {
     super("oracle", [
       { type: TokenType.WhiteSpace, re: /[ \t]+/y },
@@ -225,7 +228,12 @@ export class OracleLexer extends Lexer {
 }
 
 export class OracleParser extends Parser {
-  static BLOCK_STATEMENTS = new Set<string>([
+  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
+    const tokens = new OracleLexer(options).lex(input)
+    return new OracleParser(tokens, options).root()
+  }
+
+  private static BLOCK_STATEMENTS = new Set<string>([
     "declare",
     "begin",
     "create function",
@@ -238,10 +246,10 @@ export class OracleParser extends Parser {
   ])
 
   constructor(
-    input: string,
-    options: { [key: string]: any } = {},
+    tokens: Token[],
+    options: Record<string, any> = {},
   ) {
-    super(input, new OracleLexer(options), options)
+    super(tokens, options)
   }
 
   root(): Node {
@@ -262,9 +270,9 @@ export class OracleParser extends Parser {
         } else {
           const stmt = this.statement()
           root.add(stmt)
-          if (this.consumeIf(TokenType.Delimiter) || (
-            !OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)
-          )) {
+          if (this.consumeIf(TokenType.Delimiter)) {
+            root.add(this.token(-1))
+          } else if (!OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)) {
             root.add(this.token(-1))
           } else {
             break
@@ -331,6 +339,37 @@ export class OracleParser extends Parser {
 
       if (this.consumeIf(Keyword.CREATE)) {
         stmt.add(this.token(-1))
+      } else if (this.consumeIf(Keyword.ALTER)) {
+        stmt.add(this.token(-1))
+      } else if (this.consumeIf(Keyword.DROP)) {
+        stmt.add(this.token(-1))
+      } else {
+        if (this.peekIf(Keyword.WITH)) {
+          stmt.add(this.withClause())
+        }
+        if (this.consumeIf(Keyword.INSERT)) {
+          stmt.add(this.token(-1))
+          stmt.name = "insert"
+          this.parseInsertStatement(stmt)
+        } else if (this.consumeIf(Keyword.UPDATE)) {
+          stmt.add(this.token(-1))
+          stmt.name = "update"
+          this.parseUpdateStatement(stmt)
+        } else if (this.consumeIf(Keyword.DELETE)) {
+          this.consume(Keyword.FROM)
+          stmt.add(this.token(-2), this.token(-1))
+          stmt.name = "delete"
+          this.parseDeleteStatement(stmt)
+        } else if (this.consumeIf(Keyword.MERGE)) {
+          stmt.add(this.token(-1))
+          stmt.name = "merge"
+          this.parseMergeStatement(stmt)
+        } else if (this.peekIf(Keyword.SELECT)) {
+          const selectNode = this.selectClause()
+          stmt.name = selectNode.name
+          stmt.value = selectNode.value
+          stmt.children.push(...selectNode.children)
+        }
       }
 
       if (!stmt.name) {
@@ -343,7 +382,10 @@ export class OracleParser extends Parser {
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
-        while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+        while (this.token()
+          && !this.peekIf(TokenType.SemiColon)
+          && !this.peekIf(TokenType.Delimiter)
+        ) {
           this.consume()
           stmt.add(this.token(-1))
         }
@@ -353,5 +395,167 @@ export class OracleParser extends Parser {
     }
 
     return stmt
+  }
+
+  private parseInsertStatement(stmt: Node) {
+    this.consume(Keyword.INTO)
+    stmt.add(this.token(-1))
+
+    const nameNode = this.identifier("name")
+    stmt.add(nameNode)
+    if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
+      nameNode.name = "schema_name"
+      stmt.add(this.identifier("name"))
+    }
+    while (this.token()
+      && !this.peekIf(TokenType.SemiColon)
+      && !this.peekIf(TokenType.Delimiter)
+    ) {
+      this.consume()
+      stmt.add(this.token(-1))
+    }
+  }
+
+  private parseUpdateStatement(stmt: Node) {
+    const nameNode = this.identifier("name")
+    stmt.add(nameNode)
+    if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
+      nameNode.name = "schema_name"
+      stmt.add(this.identifier("name"))
+    }
+    while (this.token()
+      && !this.peekIf(TokenType.SemiColon)
+      && !this.peekIf(TokenType.Delimiter)
+    ) {
+      this.consume()
+      stmt.add(this.token(-1))
+    }
+  }
+
+  private parseDeleteStatement(stmt: Node) {
+    const nameNode = this.identifier("name")
+    stmt.add(nameNode)
+    if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
+      nameNode.name = "schema_name"
+      stmt.add(this.identifier("name"))
+    }
+    while (this.token()
+      && !this.peekIf(TokenType.SemiColon)
+      && !this.peekIf(TokenType.Delimiter)
+    ) {
+      this.consume()
+      stmt.add(this.token(-1))
+    }
+  }
+
+  private parseMergeStatement(stmt: Node) {
+    this.consume(Keyword.INTO)
+    stmt.add(this.token(-1))
+    
+    const nameNode = this.identifier("name")
+    stmt.add(nameNode)
+    if (this.consumeIf(TokenType.Dot)) {
+      stmt.add(this.token(-1))
+      nameNode.name = "schema_name"
+      stmt.add(this.identifier("name"))
+    }
+    while (this.token()
+      && !this.peekIf(TokenType.SemiColon)
+      && !this.peekIf(TokenType.Delimiter)
+    ) {
+      this.consume()
+      stmt.add(this.token(-1))
+    }
+  }
+
+  private selectClause() {
+    const node = new Node("select")
+
+    if (this.peekIf(Keyword.WITH)) {
+      node.add(this.withClause())
+    }
+    this.consume(Keyword.SELECT)
+    node.add(this.token(-1))
+
+    let depth = 0
+    while (this.token()
+      && !this.peekIf(TokenType.SemiColon)
+      && !this.peekIf(TokenType.Delimiter)
+      && (depth == 0 && !this.peekIf(TokenType.RightParen))
+    ) {
+      if (this.consumeIf(TokenType.LeftParen)) {
+        node.add(this.token(-1))
+        depth++
+      } else if (this.consumeIf(TokenType.RightParen)) {
+        node.add(this.token(-1))
+        depth--
+      } else {
+        this.consume()
+        node.add(this.token(-1))
+      }
+    }
+
+    return node
+  }
+
+  private withClause() {
+    const node = new Node("with")
+
+    this.consume(Keyword.WITH)
+    node.add(this.token(-1))
+
+    while (this.token()) {
+      node.add(this.identifier("name"))
+      if (this.consumeIf(TokenType.LeftParen)) {
+        while (this.token()) {
+          node.add(this.identifier("column"))
+
+          if (this.consumeIf(TokenType.Comma)) {
+            node.add(this.token(-1))
+          } else {
+            break
+          }
+        }
+
+        this.consume(TokenType.RightParen)
+        node.add(this.token(-1))
+      }
+
+      this.consume(Keyword.AS)
+      node.add(this.token(-1))
+
+      this.consume(TokenType.LeftParen)
+      node.add(this.token(-1))
+
+      node.add(this.selectClause())
+
+      this.consume(TokenType.RightParen)
+      node.add(this.token(-1))
+
+      if (this.consumeIf(TokenType.Comma)) {
+        node.add(this.token(-1))
+      } else {
+        break
+      }
+    }
+
+    return node
+  }
+
+  private identifier(name: string) {
+    const node = new Node(name)
+    if (this.consumeIf(TokenType.QuotedIdentifier)) {
+      node.add(this.token(-1))
+      node.value = dequote(this.token(-1).text)
+    } else if (this.consumeIf(TokenType.Identifier)) {
+      node.add(this.token(-1))
+      node.value = this.token(-1).text
+    } else {
+      throw this.createParseError()
+    }
+    return node
   }
 }

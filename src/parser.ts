@@ -145,17 +145,15 @@ export abstract class Lexer {
   }
 }
 
+export type ParseFunction = (input: string, options: Record<string, any>) => Node
+
 export abstract class Parser {
-  protected tokens: Token[]
   protected pos = 0
-  protected mark = 0
 
   constructor(
-    protected input: string,
-    protected lexer: Lexer,
-    protected options: { [key: string]: any} = {},
+    protected tokens: Token[],
+    protected options: Record<string, any> = {},
   ) {
-    this.tokens = lexer.lex(input)
   }
 
   abstract root(): Node
@@ -207,18 +205,52 @@ export abstract class Parser {
 
   createParseError(message?: string) {
     const token = this.token()
-    const lines = this.input.substring(0, token?.pos || 0).split(/\r\n?|\n/g)
-    let last = lines[lines.length-1]
-    const rows = lines.length + 1
-    const cols = last.length
-    if (!last && lines.length - 2 >= 0) {
-      const last2 = lines[lines.length-2].replace(/^[ \t]+/, "")
-      last = `${last2.substring(last2.length - 16)}\u21B5 ${last}`
+    let lines = [0]
+    let rows = 1
+    let cols = 0
+    for (let i = 0; i < this.pos; i++) {
+      const token = this.tokens[i]
+      if (token.type === TokenType.LineBreak) {
+        if (i + 1 < this.pos) {
+          lines.push(i + 1)
+          rows++
+        }
+      }
     }
+    for (let i = lines[lines.length-1]; i < this.pos; i++) {
+      const token = this.tokens[i]
+        for (const skipToken of token.before) {
+          cols += skipToken.text.length
+        }
+        cols += token.text.length
+    }
+
+    if (!message) {
+      let line = ""
+      for (let i = lines[lines.length-1]; i < this.pos; i++) {
+        const token = this.tokens[i]
+        for (const skipToken of token.before) {
+          line += skipToken.text
+        }
+        line += token.text
+      }
+      if (!line && lines.length > 1) {
+        let line2 = ""
+        for (let i = lines[lines.length-2]; i < lines[lines.length-1] - 1; i++) {
+          const token = this.tokens[i]
+          for (const skipToken of token.before) {
+            line2 += skipToken.text
+          }
+          line2 += token.text
+        }
+        line = `${line2.substring(line2.length - 16)}\u21B5 ${line}`
+      }
+      message = `Unexpected token: ${line}"${token && token.type !== TokenType.Eof ? token.text : "<EOF>"}"`
+    }
+
     const fileName = this.options.fileName || ""
-    const text = message || `Unexpected token: ${last}"${token ? token.text : "<EOF>"}"`
     return new ParseError(
-      `${fileName}[${rows},${cols}] ${text}`,
+      `${fileName}[${rows},${cols}] ${message}`,
       fileName,
       rows,
       cols

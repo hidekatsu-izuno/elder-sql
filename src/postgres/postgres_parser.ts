@@ -6,6 +6,7 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
+  ParseFunction,
 } from "../parser"
 import { dequote, ucase } from "../util"
 
@@ -238,7 +239,7 @@ export class Keyword extends TokenType {
     public name: string,
     public options: { [key: string]: any } = {}
   ) {
-    super(name, options)
+    super(name, { ...options, keyword: true })
     KeywordMap.set(options.value ?? name, this)
   }
 }
@@ -316,11 +317,16 @@ export class PostgresLexer extends Lexer {
 }
 
 export class PostgresParser extends Parser {
+  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
+    const tokens = new PostgresLexer(options).lex(input)
+    return new PostgresParser(tokens, options).root()
+  }
+
   constructor(
-    input: string,
-    options: { [key: string]: any} = {},
+    tokens: Token[],
+    options: Record<string, any> = {},
   ) {
-    super(input, new PostgresLexer(options), options)
+    super(tokens, options)
   }
 
   root(): Node {

@@ -8,6 +8,7 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
+  ParseFunction,
 } from "../parser"
 import { dequote, escapeRegExp, ucase } from "../util"
 
@@ -595,13 +596,12 @@ export class Keyword extends TokenType {
 
   constructor(
     public name: string,
-    public options: { [key: string]: any } = {}
+    public options: Record<string, any> = {}
   ) {
-    super(name, options)
+    super(name, { ...options, keyword: true })
     KeywordMap.set(options.value ?? name, this)
   }
 }
-
 
 export class MysqlLexer extends Lexer {
   private static COMMAND_PATTERN = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
@@ -611,7 +611,7 @@ export class MysqlLexer extends Lexer {
   private reDelimiter = new RegExp(";", "y")
 
   constructor(
-    private options: { [key: string]: any } = {}
+    private options: Record<string, any> = {}
   ) {
     super("mysql", [
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
@@ -707,13 +707,18 @@ export class MysqlLexer extends Lexer {
 }
 
 export class MysqlParser extends Parser {
+  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
+    const tokens = new MysqlLexer(options).lex(input)
+    return new MysqlParser(tokens, options).root()
+  }
+
   private sqlMode = new Set<string>()
 
   constructor(
-    input: string,
-    options: { [key: string]: any } = {},
+    tokens: Token[],
+    options: Record<string, any> = {},
   ) {
-    super(input, new MysqlLexer(options), options)
+    super(tokens, options)
     this.setSqlMode(options.sqlMode)
   }
 
