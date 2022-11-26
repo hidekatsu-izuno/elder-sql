@@ -200,16 +200,16 @@ export class Keyword extends TokenType {
   static WITH = new Keyword("WITH")
   static WITHOUT = new Keyword("WITHOUT")
 
-  static OPE_EQ = new Keyword("=")
-  static OPE_PLUS = new Keyword("+")
-  static OPE_MINUS = new Keyword("-")
+  static OPE_EQ = new Keyword("OPE_EQ", { value: "=" })
+  static OPE_PLUS = new Keyword("OPE_PLUS", { value: "+" })
+  static OPE_MINUS = new Keyword("OPE_MINUS", { value: "-" })
 
   constructor(
     public name: string,
     public options: { [key: string]: any } = {}
   ) {
     super(name, options)
-    KeywordMap.set(name, this)
+    KeywordMap.set(options.value ?? name, this)
   }
 }
 
@@ -282,12 +282,12 @@ export class Sqlite3Parser extends Parser {
     const root = new Node("root")
     const errors = []
 
-    loop: while (this.token()) {
+    while (this.token()) {
       try {
         if (!this.peekIf(TokenType.SemiColon)) {
           if (this.peekIf(TokenType.Eof)) {
             root.add(this.token(-1))
-            break loop
+            break
           } else if (this.peekIf(TokenType.Command)) {
             root.add(this.command())
           } else {

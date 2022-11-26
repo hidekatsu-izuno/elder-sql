@@ -1,9 +1,20 @@
-import { Node, Token } from "./parser";
+import { Node, Token } from "./parser"
 
-export function toJSString(target: Node | Token, space: number = 0) {
+export function toJSString(target: Node | Token | (Node |Token)[], space: number = 0) {
     const spaces = " ".repeat(space)
     let text = ""
-    if (target instanceof Node) {
+    if (Array.isArray(target)) {
+      text += spaces + "[\n"
+      let index = 0
+      for (const item of target) {
+        if (index > 0) {
+          text += ",\n"
+        }
+        text += spaces + spaces + toJSString(item, space + 1)
+        index++
+      }
+      text += "\n" + spaces + "]"
+    } else if (target instanceof Node) {
         text += spaces + "new Node(" + JSON.stringify(target.name)
         if (target.value !== undefined) {
             text += ", " + JSON.stringify(target.value)
