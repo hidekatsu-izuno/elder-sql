@@ -15,9 +15,11 @@ export class Keyword extends TokenType {
   static ADD = new Keyword("ADD", { reserved: true })
   static ALL = new Keyword("ALL", { reserved: true })
   static ALTER = new Keyword("ALTER", { reserved: true })
-  static ALWAYS = new Keyword("ALWAYS", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
-  }})
+  static ALWAYS = new Keyword("ALWAYS", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
+    }
+  })
   static AND = new Keyword("AND", { reserved: true })
   static ANALYZE = new Keyword("ANALYZE")
   static AS = new Keyword("AS", { reserved: true })
@@ -35,9 +37,11 @@ export class Keyword extends TokenType {
   static CONSTRAINT = new Keyword("CONSTRAINT", { reserved: true })
   static CREATE = new Keyword("CREATE", { reserved: true })
   static CROSS = new Keyword("CROSS", { reserved: true })
-  static CURRENT = new Keyword("CURRENT", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static CURRENT = new Keyword("CURRENT", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static CURRENT_DATE = new Keyword("CURRENT_DATE", { reserved: true })
   static CURRENT_TIME = new Keyword("CURRENT_TIME", { reserved: true })
   static CURRENT_TIMESTAMP = new Keyword("CURRENT_TIMESTAMP", { reserved: true })
@@ -52,32 +56,42 @@ export class Keyword extends TokenType {
   static DROP = new Keyword("DROP")
   static ELSE = new Keyword("ELSE", { reserved: true })
   static ESCAPE = new Keyword("ESCAPE", { reserved: true })
-  static EXCEPT = new Keyword("EXCEPT", { reserved: function(options: { [key: string]: any }) {
-    return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-  }})
+  static EXCEPT = new Keyword("EXCEPT", {
+    reserved: function (options: { [key: string]: any }) {
+      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
+    }
+  })
   static EXISTS = new Keyword("EXISTS", { reserved: true })
-  static EXCLUDE = new Keyword("EXCLUDE", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static EXCLUDE = new Keyword("EXCLUDE", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static EXCLUSIVE = new Keyword("EXCLUSIVE")
   static END = new Keyword("END")
   static EXPLAIN = new Keyword("EXPLAIN")
   static FAIL = new Keyword("FAIL")
   static FALSE = new Keyword("FALSE")
   static FILTER = new Keyword("FILTER", { reserved: true })
-  static FOLLOWING = new Keyword("FOLLOWING", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static FOLLOWING = new Keyword("FOLLOWING", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static FOREIGN = new Keyword("FOREIGN", { reserved: true })
   static FROM = new Keyword("FROM", { reserved: true })
-  static GENERATED = new Keyword("GENERATED", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
-  }})
+  static GENERATED = new Keyword("GENERATED", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
+    }
+  })
   static GLOB = new Keyword("GLOB", { reserved: true })
   static GROUP = new Keyword("GROUP", { reserved: true })
-  static GROUPS = new Keyword("GROUPS", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static GROUPS = new Keyword("GROUPS", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static HAVING = new Keyword("HAVING", { reserved: true })
   static IGNORE = new Keyword("IGNORE")
   static IMMEDIATE = new Keyword("IMMEDIATE")
@@ -86,9 +100,11 @@ export class Keyword extends TokenType {
   static INDEXED = new Keyword("INDEXED", { reserved: true })
   static INNER = new Keyword("INNER", { reserved: true })
   static INSERT = new Keyword("INSERT", { reserved: true })
-  static INTERSECT = new Keyword("INTERSECT", { reserved: function(options: { [key: string]: any }) {
-    return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-  }})
+  static INTERSECT = new Keyword("INTERSECT", {
+    reserved: function (options: { [key: string]: any }) {
+      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
+    }
+  })
   static INTO = new Keyword("INTO", { reserved: true })
   static IF = new Keyword("IF")
   static IS = new Keyword("IS", { reserved: true })
@@ -106,24 +122,32 @@ export class Keyword extends TokenType {
   static ON = new Keyword("ON", { reserved: true })
   static OR = new Keyword("OR", { reserved: true })
   static ORDER = new Keyword("ORDER", { reserved: true })
-  static OTHERS = new Keyword("OTHERS", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static OTHERS = new Keyword("OTHERS", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static OUTER = new Keyword("OUTER", { reserved: true })
   static OVER = new Keyword("OVER", { reserved: true })
-  static PARTITION = new Keyword("PARTITION", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static PARTITION = new Keyword("PARTITION", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static PRAGMA = new Keyword("PRAGMA")
-  static PRECEDING = new Keyword("PRECEDING", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static PRECEDING = new Keyword("PRECEDING", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static PRIMARY = new Keyword("PRIMARY", { reserved: true })
   static PLAN = new Keyword("PLAN")
   static QUERY = new Keyword("QUERY")
-  static RANGE = new Keyword("RANGE", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static RANGE = new Keyword("RANGE", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static RECURSIVE = new Keyword("RECURSIVE")
   static REFERENCES = new Keyword("REFERENCES", { reserved: true })
   static REGEXP = new Keyword("REGEXP", { reserved: true })
@@ -144,19 +168,25 @@ export class Keyword extends TokenType {
   static TEMP = new Keyword("TEMP")
   static TEMPORARY = new Keyword("TEMPORARY", { reserved: true })
   static THEN = new Keyword("THEN", { reserved: true })
-  static TIES = new Keyword("TIES", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
+  static TIES = new Keyword("TIES", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
   static TO = new Keyword("TO", { reserved: true })
   static TRANSACTION = new Keyword("TRANSACTION", { reserved: true })
   static TRIGGER = new Keyword("TRIGGER")
   static TRUE = new Keyword("TRUE")
-  static UNBOUNDED = new Keyword("UNBOUNDED", { reserved: function(options: { [key: string]: any }) {
-    return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-  }})
-  static UNION = new Keyword("UNION", { reserved: function(options: { [key: string]: any }) {
-    return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-  }})
+  static UNBOUNDED = new Keyword("UNBOUNDED", {
+    reserved: function (options: { [key: string]: any }) {
+      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
+    }
+  })
+  static UNION = new Keyword("UNION", {
+    reserved: function (options: { [key: string]: any }) {
+      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
+    }
+  })
   static UNIQUE = new Keyword("UNIQUE", { reserved: true })
   static UPDATE = new Keyword("UPDATE", { reserved: true })
   static USING = new Keyword("USING", { reserved: true })
@@ -173,6 +203,14 @@ export class Keyword extends TokenType {
   static OPE_EQ = new Keyword("=")
   static OPE_PLUS = new Keyword("+")
   static OPE_MINUS = new Keyword("-")
+
+  constructor(
+    public name: string,
+    public options: { [key: string]: any } = {}
+  ) {
+    super(name, options)
+    KeywordMap.set(name, this)
+  }
 }
 
 export class Sqlite3Lexer extends Lexer {
@@ -235,7 +273,7 @@ export class Sqlite3Lexer extends Lexer {
 export class Sqlite3Parser extends Parser {
   constructor(
     input: string,
-    options: { [key: string]: any} = {},
+    options: { [key: string]: any } = {},
   ) {
     super(input, new Sqlite3Lexer(options), options)
   }
@@ -243,11 +281,14 @@ export class Sqlite3Parser extends Parser {
   root(): Node {
     const root = new Node("root")
     const errors = []
-    
-    for (let i = 0; this.token(); i++) {
+
+    loop: while (this.token()) {
       try {
-        if (this.token() && !this.peekIf(TokenType.SemiColon)) {
-          if (this.peekIf(TokenType.Command)) {
+        if (!this.peekIf(TokenType.SemiColon)) {
+          if (this.peekIf(TokenType.EOF)) {
+            root.add(this.token(-1))
+            break loop
+          } else if (this.peekIf(TokenType.Command)) {
             root.add(this.command())
           } else {
             root.add(this.statement())
@@ -319,21 +360,19 @@ export class Sqlite3Parser extends Parser {
         }
       }
 
+      const before = new Array<Token>()
       for (let i = 0; i < tokens.length; i++) {
         const prev = tokens[tokens.length - 1]
         if (token.type.options.skip) {
-          if (prev) {
-            prev.after.push(token)
-          }
+          before.push(token)
         } else {
-          if (prev) {
-            token.before = prev.after
-          }
+          token.before.push(...before)
+          before.length = 0
           stmt.add(new Node(i === 0 ? "name" : "arg").add(tokens[i]))
         }
       }
     }
-    
+
     return stmt
   }
 
@@ -526,9 +565,10 @@ export class Sqlite3Parser extends Parser {
         stmt.name = "delete"
         this.parseDeleteStatement(stmt)
       } else if (this.peekIf(Keyword.SELECT)) {
-        stmt.add(this.token(-1))
-        stmt.name = "select"
-        this.parseSelectStatement(stmt)
+        const selectNode = this.selectClause()
+        stmt.name = selectNode.name
+        stmt.value = selectNode.value
+        stmt.children.push(...selectNode.children)
       }
     }
 
@@ -939,10 +979,6 @@ export class Sqlite3Parser extends Parser {
     }
   }
 
-  private parseSelectStatement(stmt: Node) {
-    stmt.add(this.selectClause())
-  }
-
   private selectClause() {
     const node = new Node("select")
 
@@ -1147,7 +1183,7 @@ export class Sqlite3Parser extends Parser {
     } else if (this.consumeIf(Keyword.REFERENCES)) {
       const constraintNode = new Node("references")
       constraintNode.add(this.token(-1))
-      
+
       constraintNode.add(this.identifier("table_name"))
 
       this.consume(TokenType.LeftParen)
@@ -1292,14 +1328,14 @@ export class Sqlite3Parser extends Parser {
 
     const typeNames = []
     node.add(this.identifier("name"))
-    typeNames.push((node.children[node.children.length-1] as Node).value)
+    typeNames.push((node.children[node.children.length - 1] as Node).value)
     while (
       this.peekIf(TokenType.QuotedIdentifier) ||
       this.peekIf(TokenType.QuotedValue) ||
       this.peekIf(TokenType.Identifier)
     ) {
       node.add(this.identifier("name"))
-      typeNames.push((node.children[node.children.length-1] as Node).value)
+      typeNames.push((node.children[node.children.length - 1] as Node).value)
     }
     node.value = typeNames.join(" ")
 
@@ -1333,7 +1369,7 @@ export class Sqlite3Parser extends Parser {
   private moduleArg() {
     const node = new Node("module_arg")
     while (
-      this.token() && 
+      this.token() &&
       !this.peekIf(TokenType.Comma) &&
       !this.peekIf(TokenType.RightParen)
     ) {
@@ -1452,7 +1488,7 @@ export class Sqlite3Parser extends Parser {
   }
 }
 
-const ReplaceReMap: {[key: string]: RegExp} = {
+const ReplaceReMap: { [key: string]: RegExp } = {
   '"': /""/g,
   "'": /''/g,
   "`": /``/g,
@@ -1461,7 +1497,7 @@ const ReplaceReMap: {[key: string]: RegExp} = {
 function dequote(text: string) {
   if (text.length >= 2) {
     const sc = text.charAt(0)
-    const ec = text.charAt(text.length-1)
+    const ec = text.charAt(text.length - 1)
     if (sc === "[" && ec === "]" || sc === ec) {
       const re = ReplaceReMap[sc]
       let value = text.substring(1, text.length - 1)

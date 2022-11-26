@@ -1,12 +1,17 @@
 export class TokenType {
+  static EOF = new TokenType("EOF")
   static Command = new TokenType("Command")
+  static Delimiter = new TokenType("Delimiter")
+  static SemiColon = new TokenType("SemiColon")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
   static LineBreak = new TokenType("LineBreak", { skip: true })
-  static BlockComment = new TokenType("BlockComment", { skip: true })
   static LineComment = new TokenType("LineComment", { skip: true })
-  static SemiColon = new TokenType("SemiColon")
+  static BlockComment = new TokenType("BlockComment", { skip: true })
+  static HintComment = new TokenType("HintComment", { skip: true })
   static LeftParen = new TokenType("LeftParen")
   static RightParen = new TokenType("RightParen")
+  static LeftBracket = new TokenType("LeftBracket")
+  static RightBracket = new TokenType("RightBracket")
   static Comma = new TokenType("Comma")
   static Dot = new TokenType("Dot")
   static Operator = new TokenType("Operator")
@@ -26,16 +31,22 @@ export class TokenType {
 }
 
 export class Token {
+  public type: TokenType
   public subtype?: TokenType
-  public before: Token[] = []
-  public after: Token[] = []
 
   constructor(
-    public type: TokenType,
+    type: TokenType | [TokenType, TokenType],
     public text: string,
     public start: number = -1,
     public end: number = -1,
+    public before: Token[] = [],
   ) {
+    if (Array.isArray(type)) {
+      this.type = type[0]
+      this.subtype = type[1]
+    } else {
+      this.type = type
+    }
   }
 }
 
@@ -110,23 +121,17 @@ export abstract class Lexer {
       }
 
       token = this.process(token)
-      const prev = tokens[tokens.length - 1]
       if (token.type.options.skip) {
-        if (prev) {
-          prev.after.push(token)
-        } else {
-          before.push(token)
-        }
+        before.push(token)
       } else {
-        if (prev) {
-          token.before = prev.after
-        } else {
-          token.before = before
-        }
+        token.before.push(...before)
+        before.length = 0
         tokens.push(token)
       }
     }
 
+    const eofToken = 
+    tokens.push(new Token(TokenType.EOF, "", pos, pos))
     return tokens
   }
 

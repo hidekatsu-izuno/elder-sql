@@ -5,6 +5,9 @@
     "moduleResolution": "Node",
     "importHelpers": true,
     "sourceMap": true,
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "outDir": "./lib",
 
     "declaration": true,
