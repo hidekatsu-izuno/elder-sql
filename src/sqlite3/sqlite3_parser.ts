@@ -988,9 +988,7 @@ export class Sqlite3Parser extends Parser {
       } else if (this.consumeIf(Keyword.DESC)) {
         node.add(new Node("desc").add(this.token(-2), this.token(-1)))
       }
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        node.add(this.token(-2), this.token(-1))
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
       if (this.consumeIf(Keyword.AUTOINCREMENT)) {
@@ -1002,27 +1000,21 @@ export class Sqlite3Parser extends Parser {
       node.name = "not null"
       node.add(this.token(-2), this.token(-1))
 
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        node.add(this.token(-2), this.token(-1))
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
     } else if (this.consumeIf(Keyword.NULL)) {
       node.name = "null"
       node.add(this.token(-1))
 
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        node.add(this.token(-2), this.token(-1))
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
     } else if (this.consumeIf(Keyword.UNIQUE)) {
       node.name = "unique"
       node.add(this.token(-1))
 
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        node.add(this.token(-2), this.token(-1))
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
     } else if (this.consumeIf(Keyword.CHECK)) {
@@ -1122,10 +1114,8 @@ export class Sqlite3Parser extends Parser {
       this.consume(TokenType.RightParen)
       constraintNode.add(this.token(-1))
 
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
+        node.add(this.conflictAction())
       }
 
       node.add(constraintNode)
@@ -1146,10 +1136,8 @@ export class Sqlite3Parser extends Parser {
       this.consume(TokenType.RightParen)
       constraintNode.add(this.token(-1))
 
-      if (this.consumeIf(Keyword.ON)) {
-        this.consume(Keyword.CONFLICT)
-        constraintNode.add(this.token(-2), this.token(-1))
-        constraintNode.add(this.conflictAction())
+      if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
+        node.add(this.conflictAction())
       }
 
       node.add(constraintNode)
@@ -1193,20 +1181,20 @@ export class Sqlite3Parser extends Parser {
   private dataType() {
     const node = new Node("type")
 
-    const name = new Node("name")
+    const nameNode = new Node("name")
     let identifier = this.identifier("")
-    name.add(...identifier.children)
-    name.value = identifier.value
+    nameNode.add(...identifier.children)
+    nameNode.value = identifier.value
     while (
       this.peekIf(TokenType.QuotedIdentifier) ||
       this.peekIf(TokenType.QuotedValue) ||
       this.peekIf(TokenType.Identifier)
     ) {
       identifier = this.identifier("")
-      name.add(...identifier.children)
-      name.value = " " + identifier.value
+      nameNode.add(...identifier.children)
+      nameNode.value = " " + identifier.value
     }
-    node.add(name)
+    node.add(nameNode)
 
     if (this.consumeIf(TokenType.LeftParen)) {
       node.add(this.numberValue("length"))
@@ -1220,19 +1208,30 @@ export class Sqlite3Parser extends Parser {
   }
 
   private conflictAction() {
+    const node = new Node("")
+    if (this.consumeIf(Keyword.ON)) {
+      this.consume(Keyword.CONFLICT)
+      node.add(this.token(-2), this.token(-1))
+    }
     if (this.consumeIf(Keyword.ROLLBACK)) {
-      return new Node("rollback").add(this.token(-1))
+      node.name = "rollback"
+      node.add(this.token(-1))
     } else if (this.consumeIf(Keyword.ABORT)) {
-      return new Node("abort").add(this.token(-1))
+      node.name = "abort"
+      node.add(this.token(-1))
     } else if (this.consumeIf(Keyword.FAIL)) {
-      return new Node("fail").add(this.token(-1))
+      node.name = "fail"
+      node.add(this.token(-1))
     } else if (this.consumeIf(Keyword.IGNORE)) {
-      return new Node("ignore").add(this.token(-1))
+      node.name = "ignore"
+      node.add(this.token(-1))
     } else if (this.consumeIf(Keyword.REPLACE)) {
-      return new Node("replace").add(this.token(-1))
+      node.name = "replace"
+      node.add(this.token(-1))
     } else {
       throw this.createParseError()
     }
+    return node
   }
 
   private indexColumn() {
