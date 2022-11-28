@@ -321,6 +321,10 @@ export class Sqlite3Parser extends Parser {
     }
 
     if (this.token() != null) {
+      for (let i = this.pos; i < this.tokens.length; i++) {
+        root.add(this.tokens[i])
+      }
+      
       try {
         throw this.createParseError()
       } catch (e) {
@@ -333,9 +337,11 @@ export class Sqlite3Parser extends Parser {
     }
 
     if (errors.length) {
-      throw new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
+      const err = new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
         e => e.message
       ).join("\n")}`)
+      err.node = root
+      throw err
     }
 
     return root
@@ -606,14 +612,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.NOT, Keyword.EXISTS)
       stmt.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
 
     if (stmt.has('virtual')) {
       this.consume(Keyword.USING)
@@ -699,14 +698,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.NOT, Keyword.EXISTS)
       stmt.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
 
     this.consume(Keyword.AS)
     stmt.add(this.token(-1))
@@ -732,14 +724,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.NOT, Keyword.EXISTS)
       stmt.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
 
     while (this.token() && !this.peekIf(TokenType.SemiColon)) {
       if (this.consumeIf(Keyword.BEGIN)) {
@@ -760,14 +745,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.NOT, Keyword.EXISTS)
       stmt.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
 
     this.consume(Keyword.ON)
     stmt.add(this.token(-1))
@@ -838,14 +816,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.EXISTS)
       stmt.add(new Node("if exists").add(this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseDropViewStatement(stmt: Node) {
@@ -853,14 +824,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.EXISTS)
       stmt.add(new Node("if exists").add(this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseDropTriggerStatement(stmt: Node) {
@@ -868,14 +832,7 @@ export class Sqlite3Parser extends Parser {
       this.consume(Keyword.EXISTS)
       stmt.add(new Node("if exists").add(this.token(-2), this.token(-1)))
     }
-
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseDropIndexStatement(stmt: Node) {
@@ -884,13 +841,7 @@ export class Sqlite3Parser extends Parser {
       stmt.add(new Node("if exists").add(this.token(-2), this.token(-1)))
     }
 
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseAttachDatabaseStatement(stmt: Node) {
@@ -905,23 +856,11 @@ export class Sqlite3Parser extends Parser {
   }
 
   private parseAnalyzeStatement(stmt: Node) {
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseReindexStatement(stmt: Node) {
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
   }
 
   private parseVacuumStatement(stmt: Node) {
@@ -935,13 +874,7 @@ export class Sqlite3Parser extends Parser {
   }
 
   private parsePragmaStatement(stmt: Node) {
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
     if (this.consumeIf(Keyword.OPE_EQ)) {
       stmt.add(this.token(-1))
       stmt.add(this.pragmaValue())
@@ -981,13 +914,7 @@ export class Sqlite3Parser extends Parser {
     this.consume(Keyword.INTO)
     stmt.add(this.token(-1))
 
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
     while (this.token() && !this.peekIf(TokenType.SemiColon)) {
       this.consume()
       stmt.add(this.token(-1))
@@ -995,13 +922,7 @@ export class Sqlite3Parser extends Parser {
   }
 
   private parseUpdateStatement(stmt: Node) {
-    const nameNode = this.identifier("name")
-    stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
-      nameNode.name = "schema_name"
-      stmt.add(this.identifier("name"))
-    }
+    this.parseName(stmt)
     while (this.token() && !this.peekIf(TokenType.SemiColon)) {
       this.consume()
       stmt.add(this.token(-1))
@@ -1009,6 +930,14 @@ export class Sqlite3Parser extends Parser {
   }
 
   private parseDeleteStatement(stmt: Node) {
+    this.parseName(stmt)
+    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      this.consume()
+      stmt.add(this.token(-1))
+    }
+  }
+
+  private parseName(stmt: Node) {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
     if (this.consumeIf(TokenType.Dot)) {
@@ -1016,93 +945,6 @@ export class Sqlite3Parser extends Parser {
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-      this.consume()
-      stmt.add(this.token(-1))
-    }
-  }
-
-  private selectClause() {
-    const node = new Node("select")
-
-    if (this.peekIf(Keyword.WITH)) {
-      node.add(this.withClause())
-    }
-    this.consume(Keyword.SELECT)
-    node.add(this.token(-1))
-
-    let depth = 0
-    while (this.token() &&
-      !this.peekIf(TokenType.SemiColon) &&
-      (depth == 0 && !this.peekIf(TokenType.RightParen))
-    ) {
-      if (this.consumeIf(TokenType.LeftParen)) {
-        node.add(this.token(-1))
-        depth++
-      } else if (this.consumeIf(TokenType.RightParen)) {
-        node.add(this.token(-1))
-        depth--
-      } else {
-        this.consume()
-        node.add(this.token(-1))
-      }
-    }
-
-    return node
-  }
-
-  private withClause() {
-    const node = new Node("with")
-
-    this.consume(Keyword.WITH)
-    node.add(this.token(-1))
-
-    if (this.consumeIf(Keyword.RECURSIVE)) {
-      node.add(new Node("recursive").add(this.token(-1)))
-    }
-
-    while (this.token()) {
-      node.add(this.identifier("name"))
-      if (this.consumeIf(TokenType.LeftParen)) {
-        while (this.token()) {
-          node.add(this.identifier("column"))
-
-          if (this.consumeIf(TokenType.Comma)) {
-            node.add(this.token(-1))
-          } else {
-            break
-          }
-        }
-
-        this.consume(TokenType.RightParen)
-        node.add(this.token(-1))
-      }
-
-      this.consume(Keyword.AS)
-      node.add(this.token(-1))
-
-      if (this.consumeIf(Keyword.NOT)) {
-        this.consume(Keyword.MATERIALIZED)
-        node.add(new Node("not materialized").add(this.token(-2), this.token(-1)))
-      } else if (this.consumeIf(Keyword.MATERIALIZED)) {
-        node.add(new Node("materialized").add(this.token(-1)))
-      }
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
-
-      node.add(this.selectClause())
-
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
-
-      if (this.consumeIf(TokenType.Comma)) {
-        node.add(this.token(-1))
-      } else {
-        break
-      }
-    }
-
-    return node
   }
 
   private tableColumn() {
@@ -1455,6 +1297,89 @@ export class Sqlite3Parser extends Parser {
     } else {
       throw this.createParseError()
     }
+    return node
+  }
+  
+  private selectClause() {
+    const node = new Node("select")
+
+    if (this.peekIf(Keyword.WITH)) {
+      node.add(this.withClause())
+    }
+    this.consume(Keyword.SELECT)
+    node.add(this.token(-1))
+
+    let depth = 0
+    while (this.token() &&
+      !this.peekIf(TokenType.SemiColon) &&
+      (depth == 0 && !this.peekIf(TokenType.RightParen))
+    ) {
+      if (this.consumeIf(TokenType.LeftParen)) {
+        node.add(this.token(-1))
+        depth++
+      } else if (this.consumeIf(TokenType.RightParen)) {
+        node.add(this.token(-1))
+        depth--
+      } else {
+        this.consume()
+        node.add(this.token(-1))
+      }
+    }
+
+    return node
+  }
+
+  private withClause() {
+    const node = new Node("with")
+
+    this.consume(Keyword.WITH)
+    node.add(this.token(-1))
+
+    if (this.consumeIf(Keyword.RECURSIVE)) {
+      node.add(new Node("recursive").add(this.token(-1)))
+    }
+
+    while (this.token()) {
+      node.add(this.identifier("name"))
+      if (this.consumeIf(TokenType.LeftParen)) {
+        while (this.token()) {
+          node.add(this.identifier("column"))
+
+          if (this.consumeIf(TokenType.Comma)) {
+            node.add(this.token(-1))
+          } else {
+            break
+          }
+        }
+
+        this.consume(TokenType.RightParen)
+        node.add(this.token(-1))
+      }
+
+      this.consume(Keyword.AS)
+      node.add(this.token(-1))
+
+      if (this.consumeIf(Keyword.NOT)) {
+        this.consume(Keyword.MATERIALIZED)
+        node.add(new Node("not materialized").add(this.token(-2), this.token(-1)))
+      } else if (this.consumeIf(Keyword.MATERIALIZED)) {
+        node.add(new Node("materialized").add(this.token(-1)))
+      }
+      this.consume(TokenType.LeftParen)
+      node.add(this.token(-1))
+
+      node.add(this.selectClause())
+
+      this.consume(TokenType.RightParen)
+      node.add(this.token(-1))
+
+      if (this.consumeIf(TokenType.Comma)) {
+        node.add(this.token(-1))
+      } else {
+        break
+      }
+    }
+
     return node
   }
 

@@ -759,6 +759,10 @@ export class MysqlParser extends Parser {
     }
 
     if (this.token() != null) {
+      for (let i = this.pos; i < this.tokens.length; i++) {
+        root.add(this.tokens[i])
+      }
+      
       try {
         throw this.createParseError()
       } catch (e) {
@@ -771,9 +775,11 @@ export class MysqlParser extends Parser {
     }
 
     if (errors.length) {
-      throw new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
+      const err = new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
         e => e.message
       ).join("\n")}`)
+      err.node = root
+      throw err
     }
 
     return root

@@ -259,6 +259,8 @@ export abstract class Parser {
 }
 
 export class AggregateParseError extends Error {
+  node?: Node
+  
   constructor(
     public errors: Error[],
     message: string
