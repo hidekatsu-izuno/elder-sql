@@ -50,6 +50,10 @@ export class Token {
       this.type = type
     }
   }
+
+  is(type: TokenType) {
+    return this.type === type || this.subtype === type
+  }
 }
 
 export class Node {
@@ -79,23 +83,27 @@ export class Node {
   }
 }
 
+export class Segment {
+  public tokens: Token[] = []
+
+  constructor(
+    public lineNumber: number = 1,
+    public fileName?: string,
+  ) {
+  }
+}
+
 export abstract class Lexer {
   constructor(
     public type: string,
-    private patterns: {type: TokenType, re: RegExp | (() => RegExp) }[]
+    public patterns: {type: TokenType, re: RegExp | (() => RegExp) }[],
+    public options: Record<string, any> = {},
   ) {
   }
 
   lex(input: string) {
     const tokens = []
     let pos = 0
-
-    input = input.replace(/(\/\*<elder-sql>)(.*?)(<\/elder-sql>\*\/)/sg, (m, p1, p2, p3) => {
-      return `${" ".repeat(p1.length)}${p2.replace(/\/\+(.*)\+\//sg, "/*$1*/")}${" ".repeat(p3.length)}`
-    })
-    input = input.replace(/\/\*(<no-elder-sql>\*\/)(.*?)(\/\*<\/no-elder-sql>)\*\//sg, (m, p1, p2, p3) => {
-      return `/*${" ".repeat(p1.length)}${p2.replace(/\/\*(.*)\*\//sg, "/+$1+/")}${" ".repeat(p3.length)}*/`
-    })
     input = this.filter(input)
 
     if (input.startsWith("\uFEFF")) {
@@ -143,6 +151,17 @@ export abstract class Lexer {
   protected process(token: Token) {
     return token
   }
+}
+
+export type SplitFunction = (input: string, options?: Record<string, any>) => Segment[]
+
+export abstract class Splitter {
+  constructor(
+    public options: Record<string, any> = {},
+  ) {
+  }
+
+  abstract split(tokens: Token[]): Segment[]
 }
 
 export type ParseFunction = (input: string, options?: Record<string, any>) => Node
@@ -205,9 +224,11 @@ export abstract class Parser {
 
   createParseError(message?: string) {
     const token = this.token()
+    const fileName = this.options.fileName ?? ""
     let lines = [0]
-    let rows = 1
+    let rows = this.options.lineNumber ?? 1
     let cols = 0
+
     for (let i = 0; i < this.pos; i++) {
       const token = this.tokens[i]
       if (token.type === TokenType.LineBreak) {
@@ -248,12 +269,11 @@ export abstract class Parser {
       message = `Unexpected token: ${line}"${token && token.type !== TokenType.Eof ? token.text : "<EOF>"}"`
     }
 
-    const fileName = this.options.fileName || ""
     return new ParseError(
       `${fileName}[${rows},${cols}] ${message}`,
       fileName,
       rows,
-      cols
+      cols,
     )
   }
 }

@@ -7,6 +7,9 @@ import {
   ParseError,
   AggregateParseError,
   ParseFunction,
+  Splitter,
+  Segment,
+  SplitFunction,
 } from "../parser"
 import { dequote } from "../util"
 
@@ -241,7 +244,7 @@ export class OracleLexer extends Lexer {
   private reserved = new Set<Keyword>()
 
   constructor(
-    private options: Record<string, any> = {}
+    options: Record<string, any> = {}
   ) {
     super("oracle", [
       { type: TokenType.WhiteSpace, re: /[ \t]+/y },
@@ -263,7 +266,7 @@ export class OracleLexer extends Lexer {
       { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|[=<>!^:]=?|[~&|*/+-]/y },
       { type: TokenType.Error, re: /./y },
-    ])
+    ], options)
 
     for (const keyword of KeywordMap.values()) {
       if (typeof keyword.options.reserved === "function") {
@@ -291,6 +294,78 @@ export class OracleLexer extends Lexer {
       }
     }
     return token
+  }
+}
+
+export class OracleSplitter extends Splitter {
+  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
+    const tokens = new OracleLexer(options).lex(input)
+    const stmts = new OracleSplitter(options).split(tokens)
+    return stmts
+  }
+
+  constructor(
+    options: Record<string, any> = {},
+  ) {
+    super(options)
+  }
+
+  split(tokens: Token[]): Segment[] {
+    const stmts = new Array<Segment>()
+
+    let stmt = null
+    let lineNumber = 1
+    for (const token of tokens) {
+      if (!stmt) {
+        stmt = new Segment(lineNumber)
+        stmts.push(stmt)
+      }
+      for (const skip of token.before) {
+        if (token.is(TokenType.LineBreak)) {
+          lineNumber++
+        }
+      }
+      if (token.is(TokenType.Command)) {
+        stmt = new Segment(lineNumber)
+        stmt.tokens.push(token)
+        stmts.push(stmt)
+        stmt = null
+      } else if (token.is(TokenType.SemiColon)) {
+        if (stmt.tokens[0]?.is(Keyword.DECLARE) || stmt.tokens[0]?.is(Keyword.BEGIN)) {
+          stmt.tokens.push(token)
+        } else if (stmt.tokens[0]?.is(Keyword.CREATE)) {
+          let isBlock = false
+          for (let i = 1; i < stmt.tokens.length; i++) {
+            const stoken = stmt.tokens[i]
+            if (stoken.is(Keyword.FUNCTION)
+              || stoken.is(Keyword.LIBRARY)
+              || stoken.is(Keyword.PACKAGE)
+              || stoken.is(Keyword.PROCEDURE)
+              || stoken.is(Keyword.TRIGGER)
+              || stoken.is(Keyword.TYPE)) {
+              isBlock = true
+              break
+            }
+          }
+          if (isBlock) {
+            stmt.tokens.push(token)
+          } else {
+            stmt.tokens.push(token)
+            stmt = null
+          }
+        } else {
+          stmt.tokens.push(token)
+          stmt = null
+        }
+      } else if (token.is(TokenType.Delimiter) || token.is(TokenType.Eof)) {
+        stmt.tokens.push(token)
+        stmt = null
+      } else {
+        stmt.tokens.push(token)
+      }
+    }
+
+    return stmts
   }
 }
 
@@ -398,7 +473,8 @@ export class OracleParser extends Parser {
     try {
       if (this.consumeIf(Keyword.EXPLAIN)) {
         this.consume(Keyword.PLAN)
-        explainPlan = new Node("explain plan").add(this.token(-2), this.token(-1))
+        explainPlan = new Node("explain plan")
+        explainPlan.add(this.token(-2), this.token(-1))
 
         if (this.consumeIf(Keyword.SET)) {
           explainPlan.add(this.token(-1))
@@ -614,6 +690,8 @@ export class OracleParser extends Parser {
             this.pos = mark
             stmt = this.createViewStatement()
             break
+          } else {
+            this.consume()
           }
         }
         if (!stmt) {
@@ -797,6 +875,8 @@ export class OracleParser extends Parser {
             this.pos = mark
             stmt = this.alterViewStatement()
             break
+          } else {
+            this.consume()
           }
         }
         if (!stmt) {
@@ -985,6 +1065,8 @@ export class OracleParser extends Parser {
             this.pos = mark
             stmt = this.dropViewStatement()
             break
+          } else {
+            this.consume()
           }
         }
         if (!stmt) {
@@ -995,8 +1077,10 @@ export class OracleParser extends Parser {
         this.consume()
 
         if (this.consumeIf(Keyword.CLUSTER)) {
+          this.pos = mark
           stmt = this.truncateClusterStatement()
         } else if (this.consumeIf(Keyword.TABLE)) {
+          this.pos = mark
           stmt = this.truncateTableStatement()
         }
         if (!stmt) {
@@ -1084,7 +1168,7 @@ export class OracleParser extends Parser {
       if (err instanceof ParseError) {
         // skip tokens
         if (!stmt) {
-          stmt = new Node("error")
+          stmt = new Node("unknown")
         }
         while (this.token()
           && !this.peekIf(TokenType.SemiColon)
@@ -3627,6 +3711,9 @@ export class OracleParser extends Parser {
 
   private insertClause(withNode?: Node) {
     const node = new Node("insert")
+    if (withNode) {
+      node.add(withNode)
+    }
     this.consume(Keyword.INSERT, Keyword.INTO)
     node.add(this.token(-2), this.token(-1))
 
