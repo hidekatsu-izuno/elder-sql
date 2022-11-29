@@ -108,17 +108,25 @@ export function toJSString(target: Node | Token | (Node |Token)[], space: number
             text += target.type.constructor.name + "." + target.type.name
         }
         text += ", " + JSON.stringify(target.text)
-        text += ", " + target.pos
-        if (target.before.length) {
+        if (target.skips.length) {
             text += ", ["
-            for (let i = 0; i < target.before.length; i++) {
+            for (let i = 0; i < target.skips.length; i++) {
                 if (i > 0) {
                     text += ","
                 }
-                const ctext = toJSString(target.before[i], space + 1).trimStart()
+                const ctext = toJSString(target.skips[i], space + 1).trimStart()
                 text += "\n" + spaces + spaces + ctext
             }
             text += "\n" + spaces + "]"
+        } else {
+          text += ", []"
+        }
+        if (target.location) {
+          text += ", new SourceLocation(" 
+            + (target.location.position ?? 'undefined') + ", "
+            + (target.location.lineNumber ?? 'undefined') + ", "
+            + (target.location.columnNumber ?? 'undefined') + ", "
+            + (target.location.fileName ?? 'undefined') + ")"
         }
         text += ")"
     } else {

@@ -320,7 +320,7 @@ export class OracleSplitter extends Splitter {
         stmt = new Segment(lineNumber)
         stmts.push(stmt)
       }
-      for (const skip of token.before) {
+      for (const skip of token.skips) {
         if (token.is(TokenType.LineBreak)) {
           lineNumber++
         }

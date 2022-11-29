@@ -11,6 +11,7 @@ import {
   Splitter,
   Segment,
   SplitFunction,
+  SourceLocation,
 } from "../parser"
 
 const KeywordMap = new Map<string, Keyword>()
@@ -297,7 +298,7 @@ export class Sqlite3Splitter extends Splitter {
         stmt = new Segment(lineNumber)
         stmts.push(stmt)
       }
-      for (const skip of token.before) {
+      for (const skip of token.skips) {
         if (skip.is(TokenType.LineBreak)) {
           lineNumber++
         }
@@ -405,7 +406,7 @@ export class Sqlite3Parser extends Parser {
     if (sep === -1) {
       stmt.add(new Node("name", token.text).add(token))
     } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), token.pos, token.before)
+      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), token.skips, token.location)
       stmt.add(new Node("name", nameToken.text).add(nameToken))
 
       const args = token.text.substring(sep)
@@ -417,18 +418,27 @@ export class Sqlite3Parser extends Parser {
         const m = re.exec(args)
         if (m) {
           const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-          argTokens.push(new Token(type, m[0], re.lastIndex))
+
+          const loc = new SourceLocation()
+          loc.fileName = token.location?.fileName
+          loc.position = re.lastIndex
+          loc.lineNumber = token.location?.lineNumber
+          if (token.location?.columnNumber != null) {
+            loc.columnNumber = token.location?.columnNumber + loc.position
+          }
+
+          argTokens.push(new Token(type, m[0], [], loc))
           pos = re.lastIndex
         }
       }
 
-      const before = new Array<Token>()
+      const skips = new Array<Token>()
       for (const argToken of argTokens) {
         if (argToken.type.options.skip) {
-          before.push(argToken)
+          skips.push(argToken)
         } else {
-          argToken.before.push(...before)
-          before.length = 0
+          argToken.skips.push(...skips)
+          skips.length = 0
           stmt.add(new Node("arg", dequote(argToken.text)).add(argToken))
         }
       }

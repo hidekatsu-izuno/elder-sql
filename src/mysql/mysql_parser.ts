@@ -9,6 +9,7 @@ import {
   ParseError,
   AggregateParseError,
   ParseFunction,
+  SourceLocation,
 } from "../parser"
 import { dequote, escapeRegExp, ucase } from "../util"
 
@@ -595,8 +596,8 @@ export class Keyword extends TokenType {
   static VAR_LOCAL = new Keyword("VAR_LOCAL", { value: "@@LOCAL" })
 
   constructor(
-    public name: string,
-    public options: Record<string, any> = {}
+    name: string,
+    options: Record<string, any> = {}
   ) {
     super(name, { ...options, keyword: true })
     KeywordMap.set(options.value ?? name, this)
@@ -611,7 +612,7 @@ export class MysqlLexer extends Lexer {
   private reDelimiter = new RegExp(";", "y")
 
   constructor(
-    private options: Record<string, any> = {}
+    options: Record<string, any> = {}
   ) {
     super("mysql", [
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
@@ -636,7 +637,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.Identifier, re: /[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\|&&|<=>|<<|>>|<>|->>?|[=<>!:]=?|[~&|^*/%+-]/y },
       { type: TokenType.Error, re: /./y },
-    ])
+    ], options)
 
     if (Array.isArray(options.reservedWords)) {
       const reserved = new Set<string>()
@@ -794,7 +795,7 @@ export class MysqlParser extends Parser {
     if (sep === -1) {
       stmt.add(new Node("name", this.getLongCommandName(token.text)).add(token))
     } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), token.pos)
+      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), [], token.location)
       const name = this.getLongCommandName(nameToken.text)
       stmt.add(new Node("name", name).add(nameToken))
 
@@ -805,11 +806,27 @@ export class MysqlParser extends Parser {
         const m = /^[ \t]*/.exec(args)
         let sep2 = sep
         if (m) {
-          argTokens.push(new Token(TokenType.WhiteSpace, m[0], sep))
+          const loc = new SourceLocation()
+          loc.fileName = token.location?.fileName
+          loc.position = sep2
+          loc.lineNumber = token.location?.lineNumber
+          if (token.location?.columnNumber != null) {
+            loc.columnNumber = token.location?.columnNumber + loc.position
+          }
+
+          argTokens.push(new Token(TokenType.WhiteSpace, m[0], [], token.location))
           sep2 += m[0].length
         }
         if (sep2 < args.length) {
-          argTokens.push(new Token(TokenType.Identifier, args.substring(sep2), sep2))
+          const loc = new SourceLocation()
+          loc.fileName = token.location?.fileName
+          loc.position = sep2
+          loc.lineNumber = token.location?.lineNumber
+          if (token.location?.columnNumber != null) {
+            loc.columnNumber = token.location?.columnNumber + loc.position
+          }
+
+          argTokens.push(new Token(TokenType.Identifier, args.substring(sep2), [], loc))
         }
       } else {
         const re = /([ \t]+)|('(?:''|[^']+)*'|`(?:``|[^`]+)*`)|([^ \t'`]+)/y
@@ -819,19 +836,28 @@ export class MysqlParser extends Parser {
           const m = re.exec(args)
           if (m) {
             const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-            argTokens.push(new Token(type, m[0], re.lastIndex))
+
+            const loc = new SourceLocation()
+            loc.fileName = token.location?.fileName
+            loc.position = re.lastIndex
+            loc.lineNumber = token.location?.lineNumber
+            if (token.location?.columnNumber != null) {
+              loc.columnNumber = token.location?.columnNumber + loc.position
+            }
+
+            argTokens.push(new Token(type, m[0], [], loc))
             pos = re.lastIndex
           }
         }
       }
 
-      const before = new Array<Token>()
+      const skips = new Array<Token>()
       for (const argToken of argTokens) {
         if (argToken.type.options.skip) {
-          before.push(argToken)
+          skips.push(argToken)
         } else {
-          argToken.before.push(...before)
-          before.length = 0
+          argToken.skips.push(...skips)
+          skips.length = 0
           stmt.add(new Node("arg", dequote(argToken.text)).add(argToken))
         }
       }

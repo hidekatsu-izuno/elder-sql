@@ -1,4 +1,4 @@
-import { Node, Token, TokenType } from "../../../src/parser"
+import { Node, SourceLocation, Token, TokenType } from "../../../src/parser"
 import { Keyword } from "../../../src/sqlite3/sqlite3_parser"
 
 export const actual = `
@@ -9,59 +9,59 @@ CREATE TABLE test (
 `.trim()
 export const expected = new Node("root")
   .add(new Node("create table")
-    .add(new Token(Keyword.CREATE, "CREATE", 0))
-    .add(new Token(Keyword.TABLE, "TABLE", 7, [
-      new Token(TokenType.WhiteSpace, " ", 6)
-    ]))
+    .add(new Token(Keyword.CREATE, "CREATE", [], new SourceLocation(0, 1, 0, undefined)))
+    .add(new Token(Keyword.TABLE, "TABLE", [
+      new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(6, 1, 6, undefined))
+    ], new SourceLocation(7, 1, 7, undefined)))
     .add(new Node("name", "test")
-      .add(new Token(TokenType.Identifier, "test", 13, [
-        new Token(TokenType.WhiteSpace, " ", 12)
-      ]))
+      .add(new Token(TokenType.Identifier, "test", [
+        new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(12, 1, 12, undefined))
+      ], new SourceLocation(13, 1, 13, undefined)))
     )
-    .add(new Token(TokenType.LeftParen, "(", 18, [
-      new Token(TokenType.WhiteSpace, " ", 17)
-    ]))
+    .add(new Token(TokenType.LeftParen, "(", [
+      new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(17, 1, 17, undefined))
+    ], new SourceLocation(18, 1, 18, undefined)))
     .add(new Node("column")
       .add(new Node("name", "text")
-        .add(new Token(TokenType.Identifier, "text", 24, [
-          new Token(TokenType.LineBreak, "\n", 19),
-          new Token(TokenType.WhiteSpace, "    ", 20)
-        ]))
+        .add(new Token(TokenType.Identifier, "text", [
+          new Token(TokenType.LineBreak, "\n", [], new SourceLocation(19, 1, 19, undefined)),
+          new Token(TokenType.WhiteSpace, "    ", [], new SourceLocation(20, 2, 0, undefined))
+        ], new SourceLocation(24, 2, 4, undefined)))
       )
       .add(new Node("type")
         .add(new Node("name", "TEXT")
-          .add(new Token(TokenType.Identifier, "TEXT", 29, [
-            new Token(TokenType.WhiteSpace, " ", 28)
-          ]))
+          .add(new Token(TokenType.Identifier, "TEXT", [
+            new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(28, 2, 8, undefined))
+          ], new SourceLocation(29, 2, 9, undefined)))
         )
       )
       .add(new Node("primary key")
-        .add(new Token(Keyword.PRIMARY, "PRIMARY", 34, [
-          new Token(TokenType.WhiteSpace, " ", 33)
-        ]))
-        .add(new Token([TokenType.Identifier, Keyword.KEY], "KEY", 42, [
-          new Token(TokenType.WhiteSpace, " ", 41)
-        ]))
+        .add(new Token(Keyword.PRIMARY, "PRIMARY", [
+          new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(33, 2, 13, undefined))
+        ], new SourceLocation(34, 2, 14, undefined)))
+        .add(new Token([TokenType.Identifier, Keyword.KEY], "KEY", [
+          new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(41, 2, 21, undefined))
+        ], new SourceLocation(42, 2, 22, undefined)))
       )
     )
-    .add(new Token(TokenType.Comma, ",", 45))
+    .add(new Token(TokenType.Comma, ",", [], new SourceLocation(45, 2, 25, undefined)))
     .add(new Node("column")
       .add(new Node("name", "age")
-        .add(new Token(TokenType.Identifier, "age", 51, [
-          new Token(TokenType.LineBreak, "\n", 46),
-          new Token(TokenType.WhiteSpace, "    ", 47)
-        ]))
+        .add(new Token(TokenType.Identifier, "age", [
+          new Token(TokenType.LineBreak, "\n", [], new SourceLocation(46, 2, 26, undefined)),
+          new Token(TokenType.WhiteSpace, "    ", [], new SourceLocation(47, 3, 0, undefined))
+        ], new SourceLocation(51, 3, 4, undefined)))
       )
       .add(new Node("type")
         .add(new Node("name", "INT")
-          .add(new Token(TokenType.Identifier, "INT", 55, [
-            new Token(TokenType.WhiteSpace, " ", 54)
-          ]))
+          .add(new Token(TokenType.Identifier, "INT", [
+            new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(54, 3, 7, undefined))
+          ], new SourceLocation(55, 3, 8, undefined)))
         )
       )
     )
-    .add(new Token(TokenType.RightParen, ")", 59, [
-      new Token(TokenType.LineBreak, "\n", 58)
-    ]))
-    .add(new Token(TokenType.Eof, "", 60))
+    .add(new Token(TokenType.RightParen, ")", [
+      new Token(TokenType.LineBreak, "\n", [], new SourceLocation(58, 3, 11, undefined))
+    ], new SourceLocation(59, 4, 0, undefined)))
+    .add(new Token(TokenType.Eof, "", [], new SourceLocation(60, 4, 1, undefined)))
   )

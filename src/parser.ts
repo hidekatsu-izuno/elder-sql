@@ -33,6 +33,16 @@ export class TokenType {
   }
 }
 
+export class SourceLocation {
+  constructor(
+    public position?: number,
+    public lineNumber?: number,
+    public columnNumber?: number,
+    public fileName?: string,
+  ) {
+  }
+}
+
 export class Token {
   public type: TokenType
   public subtype?: TokenType
@@ -40,8 +50,8 @@ export class Token {
   constructor(
     type: TokenType | [TokenType, TokenType],
     public text: string,
-    public pos: number = -1,
-    public before: Token[] = [],
+    public skips: Token[] = [],
+    public location?: SourceLocation,
   ) {
     if (Array.isArray(type)) {
       this.type = type[0]
@@ -101,16 +111,18 @@ export abstract class Lexer {
   ) {
   }
 
-  lex(input: string) {
+  lex(input: string, fileName?: string) {
     const tokens = []
     let pos = 0
+    let lineNumber = 1
+    let columnNumber = 0
     input = this.filter(input)
 
     if (input.startsWith("\uFEFF")) {
       pos = 1
     }
 
-    const before = new Array<Token>()
+    const skips = new Array<Token>()
     while (pos < input.length) {
       let token
       for (const pattern of this.patterns) {
@@ -120,7 +132,13 @@ export abstract class Lexer {
         re.lastIndex = pos
         const m = re.exec(input)
         if (m) {
-          token = new Token(pattern.type, m[0], pos)
+          const loc = new SourceLocation()
+          loc.fileName = fileName
+          loc.position = pos
+          loc.lineNumber = lineNumber
+          loc.columnNumber = columnNumber
+
+          token = new Token(pattern.type, m[0], [], loc)
           pos = re.lastIndex
           break
         }
@@ -130,17 +148,30 @@ export abstract class Lexer {
         throw new Error(`Failed to tokenize: ${pos}`)
       }
 
+      if (token.type === TokenType.LineBreak || token.subtype === TokenType.LineBreak) {
+        lineNumber++
+        columnNumber = 0
+      } else {
+        columnNumber += token.text.length
+      }
+
       token = this.process(token)
       if (token.type.options.skip) {
-        before.push(token)
+        skips.push(token)
       } else {
-        token.before.push(...before)
-        before.length = 0
+        token.skips.push(...skips)
+        skips.length = 0
         tokens.push(token)
       }
     }
 
-    tokens.push(new Token(TokenType.Eof, "", pos, before))
+    const loc = new SourceLocation()
+    loc.fileName = fileName
+    loc.position = pos
+    loc.lineNumber = lineNumber
+    loc.columnNumber = columnNumber
+
+    tokens.push(new Token(TokenType.Eof, "", skips, loc))
     return tokens
   }
 
@@ -240,7 +271,7 @@ export abstract class Parser {
     }
     for (let i = lines[lines.length-1]; i < this.pos; i++) {
       const token = this.tokens[i]
-        for (const skipToken of token.before) {
+        for (const skipToken of token.skips) {
           cols += skipToken.text.length
         }
         cols += token.text.length
@@ -250,7 +281,7 @@ export abstract class Parser {
       let line = ""
       for (let i = lines[lines.length-1]; i < this.pos; i++) {
         const token = this.tokens[i]
-        for (const skipToken of token.before) {
+        for (const skipToken of token.skips) {
           line += skipToken.text
         }
         line += token.text
@@ -259,7 +290,7 @@ export abstract class Parser {
         let line2 = ""
         for (let i = lines[lines.length-2]; i < lines[lines.length-1] - 1; i++) {
           const token = this.tokens[i]
-          for (const skipToken of token.before) {
+          for (const skipToken of token.skips) {
             line2 += skipToken.text
           }
           line2 += token.text

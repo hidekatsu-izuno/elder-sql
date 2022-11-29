@@ -1,13 +1,13 @@
-import { Token, TokenType } from "../../../src/parser"
+import { SourceLocation, Token, TokenType } from "../../../src/parser"
 import { Keyword } from "../../../src/sqlite3/sqlite3_parser"
 
 export const actual = `
 SELECT 1
 `.trim()
 export const expected = [
-  new Token(Keyword.SELECT, "SELECT", 0,),
-  new Token(TokenType.Number, "1", 7, [
-    new Token(TokenType.WhiteSpace, " ", 6)
-  ]),
-  new Token(TokenType.Eof, "", 8),
+  new Token(Keyword.SELECT, "SELECT", [], new SourceLocation(0, 1, 0, undefined)),
+  new Token(TokenType.Number, "1", [
+    new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(6, 1, 6, undefined))
+  ], new SourceLocation(7, 1, 7, undefined)),
+  new Token(TokenType.Eof, "", [], new SourceLocation(8, 1, 8, undefined))
 ]
