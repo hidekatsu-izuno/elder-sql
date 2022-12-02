@@ -568,7 +568,7 @@ export class Keyword extends TokenType {
   static NULL = new Keyword("NULL", { reserved: true })
   static NULLS = new Keyword("NULLS")
   static NUMBER = new Keyword("NUMBER", { reserved: true })
-  static NONEDITIONALBE = new Keyword("NONEDITIONALBE")
+  static NONEDITIONABLE = new Keyword("NONEDITIONABLE")
   static OBJECT = new Keyword("OBJECT")
   static OF = new Keyword("OF", { reserved: true })
   static OFF = new Keyword("OFF")
@@ -1069,18 +1069,27 @@ export class OracleSplitter extends Splitter {
     } else if (tokens[0].is(Keyword.DECLARE) || tokens[0].is(Keyword.BEGIN)) {
       return true
     } else if (tokens[0].is(Keyword.CREATE)) {
-      const max = Math.min(tokens.length, 5)
-      for (let i = 1; i < max; i++) {
-        if (
-          tokens[i].is(Keyword.FUNCTION)
-          || tokens[i].is(Keyword.LIBRARY)
-          || tokens[i].is(Keyword.PACKAGE)
-          || tokens[i].is(Keyword.PROCEDURE)
-          || tokens[i].is(Keyword.TRIGGER)
-          || tokens[i].is(Keyword.TYPE)
-        ) {
-          return true
+      let i = 1
+      if (tokens[i]?.is(Keyword.OR)) {
+        i++
+        if (tokens[i]?.is(Keyword.REPLACE)) {
+          i++
+        } else {
+          return false
         }
+      }
+      if (tokens[i]?.is(Keyword.EDITIONABLE) || tokens[i]?.is(Keyword.NONEDITIONABLE)) {
+        i++
+      }
+      if (
+        tokens[i].is(Keyword.FUNCTION)
+        || tokens[i].is(Keyword.LIBRARY)
+        || tokens[i].is(Keyword.PACKAGE)
+        || tokens[i].is(Keyword.PROCEDURE)
+        || tokens[i].is(Keyword.TRIGGER)
+        || tokens[i].is(Keyword.TYPE)
+      ) {
+        return true
       }
     }
     return false
@@ -1163,6 +1172,7 @@ export class OracleParser extends Parser {
   statement() {
     let explainPlan
     let stmt
+    let isBlock = false
 
     try {
       if (this.peekIf(Keyword.EXPLAIN)) {
@@ -1171,15 +1181,20 @@ export class OracleParser extends Parser {
         explainPlan.add(this.consume(Keyword.PLAN))
 
         if (this.peekIf(Keyword.SET)) {
-          explainPlan.add(this.consume())
-          explainPlan.add(this.consume(Keyword.STATEMENT_ID))
-          explainPlan.add(this.consume(Keyword.OPE_EQ))
-          explainPlan.add(this.consume(TokenType.String))
+          const childNode = new Node("statement_id")
+          childNode.add(this.consume())
+          childNode.add(this.consume(Keyword.STATEMENT_ID))
+          childNode.add(this.consume(Keyword.OPE_EQ))
+          childNode.add(this.consume(TokenType.String))
+          childNode.value = dequote(this.token(-1).text)
+          explainPlan.add(childNode)
         }
 
         if (this.peekIf(Keyword.INTO)) {
           explainPlan.add(this.consume())
         }
+
+        this.parseName(explainPlan)
 
         explainPlan.add(this.consume(Keyword.FOR))
       }
@@ -1188,580 +1203,495 @@ export class OracleParser extends Parser {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-          && !this.peekIf(TokenType.Delimiter)
-        ) {
-          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.createAnalyticViewStatement()
-            break
-          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.createAttributeDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
-            this.pos = mark
-            stmt = this.createAuditPolicyStatement()
-            break
-          } else if (this.peekIf(Keyword.CLUSTER)) {
-            this.pos = mark
-            stmt = this.createClusterStatement()
-            break
-          } else if (this.peekIf(Keyword.CONTEXT)) {
-            this.pos = mark
-            stmt = this.createContextStatement()
-            break
-          } else if (this.peekIf(Keyword.CONTROLFILE)) {
-            this.pos = mark
-            stmt = this.createControlfileStatement()
-            break
-          } else if (this.peekIf(Keyword.DATABASE)) {
-            this.consume()
-            if (this.peekIf(Keyword.LINK)) {
-              this.pos = mark
-              stmt = this.createDatabaseLinkStatement()  
-            } else {
-              this.pos = mark
-              stmt = this.createDatabaseStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.createDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.DIRECTORY)) {
-            this.pos = mark
-            stmt = this.createDirectoryStatement()
-            break
-          } else if (this.peekIf(Keyword.DISKGROUP)) {
-            this.pos = mark
-            stmt = this.createDiskgroupStatement()
-            break
-          } else if (this.peekIf(Keyword.EDITION)) {
-            this.pos = mark
-            stmt = this.createEditionStatement()
-            break
-          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
-            this.pos = mark
-            stmt = this.createEditionStatement()
-            break
-          } else if (this.peekIf(Keyword.FUNCTION)) {
-            this.pos = mark
-            stmt = this.createFunctionStatement()
-            break
-          } else if (this.peekIf(Keyword.HIERARCHY)) {
-            this.pos = mark
-            stmt = this.createHierarchyStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEX)) {
-            this.pos = mark
-            stmt = this.createIndexStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEXTYPE)) {
-            this.pos = mark
-            stmt = this.createIndextypeStatement()
-            break
-          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
-            this.pos = mark
-            stmt = this.createInmemoryJoinGroupStatement()
-            break
-          } else if (this.peekIf(Keyword.JAVA)) {
-            this.pos = mark
-            stmt = this.createJavaStatement()
-            break
-          } else if (this.peekIf(Keyword.LIBRARY)) {
-            this.pos = mark
-            stmt = this.createLibraryStatement()
-            break
-          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.createLockdownProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.LOG)) {
-              stmt = this.createMaterializedViewLogStatement()
-            } else if (this.peekIf(Keyword.ZONEMAP)) {
-              stmt = this.createMaterializedViewLogStatement()
-            } else {
-              stmt = this.createMaterializedViewStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.OPERATOR)) {
-            this.pos = mark
-            stmt = this.createOperatorStatement()
-            break
-          } else if (this.peekIf(Keyword.OUTLINE)) {
-            this.pos = mark
-            stmt = this.createOutlineStatement()
-            break
-          } else if (this.peekIf(Keyword.PACKAGE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.BODY)) {
-              stmt = this.createPackageBodyStatement()
-            } else {
-              stmt = this.createPackageStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.PFILE)) {
-            this.pos = mark
-            stmt = this.createPfileStatement()
-            break
-          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
-            this.pos = mark
-            stmt = this.createPluggableDatabaseStatement()
-            break
-          } else if (this.peekIf(Keyword.PROCEDURE)) {
-            this.pos = mark
-            stmt = this.createProcedureStatement()
-            break
-          } else if (this.peekIf(Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.createProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.RESTORE, Keyword.POINT)) {
-            this.pos = mark
-            stmt = this.createRestorePointStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLE)) {
-            this.pos = mark
-            stmt = this.createRoleStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
-            this.pos = mark
-            stmt = this.createRollbackSegmentStatement()
-            break
-          } else if (this.peekIf(Keyword.SCHEMA)) {
-            this.pos = mark
-            stmt = this.createSchemaStatement()
-            break
-          } else if (this.peekIf(Keyword.SEQUENCE)) {
-            this.pos = mark
-            stmt = this.createSequenceStatement()
-            break
-          } else if (this.peekIf(Keyword.SPFILE)) {
-            this.pos = mark
-            stmt = this.createSpfileStatement()
-            break
-          } else if (this.peekIf(Keyword.SYNONYM)) {
-            this.pos = mark
-            stmt = this.createSynonymStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.createTableStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLESPACE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.SET)) {
-              stmt = this.createTablespaceSetStatement()
-            } else {
-              stmt = this.createTablespaceStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.TRIGGER)) {
-            this.pos = mark
-            stmt = this.createTriggerStatement()
-            break
-          } else if (this.peekIf(Keyword.TYPE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.BODY)) {
-              stmt = this.createTypeBodyStatement()
-            } else {
-              stmt = this.createTypeStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.USER)) {
-            this.pos = mark
-            stmt = this.createUserStatement()
-            break
-          } else if (this.peekIf(Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.createViewStatement()
-            break
-          } else {
-            this.consume()
-          }
+        if (this.peekIf(Keyword.OR, Keyword.REPLACE)) {
+          this.consume()
+          this.consume()
+        } else if (this.peekIf(Keyword.BIGFILE) || this.peekIf(Keyword.SMALLFILE)) {
+          this.consume()
         }
-        if (!stmt) {
+        if (
+          this.peekIf(Keyword.AND, Keyword.RESOLVE) ||
+          this.peekIf(Keyword.AND, Keyword.COMPILE)
+        ) {
+          this.consume()
+          this.consume()
+        }
+        if (this.peekIf(Keyword.NO, Keyword.FORCE)) {
+          this.consume()
+          this.consume()
+        } else if (this.peekIf(Keyword.FORCE) || this.peekIf(Keyword.NOFORCE)) {
+          this.consume()
+        }
+        if (this.peekIf(Keyword.EDITIONABLE) || this.peekIf(Keyword.NONEDITIONABLE)) {
+          this.consume()
+        }
+
+        if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.createAnalyticViewStatement()
+        } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.createAttributeDimensionStatement()
+        } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
+          this.pos = mark
+          stmt = this.createAuditPolicyStatement()
+        } else if (this.peekIf(Keyword.CLUSTER)) {
+          this.pos = mark
+          stmt = this.createClusterStatement()
+        } else if (this.peekIf(Keyword.CONTEXT)) {
+          this.pos = mark
+          stmt = this.createContextStatement()
+        } else if (this.peekIf(Keyword.CONTROLFILE)) {
+          this.pos = mark
+          stmt = this.createControlfileStatement()
+        } else if (
+          this.peekIf(Keyword.SHARED, Keyword.PUBLIC, Keyword.DATABASE, Keyword.LINK) ||
+          this.peekIf(Keyword.SHARED, Keyword.DATABASE, Keyword.LINK) ||
+          this.peekIf(Keyword.PUBLIC, Keyword.DATABASE, Keyword.LINK) ||
+          this.peekIf(Keyword.DATABASE, Keyword.LINK)
+        ) {
+          this.pos = mark
+          stmt = this.createDatabaseLinkStatement()
+        } else if (this.peekIf(Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.createDatabaseStatement()
+        } else if (this.peekIf(Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.createDimensionStatement()
+        } else if (this.peekIf(Keyword.DIRECTORY)) {
+          this.pos = mark
+          stmt = this.createDirectoryStatement()
+        } else if (this.peekIf(Keyword.DISKGROUP)) {
+          this.pos = mark
+          stmt = this.createDiskgroupStatement()
+        } else if (this.peekIf(Keyword.EDITION)) {
+          this.pos = mark
+          stmt = this.createEditionStatement()
+        } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          this.pos = mark
+          stmt = this.createEditionStatement()
+        } else if (this.peekIf(Keyword.FUNCTION)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createFunctionStatement()
+        } else if (this.peekIf(Keyword.HIERARCHY)) {
+          this.pos = mark
+          stmt = this.createHierarchyStatement()
+        } else if (
+          this.peekIf(Keyword.UNIQUE, Keyword.INDEX) || 
+          this.peekIf(Keyword.BITMAP, Keyword.INDEX) ||
+          this.peekIf(Keyword.INDEX)
+        ) {
+          this.pos = mark
+          stmt = this.createIndexStatement()
+        } else if (this.peekIf(Keyword.INDEXTYPE)) {
+          this.pos = mark
+          stmt = this.createIndextypeStatement()
+        } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          this.pos = mark
+          stmt = this.createInmemoryJoinGroupStatement()
+        } else if (this.peekIf(Keyword.JAVA)) {
+          this.pos = mark
+          stmt = this.createJavaStatement()
+        } else if (this.peekIf(Keyword.LIBRARY)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createLibraryStatement()
+        } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.createLockdownProfileStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)) {
+          this.pos = mark
+          stmt = this.createMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.ZONEMAP)) {
+          this.pos = mark
+          stmt = this.createMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.createMaterializedViewStatement()
+        } else if (this.peekIf(Keyword.OPERATOR)) {
+          this.pos = mark
+          stmt = this.createOperatorStatement()
+        } else if (
+          this.peekIf(Keyword.PUBLIC, Keyword.OUTLINE) ||
+          this.peekIf(Keyword.PRIVATE, Keyword.OUTLINE) ||
+          this.peekIf(Keyword.OUTLINE)
+        ) {
+          this.pos = mark
+          stmt = this.createOutlineStatement()
+        } else if (this.peekIf(Keyword.PACKAGE, Keyword.BODY)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createPackageBodyStatement()
+        } else if (this.peekIf(Keyword.PACKAGE)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createPackageStatement()
+        } else if (this.peekIf(Keyword.PFILE)) {
+          this.pos = mark
+          stmt = this.createPfileStatement()
+        } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.createPluggableDatabaseStatement()
+        } else if (this.peekIf(Keyword.PROCEDURE)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createProcedureStatement()
+        } else if (this.peekIf(Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.createProfileStatement()
+        } else if (
+          this.peekIf(Keyword.CLEAN, Keyword.RESTORE, Keyword.POINT) ||
+          this.peekIf(Keyword.RESTORE, Keyword.POINT)
+        ) {
+          this.pos = mark
+          stmt = this.createRestorePointStatement()
+        } else if (this.peekIf(Keyword.ROLE)) {
+          this.pos = mark
+          stmt = this.createRoleStatement()
+        } else if (
+          this.peekIf(Keyword.PUBLIC, Keyword.ROLLBACK, Keyword.SEGMENT) ||
+          this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)
+        ) {
+          this.pos = mark
+          stmt = this.createRollbackSegmentStatement()
+        } else if (this.peekIf(Keyword.SCHEMA)) {
+          this.pos = mark
+          stmt = this.createSchemaStatement()
+        } else if (this.peekIf(Keyword.SEQUENCE)) {
+          this.pos = mark
+          stmt = this.createSequenceStatement()
+        } else if (this.peekIf(Keyword.SPFILE)) {
+          this.pos = mark
+          stmt = this.createSpfileStatement()
+        } else if (
+          this.peekIf(Keyword.PUBLIC, Keyword.SYNONYM) ||
+          this.peekIf(Keyword.SYNONYM)
+        ) {
+          this.pos = mark
+          stmt = this.createSynonymStatement()
+        } else if (
+          this.peekIf(Keyword.GLOBAL, Keyword.TEMPORARY, Keyword.TABLE) ||
+          this.peekIf(Keyword.PRIVATE, Keyword.TEMPORARY, Keyword.TABLE) ||
+          this.peekIf(Keyword.SHARED, Keyword.TABLE) ||
+          this.peekIf(Keyword.DUPLICATED, Keyword.TABLE) ||
+          this.peekIf(Keyword.IMMUTABLE, Keyword.BLOCKCHAIN, Keyword.TABLE) ||
+          this.peekIf(Keyword.BLOCKCHAIN, Keyword.TABLE) ||
+          this.peekIf(Keyword.IMMUTABLE, Keyword.TABLE) ||
+          this.peekIf(Keyword.TABLE)
+        ) {
+          this.pos = mark
+          stmt = this.createTableStatement()
+        } else if (this.peekIf(Keyword.TABLESPACE, Keyword.SET)) {
+          this.pos = mark
+          stmt = this.createTablespaceSetStatement()
+        } else if (
+          this.peekIf(Keyword.LOCAL, Keyword.TEMPORARY, Keyword.TABLESPACE) ||
+          this.peekIf(Keyword.TEMPORARY, Keyword.TABLESPACE) ||
+          this.peekIf(Keyword.UNDO, Keyword.TABLESPACE) ||
+          this.peekIf(Keyword.TABLESPACE)
+        ) {
+          this.pos = mark
+          stmt = this.createTablespaceStatement()
+        } else if (this.peekIf(Keyword.TRIGGER)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createTriggerStatement()
+        } else if (this.peekIf(Keyword.TYPE, Keyword.BODY)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createTypeBodyStatement()
+        } else if (this.peekIf(Keyword.TYPE)) {
+          isBlock = true
+          this.pos = mark
+          stmt = this.createTypeStatement()
+        } else if (this.peekIf(Keyword.USER)) {
+          this.pos = mark
+          stmt = this.createUserStatement()
+        } else if (this.peekIf(Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.createViewStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.ALTER)) {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-          && !this.peekIf(TokenType.Delimiter)
-        ) {
-          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.alterAnalyticViewStatement()
-            break
-          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.alterAttributeDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
-            this.pos = mark
-            stmt = this.alterAuditPolicyStatement()
-            break
-          } else if (this.peekIf(Keyword.CLUSTER)) {
-            this.pos = mark
-            stmt = this.alterClusterStatement()
-            break
-          } else if (this.peekIf(Keyword.DATABASE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.DICTIONARY)) {
-              stmt = this.alterDatabaseDictionaryStatement()
-            } else if (this.peekIf(Keyword.LINK)) {
-              stmt = this.alterDatabaseLinkStatement()  
-            } else {
-              stmt = this.alterDatabaseStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.alterDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.DISKGROUP)) {
-            this.pos = mark
-            stmt = this.alterDiskgroupStatement()
-            break
-          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
-            this.pos = mark
-            stmt = this.alterEditionStatement()
-            break
-          } else if (this.peekIf(Keyword.FUNCTION)) {
-            this.pos = mark
-            stmt = this.alterFunctionStatement()
-            break
-          } else if (this.peekIf(Keyword.HIERARCHY)) {
-            this.pos = mark
-            stmt = this.alterHierarchyStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEX)) {
-            this.pos = mark
-            stmt = this.alterIndexStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEXTYPE)) {
-            this.pos = mark
-            stmt = this.alterIndextypeStatement()
-            break
-          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
-            this.pos = mark
-            stmt = this.alterInmemoryJoinGroupStatement()
-            break
-          } else if (this.peekIf(Keyword.JAVA)) {
-            this.pos = mark
-            stmt = this.alterJavaStatement()
-            break
-          } else if (this.peekIf(Keyword.LIBRARY)) {
-            this.pos = mark
-            stmt = this.alterLibraryStatement()
-            break
-          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.alterLockdownProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.LOG)) {
-              stmt = this.alterMaterializedViewLogStatement()
-            } else if (this.peekIf(Keyword.ZONEMAP)) {
-              stmt = this.alterMaterializedViewLogStatement()
-            } else {
-              stmt = this.alterMaterializedViewStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.OPERATOR)) {
-            this.pos = mark
-            stmt = this.alterOperatorStatement()
-            break
-          } else if (this.peekIf(Keyword.OUTLINE)) {
-            this.pos = mark
-            stmt = this.alterOutlineStatement()
-            break
-          } else if (this.peekIf(Keyword.PACKAGE)) {
-            this.pos = mark
-            stmt = this.alterPackageStatement()
-            break
-          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
-            this.pos = mark
-            stmt = this.alterPluggableDatabaseStatement()
-            break
-          } else if (this.peekIf(Keyword.PROCEDURE)) {
-            this.pos = mark
-            stmt = this.alterProcedureStatement()
-            break
-          } else if (this.peekIf(Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.alterProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.RESOURCE, Keyword.COST)) {
-            this.pos = mark
-            stmt = this.alterResourceCostStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLE)) {
-            this.pos = mark
-            stmt = this.alterRoleStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
-            this.pos = mark
-            stmt = this.alterRollbackSegmentStatement()
-            break
-          } else if (this.peekIf(Keyword.SEQUENCE)) {
-            this.pos = mark
-            stmt = this.alterSequenceStatement()
-            break
-          } else if (this.peekIf(Keyword.SESSION)) {
-            this.pos = mark
-            stmt = this.alterSessionStatement()
-            break
-          } else if (this.peekIf(Keyword.SYNONYM)) {
-            this.pos = mark
-            stmt = this.alterSynonymStatement()
-            break
-          } else if (this.peekIf(Keyword.SYSTEM)) {
-            this.pos = mark
-            stmt = this.alterSystemStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.alterTableStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLESPACE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.SET)) {
-              stmt = this.alterTablespaceSetStatement()
-            } else {
-              stmt = this.alterTablespaceStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.TRIGGER)) {
-            this.pos = mark
-            stmt = this.alterTriggerStatement()
-            break
-          } else if (this.peekIf(Keyword.TYPE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.BODY)) {
-              stmt = this.alterTypeBodyStatement()
-            } else {
-              stmt = this.alterTypeStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.USER)) {
-            this.pos = mark
-            stmt = this.alterUserStatement()
-            break
-          } else if (this.peekIf(Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.alterViewStatement()
-            break
-          } else {
-            this.consume()
-          }
+        if (this.peekIf(Keyword.SHARED)) {
+          this.consume()
         }
-        if (!stmt) {
+        if (this.peekIf(Keyword.PUBLIC)) {
+          this.consume()
+        }
+
+        if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.alterAnalyticViewStatement()
+        } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.alterAttributeDimensionStatement()
+        } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
+          this.pos = mark
+          stmt = this.alterAuditPolicyStatement()
+        } else if (this.peekIf(Keyword.CLUSTER)) {
+          this.pos = mark
+          stmt = this.alterClusterStatement()
+        } else if (this.peekIf(Keyword.DATABASE, Keyword.DICTIONARY)) {
+          this.pos = mark
+          stmt = this.alterDatabaseDictionaryStatement()
+        } else if (this.peekIf(Keyword.DATABASE, Keyword.LINK)) {
+          this.pos = mark
+          stmt = this.alterDatabaseLinkStatement()  
+        } else if (this.peekIf(Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.alterDatabaseStatement()  
+        } else if (this.peekIf(Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.alterDimensionStatement()
+        } else if (this.peekIf(Keyword.DISKGROUP)) {
+          this.pos = mark
+          stmt = this.alterDiskgroupStatement()
+        } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          this.pos = mark
+          stmt = this.alterEditionStatement()
+        } else if (this.peekIf(Keyword.FUNCTION)) {
+          this.pos = mark
+          stmt = this.alterFunctionStatement()
+        } else if (this.peekIf(Keyword.HIERARCHY)) {
+          this.pos = mark
+          stmt = this.alterHierarchyStatement()
+        } else if (this.peekIf(Keyword.INDEX)) {
+          this.pos = mark
+          stmt = this.alterIndexStatement()
+        } else if (this.peekIf(Keyword.INDEXTYPE)) {
+          this.pos = mark
+          stmt = this.alterIndextypeStatement()
+        } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          this.pos = mark
+          stmt = this.alterInmemoryJoinGroupStatement()
+        } else if (this.peekIf(Keyword.JAVA)) {
+          this.pos = mark
+          stmt = this.alterJavaStatement()
+        } else if (this.peekIf(Keyword.LIBRARY)) {
+          this.pos = mark
+          stmt = this.alterLibraryStatement()
+        } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.alterLockdownProfileStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)) {
+          this.pos = mark
+          stmt = this.alterMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.ZONEMAP)) {
+          this.pos = mark
+          stmt = this.alterMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.alterMaterializedViewStatement()
+        } else if (this.peekIf(Keyword.OPERATOR)) {
+          this.pos = mark
+          stmt = this.alterOperatorStatement()
+        } else if (this.peekIf(Keyword.OUTLINE)) {
+          this.pos = mark
+          stmt = this.alterOutlineStatement()
+        } else if (this.peekIf(Keyword.PACKAGE)) {
+          this.pos = mark
+          stmt = this.alterPackageStatement()
+        } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.alterPluggableDatabaseStatement()
+        } else if (this.peekIf(Keyword.PROCEDURE)) {
+          this.pos = mark
+          stmt = this.alterProcedureStatement()
+        } else if (this.peekIf(Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.alterProfileStatement()
+        } else if (this.peekIf(Keyword.RESOURCE, Keyword.COST)) {
+          this.pos = mark
+          stmt = this.alterResourceCostStatement()
+        } else if (this.peekIf(Keyword.ROLE)) {
+          this.pos = mark
+          stmt = this.alterRoleStatement()
+        } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
+          this.pos = mark
+          stmt = this.alterRollbackSegmentStatement()
+        } else if (this.peekIf(Keyword.SEQUENCE)) {
+          this.pos = mark
+          stmt = this.alterSequenceStatement()
+        } else if (this.peekIf(Keyword.SESSION)) {
+          this.pos = mark
+          stmt = this.alterSessionStatement()
+        } else if (this.peekIf(Keyword.SYNONYM)) {
+          this.pos = mark
+          stmt = this.alterSynonymStatement()
+        } else if (this.peekIf(Keyword.SYSTEM)) {
+          this.pos = mark
+          stmt = this.alterSystemStatement()
+        } else if (this.peekIf(Keyword.TABLE)) {
+          this.pos = mark
+          stmt = this.alterTableStatement()
+        } else if (this.peekIf(Keyword.TABLESPACE, Keyword.SET)) {
+          this.pos = mark
+          stmt = this.alterTablespaceSetStatement()
+        } else if (this.peekIf(Keyword.TABLESPACE)) {
+          this.pos = mark
+          stmt = this.alterTablespaceStatement()  
+        } else if (this.peekIf(Keyword.TRIGGER)) {
+          this.pos = mark
+          stmt = this.alterTriggerStatement()
+        } else if (this.peekIf(Keyword.TYPE, Keyword.BODY)) {
+          this.pos = mark
+          stmt = this.alterTypeBodyStatement()
+        } else if (this.peekIf(Keyword.TYPE)) {
+          this.pos = mark
+          stmt = this.alterTypeStatement()
+        } else if (this.peekIf(Keyword.USER)) {
+          this.pos = mark
+          stmt = this.alterUserStatement()
+        } else if (this.peekIf(Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.alterViewStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.DROP)) {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-          && !this.peekIf(TokenType.Delimiter)
-        ) {
-          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.dropAnalyticViewStatement()
-            break
-          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.dropAttributeDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
-            this.pos = mark
-            stmt = this.dropAuditPolicyStatement()
-            break
-          } else if (this.peekIf(Keyword.CLUSTER)) {
-            this.pos = mark
-            stmt = this.dropClusterStatement()
-            break
-          } else if (this.peekIf(Keyword.CONTEXT)) {
-            this.pos = mark
-            stmt = this.dropContextStatement()
-            break
-          } else if (this.peekIf(Keyword.DATABASE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.LINK)) {
-              stmt = this.dropDatabaseLinkStatement()  
-            } else {
-              this.pos = mark
-              stmt = this.dropDatabaseStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.DIMENSION)) {
-            this.pos = mark
-            stmt = this.dropDimensionStatement()
-            break
-          } else if (this.peekIf(Keyword.DIRECTORY)) {
-            this.pos = mark
-            stmt = this.dropDirectoryStatement()
-            break
-          } else if (this.peekIf(Keyword.DISKGROUP)) {
-            this.pos = mark
-            stmt = this.dropDiskgroupStatement()
-            break
-          } else if (this.peekIf(Keyword.EDITION)) {
-            this.pos = mark
-            stmt = this.dropEditionStatement()
-            break
-          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
-            this.pos = mark
-            stmt = this.dropEditionStatement()
-            break
-          } else if (this.peekIf(Keyword.FUNCTION)) {
-            this.pos = mark
-            stmt = this.dropFunctionStatement()
-            break
-          } else if (this.peekIf(Keyword.HIERARCHY)) {
-            this.pos = mark
-            stmt = this.dropHierarchyStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEX)) {
-            this.pos = mark
-            stmt = this.dropIndexStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEXTYPE)) {
-            this.pos = mark
-            stmt = this.dropIndextypeStatement()
-            break
-          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
-            this.pos = mark
-            stmt = this.dropInmemoryJoinGroupStatement()
-            break
-          } else if (this.peekIf(Keyword.JAVA)) {
-            this.pos = mark
-            stmt = this.dropJavaStatement()
-            break
-          } else if (this.peekIf(Keyword.LIBRARY)) {
-            this.pos = mark
-            stmt = this.dropLibraryStatement()
-            break
-          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.dropLockdownProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.LOG)) {
-              stmt = this.dropMaterializedViewLogStatement()
-            } else if (this.peekIf(Keyword.ZONEMAP)) {
-              stmt = this.dropMaterializedViewLogStatement()
-            } else {
-              stmt = this.dropMaterializedViewStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.OPERATOR)) {
-            this.pos = mark
-            stmt = this.dropOperatorStatement()
-            break
-          } else if (this.peekIf(Keyword.OUTLINE)) {
-            this.pos = mark
-            stmt = this.dropOutlineStatement()
-            break
-          } else if (this.peekIf(Keyword.PACKAGE)) {
-            this.pos = mark
-            stmt = this.dropPackageStatement()
-            break
-          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
-            this.pos = mark
-            stmt = this.dropPluggableDatabaseStatement()
-            break
-          } else if (this.peekIf(Keyword.PROCEDURE)) {
-            this.pos = mark
-            stmt = this.dropProcedureStatement()
-            break
-          } else if (this.peekIf(Keyword.PROFILE)) {
-            this.pos = mark
-            stmt = this.dropProfileStatement()
-            break
-          } else if (this.peekIf(Keyword.RESTORE, Keyword.POINT)) {
-            this.pos = mark
-            stmt = this.dropRestorePointStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLE)) {
-            this.pos = mark
-            stmt = this.dropRoleStatement()
-            break
-          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
-            this.pos = mark
-            stmt = this.dropRollbackSegmentStatement()
-            break
-          } else if (this.peekIf(Keyword.SCHEMA)) {
-            this.pos = mark
-            stmt = this.dropSchemaStatement()
-            break
-          } else if (this.peekIf(Keyword.SEQUENCE)) {
-            this.pos = mark
-            stmt = this.dropSequenceStatement()
-            break
-          } else if (this.peekIf(Keyword.SYNONYM)) {
-            this.pos = mark
-            stmt = this.dropSynonymStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.dropTableStatement()
-            break
-          } else if (this.peekIf(Keyword.TABLESPACE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.SET)) {
-              stmt = this.dropTablespaceSetStatement()
-            } else {
-              stmt = this.dropTablespaceStatement()  
-            }
-            break
-          } else if (this.peekIf(Keyword.TRIGGER)) {
-            this.pos = mark
-            stmt = this.dropTriggerStatement()
-            break
-          } else if (this.peekIf(Keyword.TYPE)) {
-            this.consume()
-            this.pos = mark
-            if (this.peekIf(Keyword.BODY)) {
-              stmt = this.dropTypeBodyStatement()
-            } else {
-              stmt = this.dropTypeStatement()
-            }
-            break
-          } else if (this.peekIf(Keyword.USER)) {
-            this.pos = mark
-            stmt = this.dropUserStatement()
-            break
-          } else if (this.peekIf(Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.dropViewStatement()
-            break
-          } else {
-            this.consume()
-          }
+        if (this.peekIf(Keyword.PUBLIC)) {
+          this.consume()
         }
-        if (!stmt) {
+
+        if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.dropAnalyticViewStatement()
+        } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.dropAttributeDimensionStatement()
+        } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
+          this.pos = mark
+          stmt = this.dropAuditPolicyStatement()
+        } else if (this.peekIf(Keyword.CLUSTER)) {
+          this.pos = mark
+          stmt = this.dropClusterStatement()
+        } else if (this.peekIf(Keyword.CONTEXT)) {
+          this.pos = mark
+          stmt = this.dropContextStatement()
+        } else if (this.peekIf(Keyword.DATABASE, Keyword.LINK)) {
+          this.pos = mark
+          stmt = this.dropDatabaseLinkStatement()  
+        } else if (this.peekIf(Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.dropDatabaseStatement()  
+        } else if (this.peekIf(Keyword.DIMENSION)) {
+          this.pos = mark
+          stmt = this.dropDimensionStatement()
+        } else if (this.peekIf(Keyword.DIRECTORY)) {
+          this.pos = mark
+          stmt = this.dropDirectoryStatement()
+        } else if (this.peekIf(Keyword.DISKGROUP)) {
+          this.pos = mark
+          stmt = this.dropDiskgroupStatement()
+        } else if (this.peekIf(Keyword.EDITION)) {
+          this.pos = mark
+          stmt = this.dropEditionStatement()
+        } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          this.pos = mark
+          stmt = this.dropEditionStatement()
+        } else if (this.peekIf(Keyword.FUNCTION)) {
+          this.pos = mark
+          stmt = this.dropFunctionStatement()
+        } else if (this.peekIf(Keyword.HIERARCHY)) {
+          this.pos = mark
+          stmt = this.dropHierarchyStatement()
+        } else if (this.peekIf(Keyword.INDEX)) {
+          this.pos = mark
+          stmt = this.dropIndexStatement()
+        } else if (this.peekIf(Keyword.INDEXTYPE)) {
+          this.pos = mark
+          stmt = this.dropIndextypeStatement()
+        } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          this.pos = mark
+          stmt = this.dropInmemoryJoinGroupStatement()
+        } else if (this.peekIf(Keyword.JAVA)) {
+          this.pos = mark
+          stmt = this.dropJavaStatement()
+        } else if (this.peekIf(Keyword.LIBRARY)) {
+          this.pos = mark
+          stmt = this.dropLibraryStatement()
+        } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.dropLockdownProfileStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)) {
+          this.pos = mark
+          stmt = this.dropMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW, Keyword.ZONEMAP)) {
+          this.pos = mark
+          stmt = this.dropMaterializedViewLogStatement()
+        } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.dropMaterializedViewStatement()
+        } else if (this.peekIf(Keyword.OPERATOR)) {
+          this.pos = mark
+          stmt = this.dropOperatorStatement()
+        } else if (this.peekIf(Keyword.OUTLINE)) {
+          this.pos = mark
+          stmt = this.dropOutlineStatement()
+        } else if (this.peekIf(Keyword.PACKAGE)) {
+          this.pos = mark
+          stmt = this.dropPackageStatement()
+        } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          this.pos = mark
+          stmt = this.dropPluggableDatabaseStatement()
+        } else if (this.peekIf(Keyword.PROCEDURE)) {
+          this.pos = mark
+          stmt = this.dropProcedureStatement()
+        } else if (this.peekIf(Keyword.PROFILE)) {
+          this.pos = mark
+          stmt = this.dropProfileStatement()
+        } else if (this.peekIf(Keyword.RESTORE, Keyword.POINT)) {
+          this.pos = mark
+          stmt = this.dropRestorePointStatement()
+        } else if (this.peekIf(Keyword.ROLE)) {
+          this.pos = mark
+          stmt = this.dropRoleStatement()
+        } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
+          this.pos = mark
+          stmt = this.dropRollbackSegmentStatement()
+        } else if (this.peekIf(Keyword.SCHEMA)) {
+          this.pos = mark
+          stmt = this.dropSchemaStatement()
+        } else if (this.peekIf(Keyword.SEQUENCE)) {
+          this.pos = mark
+          stmt = this.dropSequenceStatement()
+        } else if (this.peekIf(Keyword.SYNONYM)) {
+          this.pos = mark
+          stmt = this.dropSynonymStatement()
+        } else if (this.peekIf(Keyword.TABLE)) {
+          this.pos = mark
+          stmt = this.dropTableStatement()
+        } else if (this.peekIf(Keyword.TABLESPACE, Keyword.SET)) {
+          this.pos = mark
+          stmt = this.dropTablespaceSetStatement()
+        } else if (this.peekIf(Keyword.TABLESPACE, Keyword.SET)) {
+          this.pos = mark
+          stmt = this.dropTablespaceStatement()  
+        } else if (this.peekIf(Keyword.TRIGGER)) {
+          this.pos = mark
+          stmt = this.dropTriggerStatement()
+        } else if (this.peekIf(Keyword.TYPE, Keyword.BODY)) {
+          this.pos = mark
+          stmt = this.dropTypeBodyStatement()
+        } else if (this.peekIf(Keyword.TYPE)) {
+          this.pos = mark
+          stmt = this.dropTypeStatement()
+        } else if (this.peekIf(Keyword.USER)) {
+          this.pos = mark
+          stmt = this.dropUserStatement()
+        } else if (this.peekIf(Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.dropViewStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.TRUNCATE)) {
@@ -1774,8 +1704,7 @@ export class OracleParser extends Parser {
         } else if (this.peekIf(Keyword.TABLE)) {
           this.pos = mark
           stmt = this.truncateTableStatement()
-        }
-        if (!stmt) {
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.SET)) {
@@ -1791,8 +1720,7 @@ export class OracleParser extends Parser {
         } else if (this.peekIf(Keyword.TRANSACTION)) {
           this.pos = mark
           stmt = this.setTransactionStatement()
-        }
-        if (!stmt) {
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.ADMINISTER, Keyword.KEY, Keyword.MANAGEMENT)) {
@@ -1836,7 +1764,7 @@ export class OracleParser extends Parser {
       } else if (this.peekIf(Keyword.BEGIN)) {
         stmt = this.beginBlock()
       } else {
-        let withNode = undefined
+        let withNode
         if (this.peekIf(Keyword.WITH)) {
           withNode = this.withClause()
         }
@@ -1856,6 +1784,22 @@ export class OracleParser extends Parser {
       if (!stmt) {
         throw this.createParseError()
       }
+
+      if (explainPlan) {
+        stmt = explainPlan.add(stmt)
+      }
+
+      if (this.peekIf(TokenType.SemiColon)) {
+        stmt.add(this.consume())
+      }
+      if (this.peekIf(TokenType.Delimiter)) {
+        stmt.add(this.consume())
+      }
+      if (this.peekIf(TokenType.Eof)) {
+        stmt.add(this.consume())
+      }
+  
+      return stmt
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
@@ -1863,22 +1807,15 @@ export class OracleParser extends Parser {
           stmt = new Node("unknown")
         }
         while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
+          && !(!isBlock && this.peekIf(TokenType.SemiColon))
           && !this.peekIf(TokenType.Delimiter)
         ) {
-          this.consume()
-          stmt.add(this.token(-1))
+          stmt.add(this.consume())
         }
         err.node = stmt
       }      
       throw err
     }
-
-    if (explainPlan) {
-      return explainPlan.add(stmt)
-    }
-
-    return stmt
   }
 
   private createAnalyticViewStatement() {
@@ -2071,7 +2008,6 @@ export class OracleParser extends Parser {
     node.add(this.consume(Keyword.FUNCTION))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
       node.add(this.consume())
@@ -2164,7 +2100,6 @@ export class OracleParser extends Parser {
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
-      && !this.peekIf(TokenType.Delimiter)
     ) {
       node.add(this.consume())
     }
@@ -2272,7 +2207,6 @@ export class OracleParser extends Parser {
     node.add(this.consume(Keyword.PACKAGE))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
       node.add(this.consume())
@@ -4406,7 +4340,6 @@ export class OracleParser extends Parser {
         break
       }
     }
-
     return node
   }
 
@@ -4417,6 +4350,10 @@ export class OracleParser extends Parser {
       stmt.add(this.consume())
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
+    }
+    if (this.peekIf(Keyword.OPE_AT)) {
+      stmt.add(this.consume())
+      stmt.add(this.identifier("dblink"))
     }
   }
 

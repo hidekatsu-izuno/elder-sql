@@ -666,7 +666,7 @@ export const expected = [
   new Token(TokenType.Identifier, "number_hired", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1774, 37, 21, undefined))
   ], new SourceLocation(1775, 37, 22, undefined)),
-  new Token(TokenType.Operator, "+", [
+  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1787, 37, 34, undefined))
   ], new SourceLocation(1788, 37, 35, undefined)),
   new Token(TokenType.Number, "1", [
@@ -884,7 +884,7 @@ export const expected = [
   new Token(TokenType.Identifier, "salary", [], new SourceLocation(2424, 55, 17, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(2430, 55, 23, undefined)),
   new Token(TokenType.Comma, ",", [], new SourceLocation(2431, 55, 24, undefined)),
-  new Token(TokenType.Identifier, "MAX", [
+  new Token([TokenType.Identifier, Keyword.MAX], "MAX", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2432, 55, 25, undefined))
   ], new SourceLocation(2433, 55, 26, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(2436, 55, 29, undefined)),
@@ -1065,7 +1065,7 @@ export const expected = [
   new Token(TokenType.Identifier, "sal", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2820, 65, 22, undefined))
   ], new SourceLocation(2821, 65, 23, undefined)),
-  new Token(TokenType.Operator, "+", [
+  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2824, 65, 26, undefined))
   ], new SourceLocation(2825, 65, 27, undefined)),
   new Token(TokenType.Identifier, "amount", [
@@ -1094,7 +1094,7 @@ export const expected = [
   new Token(TokenType.Identifier, "salary", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2878, 66, 38, undefined))
   ], new SourceLocation(2879, 66, 39, undefined)),
-  new Token(TokenType.Operator, "+", [
+  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2885, 66, 45, undefined))
   ], new SourceLocation(2886, 66, 46, undefined)),
   new Token(TokenType.Identifier, "amount", [
@@ -1117,7 +1117,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2922, 66, 82, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(2923, 67, 0, undefined))
   ], new SourceLocation(2929, 67, 6, undefined)),
-  new Token(TokenType.Identifier, "RAISE", [
+  new Token([TokenType.Identifier, Keyword.RAISE], "RAISE", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2933, 67, 10, undefined)),
     new Token(TokenType.WhiteSpace, "         ", [], new SourceLocation(2934, 68, 0, undefined))
   ], new SourceLocation(2943, 68, 9, undefined)),
@@ -1203,7 +1203,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3243, 75, 24, undefined)),
     new Token(TokenType.WhiteSpace, "   ", [], new SourceLocation(3244, 76, 0, undefined))
   ], new SourceLocation(3247, 76, 3, undefined)),
-  new Token(TokenType.Identifier, "OPEN", [
+  new Token([TokenType.Identifier, Keyword.OPEN], "OPEN", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3252, 76, 8, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(3253, 77, 0, undefined))
   ], new SourceLocation(3259, 77, 6, undefined)),

@@ -1,3 +1,4 @@
+import { dequote } from "../util"
 import Decimal from "decimal.js"
 import {
   TokenType,
@@ -333,10 +334,7 @@ export class Sqlite3Parser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.peekIf(TokenType.Eof)) {
-          root.add(this.consume())
-          break
-        } else if (this.peekIf(TokenType.SemiColon)) {
+        if (this.peekIf(TokenType.SemiColon) || this.peekIf(TokenType.Eof)) {
           root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
@@ -451,78 +449,55 @@ export class Sqlite3Parser extends Parser {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-        ) {
-          if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.createTableStatement()
-            break
-          } else if (this.peekIf(Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.createViewStatement()
-            break
-          } else if (this.peekIf(Keyword.TRIGGER)) {
-            this.pos = mark
-            stmt = this.createTriggerStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEX)) {
-            this.pos = mark
-            stmt = this.createIndexStatement()
-            break
-          } else {
-            this.consume()
-          }
+        if (this.peekIf(Keyword.TEMPORARY) || this.peekIf(Keyword.TEMP)) {
+          this.consume()
         }
-        if (!stmt) {
+
+        if (this.peekIf(Keyword.TABLE)) {
+          this.pos = mark
+          stmt = this.createTableStatement()
+        } else if (this.peekIf(Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.createViewStatement()
+        } else if (this.peekIf(Keyword.TRIGGER)) {
+          this.pos = mark
+          stmt = this.createTriggerStatement()
+        } else if (
+          this.peekIf(Keyword.UNIQUE, Keyword.INDEX) ||
+          this.peekIf(Keyword.INDEX)
+        ) {
+          this.pos = mark
+          stmt = this.createIndexStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.ALTER)) {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-        ) {
-          if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.alterTableStatement()
-            break
-          } else {
-            this.consume()
-          }
-        }
-        if (!stmt) {
+        if (this.peekIf(Keyword.TABLE)) {
+          this.pos = mark
+          stmt = this.alterTableStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.DROP)) {
         const mark = this.pos
         this.consume()
 
-        while (this.token()
-          && !this.peekIf(TokenType.SemiColon)
-        ) {
-          if (this.peekIf(Keyword.TABLE)) {
-            this.pos = mark
-            stmt = this.dropTableStatement()
-            break
-          } else if (this.peekIf(Keyword.VIEW)) {
-            this.pos = mark
-            stmt = this.dropViewStatement()
-            break
-          } else if (this.peekIf(Keyword.TRIGGER)) {
-            this.pos = mark
-            stmt = this.dropTriggerStatement()
-            break
-          } else if (this.peekIf(Keyword.INDEX)) {
-            this.pos = mark
-            stmt = this.dropIndexStatement()
-            break
-          } else {
-            this.consume()
-          }
-        }
-        if (!stmt) {
+        if (this.peekIf(Keyword.TABLE)) {
+          this.pos = mark
+          stmt = this.dropTableStatement()
+        } else if (this.peekIf(Keyword.VIEW)) {
+          this.pos = mark
+          stmt = this.dropViewStatement()
+        } else if (this.peekIf(Keyword.TRIGGER)) {
+          this.pos = mark
+          stmt = this.dropTriggerStatement()
+        } else if (this.peekIf(Keyword.INDEX)) {
+          this.pos = mark
+          stmt = this.dropIndexStatement()
+        } else {
           this.pos = mark
         }
       } else if (this.peekIf(Keyword.ATTACH, Keyword.DATABASE)) {
@@ -566,10 +541,19 @@ export class Sqlite3Parser extends Parser {
       if (!stmt) {
         throw this.createParseError()
       }
-  
+      
       if (explain) {
-        return explain.add(stmt)
+        stmt = explain.add(stmt)
       }
+
+      if (this.peekIf(TokenType.SemiColon)) {
+        stmt.add(this.consume())
+      }
+      if (this.peekIf(TokenType.Eof)) {
+        stmt.add(this.consume())
+      }
+  
+      return stmt
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
@@ -1520,26 +1504,4 @@ export class Sqlite3Parser extends Parser {
     }
     return node
   }
-}
-
-const ReplaceReMap: { [key: string]: RegExp } = {
-  '"': /""/g,
-  "'": /''/g,
-  "`": /``/g,
-}
-
-function dequote(text: string) {
-  if (text.length >= 2) {
-    const sc = text.charAt(0)
-    const ec = text.charAt(text.length - 1)
-    if (sc === "[" && ec === "]" || sc === ec) {
-      const re = ReplaceReMap[sc]
-      let value = text.substring(1, text.length - 1)
-      if (re != null) {
-        value = value.replace(re, sc)
-      }
-      return value
-    }
-  }
-  return text
 }
