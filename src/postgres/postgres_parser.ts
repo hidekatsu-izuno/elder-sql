@@ -8,6 +8,8 @@ import {
   AggregateParseError,
   ParseFunction,
   SourceLocation,
+  Splitter,
+  SplitFunction,
 } from "../parser"
 import { dequote, ucase } from "../util"
 
@@ -317,6 +319,45 @@ export class PostgresLexer extends Lexer {
   }
 }
 
+export class PostgresSplitter extends Splitter {
+  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
+    const tokens = new PostgresLexer(options).lex(input)
+    const stmts = new PostgresSplitter(options).split(tokens)
+    return stmts
+  }
+
+  constructor(
+    options: Record<string, any> = {},
+  ) {
+    super(options)
+  }
+
+  split(tokens: Token[]): Token[][] {
+    const segments = new Array<Token[]>()
+
+    let segment: Token[] | undefined
+    for (const token of tokens) {
+      if (!segment) {
+        segment = []
+        segments.push(segment)
+      }
+      if (token.is(TokenType.Command)) {
+        segment = []
+        segment.push(token)
+        segments.push(segment)
+        segment = undefined
+      } else if (token.is(TokenType.SemiColon) || token.is(TokenType.Eof)) {
+        segment.push(token)
+        segment = undefined
+      } else {
+        segment.push(token)
+      }
+    }
+
+    return segments
+  }
+}
+
 export class PostgresParser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
     const tokens = new PostgresLexer(options).lex(input)
@@ -336,23 +377,15 @@ export class PostgresParser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.consumeIf(TokenType.Eof)) {
-          root.add(this.token(-1))
+        if (this.peekIf(TokenType.Eof)) {
+          root.add(this.consume())
           break
-        } else if (this.consumeIf(TokenType.SemiColon)) {
-          root.add(this.token(-1))
+        } else if (this.peekIf(TokenType.SemiColon)) {
+          root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
         } else {
           root.add(this.statement())
-          if (this.consumeIf(TokenType.Eof)) {
-            root.add(this.token(-1))
-            break
-          } else if (this.consumeIf(TokenType.SemiColon)) {
-            root.add(this.token(-1))
-          } else {
-            break
-          }
         }
       } catch (e) {
         if (e instanceof ParseError) {

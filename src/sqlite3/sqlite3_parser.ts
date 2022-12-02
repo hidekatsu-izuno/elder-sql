@@ -9,7 +9,6 @@ import {
   AggregateParseError,
   ParseFunction,
   Splitter,
-  Segment,
   SplitFunction,
   SourceLocation,
 } from "../parser"
@@ -288,35 +287,29 @@ export class Sqlite3Splitter extends Splitter {
     super(options)
   }
 
-  split(tokens: Token[]): Segment[] {
-    const stmts = new Array<Segment>()
+  split(tokens: Token[]): Token[][] {
+    const segments = new Array<Token[]>()
 
-    let stmt = null
-    let lineNumber = 1
+    let segment: Token[] | undefined
     for (const token of tokens) {
-      if (!stmt) {
-        stmt = new Segment(lineNumber)
-        stmts.push(stmt)
-      }
-      for (const skip of token.skips) {
-        if (skip.is(TokenType.LineBreak)) {
-          lineNumber++
-        }
+      if (!segment) {
+        segment = []
+        segments.push(segment)
       }
       if (token.is(TokenType.Command)) {
-        stmt = new Segment(lineNumber)
-        stmt.tokens.push(token)
-        stmts.push(stmt)
-        stmt = null
+        segment = []
+        segment.push(token)
+        segments.push(segment)
+        segment = undefined
       } else if (token.is(TokenType.SemiColon) || token.is(TokenType.Eof)) {
-        stmt.tokens.push(token)
-        stmt = null
+        segment.push(token)
+        segment = undefined
       } else {
-        stmt.tokens.push(token)
+        segment.push(token)
       }
     }
 
-    return stmts
+    return segments
   }
 }
 
@@ -340,23 +333,15 @@ export class Sqlite3Parser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.consumeIf(TokenType.Eof)) {
-          root.add(this.token(-1))
+        if (this.peekIf(TokenType.Eof)) {
+          root.add(this.consume())
           break
-        } else if (this.consumeIf(TokenType.SemiColon)) {
-          root.add(this.token(-1))
+        } else if (this.peekIf(TokenType.SemiColon)) {
+          root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
         } else {
           root.add(this.statement())
-          if (this.consumeIf(TokenType.Eof)) {
-            root.add(this.token(-1))
-            break
-          } else if (this.consumeIf(TokenType.SemiColon)) {
-            root.add(this.token(-1))
-          } else {
-            break
-          }
         }
       } catch (e) {
         if (e instanceof ParseError) {
@@ -400,8 +385,7 @@ export class Sqlite3Parser extends Parser {
   command() {
     const stmt = new Node("command")
 
-    this.consume(TokenType.Command)
-    const token = this.token(-1)
+    const token = this.consume(TokenType.Command)
     const sep = token.text.indexOf(" ")
     if (sep === -1) {
       stmt.add(new Node("name", token.text).add(token))
@@ -452,11 +436,14 @@ export class Sqlite3Parser extends Parser {
     let stmt
 
     try {
-      if (this.consumeIf(Keyword.EXPLAIN)) {
-        explain = new Node("explain").add(this.token(-1))
-        if (this.consumeIf(Keyword.QUERY)) {
-          this.consume(Keyword.PLAN)
-          explain.add(new Node("query plan").add(this.token(-2), this.token(-1)))
+      if (this.peekIf(Keyword.EXPLAIN)) {
+        explain = new Node("explain")
+        explain.add(this.consume())
+        if (this.peekIf(Keyword.QUERY)) {
+          explain.add(new Node("query plan").add(
+            this.consume(), 
+            this.consume(Keyword.PLAN)
+          ))
         }
       }
 
@@ -467,19 +454,19 @@ export class Sqlite3Parser extends Parser {
         while (this.token()
           && !this.peekIf(TokenType.SemiColon)
         ) {
-          if (this.consumeIf(Keyword.TABLE)) {
+          if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.createTableStatement()
             break
-          } else if (this.consumeIf(Keyword.VIEW)) {
+          } else if (this.peekIf(Keyword.VIEW)) {
             this.pos = mark
             stmt = this.createViewStatement()
             break
-          } else if (this.consumeIf(Keyword.TRIGGER)) {
+          } else if (this.peekIf(Keyword.TRIGGER)) {
             this.pos = mark
             stmt = this.createTriggerStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEX)) {
+          } else if (this.peekIf(Keyword.INDEX)) {
             this.pos = mark
             stmt = this.createIndexStatement()
             break
@@ -497,7 +484,7 @@ export class Sqlite3Parser extends Parser {
         while (this.token()
           && !this.peekIf(TokenType.SemiColon)
         ) {
-          if (this.consumeIf(Keyword.TABLE)) {
+          if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.alterTableStatement()
             break
@@ -515,19 +502,19 @@ export class Sqlite3Parser extends Parser {
         while (this.token()
           && !this.peekIf(TokenType.SemiColon)
         ) {
-          if (this.consumeIf(Keyword.TABLE)) {
+          if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.dropTableStatement()
             break
-          } else if (this.consumeIf(Keyword.VIEW)) {
+          } else if (this.peekIf(Keyword.VIEW)) {
             this.pos = mark
             stmt = this.dropViewStatement()
             break
-          } else if (this.consumeIf(Keyword.TRIGGER)) {
+          } else if (this.peekIf(Keyword.TRIGGER)) {
             this.pos = mark
             stmt = this.dropTriggerStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEX)) {
+          } else if (this.peekIf(Keyword.INDEX)) {
             this.pos = mark
             stmt = this.dropIndexStatement()
             break
@@ -554,11 +541,11 @@ export class Sqlite3Parser extends Parser {
         stmt = this.beginTransactionStatement()
       } else if (this.peekIf(Keyword.SAVEPOINT)) {
         stmt = this.savepointStatement()
-      } else if (this.consumeIf(Keyword.RELEASE)) {
+      } else if (this.peekIf(Keyword.RELEASE)) {
         stmt = this.releaseSavepointStatement()
       } else if (this.peekIf(Keyword.COMMIT) || this.peekIf(Keyword.END)) {
         stmt = this.commitTransactionStatement()
-      } else if (this.consumeIf(Keyword.ROLLBACK)) {
+      } else if (this.peekIf(Keyword.ROLLBACK)) {
         stmt = this.rollbackTransactionStatement()
       } else {
         let withNode
@@ -590,8 +577,7 @@ export class Sqlite3Parser extends Parser {
           stmt = new Node("unknown")
         }
         while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-          this.consume()
-          stmt.add(this.token(-1))
+          stmt.add(this.consume())
         }
         err.node = stmt
       }      
@@ -604,32 +590,32 @@ export class Sqlite3Parser extends Parser {
   private createTableStatement() {
     const node = new Node("create table")
     let virtual = false
-
-    this.consume(Keyword.CREATE)
-    node.add(this.token(-1))
-    if (this.consumeIf(Keyword.TEMPORARY) || this.consumeIf(Keyword.TEMP)) {
-      node.add(new Node("temporary").add(this.token(-1)))
-    } else if (this.consumeIf(Keyword.VIRTUAL)) {
-      node.add(new Node("virtual").add(this.token(-1)))
+    
+    node.add(this.consume(Keyword.CREATE))
+    if (this.peekIf(Keyword.TEMPORARY) || this.peekIf(Keyword.TEMP)) {
+      node.add(new Node("temporary").add(this.consume()))
+    } else if (this.peekIf(Keyword.VIRTUAL)) {
+      node.add(new Node("virtual").add(this.consume()))
       virtual = true
     }
-    this.consume(Keyword.TABLE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.TABLE))
 
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.NOT, Keyword.EXISTS)
-      node.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if not exists").add(
+        this.consume(),
+        this.consume(Keyword.NOT),
+        this.consume(Keyword.EXISTS)
+      ))
     }
     this.parseName(node)
 
     if (virtual) {
-      this.consume(Keyword.USING)
-      node.add(this.token(-1))
+      node.add(this.consume(Keyword.USING))
 
       const moduleNode = new Node("module")
       moduleNode.add(this.identifier("name"))
-      if (this.consumeIf(TokenType.LeftParen)) {
-        moduleNode.add(this.token(-1))
+      if (this.peekIf(TokenType.LeftParen)) {
+        moduleNode.add(this.consume())
         while (this.token()) {
           const moduleArg = new Node("arg")
           while (
@@ -637,26 +623,24 @@ export class Sqlite3Parser extends Parser {
             !this.peekIf(TokenType.Comma) &&
             !this.peekIf(TokenType.RightParen)
           ) {
-            this.consume()
-            moduleArg.add(this.token(-1))
+            moduleArg.add(this.consume())
           }
           moduleNode.add(moduleArg)
-          if (this.consumeIf(TokenType.Comma)) {
-            moduleNode.add(this.token(-1))
+          if (this.peekIf(TokenType.Comma)) {
+            moduleNode.add(this.consume())
           } else {
             break
           }
         }
-        this.consume(TokenType.RightParen)
-        moduleNode.add(this.token(-1))
+        moduleNode.add(this.consume(TokenType.RightParen))
       }
       node.add(moduleNode)
-    } else if (this.consumeIf(TokenType.LeftParen)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.LeftParen)) {
+      node.add(this.consume())
       node.add(this.tableColumn())
 
-      while (this.consumeIf(TokenType.Comma)) {
-        node.add(this.token(-1))
+      while (this.peekIf(TokenType.Comma)) {
+        node.add(this.consume())
 
         if (
           !this.peekIf(Keyword.CONSTRAINT) &&
@@ -674,27 +658,27 @@ export class Sqlite3Parser extends Parser {
           node.add(this.tableColumn())
         } else {
           node.add(this.tableConstraint())
-          while (this.consumeIf(TokenType.Comma)) {
-            node.add(this.token(-1))
+          while (this.peekIf(TokenType.Comma)) {
+            node.add(this.consume())
             node.add(this.tableConstraint())
           }
           break
         }
       }
 
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
       while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-        if (this.consumeIf(Keyword.WITHOUT)) {
-          this.consume(Keyword.ROWID)
-          node.add(new Node("without rowid").add(this.token(-2), this.token(-1)))
+        if (this.peekIf(Keyword.WITHOUT)) {
+          node.add(new Node("without rowid").add(
+            this.consume(), 
+            this.consume(Keyword.ROWID)
+          ))
         } else {
-          this.consume()
-          node.add(this.token(-1))
+          node.add(this.consume())
         }
       }
-    } else if (this.consumeIf(Keyword.AS)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(Keyword.AS)) {
+      node.add(this.consume())
       node.add(this.selectClause())
     } else {
       throw this.createParseError()
@@ -706,38 +690,37 @@ export class Sqlite3Parser extends Parser {
   private createViewStatement() {
     const node = new Node("create view")
 
-    this.consume(Keyword.CREATE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
     if (
-      this.consumeIf(Keyword.TEMPORARY) ||
-      this.consumeIf(Keyword.TEMP)
+      this.peekIf(Keyword.TEMPORARY) ||
+      this.peekIf(Keyword.TEMP)
     ) {
-      node.add(new Node("temporary").add(this.token(-1)))
+      node.add(new Node("temporary").add(this.consume()))
     }
-    this.consume(Keyword.VIEW)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.VIEW))
 
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.NOT, Keyword.EXISTS)
-      node.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if not exists").add(
+        this.consume(),
+        this.consume(Keyword.NOT),
+        this.consume(Keyword.EXISTS)
+      ))
     }
     this.parseName(node)
 
-    this.consume(Keyword.AS)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.AS))
 
-    if (this.consumeIf(TokenType.LeftParen)) {
-      node.add(this.token(-1))
+    if (this.peekIf(TokenType.LeftParen)) {
+      node.add(this.consume())
       while (this.token()) {
         node.add(this.identifier("column_name"))
-        if (this.consumeIf(TokenType.Comma)) {
-          node.add(this.token(-1))
+        if (this.peekIf(TokenType.Comma)) {
+          node.add(this.consume())
         } else {
           break
         }
       }
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
     }
     node.add(this.selectClause())
 
@@ -747,33 +730,29 @@ export class Sqlite3Parser extends Parser {
   private createTriggerStatement() {
     const node = new Node("create trigger")
 
-    this.consume(Keyword.CREATE)
-    node.add(this.token(-1))
-    if (
-      this.consumeIf(Keyword.TEMPORARY) ||
-      this.consumeIf(Keyword.TEMP)
-    ) {
-      node.add(new Node("temporary").add(this.token(-1)))
+    node.add(this.consume(Keyword.CREATE))
+    if (this.peekIf(Keyword.TEMPORARY) || this.peekIf(Keyword.TEMP)) {
+      node.add(new Node("temporary").add(this.consume()))
     }
-    this.consume(Keyword.TRIGGER)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.TRIGGER))
 
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.NOT, Keyword.EXISTS)
-      node.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if not exists").add(
+        this.consume(),
+        this.consume(Keyword.NOT),
+        this.consume(Keyword.EXISTS)
+      ))
     }
     this.parseName(node)
 
     while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-      if (this.consumeIf(Keyword.BEGIN)) {
-        node.add(this.token(-1))
+      if (this.peekIf(Keyword.BEGIN)) {
+        node.add(this.consume())
         while (this.token() && !this.peekIf(Keyword.END)) {
-          this.consume()
-          node.add(this.token(-1))
+          node.add(this.consume())
         }
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
 
@@ -783,44 +762,40 @@ export class Sqlite3Parser extends Parser {
   private createIndexStatement() {
     const node = new Node("create index")
 
-    this.consume(Keyword.CREATE)
-    node.add(this.token(-1))
-    if (this.consumeIf(Keyword.UNIQUE)) {
-      node.add(new Node("unique").add(this.token(-1)))
+    node.add(this.consume(Keyword.CREATE))
+    if (this.peekIf(Keyword.UNIQUE)) {
+      node.add(new Node("unique").add(this.consume()))
     }
-    this.consume(Keyword.INDEX)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.INDEX))
 
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.NOT, Keyword.EXISTS)
-      node.add(new Node("if not exists").add(this.token(-3), this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if not exists").add(
+        this.consume(),
+        this.consume(Keyword.NOT),
+        this.consume(Keyword.EXISTS)
+      ))
     }
     this.parseName(node)
 
-    this.consume(Keyword.ON)
-    node.add(this.token(-1))
-
+    node.add(this.consume(Keyword.ON))
     node.add(this.identifier("table_name"))
 
-    this.consume(TokenType.LeftParen)
-    node.add(this.token(-1))
+    node.add(this.consume(TokenType.LeftParen))
     while (this.token()) {
       node.add(this.indexColumn())
-      if (this.consumeIf(TokenType.Comma)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.Comma)) {
+        node.add(this.consume())
       } else {
         break
       }
     }
-    this.consume(TokenType.RightParen)
-    node.add(this.token(-1))
+    node.add(this.consume(TokenType.RightParen))
 
-    if (this.consumeIf(Keyword.WHERE)) {
+    if (this.peekIf(Keyword.WHERE)) {
       const whereNode = new Node("where")
-      whereNode.add(this.token(-1))
+      whereNode.add(this.consume())
       while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-        this.consume()
-        whereNode.add(this.token(-1))
+        whereNode.add(this.consume())
       }
       node.add(whereNode)
     }
@@ -830,39 +805,39 @@ export class Sqlite3Parser extends Parser {
 
   private alterTableStatement() {
     const node = new Node("alter table")
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TABLE))
 
-    this.consume(Keyword.ALTER, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
-
-    if (this.consumeIf(Keyword.RENAME)) {
-      if (this.consumeIf(Keyword.TO)) {
-        const node = new Node("rename to")
-        node.add(this.token(-2), this.token(-1))
-        node.add(this.identifier("table_name"))
-        node.add(node)
-      } else if (this.consumeIf(Keyword.COLUMN)) {
-        const node = new Node("rename column")
-        node.add(this.token(-2), this.token(-1))
-        node.add(this.identifier("from_column_name"))
-        this.consume(Keyword.TO)
-        node.add(this.token(-1))
-        node.add(this.identifier("to_column_name"))
-        node.add(node)
-      } else {
-        throw this.createParseError()
+    if (this.peekIf(Keyword.RENAME, Keyword.TO)) {
+      node.add(new Node("rename to").add(
+        this.consume(),
+        this.consume(),
+        this.identifier("table_name")
+      ))
+    } else  if (this.peekIf(Keyword.RENAME, Keyword.COLUMN)) {
+      node.add(new Node("rename column").add(
+        this.consume(),
+        this.consume(),
+        this.identifier("from_column_name"),
+        this.consume(Keyword.TO),
+        this.identifier("to_column_name")
+      ))
+    } else if (this.peekIf(Keyword.ADD)) {
+      const child = new Node("add column")
+      child.add(this.consume())
+      if (this.peekIf(Keyword.COLUMN)) {
+        child.add(this.consume())
       }
-    } else if (this.consumeIf(Keyword.ADD)) {
-      this.consumeIf(Keyword.COLUMN)
-      const node = new Node("add column")
-      node.add(this.token(-2), this.token(-1))
-      node.add(this.tableColumn())
-      node.add(node)
-    } else if (this.consumeIf(Keyword.DROP)) {
-      this.consumeIf(Keyword.COLUMN)
-      const node = new Node("drop column")
-      node.add(this.token(-2), this.token(-1))
-      node.add(this.identifier("column_name"))
-      node.add(node)
+      child.add(this.tableColumn())
+      node.add(child)
+    } else if (this.peekIf(Keyword.DROP)) {
+      const child = new Node("drop column")
+      child.add(this.consume())
+      if (this.peekIf(Keyword.COLUMN)) {
+        child.add(this.consume())
+      }
+      child.add(this.identifier("column_name"))
+      node.add(child)
     } else {
       throw this.createParseError()
     }
@@ -871,163 +846,142 @@ export class Sqlite3Parser extends Parser {
 
   private dropTableStatement() {
     const node = new Node("drop table")
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TABLE))
 
-    this.consume(Keyword.DROP, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
-
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.EXISTS)
-      node.add(new Node("if exists").add(this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if exists").add(
+        this.consume(),
+        this.consume(Keyword.EXISTS)
+      ))
     }
-    this.parseName(node)
 
+    this.parseName(node)
     return node
   }
 
   private dropViewStatement() {
     const node = new Node("drop view")
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.VIEW))
 
-    this.consume(Keyword.DROP, Keyword.VIEW)
-    node.add(this.token(-2), this.token(-1))
-
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.EXISTS)
-      node.add(new Node("if exists").add(this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if exists").add(
+        this.consume(),
+        this.consume(Keyword.EXISTS)
+      ))
     }
-    this.parseName(node)
 
+    this.parseName(node)
     return node
   }
 
   private dropTriggerStatement() {
     const node = new Node("drop trigger")
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TRIGGER))
 
-    this.consume(Keyword.DROP, Keyword.TRIGGER)
-    node.add(this.token(-2), this.token(-1))
-
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.EXISTS)
-      node.add(new Node("if exists").add(this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if exists").add(
+        this.consume(),
+        this.consume(Keyword.EXISTS)
+      ))
     }
-    this.parseName(node)
 
+    this.parseName(node)
     return node
   }
 
   private dropIndexStatement() {
     const node = new Node("drop index")
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.INDEX))
 
-    this.consume(Keyword.DROP, Keyword.INDEX)
-    node.add(this.token(-2), this.token(-1))
-
-    if (this.consumeIf(Keyword.IF)) {
-      this.consume(Keyword.EXISTS)
-      node.add(new Node("if exists").add(this.token(-2), this.token(-1)))
+    if (this.peekIf(Keyword.IF)) {
+      node.add(new Node("if exists").add(
+        this.consume(),
+        this.consume(Keyword.EXISTS)
+      ))
     }
-    this.parseName(node)
 
+    this.parseName(node)
     return node
   }
 
   private attachDatabaseStatement() {
     const node = new Node("attach database")
-
-    this.consume(Keyword.ATTACH, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
-
+    node.add(this.consume(Keyword.ATTACH))
+    node.add(this.consume(Keyword.DATABASE))
     node.add(this.expression())
-    this.consume(Keyword.AS)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.AS))
     node.add(this.identifier("name"))
-
     return node
   }
 
   private detachDatabaseStatement() {
     const node = new Node("detach database")
-
-    this.consume(Keyword.DETACH, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
-
+    node.add(this.consume(Keyword.DETACH))
+    node.add(this.consume(Keyword.DATABASE))
     node.add(this.identifier("name"))
-    
     return node
   }
 
   private analyzeStatement() {
     const node = new Node("analyze")
-
-    this.consume(Keyword.ANALYZE)
-    node.add(this.token(-1))
-
+    node.add(this.consume(Keyword.ANALYZE))
     this.parseName(node)
-
     return node
   }
 
   private reindexStatement() {
     const node = new Node("reindex")
-
-    this.consume(Keyword.REINDEX)
-    node.add(this.token(-1))
-
-    this.parseName(node)
-    
+    node.add(this.consume(Keyword.REINDEX))
+    this.parseName(node)    
     return node
   }
 
   private vacuumStatement() {
     const node = new Node("vacuum")
-
-    this.consume(Keyword.VACUUM)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.VACUUM))
 
     if (this.token() && !this.peekIf(Keyword.TO)) {
       node.add(this.identifier("schema_name"))
     }
     while (this.token() && !this.peekIf(TokenType.SemiColon)) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
-
     return node
   }
 
   private pragmaStatement() {
     const node = new Node("pragma")
-
-    this.consume(Keyword.PRAGMA)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.PRAGMA))
 
     this.parseName(node)
-
-    if (this.consumeIf(Keyword.OPE_EQ)) {
-      node.add(this.token(-1))
+    if (this.peekIf(Keyword.OPE_EQ)) {
+      node.add(this.consume())
       node.add(this.pragmaValue())
-    } else if (this.consumeIf(TokenType.LeftParen)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.LeftParen)) {
+      node.add(this.consume())
       node.add(this.pragmaValue())
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
     }
-
     return node
   }
 
   private beginTransactionStatement() {
     const node = new Node("begin transaction")
 
-    this.consume(Keyword.BEGIN)
-    node.add(this.token(-1))
-    if (this.consumeIf(Keyword.DEFERRED)) {
-      node.add(new Node("deferred").add(this.token(-1)))
-    } else if (this.consumeIf(Keyword.IMMEDIATE)) {
-      node.add(new Node("immediate").add(this.token(-1)))
-    } else if (this.consumeIf(Keyword.EXCLUSIVE)) {
-      node.add(new Node("exclusive").add(this.token(-1)))
+    node.add(this.consume(Keyword.BEGIN))
+    if (this.peekIf(Keyword.DEFERRED)) {
+      node.add(new Node("deferred").add(this.consume()))
+    } else if (this.peekIf(Keyword.IMMEDIATE)) {
+      node.add(new Node("immediate").add(this.consume()))
+    } else if (this.peekIf(Keyword.EXCLUSIVE)) {
+      node.add(new Node("exclusive").add(this.consume()))
     }
-    if (this.consumeIf(Keyword.TRANSACTION)) {
-      node.add(this.token(-1))
+    if (this.peekIf(Keyword.TRANSACTION)) {
+      node.add(this.consume())
     }
 
     return node
@@ -1035,57 +989,45 @@ export class Sqlite3Parser extends Parser {
 
   private savepointStatement() {
     const node = new Node("savepoint")
-
-    this.consume(Keyword.SAVEPOINT)
-    node.add(this.token(-1))
-
+    node.add(this.consume(Keyword.SAVEPOINT))
     node.add(this.identifier("name"))
-    
     return node
   }
 
   private releaseSavepointStatement() {
     const node = new Node("release savepoint")
-
-    this.consume(Keyword.RELEASE)
-    node.add(this.token(-1))
-    if (this.consumeIf(Keyword.SAVEPOINT)) {
-      node.add( this.token(-1))
+    node.add(this.consume(Keyword.RELEASE))
+    if (this.peekIf(Keyword.SAVEPOINT)) {
+      node.add(this.consume())
     }
-
     node.add(this.identifier("name"))
-
     return node
   }
 
   private commitTransactionStatement() {
     const node = new Node("commit transaction")
-
-    if (this.consumeIf(Keyword.END)) {
-      node.add(this.token(-1))
+    if (this.peekIf(Keyword.END)) {
+      node.add(this.consume())
     } else {
-      this.consume(Keyword.COMMIT)
-      node.add(this.token(-1))  
+      node.add(this.consume(Keyword.COMMIT))  
     }
-    if (this.consumeIf(Keyword.TRANSACTION)) {
-      node.add( this.token(-1))
+    if (this.peekIf(Keyword.TRANSACTION)) {
+      node.add(this.consume())
     }
-
     return node
   }
 
   private rollbackTransactionStatement() {
     const node = new Node("rollback transaction")
-
-    this.consume(Keyword.ROLLBACK)
-    node.add(this.token(-1))
-    if (this.consumeIf(Keyword.TRANSACTION)) {
-      node.add( this.token(-1))
+    node.add(this.consume(Keyword.ROLLBACK))
+    if (this.peekIf(Keyword.TRANSACTION)) {
+      node.add(this.consume())
     }
-
-    if (this.consumeIf(Keyword.TO)) {
-      this.consumeIf(Keyword.SAVEPOINT)
-      node.add(this.token(-2), this.token(-1))
+    if (this.peekIf(Keyword.TO)) {
+      node.add(this.consume())
+      if (this.peekIf(Keyword.SAVEPOINT)) {
+        node.add(this.consume())
+      }
       node.add(this.identifier("name"))
     }
     return node
@@ -1096,29 +1038,21 @@ export class Sqlite3Parser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    if (this.consumeIf(Keyword.REPLACE)) {
-      node.add(new Node("replace").add(this.token(-1)))
+    if (this.peekIf(Keyword.REPLACE)) {
+      node.add(new Node("replace").add(this.consume()))
     } else {
-      this.consume(Keyword.INSERT)
-      node.add(this.token(-1))
-      if (this.consumeIf(Keyword.OR)) {
-        node.add(this.token(-1))
+      node.add(this.consume(Keyword.INSERT))
+      if (this.peekIf(Keyword.OR)) {
+        node.add(this.consume())
         node.add(this.conflictAction())
       }
     }
-
-    this.consume(Keyword.INTO)
-    node.add(this.token(-1))
-
+    node.add(this.consume(Keyword.INTO))
     this.parseName(node)
     
-    while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
-    ) {
-      this.consume()
-      node.add(this.token(-1))
+    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      node.add(this.consume())
     }
-
     return node
   }
 
@@ -1127,18 +1061,12 @@ export class Sqlite3Parser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.UPDATE)
-    node.add(this.token(-1))
-
+    node.add(this.consume(Keyword.UPDATE))
     this.parseName(node)
     
-    while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
-    ) {
-      this.consume()
-      node.add(this.token(-1))
+    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      node.add(this.consume())
     }
-
     return node
   }
 
@@ -1147,18 +1075,13 @@ export class Sqlite3Parser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.DELETE, Keyword.FROM)
-    node.add(this.token(-2), this.token(-1))
-
+    node.add(this.consume(Keyword.DELETE))
+    node.add(this.consume(Keyword.FROM))
     this.parseName(node)
     
-    while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
-    ) {
-      this.consume()
-      node.add(this.token(-1))
+    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      node.add(this.consume())
     }
-
     return node
   }
     
@@ -1167,88 +1090,77 @@ export class Sqlite3Parser extends Parser {
     if (withNode != null) {
       node.add(withNode)
     }
-    this.consume(Keyword.SELECT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.SELECT))
 
     let depth = 0
     while (this.token() &&
       !this.peekIf(TokenType.SemiColon) &&
       (depth == 0 && !this.peekIf(TokenType.RightParen))
     ) {
-      if (this.consumeIf(TokenType.LeftParen)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         depth++
-      } else if (this.consumeIf(TokenType.RightParen)) {
-        node.add(this.token(-1))
+      } else if (this.peekIf(TokenType.RightParen)) {
+        node.add(this.consume())
         depth--
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
-
     return node
   }
 
   private withClause() {
     const node = new Node("with")
+    node.add(this.consume(Keyword.WITH))
 
-    this.consume(Keyword.WITH)
-    node.add(this.token(-1))
-
-    if (this.consumeIf(Keyword.RECURSIVE)) {
-      node.add(new Node("recursive").add(this.token(-1)))
+    if (this.peekIf(Keyword.RECURSIVE)) {
+      node.add(new Node("recursive").add(this.consume()))
     }
 
     while (this.token()) {
       node.add(this.identifier("name"))
-      if (this.consumeIf(TokenType.LeftParen)) {
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         while (this.token()) {
           node.add(this.identifier("column"))
-
-          if (this.consumeIf(TokenType.Comma)) {
-            node.add(this.token(-1))
+          if (this.peekIf(TokenType.Comma)) {
+            node.add(this.consume())
           } else {
             break
           }
         }
-
-        this.consume(TokenType.RightParen)
-        node.add(this.token(-1))
+        node.add(this.consume(TokenType.RightParen))
       }
 
-      this.consume(Keyword.AS)
-      node.add(this.token(-1))
+      node.add(this.consume(Keyword.AS))
 
-      if (this.consumeIf(Keyword.NOT)) {
-        this.consume(Keyword.MATERIALIZED)
-        node.add(new Node("not materialized").add(this.token(-2), this.token(-1)))
-      } else if (this.consumeIf(Keyword.MATERIALIZED)) {
+      if (this.peekIf(Keyword.NOT)) {
+        node.add(new Node("not materialized").add(
+          this.consume(), 
+          this.consume(Keyword.MATERIALIZED)
+        ))
+      } else if (this.peekIf(Keyword.MATERIALIZED)) {
         node.add(new Node("materialized").add(this.token(-1)))
       }
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
-
+      node.add(this.consume(TokenType.LeftParen))
       node.add(this.selectClause())
+      node.add(this.consume(TokenType.RightParen))
 
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
-
-      if (this.consumeIf(TokenType.Comma)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.Comma)) {
+        node.add(this.consume())
       } else {
         break
       }
     }
-
     return node
   }
 
   private parseName(stmt: Node) {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
+    if (this.peekIf(TokenType.Dot)) {
+      stmt.add(this.consume())
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -1256,7 +1168,6 @@ export class Sqlite3Parser extends Parser {
 
   private tableColumn() {
     const node = new Node("column")
-
     node.add(this.identifier("name"))
 
     if (
@@ -1281,112 +1192,93 @@ export class Sqlite3Parser extends Parser {
 
   private columnConstraint() {
     const node = new Node("")
-    if (this.consumeIf(Keyword.CONSTRAINT)) {
-      node.add(this.token(-1))
+    if (this.peekIf(Keyword.CONSTRAINT)) {
+      node.add(this.consume())
       node.add(this.identifier("name"))
     }
-    if (this.consumeIf(Keyword.PRIMARY)) {
-      this.consume(Keyword.KEY)
+    if (this.peekIf(Keyword.PRIMARY)) {
+      node.add(this.consume())
+      node.add(this.consume(Keyword.KEY))
       node.name = "primary key"
-      node.add(this.token(-2), this.token(-1))
 
-      if (this.consumeIf(Keyword.ASC)) {
-        node.add(new Node("asc").add(this.token(-2), this.token(-1)))
-      } else if (this.consumeIf(Keyword.DESC)) {
-        node.add(new Node("desc").add(this.token(-2), this.token(-1)))
+      if (this.peekIf(Keyword.ASC)) {
+        node.add(new Node("asc").add(this.consume()))
+      } else if (this.peekIf(Keyword.DESC)) {
+        node.add(new Node("desc").add(this.consume()))
       }
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
-      if (this.consumeIf(Keyword.AUTOINCREMENT)) {
-        node.add(new Node("autoincrement").add(this.token(-1)))
+      if (this.peekIf(Keyword.AUTOINCREMENT)) {
+        node.add(new Node("autoincrement").add(this.consume()))
       }
-    } else if (this.consumeIf(Keyword.NOT)) {
-      this.consume(Keyword.NULL)
-
+    } else if (this.peekIf(Keyword.NOT)) {
+      node.add(this.consume())
+      node.add(this.consume(Keyword.NULL))
       node.name = "not null"
-      node.add(this.token(-2), this.token(-1))
-
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
-    } else if (this.consumeIf(Keyword.NULL)) {
+    } else if (this.peekIf(Keyword.NULL)) {
+      node.add(this.consume())
       node.name = "null"
-      node.add(this.token(-1))
-
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
-    } else if (this.consumeIf(Keyword.UNIQUE)) {
+    } else if (this.peekIf(Keyword.UNIQUE)) {
+      node.add(this.consume())
       node.name = "unique"
-      node.add(this.token(-1))
-
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
         node.add(this.conflictAction())
       }
-    } else if (this.consumeIf(Keyword.CHECK)) {
+    } else if (this.peekIf(Keyword.CHECK)) {
+      node.add(this.consume())
       node.name = "check"
-      node.add(this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.LeftParen))
       node.add(this.expression())
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
-    } else if (this.consumeIf(Keyword.DEFAULT)) {
+      node.add(this.consume(TokenType.RightParen))
+    } else if (this.peekIf(Keyword.DEFAULT)) {
+      node.add(this.consume())
       node.name = "default"
-      node.add(this.token(-1))
-
-      if (this.consumeIf(TokenType.LeftParen)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         node.add(this.expression())
-        this.consume(TokenType.RightParen)
-        node.add(this.token(-1))
+        node.add(this.consume(TokenType.RightParen))
       } else {
         node.add(this.expression())
       }
-    } else if (this.consumeIf(Keyword.COLLATE)) {
+    } else if (this.peekIf(Keyword.COLLATE)) {
+      node.add(this.consume())
       node.name = "collate"
-      node.add(this.token(-1))
-
       node.add(this.identifier("collate_name"))
-    } else if (this.consumeIf(Keyword.REFERENCES)) {
+    } else if (this.peekIf(Keyword.REFERENCES)) {
+      node.add(this.consume())
       node.name = "references"
-      node.add(this.token(-1))
-
       node.add(this.identifier("table_name"))
-
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.LeftParen))
       while (this.token()) {
         node.add(this.identifier("column_name"))
-        if (this.consumeIf(TokenType.Comma)) {
-          node.add(this.token(-1))
+        if (this.peekIf(TokenType.Comma)) {
+          node.add(this.consume())
         } else {
           break
         }
       }
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
     } else if (this.peekIf(Keyword.GENERATED) || this.peekIf(Keyword.AS)) {
       node.name = "generated always"
-      if (this.consumeIf(Keyword.GENERATED)) {
-        this.consume(Keyword.ALWAYS)
-        node.add(this.token(-2), this.token(-1))
+      if (this.peekIf(Keyword.GENERATED)) {
+        node.add(this.consume(), this.consume(Keyword.ALWAYS))
       }
-      this.consume(Keyword.AS)
-      node.add(this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
+      node.add(this.consume(Keyword.AS))
+      node.add(this.consume(TokenType.LeftParen))
       node.add(this.expression())
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
 
-      if (this.consumeIf(Keyword.STORED)) {
-        node.add(new Node("stored").add(this.token(-1)))
-      } else if (this.consumeIf(Keyword.VIRTUAL)) {
-        node.add(new Node("virtual").add(this.token(-1)))
+      if (this.peekIf(Keyword.STORED)) {
+        node.add(new Node("stored").add(this.consume()))
+      } else if (this.peekIf(Keyword.VIRTUAL)) {
+        node.add(new Node("virtual").add(this.consume()))
       }
     } else {
       throw this.createParseError()
@@ -1398,87 +1290,70 @@ export class Sqlite3Parser extends Parser {
   private tableConstraint() {
     const node = new Node("constraint")
 
-    if (this.consumeIf(Keyword.CONSTRAINT)) {
+    if (this.peekIf(Keyword.CONSTRAINT)) {
+      node.add(this.consume())
       const nameNode = this.identifier("name")
       node.value = nameNode.value
       node.add(nameNode)
     }
-    if (this.consumeIf(Keyword.PRIMARY)) {
-      this.consume(Keyword.KEY)
-      const constraintNode = new Node("primary key")
-      constraintNode.add(this.token(-2), this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
+    if (this.peekIf(Keyword.PRIMARY)) {
+      const childNode = new Node("primary key")
+      childNode.add(this.consume())
+      childNode.add(this.consume(Keyword.KEY))
+      childNode.add(this.consume(TokenType.LeftParen))
       while (this.token()) {
-        constraintNode.add(this.indexColumn())
-        if (this.consumeIf(TokenType.Comma)) {
-          constraintNode.add(this.token(-1))
+        childNode.add(this.indexColumn())
+        if (this.peekIf(TokenType.Comma)) {
+          childNode.add(this.consume())
         } else {
           break
         }
       }
-      this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
+      childNode.add(this.consume(TokenType.RightParen))
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
-        node.add(this.conflictAction())
+        childNode.add(this.conflictAction())
       }
-
-      node.add(constraintNode)
-    } else if (this.consumeIf(Keyword.UNIQUE)) {
-      const constraintNode = new Node("unique")
-      constraintNode.add(this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
+      node.add(childNode)
+    } else if (this.peekIf(Keyword.UNIQUE)) {
+      const childNode = new Node("unique")
+      childNode.add(this.consume())
+      childNode.add(this.consume(TokenType.LeftParen))
       while (this.token()) {
-        constraintNode.add(this.indexColumn())
-        if (this.consumeIf(TokenType.Comma)) {
-          constraintNode.add(this.token(-1))
+        childNode.add(this.indexColumn())
+        if (this.peekIf(TokenType.Comma)) {
+          childNode.add(this.consume())
         } else {
           break
         }
       }
-      this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
+      childNode.add(this.consume(TokenType.RightParen))
       if (this.peekIf(Keyword.ON, Keyword.CONFLICT)) {
-        node.add(this.conflictAction())
+        childNode.add(this.conflictAction())
       }
-
-      node.add(constraintNode)
-    } else if (this.consumeIf(Keyword.CHECK)) {
-      const constraintNode = new Node("check")
-      constraintNode.add(this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
-      constraintNode.add(this.expression())
-      this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
-      node.add(constraintNode)
-    } else if (this.consumeIf(Keyword.FOREIGN)) {
-      this.consume(Keyword.KEY)
-      const constraintNode = new Node("foreign key")
-      constraintNode.add(this.token(-2), this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      constraintNode.add(this.token(-1))
-      constraintNode.add(this.identifier("column_name"))
+      node.add(childNode)
+    } else if (this.peekIf(Keyword.CHECK)) {
+      const childNode = new Node("check")
+      childNode.add(this.consume())
+      childNode.add(this.consume(TokenType.LeftParen))
+      childNode.add(this.expression())
+      childNode.add(this.consume(TokenType.RightParen))
+      node.add(childNode)
+    } else if (this.peekIf(Keyword.FOREIGN)) {
+      const childNode = new Node("foreign key")
+      childNode.add(this.consume())
+      childNode.add(this.consume(Keyword.KEY))
+      childNode.add(this.consume(TokenType.LeftParen))
+      childNode.add(this.identifier("column_name"))
       while (this.token()) {
-        constraintNode.add(this.identifier("column_name"))
-        if (this.consumeIf(TokenType.Comma)) {
-          constraintNode.add(this.token(-1))
+        childNode.add(this.identifier("column_name"))
+        if (this.peekIf(TokenType.Comma)) {
+          childNode.add(this.consume())
         } else {
           break
         }
       }
-      this.consume(TokenType.RightParen)
-      constraintNode.add(this.token(-1))
-
-      node.add(constraintNode)
+      childNode.add(this.consume(TokenType.RightParen))
+      node.add(childNode)
     } else {
       throw this.createParseError()
     }
@@ -1503,38 +1378,39 @@ export class Sqlite3Parser extends Parser {
     }
     node.add(nameNode)
 
-    if (this.consumeIf(TokenType.LeftParen)) {
+    if (this.peekIf(TokenType.LeftParen)) {
+      node.add(this.consume())
       node.add(this.numberValue("length"))
-      if (this.consumeIf(TokenType.Comma)) {
+      if (this.peekIf(TokenType.Comma)) {
+        node.add(this.consume())
         node.add(this.numberValue("scale"))
       }
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
+      node.add(this.consume(TokenType.RightParen))
     }
     return node
   }
 
   private conflictAction() {
     const node = new Node("")
-    if (this.consumeIf(Keyword.ON)) {
-      this.consume(Keyword.CONFLICT)
-      node.add(this.token(-2), this.token(-1))
+    if (this.peekIf(Keyword.ON)) {
+      node.add(this.consume())
+      node.add(this.consume(Keyword.CONFLICT))
     }
-    if (this.consumeIf(Keyword.ROLLBACK)) {
+    if (this.peekIf(Keyword.ROLLBACK)) {
       node.name = "rollback"
-      node.add(this.token(-1))
-    } else if (this.consumeIf(Keyword.ABORT)) {
+      node.add(this.consume())
+    } else if (this.peekIf(Keyword.ABORT)) {
       node.name = "abort"
-      node.add(this.token(-1))
-    } else if (this.consumeIf(Keyword.FAIL)) {
+      node.add(this.consume())
+    } else if (this.peekIf(Keyword.FAIL)) {
       node.name = "fail"
-      node.add(this.token(-1))
-    } else if (this.consumeIf(Keyword.IGNORE)) {
+      node.add(this.consume())
+    } else if (this.peekIf(Keyword.IGNORE)) {
       node.name = "ignore"
-      node.add(this.token(-1))
-    } else if (this.consumeIf(Keyword.REPLACE)) {
+      node.add(this.consume())
+    } else if (this.peekIf(Keyword.REPLACE)) {
       node.name = "replace"
-      node.add(this.token(-1))
+      node.add(this.consume())
     } else {
       throw this.createParseError()
     }
@@ -1543,41 +1419,40 @@ export class Sqlite3Parser extends Parser {
 
   private indexColumn() {
     const node = new Node("index_column")
-    const start = this.pos
+    const mark = this.pos
     const expressionNode = this.expression()
     if (expressionNode.children.length === 1) {
-      this.pos = start
+      this.pos = mark
       node.add(this.identifier("name"))
     } else {
       node.add(expressionNode)
     }
-    if (this.consumeIf(Keyword.ASC)) {
-      node.add(new Node("asc").add(this.token(-1)))
-    } else if (this.consumeIf(Keyword.DESC)) {
-      node.add(new Node("desc").add(this.token(-1)))
+    if (this.peekIf(Keyword.ASC)) {
+      node.add(new Node("asc").add(this.consume()))
+    } else if (this.peekIf(Keyword.DESC)) {
+      node.add(new Node("desc").add(this.consume()))
     }
     return node
   }
 
   private pragmaValue() {
     const node = new Node("pragma_value")
-    if (this.consumeIf(Keyword.OPE_PLUS) || this.consumeIf(Keyword.OPE_MINUS)) {
-      const token1 = this.token(-1)
+    if (this.peekIf(Keyword.OPE_PLUS) || this.peekIf(Keyword.OPE_MINUS)) {
+      const token1 = this.consume()
       node.add(token1)
-      this.consume(TokenType.Number)
-      const token2 = this.token(-1)
+      const token2 = this.consume(TokenType.Number)
       node.add(token2)
       node.value = new Decimal(token1.text + token2.text).toString()
-    } else if (this.consumeIf(TokenType.Number)) {
-      const token = this.token(-1)
+    } else if (this.peekIf(TokenType.Number)) {
+      const token = this.consume()
       node.add(token)
       node.value = new Decimal(token.text).toString()
-    } else if (this.consumeIf(TokenType.String) || this.consumeIf(TokenType.QuotedValue)) {
-      const token = this.token(-1)
+    } else if (this.peekIf(TokenType.String) || this.peekIf(TokenType.QuotedValue)) {
+      const token = this.consume()
       node.add(token)
       node.value = dequote(token.text)
-    } else if (this.consumeIf(TokenType.Identifier)) {
-      const token = this.token(-1)
+    } else if (this.peekIf(TokenType.Identifier)) {
+      const token = this.consume()
       node.add(token)
       node.value = token.text
     } else {
@@ -1588,17 +1463,17 @@ export class Sqlite3Parser extends Parser {
 
   private identifier(name: string) {
     const node = new Node(name)
-    if (this.consumeIf(TokenType.QuotedIdentifier)) {
-      node.add(this.token(-1))
+    if (this.peekIf(TokenType.QuotedIdentifier)) {
+      node.add(this.consume())
       node.value = dequote(this.token(-1).text)
-    } else if (this.consumeIf(TokenType.QuotedValue)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.QuotedValue)) {
+      node.add(this.consume())
       node.value = dequote(this.token(-1).text)
-    } else if (this.consumeIf(TokenType.String)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.String)) {
+      node.add(this.consume())
       node.value = dequote(this.token(-1).text)
-    } else if (this.consumeIf(TokenType.Identifier)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.Identifier)) {
+      node.add(this.consume())
       node.value = this.token(-1).text
     } else {
       throw this.createParseError()
@@ -1608,16 +1483,14 @@ export class Sqlite3Parser extends Parser {
 
   private numberValue(name: string) {
     const node = new Node(name)
-    if (this.consumeIf(Keyword.OPE_PLUS) || this.consumeIf(Keyword.OPE_MINUS)) {
-      const token1 = this.token(-1)
+    if (this.peekIf(Keyword.OPE_PLUS) || this.peekIf(Keyword.OPE_MINUS)) {
+      const token1 = this.consume()
       node.add(token1)
-      this.consume(TokenType.Number)
-      const token2 = this.token(-1)
+      const token2 = this.consume(TokenType.Number)
       node.add(token2)
       node.value = new Decimal(token1.text + token2.text).toString()
     } else {
-      this.consume(TokenType.Number)
-      const token = this.token(-1)
+      const token = this.consume(TokenType.Number)
       node.add(token)
       node.value = new Decimal(token.text).toString()
     }
@@ -1635,15 +1508,14 @@ export class Sqlite3Parser extends Parser {
       (depth == 0 && !this.peekIf(Keyword.DESC)) &&
       !this.peekIf(TokenType.SemiColon)
     ) {
-      if (this.consumeIf(TokenType.LeftParen)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         depth++
-      } else if (this.consumeIf(TokenType.RightParen)) {
-        node.add(this.token(-1))
+      } else if (this.peekIf(TokenType.RightParen)) {
+        node.add(this.consume())
         depth--
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
     return node

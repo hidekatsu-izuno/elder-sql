@@ -93,16 +93,6 @@ export class Node {
   }
 }
 
-export class Segment {
-  public tokens: Token[] = []
-
-  constructor(
-    public lineNumber: number = 1,
-    public fileName?: string,
-  ) {
-  }
-}
-
 export abstract class Lexer {
   constructor(
     public type: string,
@@ -184,7 +174,7 @@ export abstract class Lexer {
   }
 }
 
-export type SplitFunction = (input: string, options?: Record<string, any>) => Segment[]
+export type SplitFunction = (input: string, options?: Record<string, any>) => Token[][]
 
 export abstract class Splitter {
   constructor(
@@ -192,7 +182,7 @@ export abstract class Splitter {
   ) {
   }
 
-  abstract split(tokens: Token[]): Segment[]
+  abstract split(tokens: Token[]):  Token[][]
 }
 
 export type ParseFunction = (input: string, options?: Record<string, any>) => Node
@@ -230,82 +220,78 @@ export abstract class Parser {
     return true
   }
 
-  consumeIf(...types: TokenType[]) {
-    if (!this.peekIf(...types)) {
-      return false
+  consume(type?: TokenType) {
+    const token = this.token()
+    if (token == null) {
+      throw this.createParseError()
     }
-    this.pos += types.length
-    return true
-  }
-
-  consume(...types: TokenType[]) {
-    if (types.length > 0) {
-      if (!this.consumeIf(...types)) {
-        throw this.createParseError()
-      }
-    } else {
-      const token = this.token()
-      if (token == null) {
-        throw this.createParseError()
-      }
-      this.pos++
+    if (type && !token.is(type)) {
+      throw this.createParseError()
     }
-    return true
+    this.pos++
+    return token
   }
 
   createParseError(message?: string) {
     const token = this.token()
-    const fileName = this.options.fileName ?? ""
-    let lines = [0]
-    let rows = this.options.lineNumber ?? 1
-    let cols = 0
+    let fileName = token.location?.fileName
+    let lineNumber = token.location?.lineNumber
+    let columnNumber = token.location?.columnNumber
 
-    for (let i = 0; i < this.pos; i++) {
-      const token = this.tokens[i]
-      if (token.type === TokenType.LineBreak) {
-        if (i + 1 < this.pos) {
-          lines.push(i + 1)
-          rows++
-        }
-      }
-    }
-    for (let i = lines[lines.length-1]; i < this.pos; i++) {
-      const token = this.tokens[i]
-        for (const skipToken of token.skips) {
-          cols += skipToken.text.length
-        }
-        cols += token.text.length
-    }
-
-    if (!message) {
-      let line = ""
-      for (let i = lines[lines.length-1]; i < this.pos; i++) {
+    if (message == null) {
+      const lines = []
+      lineNumber = 1
+      for (let i = 0; i < this.pos - 1; i++) {
         const token = this.tokens[i]
-        for (const skipToken of token.skips) {
-          line += skipToken.text
-        }
-        line += token.text
-      }
-      if (!line && lines.length > 1) {
-        let line2 = ""
-        for (let i = lines[lines.length-2]; i < lines[lines.length-1] - 1; i++) {
-          const token = this.tokens[i]
-          for (const skipToken of token.skips) {
-            line2 += skipToken.text
+        if (token.type === TokenType.LineBreak) {
+          lineNumber++
+        } else {
+          if (!lines[lineNumber-1]) {
+            lines[lineNumber-1] = ""
           }
-          line2 += token.text
+          for (const skipToken of token.skips) {
+            lines[lineNumber-1] += skipToken.text
+          }
+          if (token.type === TokenType.Eof) {
+            lines[lineNumber-1] += "<EOF>"
+          } else {
+            lines[lineNumber-1] += token.text
+          }
         }
-        line = `${line2.substring(line2.length - 16)}\u21B5 ${line}`
       }
-      message = `Unexpected token: ${line}"${token && token.type !== TokenType.Eof ? token.text : "<EOF>"}"`
+      let line = lines[lines.length-1] || ""
+      if (line && lines.length > 1) {
+        let preLine = lines[lines.length-1]
+        line = `${preLine.substring(preLine.length - 16)}\u21B5 ${line}`
+      }
+      message = `Unexpected token: ${line}`
     }
 
-    return new ParseError(
-      `${fileName}[${rows},${cols}] ${message}`,
-      fileName,
-      rows,
-      cols,
-    )
+    if (lineNumber == null) {
+      lineNumber = 1
+      for (let i = 0; i < this.pos; i++) {
+        const token = this.tokens[i]
+        if (token.type === TokenType.LineBreak) {
+          lineNumber++
+        }
+      }
+    }
+
+    let prefix = ""
+    if (fileName != null) {
+      prefix += fileName
+    }
+    prefix += "[" + lineNumber
+    if (columnNumber != null) {
+      prefix += "," + columnNumber
+    }
+    prefix += "] "
+
+    const err = new ParseError(prefix + message)
+    err.fileName = fileName
+    err.lineNumber = lineNumber
+    err.columnNumber = columnNumber
+    return err
   }
 }
 
@@ -322,13 +308,11 @@ export class AggregateParseError extends Error {
 
 export class ParseError extends Error {
   node?: Node
+  fileName?: string
+  lineNumber?: number
+  columnNumber?: number
 
-  constructor(
-    public message: string,
-    public fileName: string,
-    public lineNumber: number,
-    public columnNumber: number,
-  ) {
+  constructor(message: string) {
     super(message)
   }
 }

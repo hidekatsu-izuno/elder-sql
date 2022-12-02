@@ -8,7 +8,6 @@ import {
   AggregateParseError,
   ParseFunction,
   Splitter,
-  Segment,
   SplitFunction,
 } from "../parser"
 import { dequote } from "../util"
@@ -18,6 +17,7 @@ export class Keyword extends TokenType {
   static ABORT = new Keyword("ABORT")
   static ACCESS = new Keyword("ACCESS", { reserved: true })
   static ACCESSED = new Keyword("ACCESSED")
+  static ACCESSIBLE = new Keyword("ACCESSIBLE")
   static ACCOUNT = new Keyword("ACCOUNT")
   static ACTIONS = new Keyword("ACTIONS")
   static ACTIVE = new Keyword("ACTIVE")
@@ -28,6 +28,7 @@ export class Keyword extends TokenType {
   static ADVISE = new Keyword("ADVISE")
   static AFFINITY = new Keyword("AFFINITY")
   static AFTER = new Keyword("AFTER")
+  static AGENT = new Keyword("AGENT")
   static AGGREGATE = new Keyword("AGGREGATE")
   static ALGORITHM = new Keyword("ALGORITHM")
   static ALIAS = new Keyword("ALIAS")
@@ -66,6 +67,7 @@ export class Keyword extends TokenType {
   static AUTOALLOCATE = new Keyword("AUTOALLOCATE")
   static AUTOEXTEND = new Keyword("AUTOEXTEND")
   static AUTOMATIC = new Keyword("AUTOMATIC")
+  static AUTONOMOUS_TRANSACTION = new Keyword("AUTONOMOUS_TRANSACTION")
   static AVAILABILITY = new Keyword("AVAILABILITY")
   static AZURE_ROLE = new Keyword("AZURE_ROLE")
   static AZURE_USER = new Keyword("AZURE_USER")
@@ -81,6 +83,7 @@ export class Keyword extends TokenType {
   static BFILE = new Keyword("BFILE")
   static BIGFILE = new Keyword("BIGFILE")
   static BINDING = new Keyword("BINDING")
+  static BINARY_INTEGER = new Keyword("BINARY_INTEGER")
   static BITMAP = new Keyword("BITMAP")
   static BLOB = new Keyword("BLOB")
   static BLOCK = new Keyword("BLOCK")
@@ -90,6 +93,9 @@ export class Keyword extends TokenType {
   static BOTH = new Keyword("BOTH")
   static BREADTH = new Keyword("BREADTH")
   static BUFFER_CACHE = new Keyword("BUFFER_CACHE")
+  static BULK = new Keyword("BULK")
+  static BULK_ROWCOUNT = new Keyword("BULK_ROWCOUNT")
+  static BULK_EXCEPTIONS = new Keyword("BULK_EXCEPTIONS")
   static BY = new Keyword("BY", { reserved: true })
   static CACHE = new Keyword("CACHE")
   static CACHING = new Keyword("CACHING")
@@ -102,6 +108,8 @@ export class Keyword extends TokenType {
   static CATEGORY = new Keyword("CATEGORY")
   static CHAR = new Keyword("CHAR", { reserved: true })
   static CHARACTER = new Keyword("CHARACTER")
+  static CHARSETID = new Keyword("CHARSETID")
+  static CHARSETFORM = new Keyword("CHARSETFORM")
   static CHANGE = new Keyword("CHANGE")
   static CHECK = new Keyword("CHECK", { reserved: true })
   static CHAINED = new Keyword("CHAINED")
@@ -130,6 +138,7 @@ export class Keyword extends TokenType {
   static COLD = new Keyword("COLD")
   static COLLATION = new Keyword("COLLATION")
   static COLLATE = new Keyword("COLLATE")
+  static COLLECT = new Keyword("COLLECT")
   static COLUMN = new Keyword("COLUMN", { reserved: true })
   static COLUMNS = new Keyword("COLUMNS", { reserved: true })
   static COLUMN_VALUE = new Keyword("COLUMN_VALUE")
@@ -165,6 +174,8 @@ export class Keyword extends TokenType {
   static CONVERT = new Keyword("CONVERT")
   static COPY = new Keyword("COPY")
   static COST = new Keyword("COST")
+  static COUNT = new Keyword("COUNT")
+  static COVERAGE = new Keyword("COVERAGE")
   static CPU_PER_CALL = new Keyword("CPU_PER_CALL")
   static CPU_PER_SESSION = new Keyword("CPU_PER_SESSION")
   static CRASH = new Keyword("CRASH", { reserved: true })
@@ -191,6 +202,7 @@ export class Keyword extends TokenType {
   static DBA_RECYCLEBIN = new Keyword("DBA_RECYCLEBIN")
   static DDL = new Keyword("DDL")
   static DEALLOCATE = new Keyword("DEALLOCATE")
+  static DEBUG = new Keyword("DEBUG")
   static DECIMAL = new Keyword("DECIMAL", { reserved: true })
   static DECLARE = new Keyword("DECLARE", { reserved: true })
   static DECREMENT = new Keyword("DECREMENT")
@@ -205,13 +217,16 @@ export class Keyword extends TokenType {
   static DEFINER = new Keyword("DEFINER")
   static DELETE = new Keyword("DELETE", { reserved: true })
   static DELETE_ALL = new Keyword("DELETE_ALL")
+  static DELETING = new Keyword("DELETING")
   static DELIGATE = new Keyword("DELIGATE")
   static DEMAND = new Keyword("DEMAND")
   static DEPENDENT = new Keyword("DEPENDENT")
   static DEPTH = new Keyword("DEPTH")
+  static DEPLICATE = new Keyword("DEPLICATE")
   static DESC = new Keyword("DESC", { reserved: true })
   static DESCRIPTION = new Keyword("DESCRIPTION")
   static DETERMINES = new Keyword("DETERMINES")
+  static DETERMINISTIC = new Keyword("DETERMINISTIC")
   static DICTIONARY = new Keyword("DICTIONARY")
   static DIGEST = new Keyword("DIGEST")
   static DISCARDFILE = new Keyword("DISCARDFILE")
@@ -235,6 +250,7 @@ export class Keyword extends TokenType {
   static DML = new Keyword("DML")
   static DOWNGRADE = new Keyword("DOWNGRADE")
   static DROP = new Keyword("DROP", { reserved: true })
+  static DURATION = new Keyword("DURATION")
   static DUPLICATE = new Keyword("DUPLICATE")
   static DUPLICATED = new Keyword("DUPLICATED")
   static DV = new Keyword("DV")
@@ -245,6 +261,7 @@ export class Keyword extends TokenType {
   static EDITIONING = new Keyword("EDITIONING")
   static ELEMENT = new Keyword("ELEMENT")
   static ELSE = new Keyword("ELSE", { reserved: true })
+  static ELSIF = new Keyword("ELSIF")
   static ENABLE = new Keyword("ENABLE")
   static ENABLE_ALL = new Keyword("ENABLE_ALL")
   static ENCRYPT = new Keyword("ENCRYPT")
@@ -252,14 +269,18 @@ export class Keyword extends TokenType {
   static END = new Keyword("END", { reserved: true })
   static ENFORCED = new Keyword("ENFORCED")
   static ENTERPRISE = new Keyword("ENTERPRISE")
+  static ERROR_CODE = new Keyword("ERROR_CODE")
+  static ERROR_INDEX = new Keyword("ERROR_INDEX")
   static ERRORS = new Keyword("ERRORS")
   static EXCEPT = new Keyword("EXCEPT")
   static EXCEPTION = new Keyword("EXCEPTION", { reserved: true })
+  static EXCEPTION_INIT = new Keyword("EXCEPTION_INIT")
   static EXCEPTIONS = new Keyword("EXCEPTIONS")
   static EXCHANGE = new Keyword("EXCHANGE")
   static EXCLUDE = new Keyword("EXCLUDE")
   static EXCLUSIVE = new Keyword("EXCLUSIVE", { reserved: true })
   static EXISTS = new Keyword("EXISTS", { reserved: true })
+  static EXIT = new Keyword("EXIT")
   static EXPIRE = new Keyword("EXPIRE")
   static EXPLAIN = new Keyword("EXPLAIN")
   static EXPORT = new Keyword("EXPORT")
@@ -294,8 +315,10 @@ export class Keyword extends TokenType {
   static FLOAT = new Keyword("FLOAT", { reserved: true })
   static FLUSH = new Keyword("FLUSH")
   static FOR = new Keyword("FOR", { reserved: true })
+  static FORALL = new Keyword("FORALL")
   static FORCE = new Keyword("FORCE")
   static FOREIGN = new Keyword("FOREIGN")
+  static FOUND = new Keyword("FOUND")
   static FRESH = new Keyword("FRESH")
   static FREEPOOLS = new Keyword("FREEPOOLS")
   static FROM = new Keyword("FROM", { reserved: true })
@@ -351,16 +374,21 @@ export class Keyword extends TokenType {
   static INDEXING = new Keyword("INDEXING")
   static INDEXTYPE = new Keyword("INDEXTYPE")
   static INDEXTYPES = new Keyword("INDEXTYPES")
+  static INDICES = new Keyword("INDICES")
   static INDICATOR = new Keyword("INDICATOR")
   static INITIAL = new Keyword("INITIAL", { reserved: true })
   static INITIALIZED = new Keyword("INITIALIZED")
   static INITRANS = new Keyword("INITRANS")
+  static INLINE = new Keyword("INLINE")
   static INMEMORY = new Keyword("INMEMORY")
   static INNER = new Keyword("INNER")
+  static INOUT = new Keyword("INOUT")
   static INSERT = new Keyword("INSERT", { reserved: true })
+  static INSERTING = new Keyword("INSERTING")
   static INSTALL = new Keyword("INSTALL")
   static INSTANCE = new Keyword("INSTANCE")
   static INSTANCES = new Keyword("INSTANCES")
+  static INSTANTIABLE = new Keyword("INSTANTIABLE")
   static INTEGER = new Keyword("INTEGER", { reserved: true })
   static INTERLEAVED = new Keyword("INTERLEAVED")
   static INTERSECT = new Keyword("INTERSECT", { reserved: true })
@@ -373,6 +401,7 @@ export class Keyword extends TokenType {
   static IS_LEAF = new Keyword("IS_LEAF")
   static ISOLATE = new Keyword("ISOLATE")
   static ISOLATION = new Keyword("ISOLATION")
+  static ISOPEN = new Keyword("ISOPEN")
   static ITERATE = new Keyword("ITERATE")
   static JAVA = new Keyword("JAVA")
   static JOIN = new Keyword("JOIN")
@@ -388,6 +417,7 @@ export class Keyword extends TokenType {
   static LEAD_CDB_URI = new Keyword("LEAD_CDB_URI")
   static LEAF = new Keyword("LEAF")
   static LEFT = new Keyword("LEFT")
+  static LENGTH = new Keyword("LENGTH")
   static LESS = new Keyword("LESS")
   static LEVEL = new Keyword("LEVEL", { reserved: true })
   static LEVEL_NAME = new Keyword("LEVEL_NAME")
@@ -428,6 +458,7 @@ export class Keyword extends TokenType {
   static MANAGED = new Keyword("MANAGED")
   static MANAGEMENT = new Keyword("MANAGEMENT")
   static MANUAL = new Keyword("MANUAL")
+  static MAP = new Keyword("MAP")
   static MAPPING = new Keyword("MAPPING")
   static MASTER = new Keyword("MASTER")
   static MATCH = new Keyword("MATCH")
@@ -441,6 +472,7 @@ export class Keyword extends TokenType {
   static MAXIMIZE = new Keyword("MAXIMIZE")
   static MAXINSTANCES = new Keyword("MAXINSTANCES")
   static MAXDATAFILES = new Keyword("MAXDATAFILES")
+  static MAXLEN = new Keyword("MAXLEN")
   static MAXLOGFILES = new Keyword("MAXLOGFILES")
   static MAXLOGMEMBERS = new Keyword("MAXLOGMEMBERS")
   static MAXLOGHISTORY= new Keyword("MAXLOGHISTORY")
@@ -527,6 +559,10 @@ export class Keyword extends TokenType {
   static NOSORT = new Keyword("NOSORT")
   static NOSWITCH = new Keyword("NOSWITCH")
   static NOT = new Keyword("NOT", { reserved: true })
+  static NOT_FEASIBLE = new Keyword("NOT_FEASIBLE")
+  static NOT_FEASIBLE_START = new Keyword("NOT_FEASIBLE_START")
+  static NOT_FEASIBLE_END = new Keyword("NOT_FEASIBLE_END")
+  static NOTFOUND = new Keyword("NOTFOUND")
   static NOVALIDATE = new Keyword("NOVALIDATE")
   static NOWAIT = new Keyword("NOWAIT", { reserved: true })
   static NULL = new Keyword("NULL", { reserved: true })
@@ -554,10 +590,12 @@ export class Keyword extends TokenType {
   static ORDER = new Keyword("ORDER", { reserved: true })
   static ORGANIZATION = new Keyword("ORGANIZATION")
   static OTHER = new Keyword("OTHER")
+  static OUT = new Keyword("OUT")
   static OUTER = new Keyword("OUTER")
   static OUTLINE = new Keyword("OUTLINE")
   static OVERFLOW = new Keyword("OVERFLOW")
   static OVERLAPS = new Keyword("OVERLAPS", { reserved: true })
+  static OVERRIDING = new Keyword("OVERRIDING")
   static OWNER = new Keyword("OWNER")
   static OWNERSHIP = new Keyword("OWNERSHIP")
   static P = new Keyword("P")
@@ -590,18 +628,24 @@ export class Keyword extends TokenType {
   static PERMANENT = new Keyword("PERMANENT")
   static PERMISSION = new Keyword("PERMISSION")
   static PARALLEL = new Keyword("PARALLEL")
+  static PARALLEL_ENABLE = new Keyword("PARALLEL_ENABLE")
   static PARTITION = new Keyword("PARTITION")
   static PARTITIONSET = new Keyword("PARTITIONSET")
   static PFILE = new Keyword("PFILE")
   static PHYSICAL = new Keyword("PHYSICAL")
+  static PIPE = new Keyword("PIPE")
+  static PIPELINED = new Keyword("PIPELINED")
   static PIVOT = new Keyword("PIVOT")
   static PLAN = new Keyword("PLAN")
+  static PLS_INTEGER = new Keyword("PLS_INTEGER")
   static PLUGGABLE = new Keyword("PLUGGABLE")
   static POINT = new Keyword("POINT")
   static POLICY = new Keyword("POLICY")
+  static POLYMORPHIC = new Keyword("POLYMORPHIC")
   static PORT = new Keyword("PORT")
   static POST_TRANSACTION = new Keyword("POST_TRANSACTION")
   static POWER = new Keyword("POWER")
+  static PRAGMA = new Keyword("PRAGMA")
   static PRECISION = new Keyword("PRECISION")
   static PREPARE = new Keyword("PREPARE")
   static PERIOD = new Keyword("PERIOD")
@@ -630,6 +674,7 @@ export class Keyword extends TokenType {
   static QUOTA = new Keyword("QUOTA")
   static QUOTAGROUP = new Keyword("QUOTAGROUP")
   static QUARTERS = new Keyword("QUARTERS")
+  static RAISE = new Keyword("RAISE")
   static RANGE = new Keyword("RANGE")
   static RAW = new Keyword("RAW", { reserved: true })
   static READ = new Keyword("READ")
@@ -651,6 +696,7 @@ export class Keyword extends TokenType {
   static REJECT = new Keyword("REJECT")
   static REKEY = new Keyword("REKEY")
   static RELATIONAL = new Keyword("RELATIONAL")
+  static RELIES_ON = new Keyword("RELIES_ON")
   static RELY = new Keyword("RELY")
   static RELOCATE = new Keyword("RELOCATE")
   static RENAME = new Keyword("RENAME", { reserved: true })
@@ -666,6 +712,7 @@ export class Keyword extends TokenType {
   static RESOURCE = new Keyword("RESOURCE", { reserved: true })
   static RESTART = new Keyword("RESTART")
   static RESTORE = new Keyword("RESTORE")
+  static RESTRICT_REFERENCES = new Keyword("RESTRICT_REFERENCES")
   static RESTRICTED = new Keyword("RESTRICTED")
   static RESUMABLE = new Keyword("RESUMABLE")
   static RESULT_CACHE = new Keyword("RESULT_CACHE")
@@ -678,6 +725,8 @@ export class Keyword extends TokenType {
   static REVOKE = new Keyword("REVOKE", { reserved: true })
   static REWRITE = new Keyword("REWRITE")
   static RIGHT = new Keyword("RIGHT")
+  static RNDS = new Keyword("RNDS")
+  static RNPS = new Keyword("RNPS")
   static ROLE = new Keyword("ROLE")
   static ROLES = new Keyword("ROLES")
   static ROLLBACK = new Keyword("ROLLBACK")
@@ -685,16 +734,18 @@ export class Keyword extends TokenType {
   static ROLLUP = new Keyword("ROLLUP")
   static ROOT = new Keyword("ROOT")
   static ROW = new Keyword("ROW", { reserved: true })
+  static ROWCOUNT = new Keyword("ROWCOUNT")
   static ROWDEPENDENCIES = new Keyword("ROWDEPENDENCIES")
   static ROWID = new Keyword("ROWID", { reserved: true })
   static ROWNUM = new Keyword("ROWNUM", { reserved: true })
   static ROWS = new Keyword("ROWS", { reserved: true })
+  static ROWTYPE = new Keyword("ROWTYPE")
   static RULES = new Keyword("RULES")
   static RUNNING = new Keyword("RUNNING")
   static SALT = new Keyword("SALT")
   static SAMPLE = new Keyword("SAMPLE")
-  static SAVEPOINT = new Keyword("SAVEPOINT")
   static SAVE = new Keyword("SAVE")
+  static SAVEPOINT = new Keyword("SAVEPOINT")
   static SCHEMA = new Keyword("SCHEMA")
   static SCALE = new Keyword("SCALE")
   static SCAN = new Keyword("SCAN")
@@ -709,13 +760,16 @@ export class Keyword extends TokenType {
   static SEGMENT = new Keyword("SEGMENT")
   static SELECT = new Keyword("SELECT", { reserved: true })
   static SELECTIVITY = new Keyword("SELECTIVITY")
+  static SELF = new Keyword("SELF")
   static SESSION = new Keyword("SESSION", { reserved: true })
   static SESSIONS_PER_USER = new Keyword("SESSIONS_PER_USER")
   static SET = new Keyword("SET", { reserved: true })
   static SETS = new Keyword("SETS")
+  static SETTINGS = new Keyword("SETTINGS")
   static SEQUENCE = new Keyword("SEQUENCE")
   static SEQUENTIAL = new Keyword("SEQUENTIAL")
   static SERIALIZABLE = new Keyword("SERIALIZABLE")
+  static SERIALLY_REUSABLE = new Keyword("SERIALLY_REUSABLE")
   static SERVICE = new Keyword("SERVICE")
   static SERVICE_NAME_CONVERT = new Keyword("SERVICE_NAME_CONVERT")
   static SHARE = new Keyword("SHARE", { reserved: true })
@@ -735,12 +789,16 @@ export class Keyword extends TokenType {
   static SNAPSHOT = new Keyword("SNAPSHOT")
   static SORT = new Keyword("SORT")
   static SPACE = new Keyword("SPACE")
+  static SPECIFICATION = new Keyword("SPECIFICATION")
   static SPFILE = new Keyword("SPFILE")
   static SPLIT = new Keyword("SPLIT")
   static SOURCE = new Keyword("SOURCE")
   static SOURCE_FILE_DIRECTORY = new Keyword("SOURCE_FILE_DIRECTORY")
   static SOURCE_FILE_NAME_CONVERT = new Keyword("SOURCE_FILE_NAME_CONVERT")
   static SQL = new Keyword("SQL", { reserved: true })
+  static SQL_MACRO = new Keyword("SQL_MACRO")
+  static SQLCODE = new Keyword("SQLCODE")
+  static SQLERRM = new Keyword("SQLERRM")
   static STANDARD = new Keyword("STANDARD")
   static STANDBY = new Keyword("STANDBY")
   static STANDBYS = new Keyword("STANDBYS")
@@ -749,11 +807,14 @@ export class Keyword extends TokenType {
   static STATEMENT = new Keyword("STATEMENT")
   static STATEMENT_ID = new Keyword("STATEMENT_ID")
   static STATEMENTS = new Keyword("STATEMENTS")
+  static STATIC = new Keyword("STATIC")
   static STATISTICS = new Keyword("STATISTICS")
   static STORAGE = new Keyword("STORAGE")
   static STORE = new Keyword("STORE")
+  static STRING = new Keyword("STRING")
   static STRIPE_WIDTH = new Keyword("STRIPE_WIDTH")
   static STRIPE_COLUMNS = new Keyword("STRIPE_COLUMNS")
+  static STRUCT = new Keyword("STRUCT")
   static STRUCTURE = new Keyword("STRUCTURE")
   static SUBSET = new Keyword("SUBSET")
   static SUBSTITUTABLE = new Keyword("SUBSTITUTABLE")
@@ -779,6 +840,7 @@ export class Keyword extends TokenType {
   static TABLESPACE = new Keyword("TABLESPACE")
   static TAG = new Keyword("TAG")
   static TARGET = new Keyword("TARGET")
+  static TDO = new Keyword("TDO")
   static TEMPFILE = new Keyword("TEMPFILE")
   static TEMPLATE = new Keyword("TEMPLATE")
   static TEMPORARY = new Keyword("TEMPORARY")
@@ -798,6 +860,8 @@ export class Keyword extends TokenType {
   static TRACKING = new Keyword("TRACKING")
   static TRIGGER = new Keyword("TRIGGER", { reserved: true })
   static TRIGGERS = new Keyword("TRIGGERS")
+  static TRIM = new Keyword("TRIM")
+  static TRUST = new Keyword("TRUST")
   static TRUSTED = new Keyword("TRUSTED")
   static TRUNCATE = new Keyword("TRUNCATE")
   static TRANSLATION = new Keyword("TRANSLATION")
@@ -805,6 +869,7 @@ export class Keyword extends TokenType {
   static TRUE = new Keyword("TRUE")
   static TYPE = new Keyword("TYPE", { reserved: true })
   static TYPES = new Keyword("TYPES")
+  static UDF = new Keyword("UDF")
   static UID = new Keyword("UID", { reserved: true })
   static UNARCHIVED = new Keyword("UNARCHIVED")
   static UNRECOVERABLE = new Keyword("UNRECOVERABLE")
@@ -827,6 +892,7 @@ export class Keyword extends TokenType {
   static UNUSED = new Keyword("UNUSED")
   static UPDATE = new Keyword("UPDATE", { reserved: true })
   static UPDATED = new Keyword("UPDATED")
+  static UPDATING = new Keyword("UPDATING")
   static UPGRADE = new Keyword("UPGRADE")
   static UPSERT = new Keyword("UPSERT")
   static USAGE = new Keyword("USAGE")
@@ -838,11 +904,13 @@ export class Keyword extends TokenType {
   static USERS = new Keyword("USERS")
   static USERGROUP = new Keyword("USERGROUP")
   static USING = new Keyword("USING")
+  static USING_NLS_COMP = new Keyword("USING_NLS_COMP")
   static VARRAY = new Keyword("VARRAY")
   static VARRAYS = new Keyword("VARRAYS")
   static VALIDATE = new Keyword("VALIDATE", { reserved: true })
   static VALUE = new Keyword("VALUE")
   static VALUES = new Keyword("VALUES", { reserved: true })
+  static VARYING = new Keyword("VARYING")
   static VARCHAR = new Keyword("VARCHAR", { reserved: true })
   static VARCHAR2 = new Keyword("VARCHAR2", { reserved: true })
   static VERIFY = new Keyword("VERIFY")
@@ -862,6 +930,8 @@ export class Keyword extends TokenType {
   static WHERE = new Keyword("WHERE", { reserved: true })
   static WITH = new Keyword("WITH", { reserved: true })
   static WITHOUT = new Keyword("WITHOUT")
+  static WNDS = new Keyword("WNDS")
+  static WNPS = new Keyword("WNPS")
   static WORK = new Keyword("WORK")
   static WRITE = new Keyword("WRITE")
   static XDB = new Keyword("XDB")
@@ -878,6 +948,7 @@ export class Keyword extends TokenType {
   static OPE_PLUS = new Keyword("OPE_PLUS", { value: "+" })
   static OPE_MINUS = new Keyword("OPE_MINUS", { value: "-" })
   static OPE_AT = new Keyword("OPE_AT", { value: "@" })
+  static OPE_PERCENT = new Keyword("OPE_PERCENT", { value: "%" })
 
   constructor(
     public name: string,
@@ -958,62 +1029,61 @@ export class OracleSplitter extends Splitter {
     super(options)
   }
 
-  split(tokens: Token[]): Segment[] {
-    const stmts = new Array<Segment>()
+  split(tokens: Token[]): Token[][] {
+    const segments = new Array<Token[]>()
 
-    let stmt = null
-    let lineNumber = 1
+    let segment: Token[] | undefined
+    let isBlock = false
     for (const token of tokens) {
-      if (!stmt) {
-        stmt = new Segment(lineNumber)
-        stmts.push(stmt)
-      }
-      for (const skip of token.skips) {
-        if (token.is(TokenType.LineBreak)) {
-          lineNumber++
-        }
+      if (!segment) {
+        segment = []
+        isBlock = false
+        segments.push(segment)
       }
       if (token.is(TokenType.Command)) {
-        stmt = new Segment(lineNumber)
-        stmt.tokens.push(token)
-        stmts.push(stmt)
-        stmt = null
+        segment = []
+        segment.push(token)
+        segments.push(segment)
+        segment = undefined
       } else if (token.is(TokenType.SemiColon)) {
-        if (stmt.tokens[0]?.is(Keyword.DECLARE) || stmt.tokens[0]?.is(Keyword.BEGIN)) {
-          stmt.tokens.push(token)
-        } else if (stmt.tokens[0]?.is(Keyword.CREATE)) {
-          let isBlock = false
-          for (let i = 1; i < stmt.tokens.length; i++) {
-            const stoken = stmt.tokens[i]
-            if (stoken.is(Keyword.FUNCTION)
-              || stoken.is(Keyword.LIBRARY)
-              || stoken.is(Keyword.PACKAGE)
-              || stoken.is(Keyword.PROCEDURE)
-              || stoken.is(Keyword.TRIGGER)
-              || stoken.is(Keyword.TYPE)) {
-              isBlock = true
-              break
-            }
-          }
-          if (isBlock) {
-            stmt.tokens.push(token)
-          } else {
-            stmt.tokens.push(token)
-            stmt = null
-          }
+        segment.push(token)
+        if (isBlock || this.isBlock(segment)) {
+          isBlock = true
         } else {
-          stmt.tokens.push(token)
-          stmt = null
+          segment = undefined
         }
       } else if (token.is(TokenType.Delimiter) || token.is(TokenType.Eof)) {
-        stmt.tokens.push(token)
-        stmt = null
+        segment.push(token)
+        segment = undefined
       } else {
-        stmt.tokens.push(token)
+        segment.push(token)
       }
     }
 
-    return stmts
+    return segments
+  }
+
+  private isBlock(tokens: Token[]) {
+    if (tokens.length === 0) {
+      return false
+    } else if (tokens[0].is(Keyword.DECLARE) || tokens[0].is(Keyword.BEGIN)) {
+      return true
+    } else if (tokens[0].is(Keyword.CREATE)) {
+      const max = Math.min(tokens.length, 5)
+      for (let i = 1; i < max; i++) {
+        if (
+          tokens[i].is(Keyword.FUNCTION)
+          || tokens[i].is(Keyword.LIBRARY)
+          || tokens[i].is(Keyword.PACKAGE)
+          || tokens[i].is(Keyword.PROCEDURE)
+          || tokens[i].is(Keyword.TRIGGER)
+          || tokens[i].is(Keyword.TYPE)
+        ) {
+          return true
+        }
+      }
+    }
+    return false
   }
 }
 
@@ -1022,18 +1092,6 @@ export class OracleParser extends Parser {
     const tokens = new OracleLexer(options).lex(input)
     return new OracleParser(tokens, options).root()
   }
-
-  private static BLOCK_STATEMENTS = new Set<string>([
-    "declare",
-    "begin",
-    "create function",
-    "create library",
-    "create package",
-    "create package body",
-    "create procedure",
-    "create trigger",
-    "create type",
-  ])
 
   constructor(
     tokens: Token[],
@@ -1048,27 +1106,15 @@ export class OracleParser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.consumeIf(TokenType.Eof)) {
-          root.add(this.token(-1))
+        if (this.peekIf(TokenType.Eof)) {
+          root.add(this.consume())
           break
         } else if (this.peekIf(TokenType.Delimiter) || this.peekIf(TokenType.SemiColon)) {
-          this.consume()
-          root.add(this.token(-1))
+          root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
         } else {
-          const stmt = this.statement()
-          root.add(stmt)
-          if (this.consumeIf(TokenType.Eof)) {
-            root.add(this.token(-1))
-            break
-          } else if (this.consumeIf(TokenType.Delimiter)) {
-            root.add(this.token(-1))
-          } else if (!OracleParser.BLOCK_STATEMENTS.has(stmt.name) && this.consumeIf(TokenType.SemiColon)) {
-            root.add(this.token(-1))
-          } else {
-            break
-          }
+          root.add(this.statement())
         }
       } catch (e) {
         if (e instanceof ParseError) {
@@ -1082,7 +1128,7 @@ export class OracleParser extends Parser {
       }
     }
 
-    if (this.token() != null) {
+    if (this.token()) {
       for (let i = this.pos; i < this.tokens.length; i++) {
         root.add(this.tokens[i])
       }
@@ -1119,23 +1165,23 @@ export class OracleParser extends Parser {
     let stmt
 
     try {
-      if (this.consumeIf(Keyword.EXPLAIN)) {
-        this.consume(Keyword.PLAN)
+      if (this.peekIf(Keyword.EXPLAIN)) {
         explainPlan = new Node("explain plan")
-        explainPlan.add(this.token(-2), this.token(-1))
+        explainPlan.add(this.consume())
+        explainPlan.add(this.consume(Keyword.PLAN))
 
-        if (this.consumeIf(Keyword.SET)) {
-          explainPlan.add(this.token(-1))
-          this.consume(Keyword.STATEMENT_ID, Keyword.OPE_EQ, TokenType.String)
-          explainPlan.add(this.token(-3), this.token(-2), this.token(-1))
+        if (this.peekIf(Keyword.SET)) {
+          explainPlan.add(this.consume())
+          explainPlan.add(this.consume(Keyword.STATEMENT_ID))
+          explainPlan.add(this.consume(Keyword.OPE_EQ))
+          explainPlan.add(this.consume(TokenType.String))
         }
 
-        if (this.consumeIf(Keyword.INTO)) {
-          explainPlan.add(this.token(-1))
+        if (this.peekIf(Keyword.INTO)) {
+          explainPlan.add(this.consume())
         }
 
-        this.consume(Keyword.FOR)
-        explainPlan.add(this.token(-1))
+        explainPlan.add(this.consume(Keyword.FOR))
       }
 
       if (this.peekIf(Keyword.CREATE)) {
@@ -1146,32 +1192,33 @@ export class OracleParser extends Parser {
           && !this.peekIf(TokenType.SemiColon)
           && !this.peekIf(TokenType.Delimiter)
         ) {
-          if (this.consumeIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
             this.pos = mark
             stmt = this.createAnalyticViewStatement()
             break
-          } else if (this.consumeIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.createAttributeDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.AUDIT, Keyword.POLICY)) {
+          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
             this.pos = mark
             stmt = this.createAuditPolicyStatement()
             break
-          } else if (this.consumeIf(Keyword.CLUSTER)) {
+          } else if (this.peekIf(Keyword.CLUSTER)) {
             this.pos = mark
             stmt = this.createClusterStatement()
             break
-          } else if (this.consumeIf(Keyword.CONTEXT)) {
+          } else if (this.peekIf(Keyword.CONTEXT)) {
             this.pos = mark
             stmt = this.createContextStatement()
             break
-          } else if (this.consumeIf(Keyword.CONTROLFILE)) {
+          } else if (this.peekIf(Keyword.CONTROLFILE)) {
             this.pos = mark
             stmt = this.createControlfileStatement()
             break
-          } else if (this.consumeIf(Keyword.DATABASE)) {
-            if (this.consumeIf(Keyword.LINK)) {
+          } else if (this.peekIf(Keyword.DATABASE)) {
+            this.consume()
+            if (this.peekIf(Keyword.LINK)) {
               this.pos = mark
               stmt = this.createDatabaseLinkStatement()  
             } else {
@@ -1179,162 +1226,161 @@ export class OracleParser extends Parser {
               stmt = this.createDatabaseStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.createDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.DIRECTORY)) {
+          } else if (this.peekIf(Keyword.DIRECTORY)) {
             this.pos = mark
             stmt = this.createDirectoryStatement()
             break
-          } else if (this.consumeIf(Keyword.DISKGROUP)) {
+          } else if (this.peekIf(Keyword.DISKGROUP)) {
             this.pos = mark
             stmt = this.createDiskgroupStatement()
             break
-          } else if (this.consumeIf(Keyword.EDITION)) {
+          } else if (this.peekIf(Keyword.EDITION)) {
             this.pos = mark
             stmt = this.createEditionStatement()
             break
-          } else if (this.consumeIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
             this.pos = mark
             stmt = this.createEditionStatement()
             break
-          } else if (this.consumeIf(Keyword.FUNCTION)) {
+          } else if (this.peekIf(Keyword.FUNCTION)) {
             this.pos = mark
             stmt = this.createFunctionStatement()
             break
-          } else if (this.consumeIf(Keyword.HIERARCHY)) {
+          } else if (this.peekIf(Keyword.HIERARCHY)) {
             this.pos = mark
             stmt = this.createHierarchyStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEX)) {
+          } else if (this.peekIf(Keyword.INDEX)) {
             this.pos = mark
             stmt = this.createIndexStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEXTYPE)) {
+          } else if (this.peekIf(Keyword.INDEXTYPE)) {
             this.pos = mark
             stmt = this.createIndextypeStatement()
             break
-          } else if (this.consumeIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
             this.pos = mark
             stmt = this.createInmemoryJoinGroupStatement()
             break
-          } else if (this.consumeIf(Keyword.JAVA)) {
+          } else if (this.peekIf(Keyword.JAVA)) {
             this.pos = mark
             stmt = this.createJavaStatement()
             break
-          } else if (this.consumeIf(Keyword.LIBRARY)) {
+          } else if (this.peekIf(Keyword.LIBRARY)) {
             this.pos = mark
             stmt = this.createLibraryStatement()
             break
-          } else if (this.consumeIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.createLockdownProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            if (this.consumeIf(Keyword.LOG)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.LOG)) {
               stmt = this.createMaterializedViewLogStatement()
-            } else if (this.consumeIf(Keyword.ZONEMAP)) {
-              this.pos = mark
+            } else if (this.peekIf(Keyword.ZONEMAP)) {
               stmt = this.createMaterializedViewLogStatement()
             } else {
-              this.pos = mark
               stmt = this.createMaterializedViewStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.OPERATOR)) {
+          } else if (this.peekIf(Keyword.OPERATOR)) {
             this.pos = mark
             stmt = this.createOperatorStatement()
             break
-          } else if (this.consumeIf(Keyword.OUTLINE)) {
+          } else if (this.peekIf(Keyword.OUTLINE)) {
             this.pos = mark
             stmt = this.createOutlineStatement()
             break
-          } else if (this.consumeIf(Keyword.PACKAGE)) {
-            if (this.consumeIf(Keyword.BODY)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.PACKAGE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.BODY)) {
               stmt = this.createPackageBodyStatement()
             } else {
-              this.pos = mark
               stmt = this.createPackageStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.PFILE)) {
+          } else if (this.peekIf(Keyword.PFILE)) {
             this.pos = mark
             stmt = this.createPfileStatement()
             break
-          } else if (this.consumeIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
             this.pos = mark
             stmt = this.createPluggableDatabaseStatement()
             break
-          } else if (this.consumeIf(Keyword.PROCEDURE)) {
+          } else if (this.peekIf(Keyword.PROCEDURE)) {
             this.pos = mark
             stmt = this.createProcedureStatement()
             break
-          } else if (this.consumeIf(Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.createProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.RESTORE, Keyword.POINT)) {
+          } else if (this.peekIf(Keyword.RESTORE, Keyword.POINT)) {
             this.pos = mark
             stmt = this.createRestorePointStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLE)) {
+          } else if (this.peekIf(Keyword.ROLE)) {
             this.pos = mark
             stmt = this.createRoleStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
+          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
             this.pos = mark
             stmt = this.createRollbackSegmentStatement()
             break
-          } else if (this.consumeIf(Keyword.SCHEMA)) {
+          } else if (this.peekIf(Keyword.SCHEMA)) {
             this.pos = mark
             stmt = this.createSchemaStatement()
             break
-          } else if (this.consumeIf(Keyword.SEQUENCE)) {
+          } else if (this.peekIf(Keyword.SEQUENCE)) {
             this.pos = mark
             stmt = this.createSequenceStatement()
             break
-          } else if (this.consumeIf(Keyword.SPFILE)) {
+          } else if (this.peekIf(Keyword.SPFILE)) {
             this.pos = mark
             stmt = this.createSpfileStatement()
             break
-          } else if (this.consumeIf(Keyword.SYNONYM)) {
+          } else if (this.peekIf(Keyword.SYNONYM)) {
             this.pos = mark
             stmt = this.createSynonymStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLE)) {
+          } else if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.createTableStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLESPACE)) {
-            if (this.consumeIf(Keyword.SET)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TABLESPACE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.SET)) {
               stmt = this.createTablespaceSetStatement()
             } else {
-              this.pos = mark
               stmt = this.createTablespaceStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.TRIGGER)) {
+          } else if (this.peekIf(Keyword.TRIGGER)) {
             this.pos = mark
             stmt = this.createTriggerStatement()
             break
-          } else if (this.consumeIf(Keyword.TYPE)) {
-            if (this.consumeIf(Keyword.BODY)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TYPE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.BODY)) {
               stmt = this.createTypeBodyStatement()
             } else {
-              this.pos = mark
               stmt = this.createTypeStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.USER)) {
+          } else if (this.peekIf(Keyword.USER)) {
             this.pos = mark
             stmt = this.createUserStatement()
             break
-          } else if (this.consumeIf(Keyword.VIEW)) {
+          } else if (this.peekIf(Keyword.VIEW)) {
             this.pos = mark
             stmt = this.createViewStatement()
             break
@@ -1353,173 +1399,171 @@ export class OracleParser extends Parser {
           && !this.peekIf(TokenType.SemiColon)
           && !this.peekIf(TokenType.Delimiter)
         ) {
-          if (this.consumeIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
             this.pos = mark
             stmt = this.alterAnalyticViewStatement()
             break
-          } else if (this.consumeIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.alterAttributeDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.AUDIT, Keyword.POLICY)) {
+          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
             this.pos = mark
             stmt = this.alterAuditPolicyStatement()
             break
-          } else if (this.consumeIf(Keyword.CLUSTER)) {
+          } else if (this.peekIf(Keyword.CLUSTER)) {
             this.pos = mark
             stmt = this.alterClusterStatement()
             break
-          } else if (this.consumeIf(Keyword.DATABASE)) {
-            if (this.consumeIf(Keyword.DICTIONARY)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.DATABASE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.DICTIONARY)) {
               stmt = this.alterDatabaseDictionaryStatement()
-            } else if (this.consumeIf(Keyword.LINK)) {
-              this.pos = mark
+            } else if (this.peekIf(Keyword.LINK)) {
               stmt = this.alterDatabaseLinkStatement()  
             } else {
-              this.pos = mark
               stmt = this.alterDatabaseStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.alterDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.DISKGROUP)) {
+          } else if (this.peekIf(Keyword.DISKGROUP)) {
             this.pos = mark
             stmt = this.alterDiskgroupStatement()
             break
-          } else if (this.consumeIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
             this.pos = mark
             stmt = this.alterEditionStatement()
             break
-          } else if (this.consumeIf(Keyword.FUNCTION)) {
+          } else if (this.peekIf(Keyword.FUNCTION)) {
             this.pos = mark
             stmt = this.alterFunctionStatement()
             break
-          } else if (this.consumeIf(Keyword.HIERARCHY)) {
+          } else if (this.peekIf(Keyword.HIERARCHY)) {
             this.pos = mark
             stmt = this.alterHierarchyStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEX)) {
+          } else if (this.peekIf(Keyword.INDEX)) {
             this.pos = mark
             stmt = this.alterIndexStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEXTYPE)) {
+          } else if (this.peekIf(Keyword.INDEXTYPE)) {
             this.pos = mark
             stmt = this.alterIndextypeStatement()
             break
-          } else if (this.consumeIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
             this.pos = mark
             stmt = this.alterInmemoryJoinGroupStatement()
             break
-          } else if (this.consumeIf(Keyword.JAVA)) {
+          } else if (this.peekIf(Keyword.JAVA)) {
             this.pos = mark
             stmt = this.alterJavaStatement()
             break
-          } else if (this.consumeIf(Keyword.LIBRARY)) {
+          } else if (this.peekIf(Keyword.LIBRARY)) {
             this.pos = mark
             stmt = this.alterLibraryStatement()
             break
-          } else if (this.consumeIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.alterLockdownProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            if (this.consumeIf(Keyword.LOG)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.LOG)) {
               stmt = this.alterMaterializedViewLogStatement()
-            } else if (this.consumeIf(Keyword.ZONEMAP)) {
-              this.pos = mark
+            } else if (this.peekIf(Keyword.ZONEMAP)) {
               stmt = this.alterMaterializedViewLogStatement()
             } else {
-              this.pos = mark
               stmt = this.alterMaterializedViewStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.OPERATOR)) {
+          } else if (this.peekIf(Keyword.OPERATOR)) {
             this.pos = mark
             stmt = this.alterOperatorStatement()
             break
-          } else if (this.consumeIf(Keyword.OUTLINE)) {
+          } else if (this.peekIf(Keyword.OUTLINE)) {
             this.pos = mark
             stmt = this.alterOutlineStatement()
             break
-          } else if (this.consumeIf(Keyword.PACKAGE)) {
+          } else if (this.peekIf(Keyword.PACKAGE)) {
             this.pos = mark
             stmt = this.alterPackageStatement()
             break
-          } else if (this.consumeIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
             this.pos = mark
             stmt = this.alterPluggableDatabaseStatement()
             break
-          } else if (this.consumeIf(Keyword.PROCEDURE)) {
+          } else if (this.peekIf(Keyword.PROCEDURE)) {
             this.pos = mark
             stmt = this.alterProcedureStatement()
             break
-          } else if (this.consumeIf(Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.alterProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.RESOURCE, Keyword.COST)) {
+          } else if (this.peekIf(Keyword.RESOURCE, Keyword.COST)) {
             this.pos = mark
             stmt = this.alterResourceCostStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLE)) {
+          } else if (this.peekIf(Keyword.ROLE)) {
             this.pos = mark
             stmt = this.alterRoleStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
+          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
             this.pos = mark
             stmt = this.alterRollbackSegmentStatement()
             break
-          } else if (this.consumeIf(Keyword.SEQUENCE)) {
+          } else if (this.peekIf(Keyword.SEQUENCE)) {
             this.pos = mark
             stmt = this.alterSequenceStatement()
             break
-          } else if (this.consumeIf(Keyword.SESSION)) {
+          } else if (this.peekIf(Keyword.SESSION)) {
             this.pos = mark
             stmt = this.alterSessionStatement()
             break
-          } else if (this.consumeIf(Keyword.SYNONYM)) {
+          } else if (this.peekIf(Keyword.SYNONYM)) {
             this.pos = mark
             stmt = this.alterSynonymStatement()
             break
-          } else if (this.consumeIf(Keyword.SYSTEM)) {
+          } else if (this.peekIf(Keyword.SYSTEM)) {
             this.pos = mark
             stmt = this.alterSystemStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLE)) {
+          } else if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.alterTableStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLESPACE)) {
-            if (this.consumeIf(Keyword.SET)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TABLESPACE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.SET)) {
               stmt = this.alterTablespaceSetStatement()
             } else {
-              this.pos = mark
               stmt = this.alterTablespaceStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.TRIGGER)) {
+          } else if (this.peekIf(Keyword.TRIGGER)) {
             this.pos = mark
             stmt = this.alterTriggerStatement()
             break
-          } else if (this.consumeIf(Keyword.TYPE)) {
-            if (this.consumeIf(Keyword.BODY)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TYPE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.BODY)) {
               stmt = this.alterTypeBodyStatement()
             } else {
-              this.pos = mark
               stmt = this.alterTypeStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.USER)) {
+          } else if (this.peekIf(Keyword.USER)) {
             this.pos = mark
             stmt = this.alterUserStatement()
             break
-          } else if (this.consumeIf(Keyword.VIEW)) {
+          } else if (this.peekIf(Keyword.VIEW)) {
             this.pos = mark
             stmt = this.alterViewStatement()
             break
@@ -1538,178 +1582,178 @@ export class OracleParser extends Parser {
           && !this.peekIf(TokenType.SemiColon)
           && !this.peekIf(TokenType.Delimiter)
         ) {
-          if (this.consumeIf(Keyword.ANALYTIC, Keyword.VIEW)) {
+          if (this.peekIf(Keyword.ANALYTIC, Keyword.VIEW)) {
             this.pos = mark
             stmt = this.dropAnalyticViewStatement()
             break
-          } else if (this.consumeIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.ATTRIBUTE, Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.dropAttributeDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.AUDIT, Keyword.POLICY)) {
+          } else if (this.peekIf(Keyword.AUDIT, Keyword.POLICY)) {
             this.pos = mark
             stmt = this.dropAuditPolicyStatement()
             break
-          } else if (this.consumeIf(Keyword.CLUSTER)) {
+          } else if (this.peekIf(Keyword.CLUSTER)) {
             this.pos = mark
             stmt = this.dropClusterStatement()
             break
-          } else if (this.consumeIf(Keyword.CONTEXT)) {
+          } else if (this.peekIf(Keyword.CONTEXT)) {
             this.pos = mark
             stmt = this.dropContextStatement()
             break
-          } else if (this.consumeIf(Keyword.DATABASE)) {
-            if (this.consumeIf(Keyword.LINK)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.DATABASE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.LINK)) {
               stmt = this.dropDatabaseLinkStatement()  
             } else {
               this.pos = mark
               stmt = this.dropDatabaseStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.DIMENSION)) {
+          } else if (this.peekIf(Keyword.DIMENSION)) {
             this.pos = mark
             stmt = this.dropDimensionStatement()
             break
-          } else if (this.consumeIf(Keyword.DIRECTORY)) {
+          } else if (this.peekIf(Keyword.DIRECTORY)) {
             this.pos = mark
             stmt = this.dropDirectoryStatement()
             break
-          } else if (this.consumeIf(Keyword.DISKGROUP)) {
+          } else if (this.peekIf(Keyword.DISKGROUP)) {
             this.pos = mark
             stmt = this.dropDiskgroupStatement()
             break
-          } else if (this.consumeIf(Keyword.EDITION)) {
+          } else if (this.peekIf(Keyword.EDITION)) {
             this.pos = mark
             stmt = this.dropEditionStatement()
             break
-          } else if (this.consumeIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
+          } else if (this.peekIf(Keyword.FLASHBACK, Keyword.ARCHIVE)) {
             this.pos = mark
             stmt = this.dropEditionStatement()
             break
-          } else if (this.consumeIf(Keyword.FUNCTION)) {
+          } else if (this.peekIf(Keyword.FUNCTION)) {
             this.pos = mark
             stmt = this.dropFunctionStatement()
             break
-          } else if (this.consumeIf(Keyword.HIERARCHY)) {
+          } else if (this.peekIf(Keyword.HIERARCHY)) {
             this.pos = mark
             stmt = this.dropHierarchyStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEX)) {
+          } else if (this.peekIf(Keyword.INDEX)) {
             this.pos = mark
             stmt = this.dropIndexStatement()
             break
-          } else if (this.consumeIf(Keyword.INDEXTYPE)) {
+          } else if (this.peekIf(Keyword.INDEXTYPE)) {
             this.pos = mark
             stmt = this.dropIndextypeStatement()
             break
-          } else if (this.consumeIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
+          } else if (this.peekIf(Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)) {
             this.pos = mark
             stmt = this.dropInmemoryJoinGroupStatement()
             break
-          } else if (this.consumeIf(Keyword.JAVA)) {
+          } else if (this.peekIf(Keyword.JAVA)) {
             this.pos = mark
             stmt = this.dropJavaStatement()
             break
-          } else if (this.consumeIf(Keyword.LIBRARY)) {
+          } else if (this.peekIf(Keyword.LIBRARY)) {
             this.pos = mark
             stmt = this.dropLibraryStatement()
             break
-          } else if (this.consumeIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.LOCKDOWN, Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.dropLockdownProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
-            if (this.consumeIf(Keyword.LOG)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.MATERIALIZED, Keyword.VIEW)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.LOG)) {
               stmt = this.dropMaterializedViewLogStatement()
-            } else if (this.consumeIf(Keyword.ZONEMAP)) {
-              this.pos = mark
+            } else if (this.peekIf(Keyword.ZONEMAP)) {
               stmt = this.dropMaterializedViewLogStatement()
             } else {
-              this.pos = mark
               stmt = this.dropMaterializedViewStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.OPERATOR)) {
+          } else if (this.peekIf(Keyword.OPERATOR)) {
             this.pos = mark
             stmt = this.dropOperatorStatement()
             break
-          } else if (this.consumeIf(Keyword.OUTLINE)) {
+          } else if (this.peekIf(Keyword.OUTLINE)) {
             this.pos = mark
             stmt = this.dropOutlineStatement()
             break
-          } else if (this.consumeIf(Keyword.PACKAGE)) {
+          } else if (this.peekIf(Keyword.PACKAGE)) {
             this.pos = mark
             stmt = this.dropPackageStatement()
             break
-          } else if (this.consumeIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
+          } else if (this.peekIf(Keyword.PLUGGABLE, Keyword.DATABASE)) {
             this.pos = mark
             stmt = this.dropPluggableDatabaseStatement()
             break
-          } else if (this.consumeIf(Keyword.PROCEDURE)) {
+          } else if (this.peekIf(Keyword.PROCEDURE)) {
             this.pos = mark
             stmt = this.dropProcedureStatement()
             break
-          } else if (this.consumeIf(Keyword.PROFILE)) {
+          } else if (this.peekIf(Keyword.PROFILE)) {
             this.pos = mark
             stmt = this.dropProfileStatement()
             break
-          } else if (this.consumeIf(Keyword.RESTORE, Keyword.POINT)) {
+          } else if (this.peekIf(Keyword.RESTORE, Keyword.POINT)) {
             this.pos = mark
             stmt = this.dropRestorePointStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLE)) {
+          } else if (this.peekIf(Keyword.ROLE)) {
             this.pos = mark
             stmt = this.dropRoleStatement()
             break
-          } else if (this.consumeIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
+          } else if (this.peekIf(Keyword.ROLLBACK, Keyword.SEGMENT)) {
             this.pos = mark
             stmt = this.dropRollbackSegmentStatement()
             break
-          } else if (this.consumeIf(Keyword.SCHEMA)) {
+          } else if (this.peekIf(Keyword.SCHEMA)) {
             this.pos = mark
             stmt = this.dropSchemaStatement()
             break
-          } else if (this.consumeIf(Keyword.SEQUENCE)) {
+          } else if (this.peekIf(Keyword.SEQUENCE)) {
             this.pos = mark
             stmt = this.dropSequenceStatement()
             break
-          } else if (this.consumeIf(Keyword.SYNONYM)) {
+          } else if (this.peekIf(Keyword.SYNONYM)) {
             this.pos = mark
             stmt = this.dropSynonymStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLE)) {
+          } else if (this.peekIf(Keyword.TABLE)) {
             this.pos = mark
             stmt = this.dropTableStatement()
             break
-          } else if (this.consumeIf(Keyword.TABLESPACE)) {
-            if (this.consumeIf(Keyword.SET)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TABLESPACE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.SET)) {
               stmt = this.dropTablespaceSetStatement()
             } else {
-              this.pos = mark
               stmt = this.dropTablespaceStatement()  
             }
             break
-          } else if (this.consumeIf(Keyword.TRIGGER)) {
+          } else if (this.peekIf(Keyword.TRIGGER)) {
             this.pos = mark
             stmt = this.dropTriggerStatement()
             break
-          } else if (this.consumeIf(Keyword.TYPE)) {
-            if (this.consumeIf(Keyword.BODY)) {
-              this.pos = mark
+          } else if (this.peekIf(Keyword.TYPE)) {
+            this.consume()
+            this.pos = mark
+            if (this.peekIf(Keyword.BODY)) {
               stmt = this.dropTypeBodyStatement()
             } else {
-              this.pos = mark
               stmt = this.dropTypeStatement()
             }
             break
-          } else if (this.consumeIf(Keyword.USER)) {
+          } else if (this.peekIf(Keyword.USER)) {
             this.pos = mark
             stmt = this.dropUserStatement()
             break
-          } else if (this.consumeIf(Keyword.VIEW)) {
+          } else if (this.peekIf(Keyword.VIEW)) {
             this.pos = mark
             stmt = this.dropViewStatement()
             break
@@ -1724,10 +1768,10 @@ export class OracleParser extends Parser {
         const mark = this.pos
         this.consume()
 
-        if (this.consumeIf(Keyword.CLUSTER)) {
+        if (this.peekIf(Keyword.CLUSTER)) {
           this.pos = mark
           stmt = this.truncateClusterStatement()
-        } else if (this.consumeIf(Keyword.TABLE)) {
+        } else if (this.peekIf(Keyword.TABLE)) {
           this.pos = mark
           stmt = this.truncateTableStatement()
         }
@@ -1738,13 +1782,13 @@ export class OracleParser extends Parser {
         const mark = this.pos
         this.consume()
 
-        if (this.consumeIf(Keyword.CONSTRAINT) || this.consumeIf(Keyword.CONSTRAINTS)) {
+        if (this.peekIf(Keyword.CONSTRAINT) || this.peekIf(Keyword.CONSTRAINTS)) {
           this.pos = mark
           stmt = this.setConstraintStatement()
-        } else if (this.consumeIf(Keyword.ROLE)) {
+        } else if (this.peekIf(Keyword.ROLE)) {
           this.pos = mark
           stmt = this.setRoleStatement()
-        } else if (this.consumeIf(Keyword.TRANSACTION)) {
+        } else if (this.peekIf(Keyword.TRANSACTION)) {
           this.pos = mark
           stmt = this.setTransactionStatement()
         }
@@ -1839,15 +1883,15 @@ export class OracleParser extends Parser {
 
   private createAnalyticViewStatement() {
     const node = new Node("create analytic view")
-    this.consume(Keyword.CREATE, Keyword.ANALYTIC, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.ANALYTIC))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1855,15 +1899,15 @@ export class OracleParser extends Parser {
 
   private createAttributeDimensionStatement() {
     const node = new Node("create attribute dimension")
-    this.consume(Keyword.CREATE, Keyword.ATTRIBUTE, Keyword.DIMENSION)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.ATTRIBUTE))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1871,15 +1915,15 @@ export class OracleParser extends Parser {
 
   private createAuditPolicyStatement() {
     const node = new Node("create audit policy")
-    this.consume(Keyword.CREATE, Keyword.AUDIT, Keyword.POLICY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.AUDIT))
+    node.add(this.consume(Keyword.POLICY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1887,15 +1931,14 @@ export class OracleParser extends Parser {
 
   private createClusterStatement() {
     const node = new Node("create cluster")
-    this.consume(Keyword.CREATE, Keyword.CLUSTER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.CLUSTER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1903,15 +1946,14 @@ export class OracleParser extends Parser {
 
   private createContextStatement() {
     const node = new Node("create context")
-    this.consume(Keyword.CREATE, Keyword.CONTEXT)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.CONTEXT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1919,15 +1961,14 @@ export class OracleParser extends Parser {
 
   private createControlfileStatement() {
     const node = new Node("create controlfile")
-    this.consume(Keyword.CREATE, Keyword.CONTROLFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.CONTROLFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1935,15 +1976,15 @@ export class OracleParser extends Parser {
 
   private createDatabaseLinkStatement() {
     const node = new Node("create database link")
-    this.consume(Keyword.CREATE, Keyword.DATABASE, Keyword.LINK)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.DATABASE))
+    node.add(this.consume(Keyword.LINK))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1951,15 +1992,14 @@ export class OracleParser extends Parser {
 
   private createDatabaseStatement() {
     const node = new Node("create database")
-    this.consume(Keyword.CREATE, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1967,15 +2007,14 @@ export class OracleParser extends Parser {
 
   private createDimensionStatement() {
     const node = new Node("create dimension")
-    this.consume(Keyword.CREATE, Keyword.DIMENSION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1983,15 +2022,14 @@ export class OracleParser extends Parser {
 
   private createDirectoryStatement() {
     const node = new Node("create directory")
-    this.consume(Keyword.CREATE, Keyword.DIRECTORY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.DIRECTORY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -1999,15 +2037,14 @@ export class OracleParser extends Parser {
 
   private createDiskgroupStatement() {
     const node = new Node("create diskgroup")
-    this.consume(Keyword.CREATE, Keyword.DISKGROUP)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.DISKGROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2015,15 +2052,14 @@ export class OracleParser extends Parser {
 
   private createEditionStatement() {
     const node = new Node("create edition")
-    this.consume(Keyword.CREATE, Keyword.EDITION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.EDITION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2031,15 +2067,14 @@ export class OracleParser extends Parser {
 
   private createFunctionStatement() {
     const node = new Node("create function")
-    this.consume(Keyword.CREATE, Keyword.FUNCTION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.FUNCTION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2047,15 +2082,14 @@ export class OracleParser extends Parser {
 
   private createHierarchyStatement() {
     const node = new Node("create hierarchy")
-    this.consume(Keyword.CREATE, Keyword.HIERARCHY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.HIERARCHY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2063,15 +2097,14 @@ export class OracleParser extends Parser {
 
   private createIndexStatement() {
     const node = new Node("create index")
-    this.consume(Keyword.CREATE, Keyword.INDEX)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.INDEX))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2079,15 +2112,14 @@ export class OracleParser extends Parser {
 
   private createIndextypeStatement() {
     const node = new Node("create indextype")
-    this.consume(Keyword.CREATE, Keyword.INDEXTYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.INDEXTYPE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2095,15 +2127,16 @@ export class OracleParser extends Parser {
 
   private createInmemoryJoinGroupStatement() {
     const node = new Node("create inmemory join group")
-    this.consume(Keyword.CREATE, Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.INMEMORY))
+    node.add(this.consume(Keyword.JOIN))
+    node.add(this.consume(Keyword.GROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2111,15 +2144,14 @@ export class OracleParser extends Parser {
 
   private createJavaStatement() {
     const node = new Node("create java")
-    this.consume(Keyword.CREATE, Keyword.JAVA)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.JAVA))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2127,15 +2159,14 @@ export class OracleParser extends Parser {
 
   private createLibraryStatement() {
     const node = new Node("create library")
-    this.consume(Keyword.CREATE, Keyword.LIBRARY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.LIBRARY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2143,15 +2174,15 @@ export class OracleParser extends Parser {
 
   private createLockdownProfileStatement() {
     const node = new Node("create lockdown profile")
-    this.consume(Keyword.CREATE, Keyword.LOCKDOWN, Keyword.PROFILE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.LOCKDOWN))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2159,15 +2190,16 @@ export class OracleParser extends Parser {
 
   private createMaterializedViewLogStatement() {
     const node = new Node("create materialized view log")
-    this.consume(Keyword.CREATE, Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
+    node.add(this.consume(Keyword.LOG))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2175,15 +2207,15 @@ export class OracleParser extends Parser {
 
   private createMaterializedViewStatement() {
     const node = new Node("create materialized view")
-    this.consume(Keyword.CREATE, Keyword.MATERIALIZED, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2191,15 +2223,14 @@ export class OracleParser extends Parser {
 
   private createOperatorStatement() {
     const node = new Node("create operator")
-    this.consume(Keyword.CREATE, Keyword.OPERATOR)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.OPERATOR))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2207,15 +2238,14 @@ export class OracleParser extends Parser {
 
   private createOutlineStatement() {
     const node = new Node("create outline")
-    this.consume(Keyword.CREATE, Keyword.OUTLINE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.OUTLINE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2223,15 +2253,14 @@ export class OracleParser extends Parser {
 
   private createPackageBodyStatement() {
     const node = new Node("create package body")
-    this.consume(Keyword.CREATE, Keyword.PACKAGE, Keyword.BODY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PACKAGE))
+    node.add(this.consume(Keyword.BODY))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2239,15 +2268,14 @@ export class OracleParser extends Parser {
 
   private createPackageStatement() {
     const node = new Node("create package")
-    this.consume(Keyword.CREATE, Keyword.PACKAGE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PACKAGE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2255,15 +2283,14 @@ export class OracleParser extends Parser {
 
   private createPfileStatement() {
     const node = new Node("create pfile")
-    this.consume(Keyword.CREATE, Keyword.PFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2271,15 +2298,15 @@ export class OracleParser extends Parser {
 
   private createPluggableDatabaseStatement() {
     const node = new Node("create pluggable database")
-    this.consume(Keyword.CREATE, Keyword.PLUGGABLE, Keyword.DATABASE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PLUGGABLE))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2287,15 +2314,14 @@ export class OracleParser extends Parser {
 
   private createProcedureStatement() {
     const node = new Node("create procedure")
-    this.consume(Keyword.CREATE, Keyword.PROCEDURE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PROCEDURE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2303,15 +2329,14 @@ export class OracleParser extends Parser {
 
   private createProfileStatement() {
     const node = new Node("create profile")
-    this.consume(Keyword.CREATE, Keyword.PROFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2319,15 +2344,15 @@ export class OracleParser extends Parser {
 
   private createRestorePointStatement() {
     const node = new Node("create restore point")
-    this.consume(Keyword.CREATE, Keyword.RESTORE, Keyword.POINT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.RESTORE))
+    node.add(this.consume(Keyword.POINT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2335,15 +2360,14 @@ export class OracleParser extends Parser {
 
   private createRoleStatement() {
     const node = new Node("create role")
-    this.consume(Keyword.CREATE, Keyword.ROLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.ROLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2351,15 +2375,15 @@ export class OracleParser extends Parser {
   
   private createRollbackSegmentStatement() {
     const node = new Node("create rollback segment")
-    this.consume(Keyword.CREATE, Keyword.ROLLBACK, Keyword.SEGMENT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.ROLLBACK))
+    node.add(this.consume(Keyword.SEGMENT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2367,15 +2391,14 @@ export class OracleParser extends Parser {
 
   private createSchemaStatement() {
     const node = new Node("create schema")
-    this.consume(Keyword.CREATE, Keyword.SCHEMA)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.SCHEMA))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2383,15 +2406,14 @@ export class OracleParser extends Parser {
 
   private createSequenceStatement() {
     const node = new Node("create sequence")
-    this.consume(Keyword.CREATE, Keyword.SEQUENCE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.SEQUENCE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2399,15 +2421,14 @@ export class OracleParser extends Parser {
 
   private createSpfileStatement() {
     const node = new Node("create spfile")
-    this.consume(Keyword.CREATE, Keyword.SPFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.SPFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2415,15 +2436,14 @@ export class OracleParser extends Parser {
 
   private createSynonymStatement() {
     const node = new Node("create synonym")
-    this.consume(Keyword.CREATE, Keyword.SYNONYM)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.SYNONYM))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2431,15 +2451,14 @@ export class OracleParser extends Parser {
 
   private createTableStatement() {
     const node = new Node("create table")
-    this.consume(Keyword.CREATE, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2447,15 +2466,15 @@ export class OracleParser extends Parser {
 
   private createTablespaceSetStatement() {
     const node = new Node("create tablespace set")
-    this.consume(Keyword.CREATE, Keyword.TABLESPACE, Keyword.SET)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TABLESPACE))
+    node.add(this.consume(Keyword.SET))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2463,15 +2482,14 @@ export class OracleParser extends Parser {
 
   private createTablespaceStatement() {
     const node = new Node("create tablespace")
-    this.consume(Keyword.CREATE, Keyword.TABLESPACE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TABLESPACE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2479,15 +2497,13 @@ export class OracleParser extends Parser {
 
   private createTriggerStatement() {
     const node = new Node("create trigger")
-    this.consume(Keyword.CREATE, Keyword.TRIGGER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TRIGGER))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2495,15 +2511,14 @@ export class OracleParser extends Parser {
 
   private createTypeBodyStatement() {
     const node = new Node("create type body")
-    this.consume(Keyword.CREATE, Keyword.TYPE, Keyword.BODY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TYPE))
+    node.add(this.consume(Keyword.BODY))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2511,15 +2526,13 @@ export class OracleParser extends Parser {
 
   private createTypeStatement() {
     const node = new Node("create type")
-    this.consume(Keyword.CREATE, Keyword.TYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.TYPE))
 
     while (this.token()
-      && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2527,15 +2540,14 @@ export class OracleParser extends Parser {
 
   private createUserStatement() {
     const node = new Node("create user")
-    this.consume(Keyword.CREATE, Keyword.USER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.USER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2543,15 +2555,14 @@ export class OracleParser extends Parser {
 
   private createViewStatement() {
     const node = new Node("create view")
-    this.consume(Keyword.CREATE, Keyword.VIEW)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.CREATE))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2559,15 +2570,15 @@ export class OracleParser extends Parser {
 
   private alterAnalyticViewStatement() {
     const node = new Node("alter analytic view")
-    this.consume(Keyword.ALTER, Keyword.ANALYTIC, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.ANALYTIC))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2575,15 +2586,15 @@ export class OracleParser extends Parser {
 
   private alterAttributeDimensionStatement() {
     const node = new Node("alter attribute dimension")
-    this.consume(Keyword.ALTER, Keyword.ATTRIBUTE, Keyword.DIMENSION)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.ATTRIBUTE))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2591,15 +2602,15 @@ export class OracleParser extends Parser {
 
   private alterAuditPolicyStatement() {
     const node = new Node("alter audit policy")
-    this.consume(Keyword.ALTER, Keyword.AUDIT, Keyword.POLICY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.AUDIT))
+    node.add(this.consume(Keyword.POLICY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2607,15 +2618,14 @@ export class OracleParser extends Parser {
 
   private alterClusterStatement() {
     const node = new Node("alter cluster")
-    this.consume(Keyword.ALTER, Keyword.CLUSTER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.CLUSTER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2623,15 +2633,15 @@ export class OracleParser extends Parser {
 
   private alterDatabaseDictionaryStatement() {
     const node = new Node("alter database dictionary")
-    this.consume(Keyword.ALTER, Keyword.DATABASE, Keyword.DICTIONARY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.DATABASE))
+    node.add(this.consume(Keyword.DICTIONARY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2639,15 +2649,15 @@ export class OracleParser extends Parser {
 
   private alterDatabaseLinkStatement() {
     const node = new Node("alter database link")
-    this.consume(Keyword.ALTER, Keyword.DATABASE, Keyword.LINK)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.DATABASE))
+    node.add(this.consume(Keyword.LINK))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2655,15 +2665,14 @@ export class OracleParser extends Parser {
 
   private alterDatabaseStatement() {
     const node = new Node("alter database")
-    this.consume(Keyword.ALTER, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2671,15 +2680,14 @@ export class OracleParser extends Parser {
 
   private alterDimensionStatement() {
     const node = new Node("alter dimension")
-    this.consume(Keyword.ALTER, Keyword.DIMENSION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2687,15 +2695,14 @@ export class OracleParser extends Parser {
 
   private alterDiskgroupStatement() {
     const node = new Node("alter diskgroup")
-    this.consume(Keyword.ALTER, Keyword.DISKGROUP)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.DISKGROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2703,15 +2710,14 @@ export class OracleParser extends Parser {
 
   private alterEditionStatement() {
     const node = new Node("alter edition")
-    this.consume(Keyword.ALTER, Keyword.EDITION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.EDITION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2719,15 +2725,14 @@ export class OracleParser extends Parser {
 
   private alterFunctionStatement() {
     const node = new Node("alter function")
-    this.consume(Keyword.ALTER, Keyword.FUNCTION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.FUNCTION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2735,15 +2740,14 @@ export class OracleParser extends Parser {
 
   private alterHierarchyStatement() {
     const node = new Node("alter hierarchy")
-    this.consume(Keyword.ALTER, Keyword.HIERARCHY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.HIERARCHY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2751,15 +2755,14 @@ export class OracleParser extends Parser {
 
   private alterIndexStatement() {
     const node = new Node("alter index")
-    this.consume(Keyword.ALTER, Keyword.INDEX)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.INDEX))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2767,15 +2770,14 @@ export class OracleParser extends Parser {
 
   private alterIndextypeStatement() {
     const node = new Node("alter indextype")
-    this.consume(Keyword.ALTER, Keyword.INDEXTYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.INDEXTYPE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2783,15 +2785,16 @@ export class OracleParser extends Parser {
 
   private alterInmemoryJoinGroupStatement() {
     const node = new Node("alter inmemory join group")
-    this.consume(Keyword.ALTER, Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.INMEMORY))
+    node.add(this.consume(Keyword.JOIN))
+    node.add(this.consume(Keyword.GROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2799,15 +2802,14 @@ export class OracleParser extends Parser {
 
   private alterJavaStatement() {
     const node = new Node("alter java")
-    this.consume(Keyword.ALTER, Keyword.JAVA)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.JAVA))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2815,15 +2817,14 @@ export class OracleParser extends Parser {
 
   private alterLibraryStatement() {
     const node = new Node("alter library")
-    this.consume(Keyword.ALTER, Keyword.LIBRARY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.LIBRARY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2831,15 +2832,15 @@ export class OracleParser extends Parser {
 
   private alterLockdownProfileStatement() {
     const node = new Node("alter lockdown profile")
-    this.consume(Keyword.ALTER, Keyword.LOCKDOWN, Keyword.PROFILE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.LOCKDOWN))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2847,15 +2848,16 @@ export class OracleParser extends Parser {
 
   private alterMaterializedViewLogStatement() {
     const node = new Node("alter materialized view log")
-    this.consume(Keyword.ALTER, Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
+    node.add(this.consume(Keyword.LOG))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2863,15 +2865,15 @@ export class OracleParser extends Parser {
 
   private alterMaterializedViewStatement() {
     const node = new Node("alter materialized view")
-    this.consume(Keyword.ALTER, Keyword.MATERIALIZED, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2879,15 +2881,14 @@ export class OracleParser extends Parser {
 
   private alterOperatorStatement() {
     const node = new Node("alter operator")
-    this.consume(Keyword.ALTER, Keyword.OPERATOR)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.OPERATOR))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2895,15 +2896,14 @@ export class OracleParser extends Parser {
 
   private alterOutlineStatement() {
     const node = new Node("alter outline")
-    this.consume(Keyword.ALTER, Keyword.OUTLINE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.OUTLINE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2911,15 +2911,14 @@ export class OracleParser extends Parser {
 
   private alterPackageStatement() {
     const node = new Node("alter package")
-    this.consume(Keyword.ALTER, Keyword.PACKAGE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.PACKAGE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2927,15 +2926,15 @@ export class OracleParser extends Parser {
 
   private alterPluggableDatabaseStatement() {
     const node = new Node("alter pluggable database")
-    this.consume(Keyword.ALTER, Keyword.PLUGGABLE, Keyword.DATABASE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.PLUGGABLE))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2943,15 +2942,14 @@ export class OracleParser extends Parser {
 
   private alterProcedureStatement() {
     const node = new Node("alter procedure")
-    this.consume(Keyword.ALTER, Keyword.PROCEDURE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.PROCEDURE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2959,15 +2957,14 @@ export class OracleParser extends Parser {
 
   private alterProfileStatement() {
     const node = new Node("alter profile")
-    this.consume(Keyword.ALTER, Keyword.PROFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2975,15 +2972,15 @@ export class OracleParser extends Parser {
 
   private alterResourceCostStatement() {
     const node = new Node("alter resource cost")
-    this.consume(Keyword.ALTER, Keyword.RESOURCE, Keyword.COST)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.RESOURCE))
+    node.add(this.consume(Keyword.COST))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -2991,15 +2988,14 @@ export class OracleParser extends Parser {
 
   private alterRoleStatement() {
     const node = new Node("alter role")
-    this.consume(Keyword.ALTER, Keyword.ROLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.ROLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3007,15 +3003,15 @@ export class OracleParser extends Parser {
   
   private alterRollbackSegmentStatement() {
     const node = new Node("alter rollback segment")
-    this.consume(Keyword.ALTER, Keyword.ROLLBACK, Keyword.SEGMENT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.ROLLBACK))
+    node.add(this.consume(Keyword.SEGMENT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3023,15 +3019,14 @@ export class OracleParser extends Parser {
 
   private alterSequenceStatement() {
     const node = new Node("alter sequence")
-    this.consume(Keyword.ALTER, Keyword.SEQUENCE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.SEQUENCE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3039,15 +3034,14 @@ export class OracleParser extends Parser {
 
   private alterSessionStatement() {
     const node = new Node("alter session")
-    this.consume(Keyword.ALTER, Keyword.SESSION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.SESSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3055,15 +3049,14 @@ export class OracleParser extends Parser {
 
   private alterSynonymStatement() {
     const node = new Node("alter synonym")
-    this.consume(Keyword.ALTER, Keyword.SYNONYM)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.SYNONYM))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3071,15 +3064,14 @@ export class OracleParser extends Parser {
 
   private alterSystemStatement() {
     const node = new Node("alter system")
-    this.consume(Keyword.ALTER, Keyword.SYSTEM)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.SYSTEM))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3087,15 +3079,14 @@ export class OracleParser extends Parser {
 
   private alterTableStatement() {
     const node = new Node("alter table")
-    this.consume(Keyword.ALTER, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3103,15 +3094,15 @@ export class OracleParser extends Parser {
 
   private alterTablespaceSetStatement() {
     const node = new Node("alter tablespace set")
-    this.consume(Keyword.ALTER, Keyword.TABLESPACE, Keyword.SET)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TABLESPACE))
+    node.add(this.consume(Keyword.SET))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3119,15 +3110,14 @@ export class OracleParser extends Parser {
 
   private alterTablespaceStatement() {
     const node = new Node("alter tablespace")
-    this.consume(Keyword.ALTER, Keyword.TABLESPACE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TABLESPACE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3135,15 +3125,14 @@ export class OracleParser extends Parser {
 
   private alterTriggerStatement() {
     const node = new Node("alter trigger")
-    this.consume(Keyword.ALTER, Keyword.TRIGGER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TRIGGER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3151,15 +3140,15 @@ export class OracleParser extends Parser {
 
   private alterTypeBodyStatement() {
     const node = new Node("alter type body")
-    this.consume(Keyword.ALTER, Keyword.TYPE, Keyword.BODY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TYPE))
+    node.add(this.consume(Keyword.BODY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3167,15 +3156,14 @@ export class OracleParser extends Parser {
 
   private alterTypeStatement() {
     const node = new Node("alter type")
-    this.consume(Keyword.ALTER, Keyword.TYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.TYPE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3183,15 +3171,14 @@ export class OracleParser extends Parser {
 
   private alterUserStatement() {
     const node = new Node("alter user")
-    this.consume(Keyword.ALTER, Keyword.USER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.USER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3199,15 +3186,14 @@ export class OracleParser extends Parser {
 
   private alterViewStatement() {
     const node = new Node("alter view")
-    this.consume(Keyword.ALTER, Keyword.VIEW)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ALTER))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3215,15 +3201,15 @@ export class OracleParser extends Parser {
 
   private dropAnalyticViewStatement() {
     const node = new Node("drop analytic view")
-    this.consume(Keyword.DROP, Keyword.ANALYTIC, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.ANALYTIC))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3231,15 +3217,15 @@ export class OracleParser extends Parser {
 
   private dropAttributeDimensionStatement() {
     const node = new Node("drop attribute dimension")
-    this.consume(Keyword.DROP, Keyword.ATTRIBUTE, Keyword.DIMENSION)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.ATTRIBUTE))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3247,15 +3233,15 @@ export class OracleParser extends Parser {
 
   private dropAuditPolicyStatement() {
     const node = new Node("drop audit policy")
-    this.consume(Keyword.DROP, Keyword.AUDIT, Keyword.POLICY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.AUDIT))
+    node.add(this.consume(Keyword.POLICY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3263,15 +3249,14 @@ export class OracleParser extends Parser {
 
   private dropClusterStatement() {
     const node = new Node("drop cluster")
-    this.consume(Keyword.DROP, Keyword.CLUSTER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.CLUSTER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3279,15 +3264,14 @@ export class OracleParser extends Parser {
 
   private dropContextStatement() {
     const node = new Node("drop context")
-    this.consume(Keyword.DROP, Keyword.CONTEXT)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.CONTEXT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3295,15 +3279,15 @@ export class OracleParser extends Parser {
 
   private dropDatabaseLinkStatement() {
     const node = new Node("drop database link")
-    this.consume(Keyword.DROP, Keyword.DATABASE, Keyword.LINK)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.DATABASE))
+    node.add(this.consume(Keyword.LINK))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3311,15 +3295,14 @@ export class OracleParser extends Parser {
 
   private dropDatabaseStatement() {
     const node = new Node("drop database")
-    this.consume(Keyword.DROP, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3327,15 +3310,14 @@ export class OracleParser extends Parser {
 
   private dropDimensionStatement() {
     const node = new Node("drop dimension")
-    this.consume(Keyword.DROP, Keyword.DIMENSION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.DIMENSION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3343,15 +3325,14 @@ export class OracleParser extends Parser {
 
   private dropDirectoryStatement() {
     const node = new Node("drop directory")
-    this.consume(Keyword.DROP, Keyword.DIRECTORY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.DIRECTORY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3359,15 +3340,14 @@ export class OracleParser extends Parser {
 
   private dropDiskgroupStatement() {
     const node = new Node("drop diskgroup")
-    this.consume(Keyword.DROP, Keyword.DISKGROUP)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.DISKGROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3375,15 +3355,14 @@ export class OracleParser extends Parser {
 
   private dropEditionStatement() {
     const node = new Node("drop edition")
-    this.consume(Keyword.DROP, Keyword.EDITION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.EDITION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3391,15 +3370,14 @@ export class OracleParser extends Parser {
 
   private dropFunctionStatement() {
     const node = new Node("drop function")
-    this.consume(Keyword.DROP, Keyword.FUNCTION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.FUNCTION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3407,15 +3385,14 @@ export class OracleParser extends Parser {
 
   private dropHierarchyStatement() {
     const node = new Node("drop hierarchy")
-    this.consume(Keyword.DROP, Keyword.HIERARCHY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.HIERARCHY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3423,15 +3400,14 @@ export class OracleParser extends Parser {
 
   private dropIndexStatement() {
     const node = new Node("drop index")
-    this.consume(Keyword.DROP, Keyword.INDEX)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.INDEX))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3439,15 +3415,14 @@ export class OracleParser extends Parser {
 
   private dropIndextypeStatement() {
     const node = new Node("drop indextype")
-    this.consume(Keyword.DROP, Keyword.INDEXTYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.INDEXTYPE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3455,15 +3430,16 @@ export class OracleParser extends Parser {
 
   private dropInmemoryJoinGroupStatement() {
     const node = new Node("drop inmemory join group")
-    this.consume(Keyword.DROP, Keyword.INMEMORY, Keyword.JOIN, Keyword.GROUP)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.INMEMORY))
+    node.add(this.consume(Keyword.JOIN))
+    node.add(this.consume(Keyword.GROUP))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3471,15 +3447,14 @@ export class OracleParser extends Parser {
 
   private dropJavaStatement() {
     const node = new Node("drop java")
-    this.consume(Keyword.DROP, Keyword.JAVA)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.JAVA))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3487,15 +3462,14 @@ export class OracleParser extends Parser {
 
   private dropLibraryStatement() {
     const node = new Node("drop library")
-    this.consume(Keyword.DROP, Keyword.LIBRARY)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.LIBRARY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3503,15 +3477,15 @@ export class OracleParser extends Parser {
 
   private dropLockdownProfileStatement() {
     const node = new Node("drop lockdown profile")
-    this.consume(Keyword.DROP, Keyword.LOCKDOWN, Keyword.PROFILE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.LOCKDOWN))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3519,15 +3493,16 @@ export class OracleParser extends Parser {
 
   private dropMaterializedViewLogStatement() {
     const node = new Node("drop materialized view log")
-    this.consume(Keyword.DROP, Keyword.MATERIALIZED, Keyword.VIEW, Keyword.LOG)
-    node.add(this.token(-4), this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
+    node.add(this.consume(Keyword.LOG))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3535,15 +3510,15 @@ export class OracleParser extends Parser {
 
   private dropMaterializedViewStatement() {
     const node = new Node("drop materialized view")
-    this.consume(Keyword.DROP, Keyword.MATERIALIZED, Keyword.VIEW)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.MATERIALIZED))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3551,15 +3526,14 @@ export class OracleParser extends Parser {
 
   private dropOperatorStatement() {
     const node = new Node("drop operator")
-    this.consume(Keyword.DROP, Keyword.OPERATOR)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.OPERATOR))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3567,15 +3541,14 @@ export class OracleParser extends Parser {
 
   private dropOutlineStatement() {
     const node = new Node("drop outline")
-    this.consume(Keyword.DROP, Keyword.OUTLINE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.OUTLINE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3583,15 +3556,14 @@ export class OracleParser extends Parser {
 
   private dropPackageStatement() {
     const node = new Node("drop package")
-    this.consume(Keyword.DROP, Keyword.PACKAGE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.PACKAGE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3599,15 +3571,15 @@ export class OracleParser extends Parser {
 
   private dropPluggableDatabaseStatement() {
     const node = new Node("drop pluggable database")
-    this.consume(Keyword.DROP, Keyword.PLUGGABLE, Keyword.DATABASE)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.PLUGGABLE))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3615,15 +3587,14 @@ export class OracleParser extends Parser {
 
   private dropProcedureStatement() {
     const node = new Node("drop procedure")
-    this.consume(Keyword.DROP, Keyword.PROCEDURE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.PROCEDURE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3631,15 +3602,14 @@ export class OracleParser extends Parser {
 
   private dropProfileStatement() {
     const node = new Node("drop profile")
-    this.consume(Keyword.DROP, Keyword.PROFILE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.PROFILE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3647,15 +3617,15 @@ export class OracleParser extends Parser {
 
   private dropRestorePointStatement() {
     const node = new Node("drop restore point")
-    this.consume(Keyword.DROP, Keyword.RESTORE, Keyword.POINT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.RESTORE))
+    node.add(this.consume(Keyword.POINT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3663,15 +3633,14 @@ export class OracleParser extends Parser {
 
   private dropRoleStatement() {
     const node = new Node("drop role")
-    this.consume(Keyword.DROP, Keyword.ROLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.ROLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3679,15 +3648,15 @@ export class OracleParser extends Parser {
   
   private dropRollbackSegmentStatement() {
     const node = new Node("drop rollback segment")
-    this.consume(Keyword.DROP, Keyword.ROLLBACK, Keyword.SEGMENT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.ROLLBACK))
+    node.add(this.consume(Keyword.SEGMENT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3695,15 +3664,14 @@ export class OracleParser extends Parser {
 
   private dropSchemaStatement() {
     const node = new Node("drop schema")
-    this.consume(Keyword.DROP, Keyword.SCHEMA)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.SCHEMA))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3711,15 +3679,14 @@ export class OracleParser extends Parser {
 
   private dropSequenceStatement() {
     const node = new Node("drop sequence")
-    this.consume(Keyword.DROP, Keyword.SEQUENCE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.SEQUENCE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3727,15 +3694,14 @@ export class OracleParser extends Parser {
 
   private dropSynonymStatement() {
     const node = new Node("drop synonym")
-    this.consume(Keyword.DROP, Keyword.SYNONYM)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.SYNONYM))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3743,15 +3709,14 @@ export class OracleParser extends Parser {
 
   private dropTableStatement() {
     const node = new Node("drop table")
-    this.consume(Keyword.DROP, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3759,15 +3724,15 @@ export class OracleParser extends Parser {
 
   private dropTablespaceSetStatement() {
     const node = new Node("drop tablespace set")
-    this.consume(Keyword.DROP, Keyword.TABLESPACE, Keyword.SET)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TABLESPACE))
+    node.add(this.consume(Keyword.SET))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3775,15 +3740,14 @@ export class OracleParser extends Parser {
 
   private dropTablespaceStatement() {
     const node = new Node("drop tablespace")
-    this.consume(Keyword.DROP, Keyword.TABLESPACE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TABLESPACE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3791,15 +3755,14 @@ export class OracleParser extends Parser {
 
   private dropTriggerStatement() {
     const node = new Node("drop trigger")
-    this.consume(Keyword.DROP, Keyword.TRIGGER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TRIGGER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3807,15 +3770,15 @@ export class OracleParser extends Parser {
 
   private dropTypeBodyStatement() {
     const node = new Node("drop type body")
-    this.consume(Keyword.DROP, Keyword.TYPE, Keyword.BODY)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TYPE))
+    node.add(this.consume(Keyword.BODY))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3823,15 +3786,14 @@ export class OracleParser extends Parser {
 
   private dropTypeStatement() {
     const node = new Node("drop type")
-    this.consume(Keyword.DROP, Keyword.TYPE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.TYPE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3839,15 +3801,14 @@ export class OracleParser extends Parser {
 
   private dropUserStatement() {
     const node = new Node("drop user")
-    this.consume(Keyword.DROP, Keyword.USER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.USER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3855,15 +3816,14 @@ export class OracleParser extends Parser {
 
   private dropViewStatement() {
     const node = new Node("drop view")
-    this.consume(Keyword.DROP, Keyword.VIEW)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DROP))
+    node.add(this.consume(Keyword.VIEW))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3871,15 +3831,14 @@ export class OracleParser extends Parser {
 
   private truncateClusterStatement() {
     const node = new Node("truncate cluster")
-    this.consume(Keyword.TRUNCATE, Keyword.CLUSTER)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.TRUNCATE))
+    node.add(this.consume(Keyword.CLUSTER))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3887,15 +3846,14 @@ export class OracleParser extends Parser {
 
   private truncateTableStatement() {
     const node = new Node("truncate table")
-    this.consume(Keyword.TRUNCATE, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.TRUNCATE))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3903,38 +3861,33 @@ export class OracleParser extends Parser {
 
   private setConstraintStatement() {
     const node = new Node("set constraint")
-    this.consume(Keyword.SET)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.SET))
 
-    if (this.consumeIf(Keyword.CONSTRAINTS)) {
-      node.add(this.token(-1))
+    if (this.peekIf(Keyword.CONSTRAINTS)) {
+      node.add(this.consume())
     } else {
-      this.consume(Keyword.CONSTRAINT)
-      node.add(this.token(-1))
+      node.add(this.consume(Keyword.CONSTRAINT))
     }
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
-
     return node
   }
 
   private setRoleStatement() {
     const node = new Node("set role")
-    this.consume(Keyword.SET, Keyword.ROLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.SET))
+    node.add(this.consume(Keyword.ROLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3942,15 +3895,14 @@ export class OracleParser extends Parser {
 
   private setTransactionStatement() {
     const node = new Node("set transaction")
-    this.consume(Keyword.SET, Keyword.TRANSACTION)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.SET))
+    node.add(this.consume(Keyword.TRANSACTION))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3958,15 +3910,15 @@ export class OracleParser extends Parser {
 
   private administerKeyManagementStatement() {
     const node = new Node("administer key management")
-    this.consume(Keyword.ADMINISTER, Keyword.KEY, Keyword.MANAGEMENT)
-    node.add(this.token(-3), this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ADMINISTER))
+    node.add(this.consume(Keyword.KEY))
+    node.add(this.consume(Keyword.MANAGEMENT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3974,15 +3926,13 @@ export class OracleParser extends Parser {
 
   private analyzeStatement() {
     const node = new Node("analyze")
-    this.consume(Keyword.ANALYZE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.ANALYZE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -3990,15 +3940,14 @@ export class OracleParser extends Parser {
 
   private associateStatisticsStatement() {
     const node = new Node("associate statistics")
-    this.consume(Keyword.ASSOCIATE, Keyword.STATISTICS)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.ASSOCIATE))
+    node.add(this.consume(Keyword.STATISTICS))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4006,15 +3955,13 @@ export class OracleParser extends Parser {
 
   private auditStatement() {
     const node = new Node("audit")
-    this.consume(Keyword.AUDIT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.AUDIT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4022,15 +3969,13 @@ export class OracleParser extends Parser {
 
   private callStatement() {
     const node = new Node("call")
-    this.consume(Keyword.CALL)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.CALL))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4038,15 +3983,13 @@ export class OracleParser extends Parser {
 
   private commentStatement() {
     const node = new Node("comment")
-    this.consume(Keyword.COMMENT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.COMMENT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4054,15 +3997,13 @@ export class OracleParser extends Parser {
 
   private commitStatement() {
     const node = new Node("commit")
-    this.consume(Keyword.COMMIT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.COMMIT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4070,15 +4011,14 @@ export class OracleParser extends Parser {
 
   private disassociateStatisticsStatement() {
     const node = new Node("disassociate statistics")
-    this.consume(Keyword.DISASSOCIATE, Keyword.STATISTICS)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DISASSOCIATE))
+    node.add(this.consume(Keyword.STATISTICS))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4086,15 +4026,14 @@ export class OracleParser extends Parser {
 
   private flashbackDatabaseStatement() {
     const node = new Node("flashback database")
-    this.consume(Keyword.FLASHBACK, Keyword.DATABASE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.FLASHBACK))
+    node.add(this.consume(Keyword.DATABASE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4102,15 +4041,14 @@ export class OracleParser extends Parser {
 
   private flashbackTableStatement() {
     const node = new Node("flashback table")
-    this.consume(Keyword.FLASHBACK, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.FLASHBACK))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4118,15 +4056,13 @@ export class OracleParser extends Parser {
 
   private grantStatement() {
     const node = new Node("grant")
-    this.consume(Keyword.GRANT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.GRANT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4134,15 +4070,14 @@ export class OracleParser extends Parser {
 
   private lockTableStatement() {
     const node = new Node("lock table")
-    this.consume(Keyword.LOCK, Keyword.TABLE)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.LOCK))
+    node.add(this.consume(Keyword.TABLE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4150,15 +4085,13 @@ export class OracleParser extends Parser {
 
   private noauditStatement() {
     const node = new Node("noaudit")
-    this.consume(Keyword.NOAUDIT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.NOAUDIT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4166,15 +4099,13 @@ export class OracleParser extends Parser {
 
   private purgeStatement() {
     const node = new Node("purge")
-    this.consume(Keyword.PURGE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.PURGE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4182,15 +4113,13 @@ export class OracleParser extends Parser {
 
   private renameStatement() {
     const node = new Node("rename")
-    this.consume(Keyword.RENAME)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.RENAME))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4198,15 +4127,13 @@ export class OracleParser extends Parser {
 
   private revokeStatement() {
     const node = new Node("revoke")
-    this.consume(Keyword.REVOKE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.REVOKE))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4214,15 +4141,13 @@ export class OracleParser extends Parser {
 
   private rollbackStatement() {
     const node = new Node("rollback")
-    this.consume(Keyword.ROLLBACK)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.ROLLBACK))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4230,15 +4155,13 @@ export class OracleParser extends Parser {
 
   private savepointStatement() {
     const node = new Node("savepoint")
-    this.consume(Keyword.SAVEPOINT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.SAVEPOINT))
 
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4248,15 +4171,14 @@ export class OracleParser extends Parser {
     const node = new Node("block")
 
     const declareNode = new Node("declare")
-    this.consume(Keyword.DECLARE)
-    declareNode.add(this.token(-1))
+    declareNode.add(this.consume(Keyword.DECLARE))
 
     while (this.token()
       && !this.peekIf(TokenType.Delimiter)
     ) {
       if (this.peekIf(Keyword.BEGIN)) {
         node.add(this.beginBlock())
-        if (this.consumeIf(Keyword.EXCEPTION)) {
+        if (this.peekIf(Keyword.EXCEPTION)) {
           node.add(this.exceptionBlock())
         }
         break
@@ -4274,16 +4196,14 @@ export class OracleParser extends Parser {
 
   private beginBlock() {
     const node = new Node("begin")
-    this.consume(Keyword.BEGIN)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.BEGIN))
 
     while (this.token()
     && !this.peekIf(TokenType.Delimiter)
     ) {
-      if (this.consumeIf(Keyword.END)) {
-        node.add(this.token(-1))
-        this.consume(TokenType.SemiColon)
-        node.add(this.token(-1))
+      if (this.peekIf(Keyword.END)) {
+        node.add(this.consume())
+        node.add(this.consume(TokenType.SemiColon))
         break
       } else if (this.peekIf(Keyword.DECLARE)) {
         node.add(this.declareBlock())
@@ -4292,8 +4212,7 @@ export class OracleParser extends Parser {
       } else if (this.peekIf(Keyword.EXCEPTION)) {
         break
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
 
@@ -4306,14 +4225,12 @@ export class OracleParser extends Parser {
     while (this.token()
     && !this.peekIf(TokenType.Delimiter)
     ) {
-      if (this.consumeIf(Keyword.END)) {
-        node.add(this.token(-1))
-        this.consume(TokenType.SemiColon)
-        node.add(this.token(-1))
+      if (this.peekIf(Keyword.END)) {
+        node.add(this.consume())
+        node.add(this.consume(TokenType.SemiColon))
         break
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
     return node
@@ -4325,14 +4242,12 @@ export class OracleParser extends Parser {
     while (this.token()
     && !this.peekIf(TokenType.Delimiter)
     ) {
-      if (this.consumeIf(Keyword.END)) {
-        node.add(this.token(-1))
-        this.consume(TokenType.SemiColon)
-        node.add(this.token(-1))
+      if (this.peekIf(Keyword.END)) {
+        node.add(this.consume())
+        node.add(this.consume(TokenType.SemiColon))
         break
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
     return node
@@ -4344,14 +4259,12 @@ export class OracleParser extends Parser {
     while (this.token()
     && !this.peekIf(TokenType.Delimiter)
     ) {
-      if (this.consumeIf(Keyword.END)) {
-        node.add(this.token(-1))
-        this.consume(TokenType.SemiColon)
-        node.add(this.token(-1))
+      if (this.peekIf(Keyword.END)) {
+        node.add(this.consume())
+        node.add(this.consume(TokenType.SemiColon))
         break
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
     return node
@@ -4362,8 +4275,8 @@ export class OracleParser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.INSERT, Keyword.INTO)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.INSERT))
+    node.add(this.consume(Keyword.INTO))
 
     this.parseName(node)
     
@@ -4371,8 +4284,7 @@ export class OracleParser extends Parser {
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4383,8 +4295,7 @@ export class OracleParser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.UPDATE)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.UPDATE))
 
     this.parseName(node)
     
@@ -4392,8 +4303,7 @@ export class OracleParser extends Parser {
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4404,8 +4314,8 @@ export class OracleParser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.DELETE, Keyword.FROM)
-    node.add(this.token(-2), this.token(-1))
+    node.add(this.consume(Keyword.DELETE))
+    node.add(this.consume(Keyword.FROM))
 
     this.parseName(node)
     
@@ -4413,8 +4323,7 @@ export class OracleParser extends Parser {
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4425,17 +4334,15 @@ export class OracleParser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.MERGE, Keyword.INTO)
-    node.add(this.token(-2), this.token(-1))
-
+    node.add(this.consume(Keyword.MERGE))
+    node.add(this.consume(Keyword.INTO))
     this.parseName(node)
     
     while (this.token()
       && !this.peekIf(TokenType.SemiColon)
       && !this.peekIf(TokenType.Delimiter)
     ) {
-      this.consume()
-      node.add(this.token(-1))
+      node.add(this.consume())
     }
 
     return node
@@ -4446,8 +4353,7 @@ export class OracleParser extends Parser {
     if (withNode) {
       node.add(withNode)
     }
-    this.consume(Keyword.SELECT)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.SELECT))
 
     let depth = 0
     while (this.token()
@@ -4455,15 +4361,14 @@ export class OracleParser extends Parser {
       && !this.peekIf(TokenType.Delimiter)
       && (depth == 0 && !this.peekIf(TokenType.RightParen))
     ) {
-      if (this.consumeIf(TokenType.LeftParen)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         depth++
-      } else if (this.consumeIf(TokenType.RightParen)) {
-        node.add(this.token(-1))
+      } else if (this.peekIf(TokenType.RightParen)) {
+        node.add(this.consume())
         depth--
       } else {
-        this.consume()
-        node.add(this.token(-1))
+        node.add(this.consume())
       }
     }
 
@@ -4472,40 +4377,31 @@ export class OracleParser extends Parser {
 
   private withClause() {
     const node = new Node("with")
-
-    this.consume(Keyword.WITH)
-    node.add(this.token(-1))
+    node.add(this.consume(Keyword.WITH))
 
     while (this.token()) {
       node.add(this.identifier("name"))
-      if (this.consumeIf(TokenType.LeftParen)) {
+      if (this.peekIf(TokenType.LeftParen)) {
+        node.add(this.consume())
         while (this.token()) {
           node.add(this.identifier("column"))
 
-          if (this.consumeIf(TokenType.Comma)) {
-            node.add(this.token(-1))
+          if (this.peekIf(TokenType.Comma)) {
+            node.add(this.consume())
           } else {
             break
           }
         }
-
-        this.consume(TokenType.RightParen)
-        node.add(this.token(-1))
+        node.add(this.consume(TokenType.RightParen))
       }
 
-      this.consume(Keyword.AS)
-      node.add(this.token(-1))
-
-      this.consume(TokenType.LeftParen)
-      node.add(this.token(-1))
-
+      node.add(this.consume(Keyword.AS))
+      node.add(this.consume(TokenType.LeftParen))
       node.add(this.selectClause())
+      node.add(this.consume(TokenType.RightParen))
 
-      this.consume(TokenType.RightParen)
-      node.add(this.token(-1))
-
-      if (this.consumeIf(TokenType.Comma)) {
-        node.add(this.token(-1))
+      if (this.peekIf(TokenType.Comma)) {
+        node.add(this.consume())
       } else {
         break
       }
@@ -4517,8 +4413,8 @@ export class OracleParser extends Parser {
   private parseName(stmt: Node) {
     const nameNode = this.identifier("name")
     stmt.add(nameNode)
-    if (this.consumeIf(TokenType.Dot)) {
-      stmt.add(this.token(-1))
+    if (this.peekIf(TokenType.Dot)) {
+      stmt.add(this.consume())
       nameNode.name = "schema_name"
       stmt.add(this.identifier("name"))
     }
@@ -4526,11 +4422,11 @@ export class OracleParser extends Parser {
 
   private identifier(name: string) {
     const node = new Node(name)
-    if (this.consumeIf(TokenType.QuotedIdentifier)) {
-      node.add(this.token(-1))
+    if (this.peekIf(TokenType.QuotedIdentifier)) {
+      node.add(this.consume())
       node.value = dequote(this.token(-1).text)
-    } else if (this.consumeIf(TokenType.Identifier)) {
-      node.add(this.token(-1))
+    } else if (this.peekIf(TokenType.Identifier)) {
+      node.add(this.consume())
       node.value = this.token(-1).text
     } else {
       throw this.createParseError()
