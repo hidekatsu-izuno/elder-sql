@@ -14,200 +14,200 @@ import {
   SourceLocation,
 } from "../parser"
 
-const KeywordMap = new Map<string, Keyword>()
-export class Keyword extends TokenType {
-  static ABORT = new Keyword("ABORT")
-  static ADD = new Keyword("ADD", { reserved: true })
-  static ALL = new Keyword("ALL", { reserved: true })
-  static ALTER = new Keyword("ALTER", { reserved: true })
-  static ALWAYS = new Keyword("ALWAYS", {
+const KeywordMap = new Map<string, Sqlite3Keyword>()
+export class Sqlite3Keyword extends TokenType {
+  static ABORT = new Sqlite3Keyword("ABORT")
+  static ADD = new Sqlite3Keyword("ADD", { reserved: true })
+  static ALL = new Sqlite3Keyword("ALL", { reserved: true })
+  static ALTER = new Sqlite3Keyword("ALTER", { reserved: true })
+  static ALWAYS = new Sqlite3Keyword("ALWAYS", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
     }
   })
-  static AND = new Keyword("AND", { reserved: true })
-  static ANALYZE = new Keyword("ANALYZE")
-  static AS = new Keyword("AS", { reserved: true })
-  static ASC = new Keyword("ASC")
-  static ATTACH = new Keyword("ATTACH")
-  static AUTOINCREMENT = new Keyword("AUTOINCREMENT", { reserved: true })
-  static BEGIN = new Keyword("BEGIN")
-  static BETWEEN = new Keyword("BETWEEN", { reserved: true })
-  static CASE = new Keyword("CASE", { reserved: true })
-  static CHECK = new Keyword("CHECK", { reserved: true })
-  static COLLATE = new Keyword("COLLATE", { reserved: true })
-  static COLUMN = new Keyword("COLUMN")
-  static COMMIT = new Keyword("COMMIT", { reserved: true })
-  static CONFLICT = new Keyword("CONFLICT")
-  static CONSTRAINT = new Keyword("CONSTRAINT", { reserved: true })
-  static CREATE = new Keyword("CREATE", { reserved: true })
-  static CROSS = new Keyword("CROSS", { reserved: true })
-  static CURRENT = new Keyword("CURRENT", {
+  static AND = new Sqlite3Keyword("AND", { reserved: true })
+  static ANALYZE = new Sqlite3Keyword("ANALYZE")
+  static AS = new Sqlite3Keyword("AS", { reserved: true })
+  static ASC = new Sqlite3Keyword("ASC")
+  static ATTACH = new Sqlite3Keyword("ATTACH")
+  static AUTOINCREMENT = new Sqlite3Keyword("AUTOINCREMENT", { reserved: true })
+  static BEGIN = new Sqlite3Keyword("BEGIN")
+  static BETWEEN = new Sqlite3Keyword("BETWEEN", { reserved: true })
+  static CASE = new Sqlite3Keyword("CASE", { reserved: true })
+  static CHECK = new Sqlite3Keyword("CHECK", { reserved: true })
+  static COLLATE = new Sqlite3Keyword("COLLATE", { reserved: true })
+  static COLUMN = new Sqlite3Keyword("COLUMN")
+  static COMMIT = new Sqlite3Keyword("COMMIT", { reserved: true })
+  static CONFLICT = new Sqlite3Keyword("CONFLICT")
+  static CONSTRAINT = new Sqlite3Keyword("CONSTRAINT", { reserved: true })
+  static CREATE = new Sqlite3Keyword("CREATE", { reserved: true })
+  static CROSS = new Sqlite3Keyword("CROSS", { reserved: true })
+  static CURRENT = new Sqlite3Keyword("CURRENT", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static CURRENT_DATE = new Keyword("CURRENT_DATE", { reserved: true })
-  static CURRENT_TIME = new Keyword("CURRENT_TIME", { reserved: true })
-  static CURRENT_TIMESTAMP = new Keyword("CURRENT_TIMESTAMP", { reserved: true })
-  static DATABASE = new Keyword("DATABASE")
-  static DEFAULT = new Keyword("DEFAULT", { reserved: true })
-  static DEFERRED = new Keyword("DEFERRED")
-  static DEFERRABLE = new Keyword("DEFERRABLE", { reserved: true })
-  static DELETE = new Keyword("DELETE", { reserved: true })
-  static DESC = new Keyword("DESC")
-  static DETACH = new Keyword("DETACH")
-  static DISTINCT = new Keyword("DISTINCT", { reserved: true })
-  static DROP = new Keyword("DROP")
-  static ELSE = new Keyword("ELSE", { reserved: true })
-  static ESCAPE = new Keyword("ESCAPE", { reserved: true })
-  static EXCEPT = new Keyword("EXCEPT", {
+  static CURRENT_DATE = new Sqlite3Keyword("CURRENT_DATE", { reserved: true })
+  static CURRENT_TIME = new Sqlite3Keyword("CURRENT_TIME", { reserved: true })
+  static CURRENT_TIMESTAMP = new Sqlite3Keyword("CURRENT_TIMESTAMP", { reserved: true })
+  static DATABASE = new Sqlite3Keyword("DATABASE")
+  static DEFAULT = new Sqlite3Keyword("DEFAULT", { reserved: true })
+  static DEFERRED = new Sqlite3Keyword("DEFERRED")
+  static DEFERRABLE = new Sqlite3Keyword("DEFERRABLE", { reserved: true })
+  static DELETE = new Sqlite3Keyword("DELETE", { reserved: true })
+  static DESC = new Sqlite3Keyword("DESC")
+  static DETACH = new Sqlite3Keyword("DETACH")
+  static DISTINCT = new Sqlite3Keyword("DISTINCT", { reserved: true })
+  static DROP = new Sqlite3Keyword("DROP")
+  static ELSE = new Sqlite3Keyword("ELSE", { reserved: true })
+  static ESCAPE = new Sqlite3Keyword("ESCAPE", { reserved: true })
+  static EXCEPT = new Sqlite3Keyword("EXCEPT", {
     reserved: function (options: { [key: string]: any }) {
       return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
     }
   })
-  static EXISTS = new Keyword("EXISTS", { reserved: true })
-  static EXCLUDE = new Keyword("EXCLUDE", {
+  static EXISTS = new Sqlite3Keyword("EXISTS", { reserved: true })
+  static EXCLUDE = new Sqlite3Keyword("EXCLUDE", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static EXCLUSIVE = new Keyword("EXCLUSIVE")
-  static END = new Keyword("END")
-  static EXPLAIN = new Keyword("EXPLAIN")
-  static FAIL = new Keyword("FAIL")
-  static FALSE = new Keyword("FALSE")
-  static FILTER = new Keyword("FILTER", { reserved: true })
-  static FOLLOWING = new Keyword("FOLLOWING", {
+  static EXCLUSIVE = new Sqlite3Keyword("EXCLUSIVE")
+  static END = new Sqlite3Keyword("END")
+  static EXPLAIN = new Sqlite3Keyword("EXPLAIN")
+  static FAIL = new Sqlite3Keyword("FAIL")
+  static FALSE = new Sqlite3Keyword("FALSE")
+  static FILTER = new Sqlite3Keyword("FILTER", { reserved: true })
+  static FOLLOWING = new Sqlite3Keyword("FOLLOWING", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static FOREIGN = new Keyword("FOREIGN", { reserved: true })
-  static FROM = new Keyword("FROM", { reserved: true })
-  static GENERATED = new Keyword("GENERATED", {
+  static FOREIGN = new Sqlite3Keyword("FOREIGN", { reserved: true })
+  static FROM = new Sqlite3Keyword("FROM", { reserved: true })
+  static GENERATED = new Sqlite3Keyword("GENERATED", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
     }
   })
-  static GLOB = new Keyword("GLOB", { reserved: true })
-  static GROUP = new Keyword("GROUP", { reserved: true })
-  static GROUPS = new Keyword("GROUPS", {
+  static GLOB = new Sqlite3Keyword("GLOB", { reserved: true })
+  static GROUP = new Sqlite3Keyword("GROUP", { reserved: true })
+  static GROUPS = new Sqlite3Keyword("GROUPS", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static HAVING = new Keyword("HAVING", { reserved: true })
-  static IGNORE = new Keyword("IGNORE")
-  static IMMEDIATE = new Keyword("IMMEDIATE")
-  static IN = new Keyword("IN", { reserved: true })
-  static INDEX = new Keyword("INDEX", { reserved: true })
-  static INDEXED = new Keyword("INDEXED", { reserved: true })
-  static INNER = new Keyword("INNER", { reserved: true })
-  static INSERT = new Keyword("INSERT", { reserved: true })
-  static INTERSECT = new Keyword("INTERSECT", {
+  static HAVING = new Sqlite3Keyword("HAVING", { reserved: true })
+  static IGNORE = new Sqlite3Keyword("IGNORE")
+  static IMMEDIATE = new Sqlite3Keyword("IMMEDIATE")
+  static IN = new Sqlite3Keyword("IN", { reserved: true })
+  static INDEX = new Sqlite3Keyword("INDEX", { reserved: true })
+  static INDEXED = new Sqlite3Keyword("INDEXED", { reserved: true })
+  static INNER = new Sqlite3Keyword("INNER", { reserved: true })
+  static INSERT = new Sqlite3Keyword("INSERT", { reserved: true })
+  static INTERSECT = new Sqlite3Keyword("INTERSECT", {
     reserved: function (options: { [key: string]: any }) {
       return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
     }
   })
-  static INTO = new Keyword("INTO", { reserved: true })
-  static IF = new Keyword("IF")
-  static IS = new Keyword("IS", { reserved: true })
-  static ISNULL = new Keyword("ISNULL", { reserved: true })
-  static JOIN = new Keyword("JOIN", { reserved: true })
-  static KEY = new Keyword("KEY")
-  static LEFT = new Keyword("LEFT", { reserved: true })
-  static LIMIT = new Keyword("LIMIT", { reserved: true })
-  static MATERIALIZED = new Keyword("MATERIALIZED")
-  static NATURAL = new Keyword("NATURAL", { reserved: true })
-  static NOT = new Keyword("NOT", { reserved: true })
-  static NOTHING = new Keyword("NOTHING", { reserved: true })
-  static NOTNULL = new Keyword("NOTNULL", { reserved: true })
-  static NULL = new Keyword("NULL", { reserved: true })
-  static ON = new Keyword("ON", { reserved: true })
-  static OR = new Keyword("OR", { reserved: true })
-  static ORDER = new Keyword("ORDER", { reserved: true })
-  static OTHERS = new Keyword("OTHERS", {
+  static INTO = new Sqlite3Keyword("INTO", { reserved: true })
+  static IF = new Sqlite3Keyword("IF")
+  static IS = new Sqlite3Keyword("IS", { reserved: true })
+  static ISNULL = new Sqlite3Keyword("ISNULL", { reserved: true })
+  static JOIN = new Sqlite3Keyword("JOIN", { reserved: true })
+  static KEY = new Sqlite3Keyword("KEY")
+  static LEFT = new Sqlite3Keyword("LEFT", { reserved: true })
+  static LIMIT = new Sqlite3Keyword("LIMIT", { reserved: true })
+  static MATERIALIZED = new Sqlite3Keyword("MATERIALIZED")
+  static NATURAL = new Sqlite3Keyword("NATURAL", { reserved: true })
+  static NOT = new Sqlite3Keyword("NOT", { reserved: true })
+  static NOTHING = new Sqlite3Keyword("NOTHING", { reserved: true })
+  static NOTNULL = new Sqlite3Keyword("NOTNULL", { reserved: true })
+  static NULL = new Sqlite3Keyword("NULL", { reserved: true })
+  static ON = new Sqlite3Keyword("ON", { reserved: true })
+  static OR = new Sqlite3Keyword("OR", { reserved: true })
+  static ORDER = new Sqlite3Keyword("ORDER", { reserved: true })
+  static OTHERS = new Sqlite3Keyword("OTHERS", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static OUTER = new Keyword("OUTER", { reserved: true })
-  static OVER = new Keyword("OVER", { reserved: true })
-  static PARTITION = new Keyword("PARTITION", {
+  static OUTER = new Sqlite3Keyword("OUTER", { reserved: true })
+  static OVER = new Sqlite3Keyword("OVER", { reserved: true })
+  static PARTITION = new Sqlite3Keyword("PARTITION", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static PRAGMA = new Keyword("PRAGMA")
-  static PRECEDING = new Keyword("PRECEDING", {
+  static PRAGMA = new Sqlite3Keyword("PRAGMA")
+  static PRECEDING = new Sqlite3Keyword("PRECEDING", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static PRIMARY = new Keyword("PRIMARY", { reserved: true })
-  static PLAN = new Keyword("PLAN")
-  static QUERY = new Keyword("QUERY")
-  static RANGE = new Keyword("RANGE", {
+  static PRIMARY = new Sqlite3Keyword("PRIMARY", { reserved: true })
+  static PLAN = new Sqlite3Keyword("PLAN")
+  static QUERY = new Sqlite3Keyword("QUERY")
+  static RANGE = new Sqlite3Keyword("RANGE", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static RECURSIVE = new Keyword("RECURSIVE")
-  static REFERENCES = new Keyword("REFERENCES", { reserved: true })
-  static REGEXP = new Keyword("REGEXP", { reserved: true })
-  static RENAME = new Keyword("RENAME")
-  static RELEASE = new Keyword("RELEASE")
-  static REINDEX = new Keyword("REINDEX")
-  static REPLACE = new Keyword("REPLACE")
-  static RETURNING = new Keyword("RETURNING", { reserved: true })
-  static RIGHT = new Keyword("RIGHT", { reserved: true })
-  static ROLLBACK = new Keyword("ROLLBACK")
-  static ROWID = new Keyword("ROWID")
-  static SAVEPOINT = new Keyword("SAVEPOINT")
-  static SCHEMA = new Keyword("SCHEMA")
-  static SELECT = new Keyword("SELECT", { reserved: true })
-  static SET = new Keyword("SET", { reserved: true })
-  static STORED = new Keyword("STORED")
-  static TABLE = new Keyword("TABLE", { reserved: true })
-  static TEMP = new Keyword("TEMP")
-  static TEMPORARY = new Keyword("TEMPORARY", { reserved: true })
-  static THEN = new Keyword("THEN", { reserved: true })
-  static TIES = new Keyword("TIES", {
+  static RECURSIVE = new Sqlite3Keyword("RECURSIVE")
+  static REFERENCES = new Sqlite3Keyword("REFERENCES", { reserved: true })
+  static REGEXP = new Sqlite3Keyword("REGEXP", { reserved: true })
+  static RENAME = new Sqlite3Keyword("RENAME")
+  static RELEASE = new Sqlite3Keyword("RELEASE")
+  static REINDEX = new Sqlite3Keyword("REINDEX")
+  static REPLACE = new Sqlite3Keyword("REPLACE")
+  static RETURNING = new Sqlite3Keyword("RETURNING", { reserved: true })
+  static RIGHT = new Sqlite3Keyword("RIGHT", { reserved: true })
+  static ROLLBACK = new Sqlite3Keyword("ROLLBACK")
+  static ROWID = new Sqlite3Keyword("ROWID")
+  static SAVEPOINT = new Sqlite3Keyword("SAVEPOINT")
+  static SCHEMA = new Sqlite3Keyword("SCHEMA")
+  static SELECT = new Sqlite3Keyword("SELECT", { reserved: true })
+  static SET = new Sqlite3Keyword("SET", { reserved: true })
+  static STORED = new Sqlite3Keyword("STORED")
+  static TABLE = new Sqlite3Keyword("TABLE", { reserved: true })
+  static TEMP = new Sqlite3Keyword("TEMP")
+  static TEMPORARY = new Sqlite3Keyword("TEMPORARY", { reserved: true })
+  static THEN = new Sqlite3Keyword("THEN", { reserved: true })
+  static TIES = new Sqlite3Keyword("TIES", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static TO = new Keyword("TO", { reserved: true })
-  static TRANSACTION = new Keyword("TRANSACTION", { reserved: true })
-  static TRIGGER = new Keyword("TRIGGER")
-  static TRUE = new Keyword("TRUE")
-  static UNBOUNDED = new Keyword("UNBOUNDED", {
+  static TO = new Sqlite3Keyword("TO", { reserved: true })
+  static TRANSACTION = new Sqlite3Keyword("TRANSACTION", { reserved: true })
+  static TRIGGER = new Sqlite3Keyword("TRIGGER")
+  static TRUE = new Sqlite3Keyword("TRUE")
+  static UNBOUNDED = new Sqlite3Keyword("UNBOUNDED", {
     reserved: function (options: { [key: string]: any }) {
       return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
     }
   })
-  static UNION = new Keyword("UNION", {
+  static UNION = new Sqlite3Keyword("UNION", {
     reserved: function (options: { [key: string]: any }) {
       return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
     }
   })
-  static UNIQUE = new Keyword("UNIQUE", { reserved: true })
-  static UPDATE = new Keyword("UPDATE", { reserved: true })
-  static USING = new Keyword("USING", { reserved: true })
-  static VACUUM = new Keyword("VACUUM")
-  static VALUES = new Keyword("VALUES", { reserved: true })
-  static VIEW = new Keyword("VIEW")
-  static VIRTUAL = new Keyword("VIRTUAL")
-  static WHEN = new Keyword("WHEN", { reserved: true })
-  static WHERE = new Keyword("WHERE", { reserved: true })
-  static WINDOW = new Keyword("WINDOW", { reserved: true })
-  static WITH = new Keyword("WITH")
-  static WITHOUT = new Keyword("WITHOUT")
+  static UNIQUE = new Sqlite3Keyword("UNIQUE", { reserved: true })
+  static UPDATE = new Sqlite3Keyword("UPDATE", { reserved: true })
+  static USING = new Sqlite3Keyword("USING", { reserved: true })
+  static VACUUM = new Sqlite3Keyword("VACUUM")
+  static VALUES = new Sqlite3Keyword("VALUES", { reserved: true })
+  static VIEW = new Sqlite3Keyword("VIEW")
+  static VIRTUAL = new Sqlite3Keyword("VIRTUAL")
+  static WHEN = new Sqlite3Keyword("WHEN", { reserved: true })
+  static WHERE = new Sqlite3Keyword("WHERE", { reserved: true })
+  static WINDOW = new Sqlite3Keyword("WINDOW", { reserved: true })
+  static WITH = new Sqlite3Keyword("WITH")
+  static WITHOUT = new Sqlite3Keyword("WITHOUT")
 
-  static OPE_EQ = new Keyword("OPE_EQ", { value: "=" })
-  static OPE_PLUS = new Keyword("OPE_PLUS", { value: "+" })
-  static OPE_MINUS = new Keyword("OPE_MINUS", { value: "-" })
+  static OPE_EQ = new Sqlite3Keyword("OPE_EQ", { value: "=" })
+  static OPE_PLUS = new Sqlite3Keyword("OPE_PLUS", { value: "+" })
+  static OPE_MINUS = new Sqlite3Keyword("OPE_MINUS", { value: "-" })
 
   constructor(
     name: string,
@@ -218,8 +218,9 @@ export class Keyword extends TokenType {
   }
 }
 
+const Keyword = Sqlite3Keyword
 export class Sqlite3Lexer extends Lexer {
-  private reserved = new Set<Keyword>()
+  private reserved = new Set<Sqlite3Keyword>()
 
   constructor(
     options: { [key: string]: any } = {}
@@ -317,7 +318,7 @@ export class Sqlite3Splitter extends Splitter {
 export class Sqlite3Parser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
     const tokens = new Sqlite3Lexer(options).lex(input)
-    const rootNode = new Sqlite3Parser(tokens, options).root()
+    const rootNode = new Sqlite3Parser(tokens, options).parse()
     return rootNode
   }
 
@@ -328,7 +329,7 @@ export class Sqlite3Parser extends Parser {
     super(tokens, options)
   }
 
-  root(): Node {
+  parse(): Node {
     const root = new Node("root")
     const errors = []
 
@@ -380,7 +381,7 @@ export class Sqlite3Parser extends Parser {
     return root
   }
 
-  command() {
+  private command() {
     const stmt = new Node("command")
 
     const token = this.consume(TokenType.Command)
@@ -429,7 +430,7 @@ export class Sqlite3Parser extends Parser {
     return stmt
   }
 
-  statement(): Node {
+  private statement(): Node {
     let explain
     let stmt
 

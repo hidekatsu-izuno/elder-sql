@@ -1,3 +1,5 @@
+import { Parser, Token, Node, TokenType, Lexer } from "./parser"
+
 export class ElderSqlCompiler {
   constructor(
     public options = {}
@@ -23,5 +25,21 @@ export class ElderSqlError extends Error {
     super(err.message)
 
     this.name = "ElderSqlError"
+  }
+}
+
+export class ElderSqlParser extends Parser {
+  constructor(
+    tokens: Token[],
+    options: Record<string, any> = {},
+  ) {
+    super(tokens, options)
+  }
+
+  parse(): Node {
+    const root = new Node("root")
+    const errors = []
+
+    return root
   }
 }

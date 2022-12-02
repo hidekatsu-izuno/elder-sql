@@ -196,13 +196,13 @@ export abstract class Parser {
   ) {
   }
 
-  abstract root(): Node
+  abstract parse(): Node
 
-  token(pos = 0) {
+  protected token(pos = 0) {
     return this.tokens[this.pos + pos]
   }
 
-  peekIf(...types: TokenType[]) {
+  protected peekIf(...types: TokenType[]) {
     for (let i = 0; i < types.length; i++) {
       const type = types[i]
       if (!type) {
@@ -220,7 +220,7 @@ export abstract class Parser {
     return true
   }
 
-  consume(type?: TokenType) {
+  protected consume(type?: TokenType) {
     const token = this.token()
     if (token == null) {
       throw this.createParseError()
@@ -232,7 +232,7 @@ export abstract class Parser {
     return token
   }
 
-  createParseError(message?: string) {
+  protected createParseError(message?: string) {
     const token = this.token()
     let fileName = token.location?.fileName
     let lineNumber = token.location?.lineNumber
