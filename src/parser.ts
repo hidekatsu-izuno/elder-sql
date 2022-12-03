@@ -3,11 +3,11 @@ export class TokenType {
   static Command = new TokenType("Command")
   static Delimiter = new TokenType("Delimiter")
   static SemiColon = new TokenType("SemiColon")
-  static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
-  static LineBreak = new TokenType("LineBreak", { skip: true })
-  static LineComment = new TokenType("LineComment", { skip: true })
-  static BlockComment = new TokenType("BlockComment", { skip: true })
-  static HintComment = new TokenType("HintComment", { skip: true })
+  static WhiteSpace = new TokenType("WhiteSpace")
+  static LineBreak = new TokenType("LineBreak")
+  static LineComment = new TokenType("LineComment")
+  static BlockComment = new TokenType("BlockComment")
+  static HintComment = new TokenType("HintComment")
   static LeftParen = new TokenType("LeftParen")
   static RightParen = new TokenType("RightParen")
   static LeftBracket = new TokenType("LeftBracket")
@@ -19,6 +19,7 @@ export class TokenType {
   static Size = new TokenType("Size")
   static String = new TokenType("String")
   static BindVariable = new TokenType("BindVariable")
+  static ReplacementVariable = new TokenType("ReplacementVariable")
   static SessionVariable = new TokenType("SessionVariable")
   static UserVariable = new TokenType("UserVariable")
   static QuotedValue = new TokenType("QuotedValue")
@@ -91,12 +92,18 @@ export class Node {
       return child instanceof Node && child.name === name
     })
   }
+
+  filter(name: string) {
+    return this.children.filter(child => {
+      return child instanceof Node && child.name === name
+    })
+  }
 }
 
 export abstract class Lexer {
   constructor(
     public type: string,
-    public patterns: {type: TokenType, re: RegExp | (() => RegExp) }[],
+    public patterns: {type: TokenType, re: RegExp | (() => RegExp), skip?: boolean }[],
     public options: Record<string, any> = {},
   ) {
   }
@@ -115,6 +122,7 @@ export abstract class Lexer {
     const skips = new Array<Token>()
     while (pos < input.length) {
       let token
+      let skip = false
       for (const pattern of this.patterns) {
         const re = (typeof pattern.re  === 'function') ?
           pattern.re() : pattern.re
@@ -129,6 +137,7 @@ export abstract class Lexer {
           loc.columnNumber = columnNumber
 
           token = new Token(pattern.type, m[0], [], loc)
+          skip = !!pattern.skip
           pos = re.lastIndex
           break
         }
@@ -146,7 +155,7 @@ export abstract class Lexer {
       }
 
       token = this.process(token)
-      if (token.type.options.skip) {
+      if (skip) {
         skips.push(token)
       } else {
         token.skips.push(...skips)

@@ -226,11 +226,11 @@ export class Sqlite3Lexer extends Lexer {
     options: { [key: string]: any } = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
       { type: TokenType.Command, re: /^\..+$/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
+      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y, skip: true },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -277,8 +277,8 @@ export class Sqlite3Lexer extends Lexer {
 }
 
 export class Sqlite3Splitter extends Splitter {
-  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
-    const tokens = new Sqlite3Lexer(options).lex(input)
+  static split: SplitFunction = function(input: string, options: Record<string, any> = {}) {
+    const tokens = new Sqlite3Lexer(options).lex(input, options.fileName)
     const stmts = new Sqlite3Splitter(options).split(tokens)
     return stmts
   }
@@ -317,7 +317,7 @@ export class Sqlite3Splitter extends Splitter {
 
 export class Sqlite3Parser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new Sqlite3Lexer(options).lex(input)
+    const tokens = new Sqlite3Lexer(options).lex(input, options.fileName)
     const rootNode = new Sqlite3Parser(tokens, options).parse()
     return rootNode
   }
@@ -568,8 +568,6 @@ export class Sqlite3Parser extends Parser {
       }      
       throw err
     }
-
-    return stmt
   }
 
   private createTableStatement() {

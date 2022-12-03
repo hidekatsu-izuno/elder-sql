@@ -618,12 +618,12 @@ export class MysqlLexer extends Lexer {
     options: Record<string, any> = {}
   ) {
     super("mysql", [
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my, skip: true },
       { type: TokenType.Command, re: () => this.reCommand },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
+      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y, skip: true },
       { type: TokenType.Delimiter, re: () => this.reDelimiter },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -711,8 +711,8 @@ export class MysqlLexer extends Lexer {
 }
 
 export class MysqlSplitter extends Splitter {
-  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
-    const tokens = new MysqlLexer(options).lex(input)
+  static split: SplitFunction = function(input: string, options: Record<string, any> = {}) {
+    const tokens = new MysqlLexer(options).lex(input, options.fileName)
     const stmts = new MysqlSplitter(options).split(tokens)
     return stmts
   }

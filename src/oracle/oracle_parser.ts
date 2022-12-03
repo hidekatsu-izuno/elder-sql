@@ -967,12 +967,12 @@ export class OracleLexer extends Lexer {
     options: Record<string, any> = {}
   ) {
     super("oracle", [
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
       { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
+      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y, skip: true },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.Operator, re: /\(\+\)=?/y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -1018,8 +1018,8 @@ export class OracleLexer extends Lexer {
 }
 
 export class OracleSplitter extends Splitter {
-  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
-    const tokens = new OracleLexer(options).lex(input)
+  static split: SplitFunction = function(input: string, options: Record<string, any> = {}) {
+    const tokens = new OracleLexer(options).lex(input, options.fileName)
     const stmts = new OracleSplitter(options).split(tokens)
     return stmts
   }

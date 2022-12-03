@@ -255,11 +255,12 @@ export class PostgresLexer extends Lexer {
     options: { [key: string]: any } = {}
   ) {
     super("postgres", [
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
       { type: TokenType.Command, re: /^\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\\|$)/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
-      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y, skip: true },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -321,8 +322,8 @@ export class PostgresLexer extends Lexer {
 }
 
 export class PostgresSplitter extends Splitter {
-  static split: SplitFunction = function(input: string, options?: Record<string, any>) {
-    const tokens = new PostgresLexer(options).lex(input)
+  static split: SplitFunction = function(input: string, options: Record<string, any> = {}) {
+    const tokens = new PostgresLexer(options).lex(input, options.fileName)
     const stmts = new PostgresSplitter(options).split(tokens)
     return stmts
   }
@@ -361,7 +362,7 @@ export class PostgresSplitter extends Splitter {
 
 export class PostgresParser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new PostgresLexer(options).lex(input)
+    const tokens = new PostgresLexer(options).lex(input, options.fileName)
     return new PostgresParser(tokens, options).parse()
   }
 
