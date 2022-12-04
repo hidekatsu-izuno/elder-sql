@@ -1,5 +1,5 @@
 import { SourceLocation, Token, TokenType } from "../../../src/parser"
-import { Keyword } from "../../../src/oracle/oracle_parser"
+import { OracleKeyword as Keyword } from "../../../src/oracle/oracle_parser"
 
 export const actual = `
 -- create the audit table to track changes

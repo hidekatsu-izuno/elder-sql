@@ -1,5 +1,5 @@
 import { Node, SourceLocation, Token, TokenType } from "../../../src/parser"
-import { Keyword } from "../../../src/sqlite3/sqlite3_parser"
+import { Sqlite3Keyword as Keyword } from "../../../src/sqlite3/sqlite3_parser"
 
 export const actual = `
 CREATE TABLE test (

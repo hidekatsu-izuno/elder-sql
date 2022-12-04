@@ -113,6 +113,10 @@ export abstract class Lexer {
     let pos = 0
     let lineNumber = 1
     let columnNumber = 0
+
+    if (typeof this.options.filter === 'function') {
+      input = this.options.filter(input)
+    }
     input = this.filter(input)
 
     if (input.startsWith("\uFEFF")) {
@@ -155,6 +159,10 @@ export abstract class Lexer {
       }
 
       token = this.process(token)
+      if (typeof this.options.process === 'function') {
+        token = this.options.process(token)
+      }
+
       if (skip) {
         skips.push(token)
       } else {
@@ -183,35 +191,19 @@ export abstract class Lexer {
   }
 }
 
-export type SplitFunction = (input: string, options?: Record<string, any>) => Token[][]
+export class TokenReader {
+  public pos = 0
 
-export abstract class Splitter {
   constructor(
-    public options: Record<string, any> = {},
+    public tokens: Token[]
   ) {
   }
 
-  abstract split(tokens: Token[]):  Token[][]
-}
-
-export type ParseFunction = (input: string, options?: Record<string, any>) => Node
-
-export abstract class Parser {
-  protected pos = 0
-
-  constructor(
-    protected tokens: Token[],
-    protected options: Record<string, any> = {},
-  ) {
-  }
-
-  abstract parse(): Node
-
-  protected token(pos = 0) {
+  token(pos = 0) {
     return this.tokens[this.pos + pos]
   }
 
-  protected peekIf(...types: TokenType[]) {
+  peekIf(...types: TokenType[]) {
     for (let i = 0; i < types.length; i++) {
       const type = types[i]
       if (!type) {
@@ -229,7 +221,7 @@ export abstract class Parser {
     return true
   }
 
-  protected consume(type?: TokenType) {
+  consume(type?: TokenType) {
     const token = this.token()
     if (token == null) {
       throw this.createParseError()
@@ -241,7 +233,7 @@ export abstract class Parser {
     return token
   }
 
-  protected createParseError(message?: string) {
+  createParseError(message?: string) {
     const token = this.token()
     let fileName = token.location?.fileName
     let lineNumber = token.location?.lineNumber
@@ -302,6 +294,30 @@ export abstract class Parser {
     err.columnNumber = columnNumber
     return err
   }
+}
+
+export type SplitFunction = (input: string, options?: Record<string, any>) => Token[][]
+
+export abstract class Splitter {
+  constructor(
+    public options: Record<string, any> = {},
+  ) {
+  }
+
+  abstract split(tokens: Token[]):  Token[][]
+}
+
+export type ParseFunction = (input: string, options?: Record<string, any>) => Node
+
+export abstract class Parser extends TokenReader {
+  constructor(
+    tokens: Token[],
+    protected options: Record<string, any> = {},
+  ) {
+    super(tokens)
+  }
+
+  abstract parse(): Node
 }
 
 export class AggregateParseError extends Error {

@@ -33,31 +33,36 @@ export class ElderSqlCompiler {
 
   compile(input: string, fileName?: string) {
     const segments = this.splitter.split(this.lexer.lex(input, fileName))
-    let text = ""
-    for (const segment of segments) {
-      const parser = new ElderSqlParser(segment)
-      const root = parser.parse()
-      for (let i = 0; i < root.children.length; i++) {
-        const child = root.children[i]
-        if (child instanceof Node) {
-          if (child.name === 'import') {
-            text += 'import ' + (child.value ?? '') + ';'
-          } else if (child.name === 'define') {
-/*
-            text += this.define(child)
-            for () {
 
-            }
-            text += this.block(root.children[i+1])
-            text += '}\n'
-*/
+    const output = new Array<string>()
+
+    let defined = false
+    /*
+    for (const segment of segments) {
+      for (const token of segment) {
+        for (const skip of token.skips) {
+          if (defined) {
+            process(skip, output)
+          } else if (isDefineComment(skip)) {
+            defined = true
           }
-        } else if (child instanceof Token) {
-          text += child.text
+        }
+        if (defined) {
+          process(token, output)
+        } else {
+          throw new Error("Invalid token: " + token.text)
         }
       }
     }
-    return new ElderSqlCompileResult(text, {})
+    */
+
+    if (defined) {
+      output.push('}\n')
+    }
+    return new ElderSqlCompileResult(output.join(), {})
+  }
+
+  private process(segments: Token[][]) {
   }
 
   private block(node: Node) {
