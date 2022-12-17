@@ -1,16 +1,15 @@
 import fs from "node:fs"
-import { OracleLexer, OracleParser } from "../../src/oracle/oracle_parser"
+import { Sqlite3Lexer } from "../../src/sqlite3/sqlite3_lexer"
 import { toJSString } from "../../src/util"
 
-describe("test oracle lexer", () => {
+describe("test sqlite3 lexer", () => {
   test.each([
-    "select",
-    "create_package",
+    "select"
   ])("%s", (target) => {
     const module = require("./lexer/" + target)
-    const tokens = new OracleLexer().lex(module.actual)
+    const tokens = new Sqlite3Lexer().lex(module.actual)
 
-    if (target === "create_package") {
+    if (target === "") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 
