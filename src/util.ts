@@ -1,4 +1,5 @@
-import { Node, Token } from "./parser"
+import { Token } from "./lexer"
+import { Node } from "./parser"
 
 export function lcase(text: string) {
   return text.toLowerCase()

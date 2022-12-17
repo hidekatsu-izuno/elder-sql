@@ -1,5 +1,4 @@
-import { SourceLocation, Token, TokenType } from "../../../src/parser"
-import { Sqlite3Keyword as Keyword } from "../../../src/sqlite3/sqlite3_parser"
+import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
 
 export const actual = `
 SELECT 1

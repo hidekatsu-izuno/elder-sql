@@ -147,6 +147,7 @@ export abstract class Lexer {
   }
 }
 
+const KeywordMap = new Map<string, Keyword>()
 export class Keyword extends TokenType {
   static ABORT = new Keyword("ABORT")
   static ACCESS = new Keyword("ACCESS")
@@ -1382,10 +1383,8 @@ export class Keyword extends TokenType {
   static ZEROFILL = new Keyword("ZEROFILL")
   static ZONEMAP = new Keyword("ZONEMAP")
 
-  private static _MAP = new Map<string, Keyword>()
-
   static from(value: string) {
-    return this._MAP.get(value.toUpperCase())
+    return KeywordMap.get(value.toUpperCase())
   }
 
   constructor(
@@ -1393,10 +1392,11 @@ export class Keyword extends TokenType {
     options: { [key: string]: any } = {}
   ) {
     super(name, options)
-    Keyword._MAP.set(name, this)
+    KeywordMap.set(name, this)
   }
 }
 
+const OperatorMap = new Map<string, Operator>()
 export class Operator extends TokenType {
   static EQ = new Operator("EQ", "=")
   static PLUS = new Operator("PLUS", "+")
@@ -1407,10 +1407,8 @@ export class Operator extends TokenType {
   static PERCENT = new Operator("PERCENT", "%")
   static RANGE = new Operator("RANGE", "..")
 
-  private static _MAP = new Map<string, Operator>()
-
   static from(value: string) {
-    return this._MAP.get(value)
+    return OperatorMap.get(value)
   }
 
   constructor(
@@ -1419,7 +1417,7 @@ export class Operator extends TokenType {
     options: { [key: string]: any } = {}
   ) {
     super(name, options)
-    Operator._MAP.set(value, this)
+    OperatorMap.set(value, this)
   }
 }
 
