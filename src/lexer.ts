@@ -891,7 +891,6 @@ export class Keyword extends TokenType {
   static OPAQUE = new Keyword("OPAQUE")
   static OPEN = new Keyword("OPEN")
   static OPERATOR = new Keyword("OPERATOR")
-  static OPTIION = new Keyword("OPTIION")
   static OPTIMIZE = new Keyword("OPTIMIZE")
   static OPTIMIZER_COSTS = new Keyword("OPTIMIZER_COSTS")
   static OPTION = new Keyword("OPTION")
