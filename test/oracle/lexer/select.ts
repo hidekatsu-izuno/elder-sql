@@ -1,5 +1,4 @@
-import { SourceLocation, Token, TokenType } from "../../../src/parser"
-import { OracleKeyword as Keyword } from "../../../src/oracle/oracle_parser"
+import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
 
 export const actual = `
 SELECT 1

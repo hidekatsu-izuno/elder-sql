@@ -1,4 +1,4 @@
-import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
+import { SourceLocation, Token, TokenType, Keyword, Operator } from "../../../src/lexer"
 
 export const actual = `
 -- create the audit table to track changes
@@ -659,13 +659,13 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(1752, 36, 23, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(1753, 37, 0, undefined))
   ], new SourceLocation(1759, 37, 6, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_ASSIGN], ":=", [
+  new Token([TokenType.Operator, Operator.ASSIGN], ":=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1771, 37, 18, undefined))
   ], new SourceLocation(1772, 37, 19, undefined)),
   new Token(TokenType.Identifier, "number_hired", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1774, 37, 21, undefined))
   ], new SourceLocation(1775, 37, 22, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
+  new Token([TokenType.Operator, Operator.PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1787, 37, 34, undefined))
   ], new SourceLocation(1788, 37, 35, undefined)),
   new Token(TokenType.Number, "1", [
@@ -750,7 +750,7 @@ export const expected = [
   new Token(TokenType.Identifier, "employee_id", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2050, 44, 33, undefined))
   ], new SourceLocation(2051, 44, 34, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2062, 44, 45, undefined))
   ], new SourceLocation(2063, 44, 46, undefined)),
   new Token(TokenType.Identifier, "emp_id", [
@@ -803,7 +803,7 @@ export const expected = [
   new Token(TokenType.Identifier, "email", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2188, 48, 33, undefined))
   ], new SourceLocation(2189, 48, 34, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2194, 48, 39, undefined))
   ], new SourceLocation(2195, 48, 40, undefined)),
   new Token(TokenType.Identifier, "emp_email", [
@@ -912,7 +912,7 @@ export const expected = [
   new Token(TokenType.Identifier, "job_id", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2496, 56, 14, undefined))
   ], new SourceLocation(2497, 56, 15, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2503, 56, 21, undefined))
   ], new SourceLocation(2504, 56, 22, undefined)),
   new Token(TokenType.Identifier, "jobid", [
@@ -1044,7 +1044,7 @@ export const expected = [
   new Token(TokenType.Identifier, "employee_id", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2775, 64, 18, undefined))
   ], new SourceLocation(2776, 64, 19, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2787, 64, 30, undefined))
   ], new SourceLocation(2788, 64, 31, undefined)),
   new Token(TokenType.Identifier, "emp_id", [
@@ -1064,7 +1064,7 @@ export const expected = [
   new Token(TokenType.Identifier, "sal", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2820, 65, 22, undefined))
   ], new SourceLocation(2821, 65, 23, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
+  new Token([TokenType.Operator, Operator.PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2824, 65, 26, undefined))
   ], new SourceLocation(2825, 65, 27, undefined)),
   new Token(TokenType.Identifier, "amount", [
@@ -1087,13 +1087,13 @@ export const expected = [
   new Token(TokenType.Identifier, "salary", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2869, 66, 29, undefined))
   ], new SourceLocation(2870, 66, 30, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2876, 66, 36, undefined))
   ], new SourceLocation(2877, 66, 37, undefined)),
   new Token(TokenType.Identifier, "salary", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2878, 66, 38, undefined))
   ], new SourceLocation(2879, 66, 39, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_PLUS], "+", [
+  new Token([TokenType.Operator, Operator.PLUS], "+", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2885, 66, 45, undefined))
   ], new SourceLocation(2886, 66, 46, undefined)),
   new Token(TokenType.Identifier, "amount", [
@@ -1105,7 +1105,7 @@ export const expected = [
   new Token(TokenType.Identifier, "employee_id", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2900, 66, 60, undefined))
   ], new SourceLocation(2901, 66, 61, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_EQ], "=", [
+  new Token([TokenType.Operator, Operator.EQ], "=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2912, 66, 72, undefined))
   ], new SourceLocation(2913, 66, 73, undefined)),
   new Token(TokenType.Identifier, "emp_id", [
@@ -1311,7 +1311,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3536, 85, 61, undefined)),
     new Token(TokenType.WhiteSpace, "   ", [], new SourceLocation(3537, 86, 0, undefined))
   ], new SourceLocation(3540, 86, 3, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_ASSIGN], ":=", [
+  new Token([TokenType.Operator, Operator.ASSIGN], ":=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3552, 86, 15, undefined))
   ], new SourceLocation(3553, 86, 16, undefined)),
   new Token(TokenType.Number, "0", [
@@ -1351,7 +1351,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3647, 92, 5, undefined)),
     new Token(TokenType.WhiteSpace, "  ", [], new SourceLocation(3648, 93, 0, undefined))
   ], new SourceLocation(3650, 93, 2, undefined)),
-  new Token([TokenType.Operator, Keyword.OPE_ASSIGN], ":=", [
+  new Token([TokenType.Operator, Operator.ASSIGN], ":=", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3660, 93, 12, undefined))
   ], new SourceLocation(3661, 93, 13, undefined)),
   new Token(TokenType.Identifier, "emp_admin", [
