@@ -3,234 +3,104 @@ import Decimal from "decimal.js"
 import {
   TokenType,
   Token,
-  Node,
   Lexer,
+  SourceLocation,
+  Keyword,
+  Operator,
+} from "../lexer"
+import {
+  Node,
   Parser,
   ParseError,
   AggregateParseError,
   ParseFunction,
-  Splitter,
-  SplitFunction,
-  SourceLocation,
 } from "../parser"
 
-const KeywordMap = new Map<string, Sqlite3Keyword>()
-export class Sqlite3Keyword extends TokenType {
-  static ABORT = new Sqlite3Keyword("ABORT")
-  static ADD = new Sqlite3Keyword("ADD", { reserved: true })
-  static ALL = new Sqlite3Keyword("ALL", { reserved: true })
-  static ALTER = new Sqlite3Keyword("ALTER", { reserved: true })
-  static ALWAYS = new Sqlite3Keyword("ALWAYS", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
-    }
-  })
-  static AND = new Sqlite3Keyword("AND", { reserved: true })
-  static ANALYZE = new Sqlite3Keyword("ANALYZE")
-  static AS = new Sqlite3Keyword("AS", { reserved: true })
-  static ASC = new Sqlite3Keyword("ASC")
-  static ATTACH = new Sqlite3Keyword("ATTACH")
-  static AUTOINCREMENT = new Sqlite3Keyword("AUTOINCREMENT", { reserved: true })
-  static BEGIN = new Sqlite3Keyword("BEGIN")
-  static BETWEEN = new Sqlite3Keyword("BETWEEN", { reserved: true })
-  static CASE = new Sqlite3Keyword("CASE", { reserved: true })
-  static CHECK = new Sqlite3Keyword("CHECK", { reserved: true })
-  static COLLATE = new Sqlite3Keyword("COLLATE", { reserved: true })
-  static COLUMN = new Sqlite3Keyword("COLUMN")
-  static COMMIT = new Sqlite3Keyword("COMMIT", { reserved: true })
-  static CONFLICT = new Sqlite3Keyword("CONFLICT")
-  static CONSTRAINT = new Sqlite3Keyword("CONSTRAINT", { reserved: true })
-  static CREATE = new Sqlite3Keyword("CREATE", { reserved: true })
-  static CROSS = new Sqlite3Keyword("CROSS", { reserved: true })
-  static CURRENT = new Sqlite3Keyword("CURRENT", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static CURRENT_DATE = new Sqlite3Keyword("CURRENT_DATE", { reserved: true })
-  static CURRENT_TIME = new Sqlite3Keyword("CURRENT_TIME", { reserved: true })
-  static CURRENT_TIMESTAMP = new Sqlite3Keyword("CURRENT_TIMESTAMP", { reserved: true })
-  static DATABASE = new Sqlite3Keyword("DATABASE")
-  static DEFAULT = new Sqlite3Keyword("DEFAULT", { reserved: true })
-  static DEFERRED = new Sqlite3Keyword("DEFERRED")
-  static DEFERRABLE = new Sqlite3Keyword("DEFERRABLE", { reserved: true })
-  static DELETE = new Sqlite3Keyword("DELETE", { reserved: true })
-  static DESC = new Sqlite3Keyword("DESC")
-  static DETACH = new Sqlite3Keyword("DETACH")
-  static DISTINCT = new Sqlite3Keyword("DISTINCT", { reserved: true })
-  static DROP = new Sqlite3Keyword("DROP")
-  static ELSE = new Sqlite3Keyword("ELSE", { reserved: true })
-  static ESCAPE = new Sqlite3Keyword("ESCAPE", { reserved: true })
-  static EXCEPT = new Sqlite3Keyword("EXCEPT", {
-    reserved: function (options: { [key: string]: any }) {
-      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-    }
-  })
-  static EXISTS = new Sqlite3Keyword("EXISTS", { reserved: true })
-  static EXCLUDE = new Sqlite3Keyword("EXCLUDE", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static EXCLUSIVE = new Sqlite3Keyword("EXCLUSIVE")
-  static END = new Sqlite3Keyword("END")
-  static EXPLAIN = new Sqlite3Keyword("EXPLAIN")
-  static FAIL = new Sqlite3Keyword("FAIL")
-  static FALSE = new Sqlite3Keyword("FALSE")
-  static FILTER = new Sqlite3Keyword("FILTER", { reserved: true })
-  static FOLLOWING = new Sqlite3Keyword("FOLLOWING", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static FOREIGN = new Sqlite3Keyword("FOREIGN", { reserved: true })
-  static FROM = new Sqlite3Keyword("FROM", { reserved: true })
-  static GENERATED = new Sqlite3Keyword("GENERATED", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")
-    }
-  })
-  static GLOB = new Sqlite3Keyword("GLOB", { reserved: true })
-  static GROUP = new Sqlite3Keyword("GROUP", { reserved: true })
-  static GROUPS = new Sqlite3Keyword("GROUPS", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static HAVING = new Sqlite3Keyword("HAVING", { reserved: true })
-  static IGNORE = new Sqlite3Keyword("IGNORE")
-  static IMMEDIATE = new Sqlite3Keyword("IMMEDIATE")
-  static IN = new Sqlite3Keyword("IN", { reserved: true })
-  static INDEX = new Sqlite3Keyword("INDEX", { reserved: true })
-  static INDEXED = new Sqlite3Keyword("INDEXED", { reserved: true })
-  static INNER = new Sqlite3Keyword("INNER", { reserved: true })
-  static INSERT = new Sqlite3Keyword("INSERT", { reserved: true })
-  static INTERSECT = new Sqlite3Keyword("INTERSECT", {
-    reserved: function (options: { [key: string]: any }) {
-      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-    }
-  })
-  static INTO = new Sqlite3Keyword("INTO", { reserved: true })
-  static IF = new Sqlite3Keyword("IF")
-  static IS = new Sqlite3Keyword("IS", { reserved: true })
-  static ISNULL = new Sqlite3Keyword("ISNULL", { reserved: true })
-  static JOIN = new Sqlite3Keyword("JOIN", { reserved: true })
-  static KEY = new Sqlite3Keyword("KEY")
-  static LEFT = new Sqlite3Keyword("LEFT", { reserved: true })
-  static LIMIT = new Sqlite3Keyword("LIMIT", { reserved: true })
-  static MATERIALIZED = new Sqlite3Keyword("MATERIALIZED")
-  static NATURAL = new Sqlite3Keyword("NATURAL", { reserved: true })
-  static NOT = new Sqlite3Keyword("NOT", { reserved: true })
-  static NOTHING = new Sqlite3Keyword("NOTHING", { reserved: true })
-  static NOTNULL = new Sqlite3Keyword("NOTNULL", { reserved: true })
-  static NULL = new Sqlite3Keyword("NULL", { reserved: true })
-  static ON = new Sqlite3Keyword("ON", { reserved: true })
-  static OR = new Sqlite3Keyword("OR", { reserved: true })
-  static ORDER = new Sqlite3Keyword("ORDER", { reserved: true })
-  static OTHERS = new Sqlite3Keyword("OTHERS", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static OUTER = new Sqlite3Keyword("OUTER", { reserved: true })
-  static OVER = new Sqlite3Keyword("OVER", { reserved: true })
-  static PARTITION = new Sqlite3Keyword("PARTITION", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static PRAGMA = new Sqlite3Keyword("PRAGMA")
-  static PRECEDING = new Sqlite3Keyword("PRECEDING", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static PRIMARY = new Sqlite3Keyword("PRIMARY", { reserved: true })
-  static PLAN = new Sqlite3Keyword("PLAN")
-  static QUERY = new Sqlite3Keyword("QUERY")
-  static RANGE = new Sqlite3Keyword("RANGE", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static RECURSIVE = new Sqlite3Keyword("RECURSIVE")
-  static REFERENCES = new Sqlite3Keyword("REFERENCES", { reserved: true })
-  static REGEXP = new Sqlite3Keyword("REGEXP", { reserved: true })
-  static RENAME = new Sqlite3Keyword("RENAME")
-  static RELEASE = new Sqlite3Keyword("RELEASE")
-  static REINDEX = new Sqlite3Keyword("REINDEX")
-  static REPLACE = new Sqlite3Keyword("REPLACE")
-  static RETURNING = new Sqlite3Keyword("RETURNING", { reserved: true })
-  static RIGHT = new Sqlite3Keyword("RIGHT", { reserved: true })
-  static ROLLBACK = new Sqlite3Keyword("ROLLBACK")
-  static ROWID = new Sqlite3Keyword("ROWID")
-  static SAVEPOINT = new Sqlite3Keyword("SAVEPOINT")
-  static SCHEMA = new Sqlite3Keyword("SCHEMA")
-  static SELECT = new Sqlite3Keyword("SELECT", { reserved: true })
-  static SET = new Sqlite3Keyword("SET", { reserved: true })
-  static STORED = new Sqlite3Keyword("STORED")
-  static TABLE = new Sqlite3Keyword("TABLE", { reserved: true })
-  static TEMP = new Sqlite3Keyword("TEMP")
-  static TEMPORARY = new Sqlite3Keyword("TEMPORARY", { reserved: true })
-  static THEN = new Sqlite3Keyword("THEN", { reserved: true })
-  static TIES = new Sqlite3Keyword("TIES", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static TO = new Sqlite3Keyword("TO", { reserved: true })
-  static TRANSACTION = new Sqlite3Keyword("TRANSACTION", { reserved: true })
-  static TRIGGER = new Sqlite3Keyword("TRIGGER")
-  static TRUE = new Sqlite3Keyword("TRUE")
-  static UNBOUNDED = new Sqlite3Keyword("UNBOUNDED", {
-    reserved: function (options: { [key: string]: any }) {
-      return options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")
-    }
-  })
-  static UNION = new Sqlite3Keyword("UNION", {
-    reserved: function (options: { [key: string]: any }) {
-      return !options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")
-    }
-  })
-  static UNIQUE = new Sqlite3Keyword("UNIQUE", { reserved: true })
-  static UPDATE = new Sqlite3Keyword("UPDATE", { reserved: true })
-  static USING = new Sqlite3Keyword("USING", { reserved: true })
-  static VACUUM = new Sqlite3Keyword("VACUUM")
-  static VALUES = new Sqlite3Keyword("VALUES", { reserved: true })
-  static VIEW = new Sqlite3Keyword("VIEW")
-  static VIRTUAL = new Sqlite3Keyword("VIRTUAL")
-  static WHEN = new Sqlite3Keyword("WHEN", { reserved: true })
-  static WHERE = new Sqlite3Keyword("WHERE", { reserved: true })
-  static WINDOW = new Sqlite3Keyword("WINDOW", { reserved: true })
-  static WITH = new Sqlite3Keyword("WITH")
-  static WITHOUT = new Sqlite3Keyword("WITHOUT")
-
-  static OPE_EQ = new Sqlite3Keyword("OPE_EQ", { value: "=" })
-  static OPE_PLUS = new Sqlite3Keyword("OPE_PLUS", { value: "+" })
-  static OPE_MINUS = new Sqlite3Keyword("OPE_MINUS", { value: "-" })
-
-  constructor(
-    name: string,
-    options: { [key: string]: any } = {}
-  ) {
-    super(name, { ...options, keyword: true })
-    KeywordMap.set(options.value ?? name, this)
-  }
-}
-
-const Keyword = Sqlite3Keyword
 export class Sqlite3Lexer extends Lexer {
-  private reserved = new Set<Sqlite3Keyword>()
+  private static RESERVED = new Set<Keyword>([
+    Keyword.ADD,
+    Keyword.ALL,
+    Keyword.ALTER,
+    Keyword.AND,
+    Keyword.AS,
+    Keyword.AUTOINCREMENT,
+    Keyword.BETWEEN,
+    Keyword.CASE,
+    Keyword.CHECK,
+    Keyword.COLLATE,
+    Keyword.COMMIT,
+    Keyword.CONSTRAINT,
+    Keyword.CREATE,
+    Keyword.CROSS,
+    Keyword.CURRENT_DATE,
+    Keyword.CURRENT_TIME,
+    Keyword.CURRENT_TIMESTAMP,
+    Keyword.DEFAULT,
+    Keyword.DEFERRABLE,
+    Keyword.DELETE,
+    Keyword.DISTINCT,
+    Keyword.ELSE,
+    Keyword.ESCAPE,
+    Keyword.EXISTS,
+    Keyword.FILTER,
+    Keyword.FOREIGN,
+    Keyword.FROM,
+    Keyword.GLOB,
+    Keyword.GROUP,
+    Keyword.HAVING,
+    Keyword.IN,
+    Keyword.INDEX,
+    Keyword.INDEXED,
+    Keyword.INNER,
+    Keyword.INSERT,
+    Keyword.INTO,
+    Keyword.IS,
+    Keyword.ISNULL,
+    Keyword.JOIN,
+    Keyword.LEFT,
+    Keyword.LIMIT,
+    Keyword.NATURAL,
+    Keyword.NOT,
+    Keyword.NOTHING,
+    Keyword.NOTNULL,
+    Keyword.NULL,
+    Keyword.ON,
+    Keyword.OR,
+    Keyword.ORDER,
+    Keyword.PRIMARY,
+    Keyword.OUTER,
+    Keyword.OVER,
+    Keyword.REFERENCES,
+    Keyword.REGEXP,
+    Keyword.RETURNING,
+    Keyword.RIGHT,
+    Keyword.SELECT,
+    Keyword.SET,
+    Keyword.TABLE,
+    Keyword.TEMPORARY,
+    Keyword.THEN,
+    Keyword.TO,
+    Keyword.TRANSACTION,
+    Keyword.UNIQUE,
+    Keyword.UPDATE,
+    Keyword.USING,
+    Keyword.VALUES,
+    Keyword.WHEN,
+    Keyword.WHERE,
+    Keyword.WINDOW,
+  ]);
+
+  private reserved = new Set<Keyword>();
 
   constructor(
     options: { [key: string]: any } = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
-      { type: TokenType.LineComment, re: /--.*/y, skip: true },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
+      { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
       { type: TokenType.Command, re: /^\..+$/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y, skip: true },
+      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -247,71 +117,48 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.Error, re: /./y },
     ], options)
 
-    for (const keyword of KeywordMap.values()) {
-      if (typeof keyword.options.reserved === "function") {
-        if (keyword.options.reserved(options)) {
-          this.reserved.add(keyword)
-        }
-      } else if (keyword.options.reserved === true) {
-        this.reserved.add(keyword)
-      }
+    if (!options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
+      this.reserved.add(Keyword.ALWAYS)
+      this.reserved.add(Keyword.GENERATED)
+    }
+    if (!options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")) {
+      this.reserved.add(Keyword.CURRENT)
+      this.reserved.add(Keyword.EXCLUDE)
+      this.reserved.add(Keyword.FOLLOWING)
+      this.reserved.add(Keyword.GROUPS)
+      this.reserved.add(Keyword.OTHERS)
+      this.reserved.add(Keyword.PARTITION)
+      this.reserved.add(Keyword.PRECEDING)
+      this.reserved.add(Keyword.RANGE)
+      this.reserved.add(Keyword.TIES)
+      this.reserved.add(Keyword.UNBOUNDED)
+    }
+    if (!options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")) {
+      this.reserved.add(Keyword.EXCEPT)
+      this.reserved.add(Keyword.INTERSECT)
+      this.reserved.add(Keyword.UNION)
     }
   }
 
   protected process(token: Token) {
-    if (
-      token.type === TokenType.Identifier ||
-      token.type === TokenType.Operator
-    ) {
-      const keyword = KeywordMap.get(token.text.toUpperCase())
+    if (token.type === TokenType.Identifier) {
+      const keyword = Keyword.from(token.text)
       if (keyword) {
-        if (this.reserved.has(keyword)) {
+        if (Sqlite3Lexer.RESERVED.has(keyword) || this.reserved.has(keyword)) {
           token.type = keyword
         } else {
           token.subtype = keyword
         }
       }
+    } else if (token.type === TokenType.Operator) {
+      const operator = Operator.from(token.text)
+      if (operator) {
+        token.subtype = operator
+      }
+    } else if (token.type === TokenType.SemiColon) {
+      token.subtype = TokenType.Delimiter
     }
     return token
-  }
-}
-
-export class Sqlite3Splitter extends Splitter {
-  static split: SplitFunction = function(input: string, options: Record<string, any> = {}) {
-    const tokens = new Sqlite3Lexer(options).lex(input, options.fileName)
-    const stmts = new Sqlite3Splitter(options).split(tokens)
-    return stmts
-  }
-
-  constructor(
-    options: Record<string, any> = {},
-  ) {
-    super(options)
-  }
-
-  split(tokens: Token[]): Token[][] {
-    const segments = new Array<Token[]>()
-
-    let segment: Token[] | undefined
-    for (const token of tokens) {
-      if (!segment) {
-        segment = []
-        segments.push(segment)
-      }
-      if (token.is(TokenType.Command)) {
-        segment = []
-        segment.push(token)
-        segments.push(segment)
-        segment = undefined
-      } else if (token.is(TokenType.SemiColon) || token.is(TokenType.Eof)) {
-        segment.push(token)
-        segment = undefined
-      } else {
-        segment.push(token)
-      }
-    }
-
-    return segments
   }
 }
 
@@ -335,7 +182,7 @@ export class Sqlite3Parser extends Parser {
 
     while (this.token()) {
       try {
-        if (this.peekIf(TokenType.SemiColon) || this.peekIf(TokenType.Eof)) {
+        if (this.peekIf(TokenType.Delimiter) || this.peekIf(TokenType.Eof)) {
           root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
@@ -547,7 +394,7 @@ export class Sqlite3Parser extends Parser {
         stmt = explain.add(stmt)
       }
 
-      if (this.peekIf(TokenType.SemiColon)) {
+      if (this.peekIf(TokenType.Delimiter)) {
         stmt.add(this.consume())
       }
       if (this.peekIf(TokenType.Eof)) {
@@ -561,7 +408,7 @@ export class Sqlite3Parser extends Parser {
         if (!stmt) {
           stmt = new Node("unknown")
         }
-        while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+        while (this.token() && !this.peekIf(TokenType.Delimiter)) {
           stmt.add(this.consume())
         }
         err.node = stmt
@@ -650,7 +497,7 @@ export class Sqlite3Parser extends Parser {
       }
 
       node.add(this.consume(TokenType.RightParen))
-      while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      while (this.token() && !this.peekIf(TokenType.Delimiter)) {
         if (this.peekIf(Keyword.WITHOUT)) {
           node.add(new Node("without rowid").add(
             this.consume(), 
@@ -728,7 +575,7 @@ export class Sqlite3Parser extends Parser {
     }
     this.parseName(node)
 
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+    while (this.token() && !this.peekIf(TokenType.Delimiter)) {
       if (this.peekIf(Keyword.BEGIN)) {
         node.add(this.consume())
         while (this.token() && !this.peekIf(Keyword.END)) {
@@ -777,7 +624,7 @@ export class Sqlite3Parser extends Parser {
     if (this.peekIf(Keyword.WHERE)) {
       const whereNode = new Node("where")
       whereNode.add(this.consume())
-      while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+      while (this.token() && !this.peekIf(TokenType.Delimiter)) {
         whereNode.add(this.consume())
       }
       node.add(whereNode)
@@ -930,7 +777,7 @@ export class Sqlite3Parser extends Parser {
     if (this.token() && !this.peekIf(Keyword.TO)) {
       node.add(this.identifier("schema_name"))
     }
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+    while (this.token() && !this.peekIf(TokenType.Delimiter)) {
       node.add(this.consume())
     }
     return node
@@ -941,7 +788,7 @@ export class Sqlite3Parser extends Parser {
     node.add(this.consume(Keyword.PRAGMA))
 
     this.parseName(node)
-    if (this.peekIf(Keyword.OPE_EQ)) {
+    if (this.peekIf(Operator.EQ)) {
       node.add(this.consume())
       node.add(this.pragmaValue())
     } else if (this.peekIf(TokenType.LeftParen)) {
@@ -1033,7 +880,7 @@ export class Sqlite3Parser extends Parser {
     node.add(this.consume(Keyword.INTO))
     this.parseName(node)
     
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+    while (this.token() && !this.peekIf(TokenType.Delimiter)) {
       node.add(this.consume())
     }
     return node
@@ -1047,7 +894,7 @@ export class Sqlite3Parser extends Parser {
     node.add(this.consume(Keyword.UPDATE))
     this.parseName(node)
     
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+    while (this.token() && !this.peekIf(TokenType.Delimiter)) {
       node.add(this.consume())
     }
     return node
@@ -1062,7 +909,7 @@ export class Sqlite3Parser extends Parser {
     node.add(this.consume(Keyword.FROM))
     this.parseName(node)
     
-    while (this.token() && !this.peekIf(TokenType.SemiColon)) {
+    while (this.token() && !this.peekIf(TokenType.Delimiter)) {
       node.add(this.consume())
     }
     return node
@@ -1077,7 +924,7 @@ export class Sqlite3Parser extends Parser {
 
     let depth = 0
     while (this.token() &&
-      !this.peekIf(TokenType.SemiColon) &&
+      !this.peekIf(TokenType.Delimiter) &&
       (depth == 0 && !this.peekIf(TokenType.RightParen))
     ) {
       if (this.peekIf(TokenType.LeftParen)) {
@@ -1163,7 +1010,7 @@ export class Sqlite3Parser extends Parser {
 
     while (
       this.token() &&
-      !this.peekIf(TokenType.SemiColon) &&
+      !this.peekIf(TokenType.Delimiter) &&
       !this.peekIf(TokenType.RightParen) &&
       !this.peekIf(TokenType.Comma)
     ) {
@@ -1420,7 +1267,7 @@ export class Sqlite3Parser extends Parser {
 
   private pragmaValue() {
     const node = new Node("pragma_value")
-    if (this.peekIf(Keyword.OPE_PLUS) || this.peekIf(Keyword.OPE_MINUS)) {
+    if (this.peekIf(Operator.PLUS) || this.peekIf(Operator.MINUS)) {
       const token1 = this.consume()
       node.add(token1)
       const token2 = this.consume(TokenType.Number)
@@ -1466,7 +1313,7 @@ export class Sqlite3Parser extends Parser {
 
   private numberValue(name: string) {
     const node = new Node(name)
-    if (this.peekIf(Keyword.OPE_PLUS) || this.peekIf(Keyword.OPE_MINUS)) {
+    if (this.peekIf(Operator.PLUS) || this.peekIf(Operator.MINUS)) {
       const token1 = this.consume()
       node.add(token1)
       const token2 = this.consume(TokenType.Number)
@@ -1489,7 +1336,7 @@ export class Sqlite3Parser extends Parser {
       (depth == 0 && !this.peekIf(Keyword.AS)) &&
       (depth == 0 && !this.peekIf(Keyword.ASC)) &&
       (depth == 0 && !this.peekIf(Keyword.DESC)) &&
-      !this.peekIf(TokenType.SemiColon)
+      !this.peekIf(TokenType.Delimiter)
     ) {
       if (this.peekIf(TokenType.LeftParen)) {
         node.add(this.consume())

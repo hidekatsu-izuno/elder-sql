@@ -1,71 +1,4 @@
-export class TokenType {
-  static Eof = new TokenType("Eof")
-  static Command = new TokenType("Command")
-  static Delimiter = new TokenType("Delimiter")
-  static SemiColon = new TokenType("SemiColon")
-  static WhiteSpace = new TokenType("WhiteSpace")
-  static LineBreak = new TokenType("LineBreak")
-  static LineComment = new TokenType("LineComment")
-  static BlockComment = new TokenType("BlockComment")
-  static HintComment = new TokenType("HintComment")
-  static LeftParen = new TokenType("LeftParen")
-  static RightParen = new TokenType("RightParen")
-  static LeftBracket = new TokenType("LeftBracket")
-  static RightBracket = new TokenType("RightBracket")
-  static Comma = new TokenType("Comma")
-  static Dot = new TokenType("Dot")
-  static Operator = new TokenType("Operator")
-  static Number = new TokenType("Number")
-  static Size = new TokenType("Size")
-  static String = new TokenType("String")
-  static BindVariable = new TokenType("BindVariable")
-  static ReplacementVariable = new TokenType("ReplacementVariable")
-  static SessionVariable = new TokenType("SessionVariable")
-  static UserVariable = new TokenType("UserVariable")
-  static QuotedValue = new TokenType("QuotedValue")
-  static QuotedIdentifier = new TokenType("QuotedIdentifier")
-  static Identifier = new TokenType("Identifier")
-  static Error = new TokenType("Error")
-
-  constructor(
-    public name: string,
-    public options: { [key: string]: any } = {},
-  ) {
-  }
-}
-
-export class SourceLocation {
-  constructor(
-    public position?: number,
-    public lineNumber?: number,
-    public columnNumber?: number,
-    public fileName?: string,
-  ) {
-  }
-}
-
-export class Token {
-  public type: TokenType
-  public subtype?: TokenType
-
-  constructor(
-    type: TokenType | [TokenType, TokenType],
-    public text: string,
-    public skips: Token[] = [],
-    public location?: SourceLocation,
-  ) {
-    if (Array.isArray(type)) {
-      this.type = type[0]
-      this.subtype = type[1]
-    } else {
-      this.type = type
-    }
-  }
-
-  is(type: TokenType) {
-    return this.type === type || this.subtype === type
-  }
-}
+import { TokenType, Token } from './lexer'
 
 export class Node {
   parent?: Node
@@ -97,97 +30,6 @@ export class Node {
     return this.children.filter(child => {
       return child instanceof Node && child.name === name
     })
-  }
-}
-
-export abstract class Lexer {
-  constructor(
-    public type: string,
-    public patterns: {type: TokenType, re: RegExp | (() => RegExp), skip?: boolean }[],
-    public options: Record<string, any> = {},
-  ) {
-  }
-
-  lex(input: string, fileName?: string) {
-    const tokens = []
-    let pos = 0
-    let lineNumber = 1
-    let columnNumber = 0
-
-    if (typeof this.options.filter === 'function') {
-      input = this.options.filter(input)
-    }
-    input = this.filter(input)
-
-    if (input.startsWith("\uFEFF")) {
-      pos = 1
-    }
-
-    const skips = new Array<Token>()
-    while (pos < input.length) {
-      let token
-      let skip = false
-      for (const pattern of this.patterns) {
-        const re = (typeof pattern.re  === 'function') ?
-          pattern.re() : pattern.re
-
-        re.lastIndex = pos
-        const m = re.exec(input)
-        if (m) {
-          const loc = new SourceLocation()
-          loc.fileName = fileName
-          loc.position = pos
-          loc.lineNumber = lineNumber
-          loc.columnNumber = columnNumber
-
-          token = new Token(pattern.type, m[0], [], loc)
-          skip = !!pattern.skip
-          pos = re.lastIndex
-          break
-        }
-      }
-
-      if (!token) {
-        throw new Error(`Failed to tokenize: ${pos}`)
-      }
-
-      if (token.type === TokenType.LineBreak || token.subtype === TokenType.LineBreak) {
-        lineNumber++
-        columnNumber = 0
-      } else {
-        columnNumber += token.text.length
-      }
-
-      token = this.process(token)
-      if (typeof this.options.process === 'function') {
-        token = this.options.process(token)
-      }
-
-      if (skip) {
-        skips.push(token)
-      } else {
-        token.skips.push(...skips)
-        skips.length = 0
-        tokens.push(token)
-      }
-    }
-
-    const loc = new SourceLocation()
-    loc.fileName = fileName
-    loc.position = pos
-    loc.lineNumber = lineNumber
-    loc.columnNumber = columnNumber
-
-    tokens.push(new Token(TokenType.Eof, "", skips, loc))
-    return tokens
-  }
-
-  protected filter(input: string) {
-    return input
-  }
-
-  protected process(token: Token) {
-    return token
   }
 }
 
@@ -294,17 +136,6 @@ export class TokenReader {
     err.columnNumber = columnNumber
     return err
   }
-}
-
-export type SplitFunction = (input: string, options?: Record<string, any>) => Token[][]
-
-export abstract class Splitter {
-  constructor(
-    public options: Record<string, any> = {},
-  ) {
-  }
-
-  abstract split(tokens: Token[]):  Token[][]
 }
 
 export type ParseFunction = (input: string, options?: Record<string, any>) => Node
