@@ -153,10 +153,10 @@ export const expected = [
   new Token(Keyword.OR, "OR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(168, 5, 6, undefined))
   ], new SourceLocation(169, 5, 7, undefined)),
-  new Token([TokenType.Identifier, Keyword.REPLACE], "REPLACE", [
+  new Token([Keyword.REPLACE, TokenType.Identifier], "REPLACE", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(171, 5, 9, undefined))
   ], new SourceLocation(172, 5, 10, undefined)),
-  new Token([TokenType.Identifier, Keyword.PACKAGE], "PACKAGE", [
+  new Token([Keyword.PACKAGE, TokenType.Identifier], "PACKAGE", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(179, 5, 17, undefined))
   ], new SourceLocation(180, 5, 18, undefined)),
   new Token(TokenType.Identifier, "emp_admin", [
@@ -177,7 +177,7 @@ export const expected = [
   new Token(Keyword.IS, "IS", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(273, 7, 17, undefined))
   ], new SourceLocation(274, 7, 18, undefined)),
-  new Token([TokenType.Identifier, Keyword.RECORD], "RECORD", [
+  new Token([Keyword.RECORD, TokenType.Identifier], "RECORD", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(276, 7, 20, undefined))
   ], new SourceLocation(277, 7, 21, undefined)),
   new Token(TokenType.LeftParen, "(", [
@@ -203,7 +203,7 @@ export const expected = [
   new Token(TokenType.Identifier, "desc_salary", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(322, 8, 9, undefined))
   ], new SourceLocation(323, 8, 10, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(334, 8, 21, undefined))
   ], new SourceLocation(335, 8, 22, undefined)),
   new Token(TokenType.Identifier, "EmpRecTyp", [
@@ -294,7 +294,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(630, 13, 60, undefined))
   ], new SourceLocation(631, 13, 61, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(637, 13, 67, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(638, 13, 68, undefined)),
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(639, 13, 69, undefined)),
     new Token(TokenType.WhiteSpace, "     ", [], new SourceLocation(640, 14, 0, undefined))
@@ -377,7 +377,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(894, 18, 33, undefined))
   ], new SourceLocation(895, 18, 34, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(901, 18, 40, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(902, 18, 41, undefined))
   ], new SourceLocation(903, 18, 42, undefined)),
   new Token(TokenType.Identifier, "EmpRecTyp", [
@@ -400,13 +400,13 @@ export const expected = [
   new Token(Keyword.OR, "OR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(944, 21, 6, undefined))
   ], new SourceLocation(945, 21, 7, undefined)),
-  new Token([TokenType.Identifier, Keyword.REPLACE], "REPLACE", [
+  new Token([Keyword.REPLACE, TokenType.Identifier], "REPLACE", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(947, 21, 9, undefined))
   ], new SourceLocation(948, 21, 10, undefined)),
-  new Token([TokenType.Identifier, Keyword.PACKAGE], "PACKAGE", [
+  new Token([Keyword.PACKAGE, TokenType.Identifier], "PACKAGE", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(955, 21, 17, undefined))
   ], new SourceLocation(956, 21, 18, undefined)),
-  new Token([TokenType.Identifier, Keyword.BODY], "BODY", [
+  new Token([Keyword.BODY, TokenType.Identifier], "BODY", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(963, 21, 25, undefined))
   ], new SourceLocation(964, 21, 26, undefined)),
   new Token(TokenType.Identifier, "emp_admin", [
@@ -434,7 +434,7 @@ export const expected = [
   new Token(TokenType.Identifier, "desc_salary", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1092, 24, 9, undefined))
   ], new SourceLocation(1093, 24, 10, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1104, 24, 21, undefined))
   ], new SourceLocation(1105, 24, 22, undefined)),
   new Token(TokenType.Identifier, "EmpRecTyp", [
@@ -549,7 +549,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1449, 29, 60, undefined))
   ], new SourceLocation(1450, 29, 61, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(1456, 29, 67, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1457, 29, 68, undefined)),
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(1458, 29, 69, undefined)),
     new Token(TokenType.WhiteSpace, "     ", [], new SourceLocation(1459, 30, 0, undefined))
@@ -580,7 +580,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1526, 33, 12, undefined))
   ], new SourceLocation(1527, 33, 13, undefined)),
   new Token(TokenType.Dot, ".", [], new SourceLocation(1540, 33, 26, undefined)),
-  new Token(TokenType.Identifier, "NEXTVAL", [], new SourceLocation(1541, 33, 27, undefined)),
+  new Token([Keyword.NEXTVAL, TokenType.Identifier], "NEXTVAL", [], new SourceLocation(1541, 33, 27, undefined)),
   new Token(Keyword.INTO, "INTO", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1548, 33, 34, undefined))
   ], new SourceLocation(1549, 33, 35, undefined)),
@@ -590,7 +590,7 @@ export const expected = [
   new Token(Keyword.FROM, "FROM", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1564, 33, 50, undefined))
   ], new SourceLocation(1565, 33, 51, undefined)),
-  new Token([TokenType.Identifier, Keyword.DUAL], "dual", [
+  new Token([Keyword.DUAL, TokenType.Identifier], "dual", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1569, 33, 55, undefined))
   ], new SourceLocation(1570, 33, 56, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(1574, 33, 60, undefined)),
@@ -685,7 +685,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(1856, 38, 63, undefined)),
     new Token(TokenType.WhiteSpace, "                           ", [], new SourceLocation(1857, 39, 0, undefined))
   ], new SourceLocation(1884, 39, 27, undefined)),
-  new Token(TokenType.Identifier, "TO_CHAR", [
+  new Token([Keyword.TO_CHAR, TokenType.Identifier], "TO_CHAR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1886, 39, 29, undefined))
   ], new SourceLocation(1887, 39, 30, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(1894, 39, 37, undefined)),
@@ -695,7 +695,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1908, 39, 51, undefined))
   ], new SourceLocation(1909, 39, 52, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(1910, 39, 53, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, "   ", [], new SourceLocation(1911, 39, 54, undefined)),
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(1914, 39, 57, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(1915, 40, 0, undefined))
@@ -843,10 +843,10 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2327, 51, 39, undefined))
   ], new SourceLocation(2328, 51, 40, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(2334, 51, 46, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2335, 51, 47, undefined))
   ], new SourceLocation(2336, 51, 48, undefined)),
-  new Token([TokenType.Identifier, Keyword.BOOLEAN], "BOOLEAN", [
+  new Token([Keyword.BOOLEAN, TokenType.Identifier], "BOOLEAN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2342, 51, 54, undefined))
   ], new SourceLocation(2343, 51, 55, undefined)),
   new Token(Keyword.IS, "IS", [
@@ -876,14 +876,14 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2406, 54, 8, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(2407, 55, 0, undefined))
   ], new SourceLocation(2413, 55, 6, undefined)),
-  new Token([TokenType.Identifier, Keyword.MIN], "MIN", [
+  new Token([Keyword.MIN, TokenType.Identifier], "MIN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2419, 55, 12, undefined))
   ], new SourceLocation(2420, 55, 13, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(2423, 55, 16, undefined)),
   new Token(TokenType.Identifier, "salary", [], new SourceLocation(2424, 55, 17, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(2430, 55, 23, undefined)),
   new Token(TokenType.Comma, ",", [], new SourceLocation(2431, 55, 24, undefined)),
-  new Token([TokenType.Identifier, Keyword.MAX], "MAX", [
+  new Token([Keyword.MAX, TokenType.Identifier], "MAX", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2432, 55, 25, undefined))
   ], new SourceLocation(2433, 55, 26, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(2436, 55, 29, undefined)),
@@ -919,7 +919,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2505, 56, 23, undefined))
   ], new SourceLocation(2506, 56, 24, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(2511, 56, 29, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2512, 56, 30, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(2513, 57, 0, undefined))
   ], new SourceLocation(2519, 57, 6, undefined)),
@@ -1116,7 +1116,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2922, 66, 82, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(2923, 67, 0, undefined))
   ], new SourceLocation(2929, 67, 6, undefined)),
-  new Token([TokenType.Identifier, Keyword.RAISE], "RAISE", [
+  new Token([Keyword.RAISE, TokenType.Identifier], "RAISE", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2933, 67, 10, undefined)),
     new Token(TokenType.WhiteSpace, "         ", [], new SourceLocation(2934, 68, 0, undefined))
   ], new SourceLocation(2943, 68, 9, undefined)),
@@ -1181,7 +1181,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3190, 74, 33, undefined))
   ], new SourceLocation(3191, 74, 34, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(3197, 74, 40, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3198, 74, 41, undefined))
   ], new SourceLocation(3199, 74, 42, undefined)),
   new Token(TokenType.Identifier, "EmpRecTyp", [
@@ -1202,7 +1202,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3243, 75, 24, undefined)),
     new Token(TokenType.WhiteSpace, "   ", [], new SourceLocation(3244, 76, 0, undefined))
   ], new SourceLocation(3247, 76, 3, undefined)),
-  new Token([TokenType.Identifier, Keyword.OPEN], "OPEN", [
+  new Token([Keyword.OPEN, TokenType.Identifier], "OPEN", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3252, 76, 8, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(3253, 77, 0, undefined))
   ], new SourceLocation(3259, 77, 6, undefined)),
@@ -1226,7 +1226,7 @@ export const expected = [
   new Token(TokenType.Dot, ".", [], new SourceLocation(3293, 78, 16, undefined)),
   new Token(TokenType.Dot, ".", [], new SourceLocation(3294, 78, 17, undefined)),
   new Token(TokenType.Identifier, "n", [], new SourceLocation(3295, 78, 18, undefined)),
-  new Token([TokenType.Identifier, Keyword.LOOP], "LOOP", [
+  new Token([Keyword.LOOP, TokenType.Identifier], "LOOP", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3296, 78, 19, undefined))
   ], new SourceLocation(3297, 78, 20, undefined)),
   new Token(Keyword.FETCH, "FETCH", [
@@ -1247,11 +1247,11 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3342, 79, 40, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(3343, 80, 0, undefined))
   ], new SourceLocation(3349, 80, 6, undefined)),
-  new Token([TokenType.Identifier, Keyword.LOOP], "LOOP", [
+  new Token([Keyword.LOOP, TokenType.Identifier], "LOOP", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3352, 80, 9, undefined))
   ], new SourceLocation(3353, 80, 10, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(3357, 80, 14, undefined)),
-  new Token([TokenType.Identifier, Keyword.CLOSE], "CLOSE", [
+  new Token([Keyword.CLOSE, TokenType.Identifier], "CLOSE", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3358, 80, 15, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(3359, 81, 0, undefined))
   ], new SourceLocation(3365, 81, 6, undefined)),
@@ -1259,7 +1259,7 @@ export const expected = [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3370, 81, 11, undefined))
   ], new SourceLocation(3371, 81, 12, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(3382, 81, 23, undefined)),
-  new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
+  new Token([Keyword.RETURN, TokenType.Identifier], "RETURN", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3383, 81, 24, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(3384, 82, 0, undefined))
   ], new SourceLocation(3390, 82, 6, undefined)),
@@ -1407,7 +1407,7 @@ export const expected = [
   new Token(TokenType.Operator, "||", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3836, 95, 48, undefined))
   ], new SourceLocation(3837, 95, 49, undefined)),
-  new Token(TokenType.Identifier, "TO_CHAR", [
+  new Token([Keyword.TO_CHAR, TokenType.Identifier], "TO_CHAR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3839, 95, 51, undefined))
   ], new SourceLocation(3840, 95, 52, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(3847, 95, 59, undefined)),
@@ -1440,7 +1440,7 @@ export const expected = [
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(3928, 97, 22, undefined)),
   new Token(TokenType.String, "'The 10th highest salary is '", [], new SourceLocation(3929, 97, 23, undefined)),
   new Token(TokenType.Operator, "||", [], new SourceLocation(3958, 97, 52, undefined)),
-  new Token(TokenType.Identifier, "TO_CHAR", [
+  new Token([Keyword.TO_CHAR, TokenType.Identifier], "TO_CHAR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(3960, 97, 54, undefined)),
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(3961, 97, 55, undefined)),
     new Token(TokenType.WhiteSpace, "    ", [], new SourceLocation(3962, 98, 0, undefined))
@@ -1466,7 +1466,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(4043, 98, 81, undefined)),
     new Token(TokenType.WhiteSpace, "    ", [], new SourceLocation(4044, 99, 0, undefined))
   ], new SourceLocation(4048, 99, 4, undefined)),
-  new Token(TokenType.Identifier, "TO_CHAR", [
+  new Token([Keyword.TO_CHAR, TokenType.Identifier], "TO_CHAR", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(4050, 99, 6, undefined))
   ], new SourceLocation(4051, 99, 7, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(4058, 99, 14, undefined)),
