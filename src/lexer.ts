@@ -118,7 +118,7 @@ export abstract class Lexer {
         columnNumber += token.text.length
       }
 
-      token = this.process(token)
+      token = this.process(token, tokens)
       if (token.type.options.skip) {
         skips.push(token)
       } else {
@@ -142,7 +142,7 @@ export abstract class Lexer {
     return input
   }
 
-  protected process(token: Token) {
+  protected process(token: Token, tokens: Token[]) {
     return token
   }
 }

@@ -140,23 +140,32 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
-  protected process(token: Token) {
+  protected process(token: Token, tokens: Token[]) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword.from(token.text)
       if (keyword) {
         if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
           token.type = keyword
         } else {
-          token.subtype = keyword
+          token.subtype = token.type
+          token.type = keyword
         }
       }
     } else if (token.type === TokenType.Operator) {
       const operator = Operator.from(token.text)
       if (operator) {
-        token.subtype = operator
+        token.subtype = token.type
+        token.type = operator
       }
     } else if (token.type === TokenType.SemiColon) {
-      token.subtype = TokenType.Delimiter
+      token.subtype = token.type
+      token.type = TokenType.Delimiter
+    } else if (token.type === TokenType.LineBreak) {
+      const last = tokens[tokens.length - 1]
+      if (last && last.type === TokenType.Command) {
+        last.subtype = token.type
+        last.type = TokenType.Delimiter
+      }
     }
     return token
   }
@@ -274,6 +283,12 @@ export class Sqlite3Parser extends Parser {
       }
     }
 
+    if (this.peekIf(TokenType.Delimiter)) {
+      stmt.add(this.consume())
+    }
+    if (this.peekIf(TokenType.Eof)) {
+      stmt.add(this.consume())
+    }
     return stmt
   }
 
@@ -400,7 +415,6 @@ export class Sqlite3Parser extends Parser {
       if (this.peekIf(TokenType.Eof)) {
         stmt.add(this.consume())
       }
-  
       return stmt
     } catch (err) {
       if (err instanceof ParseError) {
@@ -409,6 +423,12 @@ export class Sqlite3Parser extends Parser {
           stmt = new Node("unknown")
         }
         while (this.token() && !this.peekIf(TokenType.Delimiter)) {
+          stmt.add(this.consume())
+        }
+        if (this.peekIf(TokenType.Delimiter)) {
+          stmt.add(this.consume())
+        }
+        if (this.peekIf(TokenType.Eof)) {
           stmt.add(this.consume())
         }
         err.node = stmt

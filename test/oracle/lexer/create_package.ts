@@ -145,7 +145,7 @@ export const expected = [
   new Token(TokenType.Number, "30", [], new SourceLocation(155, 3, 45, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(157, 3, 47, undefined)),
   new Token(TokenType.RightParen, ")", [], new SourceLocation(158, 3, 48, undefined)),
-  new Token(TokenType.SemiColon, ";", [], new SourceLocation(159, 3, 49, undefined)),
+  new Token([TokenType.SemiColon, TokenType.Delimiter], ";", [], new SourceLocation(159, 3, 49, undefined)),
   new Token(Keyword.CREATE, "CREATE", [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(160, 3, 50, undefined)),
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(161, 4, 0, undefined))
@@ -590,7 +590,7 @@ export const expected = [
   new Token(Keyword.FROM, "FROM", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1564, 33, 50, undefined))
   ], new SourceLocation(1565, 33, 51, undefined)),
-  new Token(TokenType.Identifier, "dual", [
+  new Token([TokenType.Identifier, Keyword.DUAL], "dual", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(1569, 33, 55, undefined))
   ], new SourceLocation(1570, 33, 56, undefined)),
   new Token(TokenType.SemiColon, ";", [], new SourceLocation(1574, 33, 60, undefined)),
@@ -846,7 +846,7 @@ export const expected = [
   new Token([TokenType.Identifier, Keyword.RETURN], "RETURN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2335, 51, 47, undefined))
   ], new SourceLocation(2336, 51, 48, undefined)),
-  new Token(TokenType.Identifier, "BOOLEAN", [
+  new Token([TokenType.Identifier, Keyword.BOOLEAN], "BOOLEAN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2342, 51, 54, undefined))
   ], new SourceLocation(2343, 51, 55, undefined)),
   new Token(Keyword.IS, "IS", [
@@ -876,7 +876,7 @@ export const expected = [
     new Token(TokenType.LineBreak, "\n", [], new SourceLocation(2406, 54, 8, undefined)),
     new Token(TokenType.WhiteSpace, "      ", [], new SourceLocation(2407, 55, 0, undefined))
   ], new SourceLocation(2413, 55, 6, undefined)),
-  new Token(TokenType.Identifier, "MIN", [
+  new Token([TokenType.Identifier, Keyword.MIN], "MIN", [
     new Token(TokenType.WhiteSpace, " ", [], new SourceLocation(2419, 55, 12, undefined))
   ], new SourceLocation(2420, 55, 13, undefined)),
   new Token(TokenType.LeftParen, "(", [], new SourceLocation(2423, 55, 16, undefined)),

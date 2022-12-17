@@ -126,20 +126,28 @@ export class PostgresLexer extends Lexer {
     ], options)
   }
 
-  protected process(token: Token) {
+  protected process(token: Token, tokens: Token[]) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword.from(token.text)
       if (keyword) {
         if (ReservedSet.has(keyword)) {
           token.type = keyword
         } else {
-          token.subtype = keyword
+          token.subtype = token.type
+          token.type = keyword
         }
       }
     } else if (token.type === TokenType.Operator) {
       const operator = Operator.from(token.text)
       if (operator) {
-        token.subtype = operator
+        token.subtype = token.type
+        token.type = operator
+      }
+    } else if (token.type === TokenType.LineBreak) {
+      const last = tokens[tokens.length - 1]
+      if (last && last.type === TokenType.Command) {
+        last.subtype = token.type
+        last.type = TokenType.Delimiter
       }
     }
     return token
@@ -168,7 +176,7 @@ export class PostgresParser extends Parser {
         if (this.peekIf(TokenType.Eof)) {
           root.add(this.consume())
           break
-        } else if (this.peekIf(TokenType.SemiColon)) {
+        } else if (this.peekIf(TokenType.Delimiter)) {
           root.add(this.consume())
         } else if (this.peekIf(TokenType.Command)) {
           root.add(this.command())
@@ -261,7 +269,12 @@ export class PostgresParser extends Parser {
       }
     }
 
-    //TODO
+    if (this.peekIf(TokenType.Delimiter)) {
+      stmt.add(this.consume())
+    }
+    if (this.peekIf(TokenType.Eof)) {
+      stmt.add(this.consume())
+    }
     return stmt
   }
 
@@ -269,19 +282,28 @@ export class PostgresParser extends Parser {
     const stmt = new Node("")
 
     try {
-      //TODO
+      if (this.peekIf(TokenType.Delimiter)) {
+        stmt.add(this.consume())
+      }
+      if (this.peekIf(TokenType.Eof)) {
+        stmt.add(this.consume())
+      }
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
         while (this.token() && !this.peekIf(TokenType.Delimiter)) {
-          this.consume()
-          stmt.add(this.token(-1))
+          stmt.add(this.consume())
+        }
+        if (this.peekIf(TokenType.Delimiter)) {
+          stmt.add(this.consume())
+        }
+        if (this.peekIf(TokenType.Eof)) {
+          stmt.add(this.consume())
         }
         err.node = stmt
       }
       throw err
     }
-
     return stmt
   }
 }
