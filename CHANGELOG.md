@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-alpha.6](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.5...v0.1.0-alpha.6) (2022-12-18)
+
 ## [0.1.0-alpha.5](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.4...v0.1.0-alpha.5) (2022-12-18)
 
 ## [0.1.0-alpha.4](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.3...v0.1.0-alpha.4) (2022-12-04)
