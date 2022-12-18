@@ -10,6 +10,7 @@ import {
   ParseError,
   AggregateParseError,
   ParseFunction,
+  TokenReader,
 } from "../parser"
 import { dequote, ucase } from "../util"
 import { MysqlLexer } from "./mysql_lexer"
@@ -17,34 +18,34 @@ import { MysqlLexer } from "./mysql_lexer"
 export class MysqlParser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
     const tokens = new MysqlLexer(options).lex(input)
-    return new MysqlParser(tokens, options).parse()
+    return new MysqlParser(options).parse(tokens)
   }
 
   private sqlMode = new Set<string>()
 
   constructor(
-    tokens: Token[],
     options: Record<string, any> = {},
   ) {
-    super(tokens, options)
+    super(options)
     this.setSqlMode(options.sqlMode)
   }
 
-  parse(): Node {
+  parse(tokens: Token[]): Node {
+    const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []
 
-    while (this.token()) {
+    while (r.token()) {
       try {
-        if (this.peekIf(TokenType.Eof)) {
-          root.add(this.consume())
+        if (r.peekIf(TokenType.Eof)) {
+          root.add(r.consume())
           break
-        } else if (this.peekIf(TokenType.Delimiter)) {
-          root.add(this.consume())
-        } else if (this.peekIf(TokenType.Command)) {
-          root.add(this.command())
+        } else if (r.peekIf(TokenType.Delimiter)) {
+          root.add(r.consume())
+        } else if (r.peekIf(TokenType.Command)) {
+          root.add(this.command(r))
         } else {
-          root.add(this.statement())
+          root.add(this.statement(r))
         }
       } catch (e) {
         if (e instanceof ParseError) {
@@ -58,13 +59,13 @@ export class MysqlParser extends Parser {
       }
     }
 
-    if (this.token() != null) {
-      for (let i = this.pos; i < this.tokens.length; i++) {
-        root.add(this.tokens[i])
+    if (r.token() != null) {
+      for (let i = r.pos; i < r.tokens.length; i++) {
+        root.add(r.tokens[i])
       }
       
       try {
-        throw this.createParseError()
+        throw r.createParseError()
       } catch (e) {
         if (e instanceof ParseError) {
           errors.push(e)
@@ -85,10 +86,10 @@ export class MysqlParser extends Parser {
     return root
   }
 
-  private command() {
+  private command(r: TokenReader) {
     const stmt = new Node("command")
-    this.consume(TokenType.Command)
-    const token = this.token(-1)
+    r.consume(TokenType.Command)
+    const token = r.token(-1)
 
     const sep = Math.max(token.text.indexOf(" "), token.text.indexOf("\t"))
     if (sep === -1) {
@@ -162,38 +163,38 @@ export class MysqlParser extends Parser {
       }
     }
 
-    if (this.peekIf(TokenType.Delimiter)) {
-      stmt.add(this.consume())
+    if (r.peekIf(TokenType.Delimiter)) {
+      stmt.add(r.consume())
     }
-    if (this.peekIf(TokenType.Eof)) {
-      stmt.add(this.consume())
+    if (r.peekIf(TokenType.Eof)) {
+      stmt.add(r.consume())
     }
     return stmt
   }
 
-  private statement() {
+  private statement(r: TokenReader) {
     const stmt = new Node("")
 
     try {
 
-      if (this.peekIf(TokenType.Delimiter)) {
-        stmt.add(this.consume())
+      if (r.peekIf(TokenType.Delimiter)) {
+        stmt.add(r.consume())
       }
-      if (this.peekIf(TokenType.Eof)) {
-        stmt.add(this.consume())
+      if (r.peekIf(TokenType.Eof)) {
+        stmt.add(r.consume())
       }
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
-        while (this.token() && !this.peekIf(TokenType.Delimiter)) {
-          this.consume()
-          stmt.add(this.token(-1))
+        while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+          r.consume()
+          stmt.add(r.token(-1))
         }
-        if (this.peekIf(TokenType.Delimiter)) {
-          stmt.add(this.consume())
+        if (r.peekIf(TokenType.Delimiter)) {
+          stmt.add(r.consume())
         }
-        if (this.peekIf(TokenType.Eof)) {
-          stmt.add(this.consume())
+        if (r.peekIf(TokenType.Eof)) {
+          stmt.add(r.consume())
         }
         err.node = stmt
       }

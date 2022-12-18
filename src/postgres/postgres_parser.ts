@@ -9,6 +9,7 @@ import {
   ParseError,
   AggregateParseError,
   ParseFunction,
+  TokenReader,
 } from "../parser"
 import { dequote } from "../util"
 import { PostgresLexer } from "./postgres_lexer"
@@ -16,31 +17,31 @@ import { PostgresLexer } from "./postgres_lexer"
 export class PostgresParser extends Parser {
   static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
     const tokens = new PostgresLexer(options).lex(input, options.fileName)
-    return new PostgresParser(tokens, options).parse()
+    return new PostgresParser(options).parse(tokens)
   }
 
   constructor(
-    tokens: Token[],
     options: Record<string, any> = {},
   ) {
-    super(tokens, options)
+    super(options)
   }
 
-  parse(): Node {
+  parse(tokens: Token[]): Node {
+    const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []
 
-    while (this.token()) {
+    while (r.token()) {
       try {
-        if (this.peekIf(TokenType.Eof)) {
-          root.add(this.consume())
+        if (r.peekIf(TokenType.Eof)) {
+          root.add(r.consume())
           break
-        } else if (this.peekIf(TokenType.Delimiter)) {
-          root.add(this.consume())
-        } else if (this.peekIf(TokenType.Command)) {
-          root.add(this.command())
+        } else if (r.peekIf(TokenType.Delimiter)) {
+          root.add(r.consume())
+        } else if (r.peekIf(TokenType.Command)) {
+          root.add(this.command(r))
         } else {
-          root.add(this.statement())
+          root.add(this.statement(r))
         }
       } catch (e) {
         if (e instanceof ParseError) {
@@ -54,13 +55,13 @@ export class PostgresParser extends Parser {
       }
     }
 
-    if (this.token() != null) {
-      for (let i = this.pos; i < this.tokens.length; i++) {
-        root.add(this.tokens[i])
+    if (r.token() != null) {
+      for (let i = r.pos; i < r.tokens.length; i++) {
+        root.add(r.tokens[i])
       }
       
       try {
-        throw this.createParseError()
+        throw r.createParseError()
       } catch (e) {
         if (e instanceof ParseError) {
           errors.push(e)
@@ -81,11 +82,11 @@ export class PostgresParser extends Parser {
     return root
   }
 
-  private command() {
+  private command(r: TokenReader) {
     const stmt = new Node("command")
 
-    this.consume(TokenType.Command)
-    const token = this.token(-1)
+    r.consume(TokenType.Command)
+    const token = r.token(-1)
     const sep = token.text.indexOf(" ")
     if (sep === -1) {
       stmt.add(new Node("name", token.text).add(token))
@@ -128,36 +129,36 @@ export class PostgresParser extends Parser {
       }
     }
 
-    if (this.peekIf(TokenType.Delimiter)) {
-      stmt.add(this.consume())
+    if (r.peekIf(TokenType.Delimiter)) {
+      stmt.add(r.consume())
     }
-    if (this.peekIf(TokenType.Eof)) {
-      stmt.add(this.consume())
+    if (r.peekIf(TokenType.Eof)) {
+      stmt.add(r.consume())
     }
     return stmt
   }
 
-  private statement() {
+  private statement(r: TokenReader) {
     const stmt = new Node("")
 
     try {
-      if (this.peekIf(TokenType.Delimiter)) {
-        stmt.add(this.consume())
+      if (r.peekIf(TokenType.Delimiter)) {
+        stmt.add(r.consume())
       }
-      if (this.peekIf(TokenType.Eof)) {
-        stmt.add(this.consume())
+      if (r.peekIf(TokenType.Eof)) {
+        stmt.add(r.consume())
       }
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
-        while (this.token() && !this.peekIf(TokenType.Delimiter)) {
-          stmt.add(this.consume())
+        while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+          stmt.add(r.consume())
         }
-        if (this.peekIf(TokenType.Delimiter)) {
-          stmt.add(this.consume())
+        if (r.peekIf(TokenType.Delimiter)) {
+          stmt.add(r.consume())
         }
-        if (this.peekIf(TokenType.Eof)) {
-          stmt.add(this.consume())
+        if (r.peekIf(TokenType.Eof)) {
+          stmt.add(r.consume())
         }
         err.node = stmt
       }

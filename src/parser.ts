@@ -140,15 +140,13 @@ export class TokenReader {
 
 export type ParseFunction = (input: string, options?: Record<string, any>) => Node
 
-export abstract class Parser extends TokenReader {
+export abstract class Parser {
   constructor(
-    tokens: Token[],
-    protected options: Record<string, any> = {},
+    public options: Record<string, any> = {},
   ) {
-    super(tokens)
   }
 
-  abstract parse(): Node
+  abstract parse(tokens: Token[]): Node
 }
 
 export class AggregateParseError extends Error {
