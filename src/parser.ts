@@ -46,6 +46,10 @@ export class TokenReader {
   }
 
   peekIf(...types: TokenType[]) {
+    if (types.length === 0) {
+      return false
+    }
+    
     for (let i = 0; i < types.length; i++) {
       const type = types[i]
       if (!type) {
