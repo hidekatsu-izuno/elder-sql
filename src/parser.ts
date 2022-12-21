@@ -47,7 +47,7 @@ export class TokenReader {
 
   peekIf(...types: TokenType[]) {
     if (types.length === 0) {
-      return false
+      throw new RangeError("types must be at least 1 length.")
     }
     
     for (let i = 0; i < types.length; i++) {
