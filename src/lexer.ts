@@ -2165,16 +2165,3 @@ export class Operator extends TokenType {
     OperatorMap.set(value, this)
   }
 }
-
-export class Variable extends TokenType {
-  static GLOBAL = new Variable("GLOBAL")
-  static SESSION = new Variable("SESSION")
-  static LOCAL = new Variable("LOCAL")
-
-  constructor(
-    name: string,
-    options: { [key: string]: any } = {}
-  ) {
-    super(name, options)
-  }
-}

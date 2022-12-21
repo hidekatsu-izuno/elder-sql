@@ -7,7 +7,6 @@ import {
   Lexer,
   Keyword,
   Operator,
-  Variable,
 } from "../lexer"
 
 const ReservedSet = new Set<Keyword>([
@@ -242,12 +241,6 @@ const ReservedSet = new Set<Keyword>([
   Keyword.ZEROFILL,
 ])
 
-const VariableMap = new Map([
-  [ "@@GLOBAL", Variable.GLOBAL ],
-  [ "@@SESSION", Variable.SESSION ],
-  [ "@@LOCAL", Variable.LOCAL ],
-])
-
 const CommandPattern = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
 
 export class MysqlLexer extends Lexer {
@@ -355,12 +348,6 @@ export class MysqlLexer extends Lexer {
       if (operator) {
         token.subtype = token.type
         token.type = operator
-      }
-    } else if (token.type === TokenType.Variable) {
-      const variable = VariableMap.get(token.text.toUpperCase())
-      if (variable) {
-        token.subtype = token.type
-        token.type = variable
       }
     } else if (token.type === TokenType.Command) {
       const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
