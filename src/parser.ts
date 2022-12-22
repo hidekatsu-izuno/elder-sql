@@ -35,7 +35,7 @@ export class Node {
 
 export declare type TokenQuery = TokenType | {
   type?: TokenType,
-  text?: string | RegExp 
+  text?: string | RegExp | ((text: string) => boolean)
 }
 
 export class TokenReader {
@@ -73,7 +73,9 @@ export class TokenReader {
         if (type.type && !token.is(type.type)) {
           return false
         }
-        if (type.text instanceof RegExp && !type.text.test(token.text)) {
+        if (typeof type.text === "function" && !type.text(token.text)) {
+          return false
+        } else if (type.text instanceof RegExp && !type.text.test(token.text)) {
           return false
         } else if (type.text !== token.text) {
           return false
