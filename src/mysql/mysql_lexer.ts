@@ -6,7 +6,6 @@ import {
   Token,
   Lexer,
   Keyword,
-  Operator,
 } from "../lexer"
 
 const ReservedSet = new Set<Keyword>([
@@ -342,12 +341,6 @@ export class MysqlLexer extends Lexer {
           token.subtype = token.type
           token.type = keyword
         }
-      }
-    } else if (token.type === TokenType.Operator) {
-      const operator = Operator.from(token.text)
-      if (operator) {
-        token.subtype = token.type
-        token.type = operator
       }
     } else if (token.type === TokenType.Command) {
       const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)

@@ -2,7 +2,6 @@ import {
   TokenType,
   Token,
   Keyword,
-  Operator,
 } from "../lexer"
 import {
   Node,
@@ -109,7 +108,7 @@ export class OracleParser extends Parser {
           const childNode = new Node("statement_id")
           childNode.add(r.consume())
           childNode.add(r.consume(Keyword.STATEMENT_ID))
-          childNode.add(r.consume(Operator.EQ))
+          childNode.add(r.consume({ type: TokenType.Operator, text: "=" }))
           childNode.add(r.consume(TokenType.String))
           childNode.value = dequote(r.token(-1).text)
           explainPlan.add(childNode)
@@ -2784,7 +2783,7 @@ export class OracleParser extends Parser {
       nameNode.name = "schema_name"
       stmt.add(this.identifier(r, "name"))
     }
-    if (r.peekIf(Operator.AT)) {
+    if (r.peekIf({ type: TokenType.Operator, text: "@" })) {
       stmt.add(r.consume())
       stmt.add(this.identifier(r, "dblink"))
     }

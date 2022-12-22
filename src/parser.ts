@@ -33,7 +33,7 @@ export class Node {
   }
 }
 
-export declare type TokenQuery = TokenType | {
+export declare type TokenCondition = TokenType | {
   type?: TokenType,
   text?: string | RegExp | ((text: string) => boolean)
 }
@@ -50,51 +50,55 @@ export class TokenReader {
     return this.tokens[this.pos + pos]
   }
 
-  peekIf(...types: TokenQuery[]) {
-    if (types.length === 0) {
-      throw new RangeError("types must be at least 1 length.")
+  peekIf(...conditions: TokenCondition[]) {
+    if (conditions.length === 0) {
+      throw new RangeError("conditions must be at least 1 length.")
     }
     
-    for (let i = 0; i < types.length; i++) {
-      const type = types[i]
-      if (!type) {
+    for (let i = 0; i < conditions.length; i++) {
+      const condition = conditions[i]
+      if (!condition) {
         continue
       }
 
       const token = this.token(i)
-      if (!token) {
+      if (!token || !this.matchToken(condition, token)) {
         return false
-      }
-      if (type instanceof TokenType) {
-        if (!token.is(type)) {
-          return false
-        }  
-      } else {
-        if (type.type && !token.is(type.type)) {
-          return false
-        }
-        if (typeof type.text === "function" && !type.text(token.text)) {
-          return false
-        } else if (type.text instanceof RegExp && !type.text.test(token.text)) {
-          return false
-        } else if (type.text !== token.text) {
-          return false
-        }
       }
     }
     return true
   }
 
-  consume(type?: TokenType) {
+  consume(condition?: TokenCondition) {
     const token = this.token()
     if (token == null) {
       throw this.createParseError()
     }
-    if (type && !token.is(type)) {
+    if (condition && !this.matchToken(condition, token)) {
       throw this.createParseError()
     }
     this.pos++
     return token
+  }
+
+  private matchToken(condition: TokenCondition, token: Token) {
+    if (condition instanceof TokenType) {
+      if (!token.is(condition)) {
+        return false
+      }  
+    } else {
+      if (condition.type && !token.is(condition.type)) {
+        return false
+      }
+      if (typeof condition.text === "function" && !condition.text(token.text)) {
+        return false
+      } else if (condition.text instanceof RegExp && !condition.text.test(token.text)) {
+        return false
+      } else if (condition.text !== token.text) {
+        return false
+      }
+    }
+    return true
   }
 
   createParseError(message?: string) {

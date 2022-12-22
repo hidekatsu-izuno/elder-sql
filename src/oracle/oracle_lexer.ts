@@ -3,7 +3,6 @@ import {
   Token,
   Lexer,
   Keyword,
-  Operator,
 } from "../lexer"
 
 export const LookAheadSet = new Set<Keyword>([
@@ -244,14 +243,6 @@ export class OracleLexer extends Lexer {
             this.state = 3
           }
         }
-      }
-    } else if (token.type === TokenType.Operator) {
-      const operator = Operator.from(token.text)
-      if (operator) {
-        token.subtype = operator
-      }
-      if (this.state === 0) {
-        this.state = 3
       }
     } else if (token.type === TokenType.SemiColon) {
       if (this.state !== 2) {
