@@ -88,16 +88,27 @@ export class TokenReader {
     if (message == null) {
       const lines = []
       lineNumber = 1
-      for (let i = 0; i < this.pos - 1; i++) {
+      for (let i = 0; i <= this.pos; i++) {
         const token = this.tokens[i]
+        for (const skipToken of token.skips) {
+          if (skipToken.type === TokenType.LineBreak) {
+            lineNumber++
+          } else {
+            if (!lines[lineNumber-1]) {
+              lines[lineNumber-1] = ""
+            }
+            if (skipToken.type === TokenType.Eof) {
+              lines[lineNumber-1] += "<EOF>"
+            } else {
+              lines[lineNumber-1] += skipToken.text
+            }
+          }
+        }
         if (token.type === TokenType.LineBreak) {
           lineNumber++
         } else {
           if (!lines[lineNumber-1]) {
             lines[lineNumber-1] = ""
-          }
-          for (const skipToken of token.skips) {
-            lines[lineNumber-1] += skipToken.text
           }
           if (token.type === TokenType.Eof) {
             lines[lineNumber-1] += "<EOF>"
@@ -107,11 +118,11 @@ export class TokenReader {
         }
       }
       let line = lines[lines.length-1] || ""
-      if (line && lines.length > 1) {
-        let preLine = lines[lines.length-1]
+      if (!line && lines.length > 1) {
+        const preLine = lines[lines.length-1]
         line = `${preLine.substring(preLine.length - 16)}\u21B5 ${line}`
       }
-      message = `Unexpected token: ${line}`
+      message = `Unexpected token: ${line}\u261C`
     }
 
     if (lineNumber == null) {

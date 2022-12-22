@@ -1,5 +1,7 @@
 import fs from "node:fs"
+import { TokenType } from "../../src/lexer"
 import { OracleLexer } from "../../src/oracle/oracle_lexer"
+import { TokenReader } from "../../src/parser"
 import { toJSString } from "../../src/util"
 
 describe("test oracle lexer", () => {

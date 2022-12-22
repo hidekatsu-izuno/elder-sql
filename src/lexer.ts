@@ -30,6 +30,10 @@ export class TokenType {
     public options: { [key: string]: any } = {},
   ) {
   }
+
+  this(value: string) {
+    return value
+  }
 }
 
 export class SourceLocation {

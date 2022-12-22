@@ -209,7 +209,7 @@ export class OracleLexer extends Lexer {
       { type: TokenType.QuotedIdentifier, re: /"([^"]|"")*"/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\||<<|>>|<>|[=<>!^:]=?|[~&|*/+-]/y },
+      { type: TokenType.Operator, re: /\|\||<<|>>|<>|[=<>!^:]=?|[%~&|*/+-]/y },
       { type: TokenType.Error, re: /./y },
     ], options)
   }
