@@ -4,7 +4,6 @@ import {
   Token,
   SourceLocation,
   Keyword,
-  Operator,
 } from "../lexer"
 import {
   Node,
@@ -655,7 +654,7 @@ export class Sqlite3Parser extends Parser {
     node.add(r.consume(Keyword.PRAGMA))
 
     this.parseName(r, node)
-    if (r.peekIf(Operator.EQ)) {
+    if (r.peekIf({ type: TokenType.Operator, text: "=" })) {
       node.add(r.consume())
       node.add(this.pragmaValue(r))
     } else if (r.peekIf(TokenType.LeftParen)) {
@@ -1134,7 +1133,7 @@ export class Sqlite3Parser extends Parser {
 
   private pragmaValue(r: TokenReader) {
     const node = new Node("pragma_value")
-    if (r.peekIf(Operator.PLUS) || r.peekIf(Operator.MINUS)) {
+    if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
       const token1 = r.consume()
       node.add(token1)
       const token2 = r.consume(TokenType.Number)
@@ -1180,7 +1179,7 @@ export class Sqlite3Parser extends Parser {
 
   private numberValue(r: TokenReader, name: string) {
     const node = new Node(name)
-    if (r.peekIf(Operator.PLUS) || r.peekIf(Operator.MINUS)) {
+    if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
       const token1 = r.consume()
       node.add(token1)
       const token2 = r.consume(TokenType.Number)

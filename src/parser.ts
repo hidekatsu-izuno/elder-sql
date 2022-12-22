@@ -33,6 +33,11 @@ export class Node {
   }
 }
 
+export declare type TokenQuery = TokenType | {
+  type?: TokenType,
+  text?: string | RegExp 
+}
+
 export class TokenReader {
   public pos = 0
 
@@ -45,7 +50,7 @@ export class TokenReader {
     return this.tokens[this.pos + pos]
   }
 
-  peekIf(...types: TokenType[]) {
+  peekIf(...types: TokenQuery[]) {
     if (types.length === 0) {
       throw new RangeError("types must be at least 1 length.")
     }
@@ -60,8 +65,19 @@ export class TokenReader {
       if (!token) {
         return false
       }
-      if (type !== token.type && type !== token.subtype) {
-        return false
+      if (type instanceof TokenType) {
+        if (!token.is(type)) {
+          return false
+        }  
+      } else {
+        if (type.type && !token.is(type.type)) {
+          return false
+        }
+        if (type.text instanceof RegExp && !type.text.test(token.text)) {
+          return false
+        } else if (type.text !== token.text) {
+          return false
+        }
       }
     }
     return true

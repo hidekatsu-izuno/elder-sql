@@ -2144,28 +2144,3 @@ export class Keyword extends TokenType {
     KeywordMap.set(name, this)
   }
 }
-
-const OperatorMap = new Map<string, Operator>()
-export class Operator extends TokenType {
-  static EQ = new Operator("EQ", "=")
-  static PLUS = new Operator("PLUS", "+")
-  static MINUS = new Operator("MINUS", "-")
-  static ASTER = new Operator("ASTER", "*")
-  static ASSIGN = new Operator("ASSIGN", ":=")
-  static AT = new Operator("AT", "@")
-  static PERCENT = new Operator("PERCENT", "%")
-  static RANGE = new Operator("RANGE", "..")
-
-  static from(value: string) {
-    return OperatorMap.get(value)
-  }
-
-  constructor(
-    name: string,
-    value: string,
-    options: { [key: string]: any } = {}
-  ) {
-    super(name, options)
-    OperatorMap.set(value, this)
-  }
-}

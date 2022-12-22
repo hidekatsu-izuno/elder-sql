@@ -2,9 +2,7 @@ import {
   TokenType,
   Token,
   Lexer,
-  SourceLocation,
   Keyword,
-  Operator,
 } from "../lexer"
 
 const ReservedSet = new Set<Keyword>([
@@ -141,12 +139,6 @@ export class Sqlite3Lexer extends Lexer {
           token.subtype = token.type
           token.type = keyword
         }
-      }
-    } else if (token.type === TokenType.Operator) {
-      const operator = Operator.from(token.text)
-      if (operator) {
-        token.subtype = token.type
-        token.type = operator
       }
     } else if (token.type === TokenType.SemiColon) {
       token.subtype = token.type

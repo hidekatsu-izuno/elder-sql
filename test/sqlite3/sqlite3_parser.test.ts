@@ -10,7 +10,7 @@ describe("test sqlite3 parser", () => {
     const module = require("./parser/" + target)
     const node = Sqlite3Parser.parse(module.actual)
 
-    if (target === "") {
+    if (target === "select") {
       fs.writeFileSync("temp.txt", toJSString(node))
     }
 
