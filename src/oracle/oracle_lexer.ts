@@ -197,7 +197,7 @@ export class OracleLexer extends Lexer {
       { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my },
       { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
       { type: TokenType.SemiColon, re: /;/y },
-      { type: TokenType.Operator, re: /\(\+\)=?/y },
+      { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },

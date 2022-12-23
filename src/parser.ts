@@ -85,16 +85,24 @@ export class TokenReader {
     if (condition instanceof TokenType) {
       if (!token.is(condition)) {
         return false
-      }  
+      }
     } else {
       if (condition.type && !token.is(condition.type)) {
         return false
       }
-      if (typeof condition.text === "function" && !condition.text(token.text)) {
-        return false
-      } else if (condition.text instanceof RegExp && !condition.text.test(token.text)) {
-        return false
-      } else if (condition.text !== token.text) {
+      if (typeof condition.text === "string") {
+        if (condition.text !== token.text) {
+          return false
+        }
+      } else if (typeof condition.text === "function") {
+        if (!condition.text(token.text)) {
+          return false
+        }
+      } else if (condition.text instanceof RegExp) {
+        if (!condition.text.test(token.text)) {
+          return false
+        }
+      } else if (!condition.text) {
         return false
       }
     }
