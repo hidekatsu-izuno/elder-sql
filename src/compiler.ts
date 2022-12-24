@@ -4,32 +4,26 @@ import { Token, TokenType, Lexer } from "./lexer"
 import { TokenReader } from "./parser"
 import { PostgresLexer } from "./postgres/postgres_lexer"
 import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer"
+import { MssqlLexer } from "./mssql/mssql_lexer"
 
 export type ElderSqlCompilerOptions = {
-  dialect: 'sqlite3' | 'mysql' | 'postgres' | 'oracle'
+  dialect: "sqlite3" | "mysql" | "postgres" | "oracle" | "mssql"
   lexer?: Record<string, any>
 }
 
-class ElderSqlType extends TokenType {
-  static Import = new ElderSqlType("Import")
-  static Define = new ElderSqlType("Define")
-  static If = new ElderSqlType("If")
-  static Elif = new ElderSqlType("Elif")
-  static Else = new ElderSqlType("Else")
-  static For = new ElderSqlType("For")
-  static End = new ElderSqlType("End")
-  static TypeHint = new ElderSqlType("TypeHint")
-  static BindVariable = new ElderSqlType("BindVariable")
-  static ReplacementVariable = new ElderSqlType("ReplacementVariable")
-  static Comment = new ElderSqlType("Comment")
-  static Uncomment = new ElderSqlType("Uncomment")
-  
-  constructor(
-    name: string, 
-    options: Record<string, any> = {}
-  ) {
-    super(name, options)
-  }
+const ElderSqlType = {
+  Import: new TokenType("Import"),
+  Define: new TokenType("Define"),
+  If: new TokenType("If"),
+  Elif: new TokenType("Elif"),
+  Else: new TokenType("Else"),
+  For: new TokenType("For"),
+  End: new TokenType("End"),
+  TypeHint: new TokenType("TypeHint"),
+  BindVariable: new TokenType("BindVariable"),
+  ReplacementVariable: new TokenType("ReplacementVariable"),
+  Comment: new TokenType("Comment"),
+  Uncomment: new TokenType("Uncomment"),
 }
 
 export class ElderSqlCompiler {
@@ -44,6 +38,8 @@ export class ElderSqlCompiler {
       this.lexer = new PostgresLexer(options.lexer)
     } else if (options.dialect === 'oracle') {
       this.lexer = new OracleLexer(options.lexer)
+    } else if (options.dialect === 'mssql') {
+      this.lexer = new MssqlLexer(options.lexer)
     } else {
       throw new TypeError(`Unknown dialect: ${options.dialect}`)
     }
@@ -95,7 +91,7 @@ export class ElderSqlCompiler {
       if (!(m = /^\/\*#import[ \t](.*?)\*\/$/su.exec(importToken.text))) {
         throw reader.createParseError()
       }
-      text += `import ${m[1]}/\n`
+      text += `import ${m[1]};/\n`
     }
     if (reader.peekIf(ElderSqlType.Define)) {
       const defineToken = reader.consume()
