@@ -5,7 +5,7 @@ import {
   Keyword,
 } from "../lexer"
 
-export const LookAheadSet = new Set<Keyword>([
+export const LookAheadSet = new Set<TokenType>([
   Keyword.ANALYTIC,
   Keyword.ATTRIBUTE,
   Keyword.AUDIT,
@@ -49,7 +49,7 @@ export const LookAheadSet = new Set<Keyword>([
   Keyword.VIEW,
 ])
 
-export const ReservedSet = new Set<Keyword>([
+export const ReservedSet = new Set<TokenType>([
   Keyword.ACCESS,
   Keyword.ADD,
   Keyword.ALL,
@@ -215,7 +215,7 @@ export class OracleLexer extends Lexer {
 
   protected process(token: Token, tokens: Token[]) {
     if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.from(token.text)
+      const keyword = Keyword[token.text]
       if (keyword) {
         if (ReservedSet.has(keyword)) {
           token.type = keyword

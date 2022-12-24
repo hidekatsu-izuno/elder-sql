@@ -1,4 +1,4 @@
-import { Token } from "./lexer"
+import { Keyword, Token } from "./lexer"
 import { Node } from "./parser"
 
 export function lcase(text: string) {
@@ -103,10 +103,12 @@ export function toJSString(target: Node | Token | (Node |Token)[], space: number
         text += spaces + "new Token("
         if (target.subtype !== undefined) {
             text += "[" 
-                + target.type.constructor.name + "." + target.type.name + ", " 
-                + target.subtype.constructor.name + "." + target.subtype.name + "]"
+            text += (Keyword[target.type.name] ? "Keyword" : target.type.constructor.name) + "." + target.type.name
+            text += ", " 
+            text += (Keyword[target.subtype.name] ? "Keyword" : target.subtype.constructor.name) + "." + target.subtype.name
+            text += "]" 
         } else {
-            text += target.type.constructor.name + "." + target.type.name
+          text += (Keyword[target.type.name] ? "Keyword" : target.type.constructor.name) + "." + target.type.name
         }
         text += ", " + JSON.stringify(target.text)
         if (target.skips.length) {

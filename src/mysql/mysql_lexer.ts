@@ -8,7 +8,7 @@ import {
   Keyword,
 } from "../lexer"
 
-const ReservedSet = new Set<Keyword>([
+const ReservedSet = new Set<TokenType>([
   Keyword.ACCESSIBLE,
   Keyword.ADD,
   Keyword.ALL,
@@ -243,7 +243,7 @@ const ReservedSet = new Set<Keyword>([
 const CommandPattern = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
 
 export class MysqlLexer extends Lexer {
-  private reserved = new Set<Keyword>()
+  private reserved = new Set<TokenType>()
   private reCommand = new RegExp(`${CommandPattern}(;|$)`, "imy")
   private reDelimiter = new RegExp(";", "y")
 
@@ -333,7 +333,7 @@ export class MysqlLexer extends Lexer {
 
   protected process(token: Token, tokens: Token[]) {
     if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.from(token.text)
+      const keyword = Keyword[token.text]
       if (keyword) {
         if (ReservedSet.has(keyword)) {
           token.type = keyword

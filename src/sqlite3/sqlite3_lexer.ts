@@ -5,7 +5,7 @@ import {
   Keyword,
 } from "../lexer"
 
-const ReservedSet = new Set<Keyword>([
+const ReservedSet = new Set<TokenType>([
   Keyword.ADD,
   Keyword.ALL,
   Keyword.ALTER,
@@ -79,7 +79,7 @@ const ReservedSet = new Set<Keyword>([
 ]);
 
 export class Sqlite3Lexer extends Lexer {
-  private reserved = new Set<Keyword>();
+  private reserved = new Set<TokenType>();
 
   constructor(
     options: { [key: string]: any } = {}
@@ -131,7 +131,7 @@ export class Sqlite3Lexer extends Lexer {
 
   protected process(token: Token, tokens: Token[]) {
     if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.from(token.text)
+      const keyword = Keyword[token.text]
       if (keyword) {
         if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
           token.type = keyword
