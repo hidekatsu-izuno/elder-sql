@@ -46,7 +46,7 @@ export class TokenReader {
   ) {
   }
 
-  token(pos = 0) {
+  peek(pos = 0) {
     return this.tokens[this.pos + pos]
   }
 
@@ -61,7 +61,7 @@ export class TokenReader {
         continue
       }
 
-      const token = this.token(i)
+      const token = this.peek(i)
       if (!token || !this.matchToken(condition, token)) {
         return false
       }
@@ -70,7 +70,7 @@ export class TokenReader {
   }
 
   consume(condition?: TokenCondition) {
-    const token = this.token()
+    const token = this.peek()
     if (token == null) {
       throw this.createParseError()
     }
@@ -110,15 +110,16 @@ export class TokenReader {
   }
 
   createParseError(message?: string) {
-    const token = this.token()
-    let fileName = token.location?.fileName
-    let lineNumber = token.location?.lineNumber
-    let columnNumber = token.location?.columnNumber
+    const token = this.peek()
+    const fileName = token?.location?.fileName
+    let lineNumber = token?.location?.lineNumber
+    let columnNumber = token?.location?.columnNumber
 
     if (message == null) {
       const lines = []
       lineNumber = 1
-      for (let i = 0; i <= this.pos; i++) {
+      const len = Math.min(this.pos + 1, this.tokens.length)
+      for (let i = 0; i < len; i++) {
         const token = this.tokens[i]
         for (const skipToken of token.skips) {
           if (skipToken.type === TokenType.LineBreak) {

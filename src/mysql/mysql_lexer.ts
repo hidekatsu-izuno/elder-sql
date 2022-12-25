@@ -1,5 +1,5 @@
 
-import { escapeRegExp } from "@/util"
+import { escapeRegExp } from "../util"
 import semver from "semver"
 import {
   TokenType,

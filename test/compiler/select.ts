@@ -7,8 +7,7 @@ select * from employee where
 /*#if employeeId != null */
   employee_id = /*#{employeeId}*/99
   /*#if employeeName != null */
-    and
-    employee_name in /*#{employeeName}*/('hoge')
+    and employee_name in /*#{employeeName}*/('hoge')
   /*#elif employeeName === "test"*/
 --* and
 --* employee_name = /*\${subquery}*/
@@ -23,7 +22,7 @@ select * from employee where
       or employee_type = /*#{employeeType}*/
     /*#end*/
     )
-  /*#end*
+  /*#end*/
 /*#end*/
 `.trim()
 export const expected = `

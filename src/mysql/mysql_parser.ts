@@ -35,7 +35,7 @@ export class MysqlParser extends Parser {
     const root = new Node("root")
     const errors = []
 
-    while (r.token()) {
+    while (r.peek()) {
       try {
         if (r.peekIf(TokenType.Eof)) {
           root.add(r.consume())
@@ -59,7 +59,7 @@ export class MysqlParser extends Parser {
       }
     }
 
-    if (r.token() != null) {
+    if (r.peek() != null) {
       for (let i = r.pos; i < r.tokens.length; i++) {
         root.add(r.tokens[i])
       }
@@ -89,7 +89,7 @@ export class MysqlParser extends Parser {
   private command(r: TokenReader) {
     const stmt = new Node("command")
     r.consume(TokenType.Command)
-    const token = r.token(-1)
+    const token = r.peek(-1)
 
     const sep = Math.max(token.text.indexOf(" "), token.text.indexOf("\t"))
     if (sep === -1) {
@@ -186,9 +186,9 @@ export class MysqlParser extends Parser {
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
-        while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+        while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
           r.consume()
-          stmt.add(r.token(-1))
+          stmt.add(r.peek(-1))
         }
         if (r.peekIf(TokenType.Delimiter)) {
           stmt.add(r.consume())

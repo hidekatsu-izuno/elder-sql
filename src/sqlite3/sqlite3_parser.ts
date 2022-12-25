@@ -35,7 +35,7 @@ export class Sqlite3Parser extends Parser {
     const root = new Node("root")
     const errors = []
 
-    while (r.token()) {
+    while (r.peek()) {
       try {
         if (r.peekIf(TokenType.Delimiter) || r.peekIf(TokenType.Eof)) {
           root.add(r.consume())
@@ -56,7 +56,7 @@ export class Sqlite3Parser extends Parser {
       }
     }
 
-    if (r.token() != null) {
+    if (r.peek() != null) {
       for (let i = r.pos; i < r.tokens.length; i++) {
         root.add(r.tokens[i])
       }
@@ -268,7 +268,7 @@ export class Sqlite3Parser extends Parser {
         if (!stmt) {
           stmt = new Node("unknown")
         }
-        while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+        while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
           stmt.add(r.consume())
         }
         if (r.peekIf(TokenType.Delimiter)) {
@@ -312,10 +312,10 @@ export class Sqlite3Parser extends Parser {
       moduleNode.add(this.identifier(r, "name"))
       if (r.peekIf(TokenType.LeftParen)) {
         moduleNode.add(r.consume())
-        while (r.token()) {
+        while (r.peek()) {
           const moduleArg = new Node("arg")
           while (
-            r.token() &&
+            r.peek() &&
             !r.peekIf(TokenType.Comma) &&
             !r.peekIf(TokenType.RightParen)
           ) {
@@ -363,7 +363,7 @@ export class Sqlite3Parser extends Parser {
       }
 
       node.add(r.consume(TokenType.RightParen))
-      while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+      while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
         if (r.peekIf(Keyword.WITHOUT)) {
           node.add(new Node("without rowid").add(
             r.consume(), 
@@ -408,7 +408,7 @@ export class Sqlite3Parser extends Parser {
 
     if (r.peekIf(TokenType.LeftParen)) {
       node.add(r.consume())
-      while (r.token()) {
+      while (r.peek()) {
         node.add(this.identifier(r, "column_name"))
         if (r.peekIf(TokenType.Comma)) {
           node.add(r.consume())
@@ -441,10 +441,10 @@ export class Sqlite3Parser extends Parser {
     }
     this.parseName(r, node)
 
-    while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
       if (r.peekIf(Keyword.BEGIN)) {
         node.add(r.consume())
-        while (r.token() && !r.peekIf(Keyword.END)) {
+        while (r.peek() && !r.peekIf(Keyword.END)) {
           node.add(r.consume())
         }
       } else {
@@ -477,7 +477,7 @@ export class Sqlite3Parser extends Parser {
     node.add(this.identifier(r, "table_name"))
 
     node.add(r.consume(TokenType.LeftParen))
-    while (r.token()) {
+    while (r.peek()) {
       node.add(this.indexColumn(r))
       if (r.peekIf(TokenType.Comma)) {
         node.add(r.consume())
@@ -490,7 +490,7 @@ export class Sqlite3Parser extends Parser {
     if (r.peekIf(Keyword.WHERE)) {
       const whereNode = new Node("where")
       whereNode.add(r.consume())
-      while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+      while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
         whereNode.add(r.consume())
       }
       node.add(whereNode)
@@ -640,10 +640,10 @@ export class Sqlite3Parser extends Parser {
     const node = new Node("vacuum")
     node.add(r.consume(Keyword.VACUUM))
 
-    if (r.token() && !r.peekIf(Keyword.TO)) {
+    if (r.peek() && !r.peekIf(Keyword.TO)) {
       node.add(this.identifier(r, "schema_name"))
     }
-    while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
       node.add(r.consume())
     }
     return node
@@ -746,7 +746,7 @@ export class Sqlite3Parser extends Parser {
     node.add(r.consume(Keyword.INTO))
     this.parseName(r, node)
     
-    while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
       node.add(r.consume())
     }
     return node
@@ -760,7 +760,7 @@ export class Sqlite3Parser extends Parser {
     node.add(r.consume(Keyword.UPDATE))
     this.parseName(r, node)
     
-    while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
       node.add(r.consume())
     }
     return node
@@ -775,7 +775,7 @@ export class Sqlite3Parser extends Parser {
     node.add(r.consume(Keyword.FROM))
     this.parseName(r, node)
     
-    while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
       node.add(r.consume())
     }
     return node
@@ -789,7 +789,7 @@ export class Sqlite3Parser extends Parser {
     node.add(r.consume(Keyword.SELECT))
 
     let depth = 0
-    while (r.token() &&
+    while (r.peek() &&
       !r.peekIf(TokenType.Delimiter) &&
       (depth == 0 && !r.peekIf(TokenType.RightParen))
     ) {
@@ -814,11 +814,11 @@ export class Sqlite3Parser extends Parser {
       node.add(new Node("recursive").add(r.consume()))
     }
 
-    while (r.token()) {
+    while (r.peek()) {
       node.add(this.identifier(r, "name"))
       if (r.peekIf(TokenType.LeftParen)) {
         node.add(r.consume())
-        while (r.token()) {
+        while (r.peek()) {
           node.add(this.identifier(r, "column"))
           if (r.peekIf(TokenType.Comma)) {
             node.add(r.consume())
@@ -837,7 +837,7 @@ export class Sqlite3Parser extends Parser {
           r.consume(Keyword.MATERIALIZED)
         ))
       } else if (r.peekIf(Keyword.MATERIALIZED)) {
-        node.add(new Node("materialized").add(r.token(-1)))
+        node.add(new Node("materialized").add(r.peek(-1)))
       }
       node.add(r.consume(TokenType.LeftParen))
       node.add(this.selectClause(r))
@@ -875,7 +875,7 @@ export class Sqlite3Parser extends Parser {
     }
 
     while (
-      r.token() &&
+      r.peek() &&
       !r.peekIf(TokenType.Delimiter) &&
       !r.peekIf(TokenType.RightParen) &&
       !r.peekIf(TokenType.Comma)
@@ -952,7 +952,7 @@ export class Sqlite3Parser extends Parser {
       node.name = "references"
       node.add(this.identifier(r, "table_name"))
       node.add(r.consume(TokenType.LeftParen))
-      while (r.token()) {
+      while (r.peek()) {
         node.add(this.identifier(r, "column_name"))
         if (r.peekIf(TokenType.Comma)) {
           node.add(r.consume())
@@ -997,7 +997,7 @@ export class Sqlite3Parser extends Parser {
       childNode.add(r.consume())
       childNode.add(r.consume(Keyword.KEY))
       childNode.add(r.consume(TokenType.LeftParen))
-      while (r.token()) {
+      while (r.peek()) {
         childNode.add(this.indexColumn(r))
         if (r.peekIf(TokenType.Comma)) {
           childNode.add(r.consume())
@@ -1014,7 +1014,7 @@ export class Sqlite3Parser extends Parser {
       const childNode = new Node("unique")
       childNode.add(r.consume())
       childNode.add(r.consume(TokenType.LeftParen))
-      while (r.token()) {
+      while (r.peek()) {
         childNode.add(this.indexColumn(r))
         if (r.peekIf(TokenType.Comma)) {
           childNode.add(r.consume())
@@ -1040,7 +1040,7 @@ export class Sqlite3Parser extends Parser {
       childNode.add(r.consume(Keyword.KEY))
       childNode.add(r.consume(TokenType.LeftParen))
       childNode.add(this.identifier(r, "column_name"))
-      while (r.token()) {
+      while (r.peek()) {
         childNode.add(this.identifier(r, "column_name"))
         if (r.peekIf(TokenType.Comma)) {
           childNode.add(r.consume())
@@ -1161,16 +1161,16 @@ export class Sqlite3Parser extends Parser {
     const node = new Node(name)
     if (r.peekIf(TokenType.QuotedIdentifier)) {
       node.add(r.consume())
-      node.value = dequote(r.token(-1).text)
+      node.value = dequote(r.peek(-1).text)
     } else if (r.peekIf(TokenType.QuotedValue)) {
       node.add(r.consume())
-      node.value = dequote(r.token(-1).text)
+      node.value = dequote(r.peek(-1).text)
     } else if (r.peekIf(TokenType.String)) {
       node.add(r.consume())
-      node.value = dequote(r.token(-1).text)
+      node.value = dequote(r.peek(-1).text)
     } else if (r.peekIf(TokenType.Identifier)) {
       node.add(r.consume())
-      node.value = r.token(-1).text
+      node.value = r.peek(-1).text
     } else {
       throw r.createParseError()
     }
@@ -1196,7 +1196,7 @@ export class Sqlite3Parser extends Parser {
   private expression(r: TokenReader) {
     const node = new Node("expression")
     let depth = 0
-    while (r.token() &&
+    while (r.peek() &&
       (depth == 0 && !r.peekIf(TokenType.Comma)) &&
       (depth == 0 && !r.peekIf(TokenType.RightParen)) &&
       (depth == 0 && !r.peekIf(Keyword.AS)) &&

@@ -1,5 +1,10 @@
 import { Keyword, Token } from "./lexer"
 import { Node } from "./parser"
+import { parseExpressionAt } from "acorn"
+
+const acornOption: acorn.Options = {
+  ecmaVersion: "latest"
+}
 
 export function lcase(text: string) {
   return text.toLowerCase()
@@ -64,6 +69,16 @@ export function dequote(text: string) {
 
 export function escapeRegExp(text: string) {
   return text.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
+}
+
+export function isJSIdentifier(text: string) {
+  const result = parseExpressionAt(text, 0, acornOption)
+  return result.end === text.length && result.type === "Identifier"
+}
+
+export function isJSExpression(text: string) {
+  const result = parseExpressionAt(text, 0, acornOption)
+  return result.end === text.length
 }
 
 export function toJSString(target: Node | Token | (Node |Token)[], space: number = 0) {

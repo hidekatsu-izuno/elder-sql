@@ -1,10 +1,11 @@
+import { Token, TokenType, Lexer, Keyword } from "./lexer"
+import { TokenReader } from "./parser"
 import { MysqlLexer } from "./mysql/mysql_lexer"
 import { OracleLexer } from "./oracle/oracle_lexer"
-import { Token, TokenType, Lexer } from "./lexer"
-import { TokenReader } from "./parser"
 import { PostgresLexer } from "./postgres/postgres_lexer"
 import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer"
 import { MssqlLexer } from "./mssql/mssql_lexer"
+import { isJSIdentifier, isJSExpression } from './util'
 
 export type ElderSqlCompilerOptions = {
   dialect: "sqlite3" | "mysql" | "postgres" | "oracle" | "mssql"
@@ -23,7 +24,6 @@ const ElderSqlType = {
   BindVariable: new TokenType("BindVariable"),
   ReplacementVariable: new TokenType("ReplacementVariable"),
   Comment: new TokenType("Comment"),
-  Uncomment: new TokenType("Uncomment"),
 }
 
 export class ElderSqlCompiler {
@@ -48,33 +48,32 @@ export class ElderSqlCompiler {
   compile(input: string, fileName?: string) {
     let text = ""
 
-    const tokens = this.lexer.lex(input, fileName)
+    const tokens = this.lexer.lex(input.replace(/^--\*/mg, '   '), fileName)
     const segment = new Array<Token>()
     for (const token of tokens) {
+      for (let i = 0; i < token.skips.length; i++) {
+        const skipToken = token.skips[i]
+        const elderSqlType = this.getElderSqlType(skipToken)
+        if (elderSqlType) {
+          skipToken.type = elderSqlType
+          if (i > 0) {
+            skipToken.skips = token.skips.splice(0, i)
+          }
+          token.skips.splice(0, 1)
+          segment.push(skipToken)
+          i = 0
+        }
+      }
+      segment.push(token)
       if (token.is(TokenType.Delimiter) || token.is(TokenType.Eof)) {
         text += this.compileSegment(segment)
         segment.length = 0
-      } else {
-        for (let j = 0; j < token.skips.length; j++) {
-          const skipToken = token.skips[j]
-          const elderSqlType = this.getElderSqlType(skipToken)
-          if (elderSqlType) {
-            skipToken.type = elderSqlType
-            if (j > 0) {
-              skipToken.skips = token.skips.splice(0, j)
-            }
-            token.skips.splice(0, 1)
-            segment.push(skipToken)
-            j = 0
-          }
-        }
-        segment.push(token)
       }
     }
 
     if (text) {
-      text += `function sandbox(context, expr) {\n`
-      text += `  return (new Function("context", "with (context) " + expr))(context)\n`
+      text += `function sandbox(ctx, expr) {\n`
+      text += `  return (new Function("ctx", "with (ctx) " + expr))(ctx);\n`
       text += `}\n`
     }
 
@@ -84,148 +83,248 @@ export class ElderSqlCompiler {
   private compileSegment(segment: Token[]) {
     let text = ""
 
-    const reader = new TokenReader(segment)
+    const tr = new TokenReader(segment)
     let m
-    while (reader.peekIf(ElderSqlType.Import)) {
-      const importToken = reader.consume()
+    while (tr.peekIf(ElderSqlType.Import)) {
+      const importToken = tr.peek()
       if (!(m = /^\/\*#import[ \t](.*?)\*\/$/su.exec(importToken.text))) {
-        throw reader.createParseError()
+        throw tr.createParseError()
       }
+
+      tr.consume()
+      if (tr.peek()?.skips[0]?.is(TokenType.LineBreak)) {
+        tr.peek().skips.shift()
+      }
+
       text += `import ${m[1]};/\n`
     }
-    if (reader.peekIf(ElderSqlType.Define)) {
-      const defineToken = reader.consume()
-      if (!(m = /^\/\*#define[ \t]([^ \t\r\n]+)[ \t]*\r?\n(.*?)\*\/$/su.exec(defineToken.text))) {
-        throw reader.createParseError()
+    if (tr.peekIf(ElderSqlType.Define)) {
+      const defineToken = tr.peek()
+      if (!(m = /^\/\*#define[ \t]([^\r\n]*)\r?\n(.*?)\*\/$/su.exec(defineToken.text))) {
+        throw tr.createParseError()
       }
-      if (!this.checkIdentifier(m[1])) {
-        throw reader.createParseError()
+      const ident = m[1].trim()
+      if (!isJSIdentifier(ident)) {
+        throw tr.createParseError()
       }
-      text += `\n`
-      text += `/**\n${m[2].trimStart()}*/\n`
+
+      tr.consume()
+      if (tr.peek()?.skips[0]?.is(TokenType.LineBreak)) {
+        tr.peek().skips.shift()
+      }
+
+      text += `/**\n${m[2]}*/\n`
       text += `export function ${m[1]}(engine, params) {\n`
-      text += `  const text = ""\n`
-      text += `  const args = []\n`
-      text += `  const context0 = {...params}\n`
+      text += `  const text = "";\n`
+      text += `  const args = [];\n`
+      text += `  const ctx0 = { ...params };\n`
       const blocks = []
       let buffer = ""
-      const params = []
-      while (reader.token()) {
-        if (reader.peekIf(ElderSqlType.If)) {
-          const ifToken = reader.consume()
-          if (!(m = /^\/\*#if[ \t](.*?)\*\/$/s.exec(ifToken.text))) {
-            throw reader.createParseError()
+      while (tr.peek()) {
+        if (tr.peekIf(ElderSqlType.If)) {
+          const token = tr.peek()
+          if (!(m = /^\/\*#if[ \t](.*)\*\/$/s.exec(token.text))) {
+            throw tr.createParseError()
+          }
+          const expr = m[1].trim()
+          if (!isJSExpression(expr)) {
+            throw tr.createParseError()
+          }
+
+          tr.consume()
+          
+          for (const skip of token.skips) {
+            buffer += skip.text
           }
           if (buffer.length) {
-            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
             buffer = ""
           }
-          text += `  ${"  ".repeat(blocks.length)}if (${m[1].trim()}) {\n`
+
+          text += `  ${"  ".repeat(blocks.length)}if (${expr}) {\n`
           blocks.push(ElderSqlType.If)
-        } else if (reader.peekIf(ElderSqlType.Elif)) {
-          const elifToken = reader.consume()
-          if (!(blocks[blocks.length-1] === ElderSqlType.If || blocks[blocks.length-1] === ElderSqlType.Elif)) {
-            throw reader.createParseError()
+        } else if (tr.peekIf(ElderSqlType.Elif)) {
+          const token = tr.peek()
+          if (blocks[blocks.length-1] !== ElderSqlType.If && blocks[blocks.length-1] !== ElderSqlType.Elif) {
+            throw tr.createParseError()
           }
-          if (!(m = /^\/\*#elif[ \t](.*?)\*\/$/s.exec(elifToken.text))) {
-            throw reader.createParseError()
+          if (!(m = /^\/\*#elif[ \t](.*?)\*\/$/s.exec(token.text))) {
+            throw tr.createParseError()
+          }
+          const expr = m[1].trim()
+          if (!isJSExpression(expr)) {
+            throw tr.createParseError()
+          }
+
+          tr.consume()
+          
+          for (const skip of token.skips) {
+            buffer += skip.text
           }
           if (buffer.length) {
-            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
             buffer = ""
           }
+
           blocks.pop()
-          text += `  ${"  ".repeat(blocks.length)}} else if (${m[1].trim()}) {\n`
+          text += `  ${"  ".repeat(blocks.length)}} else if (${expr}) {\n`
           blocks.push(ElderSqlType.Elif)
-        } else if (reader.peekIf(ElderSqlType.Else)) {
-          reader.consume()
-          if (!(blocks[blocks.length-1] === ElderSqlType.If
-            || blocks[blocks.length-1] === ElderSqlType.Elif)) {
-            throw reader.createParseError()
+        } else if (tr.peekIf(ElderSqlType.Else)) {
+          if (blocks[blocks.length-1] !== ElderSqlType.If && blocks[blocks.length-1] !== ElderSqlType.Elif) {
+            throw tr.createParseError()
+          }
+
+          const token = tr.consume()
+          
+          for (const skip of token.skips) {
+            buffer += skip.text
           }
           if (buffer.length) {
-            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
             buffer = ""
           }
+
           blocks.pop()
           text += `  ${"  ".repeat(blocks.length)}} else {\n`
           blocks.push(ElderSqlType.Else)
-        } else if (reader.peekIf(ElderSqlType.For)) {
-          const forToken = reader.consume()
-          if (!(m = /^\/\*#for[ \t](?:[ \t\r\n]*\((.+?)(?:,(.+?))?\)[ \t\r\n]*|.+?):(.+?)\*\/$/s.exec(forToken.text))) {
-            throw reader.createParseError()
+        } else if (tr.peekIf(ElderSqlType.For)) {
+          const token = tr.peek()
+          if (!(m = /^\/\*#for[ \t\r\n]([^:]+):(.*)\*\/$/s.exec(token.text))) {
+            throw tr.createParseError()
           }
-          if ((m[1] && !this.checkIdentifier(m[1])) ||
-            (m[2] && !this.checkIdentifier(m[2])) ||
-            (m[3] && !this.checkIdentifier(m[3]))) {
-            throw reader.createParseError()
+          const parts = m[1].split(',')
+          const ident = parts[0].trim()
+          const index = parts[1]?.trim()
+          const expr = m[2].trim()
+          if (!isJSIdentifier(ident) || !(index == null || isJSIdentifier(index))) {
+            throw tr.createParseError()
           }
-          if (buffer.length) {
-            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
-            buffer = ""
+          if (!isJSExpression(expr)) {
+            throw tr.createParseError()
           }
-          const items = m[4].trim()
-          const item = m[3] ? m[3].trim() : m[2] ? `${m[1].trim()}, ${m[2].trim()}` : m[1].trim()
-          text += `  ${"  ".repeat(blocks.length)}(${items}).forEach((${item}) => {\n`
-          blocks.push(ElderSqlType.For)
-          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          text += `  ${"  ".repeat(blocks.length)}const context${depth} = {...params, ${item}}\n`
-        } else if (reader.peekIf(ElderSqlType.End)) {
-          reader.consume()
-          if (!(
-            blocks[blocks.length-1] === ElderSqlType.If
-            || blocks[blocks.length-1] === ElderSqlType.Elif
-            || blocks[blocks.length-1] === ElderSqlType.Else
-          )) {
-            if (buffer.length) {
-              text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
-              buffer = ""
-            }
-            blocks.pop()
-            text += `  ${"  ".repeat(blocks.length)}\n`
-          } else if (!(
-            blocks[blocks.length-1] === ElderSqlType.For
-          )) {
-            blocks.pop()
-            if (buffer.length) {
-              text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)}\n`
-              buffer = ""
-            }
-            text += `  ${"  ".repeat(blocks.length)})\n`
-          } else {
-            throw reader.createParseError()
-          }
-        } else if (reader.peekIf(ElderSqlType.BindVariable)) {
-          const bindToken = reader.consume()
-          if (!(m = /^\/\*#{(.*)}\*\/$/s.exec(bindToken.text))) {
-            throw reader.createParseError()
-          }
-          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          text += `  ${"  ".repeat(blocks.length)}text += "?"\n`
-          text += `  ${"  ".repeat(blocks.length)}args.push(sandbox(context${depth}, ${JSON.stringify(m[1].trim())}))\n`
-        } else if (reader.peekIf(ElderSqlType.ReplacementVariable)) {
-          const bindToken = reader.consume()
-          if (!(m = /^\/\*\${(.*)}\*\/$/s.exec(bindToken.text))) {
-            throw reader.createParseError()
-          }
-          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          text += `  ${"  ".repeat(blocks.length)}text += sandbox(context${depth}, ${JSON.stringify(m[1].trim())})\n`
-        } else {
-          const otherToken = reader.consume()
-          for (const skip of otherToken.skips) {
+
+          tr.consume()
+          
+          for (const skip of token.skips) {
             buffer += skip.text
           }
-          buffer += otherToken.text
+          if (buffer.length) {
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
+            buffer = ""
+          }
+
+          text += `  ${"  ".repeat(blocks.length)}(${expr}).forEach((${index ? ident + ", " + index : ident}) => {\n`
+          blocks.push(ElderSqlType.For)
+          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
+          text += `  ${"  ".repeat(blocks.length)}const ctx${depth} = {...ctx${depth-1}, ${index ? ident + ", " + index : ident}};\n`
+        } else if (tr.peekIf(ElderSqlType.End)) {
+          const token = tr.consume()
+
+          for (const skip of token.skips) {
+            buffer += skip.text
+          }
+          if (buffer.length) {
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
+            buffer = ""
+          }
+
+          if (blocks[blocks.length-1] === ElderSqlType.If
+            || blocks[blocks.length-1] === ElderSqlType.Elif
+            || blocks[blocks.length-1] === ElderSqlType.Else) {
+            blocks.pop()
+            text += `  ${"  ".repeat(blocks.length)}}\n`
+          } else if (blocks[blocks.length-1] === ElderSqlType.For) {
+            blocks.pop()
+            text += `  ${"  ".repeat(blocks.length)}})\n`
+          } else {
+            throw tr.createParseError()
+          }
+        } else if (tr.peekIf(ElderSqlType.BindVariable)) {
+          const token = tr.peek()
+          if (!(m = /^\/\*#\{(.*)\}\*\/$/s.exec(token.text))) {
+            throw tr.createParseError()
+          }
+
+          tr.consume()
+          if (tr.peek()?.skips.length === 0) {
+            if (tr.peekIf(TokenType.LeftParen)) {
+              tr.consume()
+              let depth = 0
+              while (tr.peek()
+                && !tr.peekIf(TokenType.Delimiter)
+                && !tr.peekIf(TokenType.Eof)) {
+                if (tr.peekIf(TokenType.LeftParen)) {
+                  tr.consume()
+                  depth++
+                } else if (tr.peekIf(TokenType.RightParen)) {
+                  tr.consume()
+                  depth--
+                  if (depth === 0) {
+                    break
+                  }
+                } else {
+                  tr.consume()
+                }
+              }
+            } else if (tr.peekIf({ type: TokenType.Operator, text: /^[+-]$/ }, TokenType.Number)) {
+              tr.consume()
+              tr.consume()
+            } else if (tr.peekIf(TokenType.String)
+              || tr.peekIf(TokenType.Number)
+              || tr.peekIf(Keyword.TRUE)
+              || tr.peekIf(Keyword.FALSE)
+              || tr.peekIf(Keyword.NULL)) {
+              tr.consume()
+            }
+          }
+          
+          for (const skip of token.skips) {
+            buffer += skip.text
+          }
+          buffer += "?"
+          if (buffer.length) {
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
+            buffer = ""
+          }
+
+          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
+          text += `  ${"  ".repeat(blocks.length)}args.push(sandbox(ctx${depth}, ${JSON.stringify(m[1].trim())}));\n`
+        } else if (tr.peekIf(ElderSqlType.ReplacementVariable)) {
+          const token = tr.peek()
+          if (!(m = /^\/\*\$\{(.*)\}\*\/$/s.exec(token.text))) {
+            throw tr.createParseError()
+          }
+          const repl = m[1].trim()
+
+          tr.consume()
+
+          for (const skip of token.skips) {
+            buffer += skip.text
+          }
+          if (buffer.length) {
+            text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
+            buffer = ""
+          }
+
+          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
+          text += `  ${"  ".repeat(blocks.length)}text += sandbox(ctx${depth}, ${JSON.stringify(repl)});\n`
+        } else {
+          const token = tr.consume()
+          for (const skip of token.skips) {
+            buffer += skip.text
+          }
+          buffer += token.text
         }
       }
       if (blocks.length) {
-        throw reader.createParseError()
+        throw tr.createParseError()
       }
       if (buffer.length) {
-        text += `  text += ${JSON.stringify(buffer)}\n`
+        text += `  text += ${JSON.stringify(buffer)};\n`
       }
-      text += `  return engine.execute(text, args)\n`
+      text += `  return engine.execute(text, args);\n`
       text += `}\n`
+      text += `\n`
     }
 
     return text
@@ -249,24 +348,17 @@ export class ElderSqlCompiler {
         return ElderSqlType.End
       } else if (/^\/\*:/s.test(token.text)) {
         return ElderSqlType.TypeHint
-      } else if (/^\/\*#{[^}]*}\*\/$/s.test(token.text)) {
+      } else if (/^\/\*#\{.*\}\*\/$/s.test(token.text)) {
         return ElderSqlType.BindVariable
-      } else if (/^\/\*\${.*}\*\/$/s.test(token.text)) {
+      } else if (/^\/\*\$\{.*\}\*\/$/s.test(token.text)) {
         return ElderSqlType.ReplacementVariable
       }
     } else if (token.is(TokenType.LineComment)) {
       if (token.text.startsWith("--#")) {
         return ElderSqlType.Comment
-      } else if (token.text.startsWith("--*")) {
-        return ElderSqlType.Uncomment
       }
     }
     return undefined
-  }
-
-  private checkIdentifier(text: string) {
-    return true
-    //return /^[$_p{ID_Start}][$u200cu200dp{ID_Continue}]*$/u.test(text)
   }
 }
 

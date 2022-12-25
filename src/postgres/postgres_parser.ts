@@ -31,7 +31,7 @@ export class PostgresParser extends Parser {
     const root = new Node("root")
     const errors = []
 
-    while (r.token()) {
+    while (r.peek()) {
       try {
         if (r.peekIf(TokenType.Eof)) {
           root.add(r.consume())
@@ -55,7 +55,7 @@ export class PostgresParser extends Parser {
       }
     }
 
-    if (r.token() != null) {
+    if (r.peek() != null) {
       for (let i = r.pos; i < r.tokens.length; i++) {
         root.add(r.tokens[i])
       }
@@ -86,7 +86,7 @@ export class PostgresParser extends Parser {
     const stmt = new Node("command")
 
     r.consume(TokenType.Command)
-    const token = r.token(-1)
+    const token = r.peek(-1)
     const sep = token.text.indexOf(" ")
     if (sep === -1) {
       stmt.add(new Node("name", token.text).add(token))
@@ -151,7 +151,7 @@ export class PostgresParser extends Parser {
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
-        while (r.token() && !r.peekIf(TokenType.Delimiter)) {
+        while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
           stmt.add(r.consume())
         }
         if (r.peekIf(TokenType.Delimiter)) {
