@@ -6,10 +6,14 @@ export const actual = `
 select * from employee where
 /*#if employeeId != null */
   employee_id = /*#{employeeId}*/99
+  and employee_id = /*#{employeeId}*/99
   /*#if employeeName != null */
     and employee_name in /*#{employeeName}*/('hoge')
+    or employee_name in /*#{employeeName}*/('hoge')
   /*#elif employeeName === "test"*/
 --* and
+--* employee_name = /*\${subquery}*/
+--* or
 --* employee_name = /*\${subquery}*/
   /*#else*/
 --* and

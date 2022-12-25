@@ -71,12 +71,6 @@ export class ElderSqlCompiler {
       }
     }
 
-    if (text) {
-      text += `function sandbox(ctx, expr) {\n`
-      text += `  return (new Function("ctx", "with (ctx) " + expr))(ctx);\n`
-      text += `}\n`
-    }
-
     return new ElderSqlCompileResult(text, {})
   }
 
@@ -245,6 +239,9 @@ export class ElderSqlCompiler {
             throw tr.createParseError()
           }
 
+          const isInOperator = tr.peek(-1)?.is(Keyword.IN)
+
+          const expr = m[1].trim()
           tr.consume()
           if (tr.peek()?.skips.length === 0) {
             if (tr.peekIf(TokenType.LeftParen)) {
@@ -258,10 +255,10 @@ export class ElderSqlCompiler {
                   depth++
                 } else if (tr.peekIf(TokenType.RightParen)) {
                   tr.consume()
-                  depth--
                   if (depth === 0) {
                     break
                   }
+                  depth--
                 } else {
                   tr.consume()
                 }
@@ -277,18 +274,24 @@ export class ElderSqlCompiler {
               tr.consume()
             }
           }
-          
+
+          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
           for (const skip of token.skips) {
             buffer += skip.text
           }
-          buffer += "?"
-          if (buffer.length) {
+          if (buffer.length > 0) {
             text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
             buffer = ""
           }
-
-          const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          text += `  ${"  ".repeat(blocks.length)}args.push(sandbox(ctx${depth}, ${JSON.stringify(m[1].trim())}));\n`
+          if (isInOperator) {
+            text += `  ${"  ".repeat(blocks.length)}text += "(";\n`
+            text += `  ${"  ".repeat(blocks.length)}args.push((new Function("ctx", ${JSON.stringify("with (ctx) return (" + expr + ")")}))(ctx${depth}));\n`
+            text += `  ${"  ".repeat(blocks.length)}text += ",?".repeat(Array.isArray(args[args.length - 1]) ? args[args.length - 1].length : 1).substring(1);\n`
+            text += `  ${"  ".repeat(blocks.length)}text += ")";\n`
+          } else {
+            text += `  ${"  ".repeat(blocks.length)}args.push((new Function("ctx", ${JSON.stringify("with (ctx) return (" + expr + ")")}))(ctx${depth}));\n`
+            text += `  ${"  ".repeat(blocks.length)}text += "?";\n`
+          }
         } else if (tr.peekIf(ElderSqlType.ReplacementVariable)) {
           const token = tr.peek()
           if (!(m = /^\/\*\$\{(.*)\}\*\/$/s.exec(token.text))) {
@@ -305,9 +308,8 @@ export class ElderSqlCompiler {
             text += `  ${"  ".repeat(blocks.length)}text += ${JSON.stringify(buffer)};\n`
             buffer = ""
           }
-
           const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          text += `  ${"  ".repeat(blocks.length)}text += sandbox(ctx${depth}, ${JSON.stringify(repl)});\n`
+          text += `  ${"  ".repeat(blocks.length)}text += (new Function("ctx", ${JSON.stringify("with (ctx) return (" + repl + ")")}))(ctx${depth});\n`
         } else {
           const token = tr.consume()
           for (const skip of token.skips) {
