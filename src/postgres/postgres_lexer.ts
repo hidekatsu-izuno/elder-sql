@@ -122,6 +122,7 @@ export class PostgresLexer extends Lexer {
       if (keyword) {
         if (ReservedSet.has(keyword)) {
           token.type = keyword
+          token.reserved = true
         } else {
           token.subtype = token.type
           token.type = keyword
