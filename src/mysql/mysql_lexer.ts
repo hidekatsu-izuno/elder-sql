@@ -6,6 +6,7 @@ import {
   Token,
   Lexer,
   Keyword,
+  LexerOptions,
 } from "../lexer"
 
 const ReservedSet = new Set<TokenType>([
@@ -242,22 +243,26 @@ const ReservedSet = new Set<TokenType>([
 
 const CommandPattern = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
 
+export declare type MysqlLexerOptions = LexerOptions & {
+  package?: string
+  version?: string
+}
+
 export class MysqlLexer extends Lexer {
   private reserved = new Set<TokenType>()
   private reCommand = new RegExp(`${CommandPattern}(;|$)`, "imy")
   private reDelimiter = new RegExp(";", "y")
 
   constructor(
-    options: Record<string, any> = {}
+    options: MysqlLexerOptions = {}
   ) {
     super("mysql", [
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my },
-      { type: TokenType.Command, re: () => this.reCommand },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
-      { type: TokenType.Delimiter, re: () => this.reDelimiter },
+      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my, skip: true },
+      { type: TokenType.Command, re: () => this.reCommand, eos: true },
+      { type: TokenType.Delimiter, re: () => this.reDelimiter, eos: true },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -320,7 +325,7 @@ export class MysqlLexer extends Lexer {
     }
   }
 
-  protected filter(input: string) {
+  protected processInput(state: Record<string, any>, input: string) {
     return input.replace(/\/\*!([0-9]*)(.*?)\*\//sg, (m, p1, p2) => {
       if (this.options.version && p1) {
         if (semver.lt(this.options.version, this.toSemverString(p1))) {
@@ -331,14 +336,12 @@ export class MysqlLexer extends Lexer {
     })
   }
 
-  protected process(token: Token, tokens: Token[]) {
+  protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword[token.text.toUpperCase()]
       if (keyword) {
-        if (ReservedSet.has(keyword)) {
-          token.type = keyword
-        } else {
-          token.subtype = token.type
+        token.keyword = keyword
+        if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
           token.type = keyword
         }
       }
@@ -348,12 +351,6 @@ export class MysqlLexer extends Lexer {
         const sep = escapeRegExp(m[1])
         this.reCommand = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
         this.reDelimiter = new RegExp(sep, "y")
-      }
-    } else if (token.type === TokenType.LineBreak) {
-      const last = tokens[tokens.length - 1]
-      if (last && last.type === TokenType.Command) {
-        last.subtype = token.type
-        last.type = TokenType.Delimiter
       }
     }
     return token

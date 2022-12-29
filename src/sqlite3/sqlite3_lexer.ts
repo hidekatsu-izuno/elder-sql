@@ -3,6 +3,7 @@ import {
   Token,
   Lexer,
   Keyword,
+  LexerOptions,
 } from "../lexer"
 
 const ReservedSet = new Set<TokenType>([
@@ -78,79 +79,74 @@ const ReservedSet = new Set<TokenType>([
   Keyword.WINDOW,
 ]);
 
+export declare type Sqlite3LexerOptions = LexerOptions & {
+  compileOptions?: string[]
+}
+
 export class Sqlite3Lexer extends Lexer {
-  private reserved = new Set<TokenType>();
+  private reserved = new Set<TokenType>()
 
   constructor(
-    options: { [key: string]: any } = {}
+    options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.Command, re: /^\..+$/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
-      { type: TokenType.SemiColon, re: /;/y },
-      { type: TokenType.LeftParen, re: /\(/y },
-      { type: TokenType.RightParen, re: /\)/y },
-      { type: TokenType.Comma, re: /,/y },
+      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
+      { type: TokenType.Command, re: /^\..+/my, eos: true },
+      { type: TokenType.SemiColon, re: /;/y, eos: true, separator: true },
+      { type: TokenType.LeftParen, re: /\(/y, separator: true },
+      { type: TokenType.RightParen, re: /\)/y, separator: true },
+      { type: TokenType.Comma, re: /,/y, separator: true },
       { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|((0|[1-9][0-9]*)(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
-      { type: TokenType.Dot, re: /\./y },
+      { type: TokenType.Dot, re: /\./y, separator: true },
       { type: TokenType.String, re: /[Xx]?'([^']|'')*'/y },
       { type: TokenType.QuotedValue, re: /"([^"]|"")*"/y },
       { type: TokenType.QuotedIdentifier, re: /(`([^`]|``)*`|\[[^\]]*\])/y },
       { type: TokenType.BindVariable, re: /\?([1-9][0-9]*)?/y },
       { type: TokenType.BindVariable, re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y },
-      { type: TokenType.Error, re: /./y },
+      { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y, separator: true },
+      { type: TokenType.Error, re: /./y, separator: true },
     ], options)
 
-    if (!options.compileOptions?.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
-      this.reserved.add(Keyword.ALWAYS)
-      this.reserved.add(Keyword.GENERATED)
-    }
-    if (!options.compileOptions?.has("SQLITE_OMIT_WINDOWFUNC")) {
-      this.reserved.add(Keyword.CURRENT)
-      this.reserved.add(Keyword.EXCLUDE)
-      this.reserved.add(Keyword.FOLLOWING)
-      this.reserved.add(Keyword.GROUPS)
-      this.reserved.add(Keyword.OTHERS)
-      this.reserved.add(Keyword.PARTITION)
-      this.reserved.add(Keyword.PRECEDING)
-      this.reserved.add(Keyword.RANGE)
-      this.reserved.add(Keyword.TIES)
-      this.reserved.add(Keyword.UNBOUNDED)
-    }
-    if (!options.compileOptions?.has("SQLITE_OMIT_COMPOUND_SELECT")) {
-      this.reserved.add(Keyword.EXCEPT)
-      this.reserved.add(Keyword.INTERSECT)
-      this.reserved.add(Keyword.UNION)
+    if (options.compileOptions) {
+      const compileOptions = new Set<string>(options.compileOptions)
+      if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
+        this.reserved.add(Keyword.ALWAYS)
+        this.reserved.add(Keyword.GENERATED)
+      }
+      if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
+        this.reserved.add(Keyword.CURRENT)
+        this.reserved.add(Keyword.EXCLUDE)
+        this.reserved.add(Keyword.FOLLOWING)
+        this.reserved.add(Keyword.GROUPS)
+        this.reserved.add(Keyword.OTHERS)
+        this.reserved.add(Keyword.PARTITION)
+        this.reserved.add(Keyword.PRECEDING)
+        this.reserved.add(Keyword.RANGE)
+        this.reserved.add(Keyword.TIES)
+        this.reserved.add(Keyword.UNBOUNDED)
+      }
+      if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
+        this.reserved.add(Keyword.EXCEPT)
+        this.reserved.add(Keyword.INTERSECT)
+        this.reserved.add(Keyword.UNION)
+      }
     }
   }
 
-  protected process(token: Token, tokens: Token[]) {
+  protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword[token.text.toUpperCase()]
       if (keyword) {
+        token.keyword = keyword
         if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
-          token.type = keyword
-          token.reserved = true
-        } else {
-          token.subtype = token.type
           token.type = keyword
         }
       }
-    } else if (token.type === TokenType.SemiColon) {
-      token.subtype = token.type
-      token.type = TokenType.Delimiter
-    } else if (token.type === TokenType.LineBreak) {
-      const last = tokens[tokens.length - 1]
-      if (last && last.type === TokenType.Command) {
-        last.subtype = token.type
-        last.type = TokenType.Delimiter
-      }
     }
+
     return token
   }
 }

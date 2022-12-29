@@ -3,6 +3,7 @@ import {
   Token,
   Lexer,
   Keyword,
+  LexerOptions,
 } from "../lexer"
 
 export const LookAheadSet = new Set<TokenType>([
@@ -183,19 +184,22 @@ export const ReservedSet = new Set<TokenType>([
   Keyword.WHERE,
   Keyword.WITH,    
 ])
+
+export declare type OracleLexerOptions = LexerOptions & {
+}
+
 export class OracleLexer extends Lexer {
   private state = 0; // 0 CREATE 1 STATEMENT 2 / END 3 ; END
 
   constructor(
-    options: Record<string, any> = {}
+    options: OracleLexerOptions = {}
   ) {
     super("oracle", [
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
+      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
+      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my, eos: true },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -213,15 +217,12 @@ export class OracleLexer extends Lexer {
     ], options)
   }
 
-  protected process(token: Token, tokens: Token[]) {
+  protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword[token.text.toUpperCase()]
       if (keyword) {
+        token.keyword = keyword
         if (ReservedSet.has(keyword)) {
-          token.type = keyword
-          token.reserved = true
-        } else {
-          token.subtype = token.type
           token.type = keyword
         }
         if (this.state === 0) {
@@ -248,16 +249,10 @@ export class OracleLexer extends Lexer {
     } else if (token.type === TokenType.SemiColon) {
       if (this.state !== 2) {
         this.state = 0
-        token.subtype = TokenType.Delimiter
+        token.eos = true
       }
     } else if (token.type === TokenType.Delimiter) {
       this.state = 0
-    } else if (token.type === TokenType.LineBreak) {
-      const last = tokens[tokens.length - 1]
-      if (last && last.type === TokenType.Command) {
-        last.subtype = token.type
-        last.type = TokenType.Delimiter
-      }
     } else if (this.state === 0 && !token.type.options.skip) {
       this.state = 3
     }

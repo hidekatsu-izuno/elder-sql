@@ -3,6 +3,7 @@ import {
   Token,
   Lexer,
   Keyword,
+  LexerOptions,
 } from "../lexer"
 
 const ReservedSet = new Set<TokenType>([
@@ -85,18 +86,20 @@ const ReservedSet = new Set<TokenType>([
   Keyword.WITH,
 ])
 
+export declare type PostgresLexerOptions = LexerOptions & {
+}
+
 export class PostgresLexer extends Lexer {
   constructor(
-    options: { [key: string]: any } = {}
+    options: PostgresLexerOptions = {}
   ) {
     super("postgres", [
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.Command, re: /^\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\\|$)/my },
-      { type: TokenType.LineBreak, re: /(?:\r\n?|\n)/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.SemiColon, re: /;/y },
+      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy, skip: true },
+      { type: TokenType.LineComment, re: /--.*/y, skip: true },
+      { type: TokenType.Command, re: /^\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\\|$)/my, eos: true },
+      { type: TokenType.SemiColon, re: /;/y, eos: true },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -116,23 +119,14 @@ export class PostgresLexer extends Lexer {
     ], options)
   }
 
-  protected process(token: Token, tokens: Token[]) {
+  protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword[token.text.toUpperCase()]
       if (keyword) {
+        token.keyword = keyword
         if (ReservedSet.has(keyword)) {
           token.type = keyword
-          token.reserved = true
-        } else {
-          token.subtype = token.type
-          token.type = keyword
         }
-      }
-    } else if (token.type === TokenType.LineBreak) {
-      const last = tokens[tokens.length - 1]
-      if (last && last.type === TokenType.Command) {
-        last.subtype = token.type
-        last.type = TokenType.Delimiter
       }
     }
     return token

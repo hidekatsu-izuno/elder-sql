@@ -1,20 +1,19 @@
 export class TokenType {
-  static Eof = new TokenType("Eof")
+  static Eof = new TokenType("Eof", { separator: true })
   static Command = new TokenType("Command")
-  static Delimiter = new TokenType("Delimiter")
-  static SemiColon = new TokenType("SemiColon")
-  static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
-  static LineBreak = new TokenType("LineBreak", { skip: true })
-  static LineComment = new TokenType("LineComment", { skip: true })
-  static BlockComment = new TokenType("BlockComment", { skip: true })
-  static HintComment = new TokenType("HintComment", { skip: true })
-  static LeftParen = new TokenType("LeftParen")
-  static RightParen = new TokenType("RightParen")
-  static LeftBracket = new TokenType("LeftBracket")
-  static RightBracket = new TokenType("RightBracket")
-  static Comma = new TokenType("Comma")
-  static Dot = new TokenType("Dot")
-  static Operator = new TokenType("Operator")
+  static Delimiter = new TokenType("Delimiter", { separator: true })
+  static SemiColon = new TokenType("SemiColon", { separator: true })
+  static WhiteSpace = new TokenType("WhiteSpace")
+  static LineComment = new TokenType("LineComment")
+  static BlockComment = new TokenType("BlockComment")
+  static HintComment = new TokenType("HintComment")
+  static LeftParen = new TokenType("LeftParen", { separator: true })
+  static RightParen = new TokenType("RightParen", { separator: true })
+  static LeftBracket = new TokenType("LeftBracket", { separator: true })
+  static RightBracket = new TokenType("RightBracket", { separator: true })
+  static Comma = new TokenType("Comma", { separator: true })
+  static Dot = new TokenType("Dot", { separator: true })
+  static Operator = new TokenType("Operator", { separator: true })
   static Number = new TokenType("Number")
   static Size = new TokenType("Size")
   static String = new TokenType("String")
@@ -69,74 +68,114 @@ export class SourceLocation {
 
 export class Token {
   type: TokenType
-  subtype?: TokenType
-  reserved = false
+  keyword?: TokenType
+  eos: boolean
+  preskips: Token[]
+  postskips: Token[]
+  location?: SourceLocation
 
   constructor(
     type: TokenType | [TokenType, TokenType],
     public text: string,
-    public skips: Token[] = [],
-    public location?: SourceLocation,
+    options?: {
+      eos? :boolean
+      preskips?: Token[],
+      postskips?: Token[],
+      location?: SourceLocation,
+    }
   ) {
     if (Array.isArray(type)) {
       this.type = type[0]
-      this.subtype = type[1]
+      this.keyword = type[1]
     } else {
       this.type = type
     }
+    this.eos = !!options?.eos
+    this.preskips = options?.preskips ?? []
+    this.postskips = options?.postskips ?? []
+    this.location = options?.location
   }
 
   is(type: TokenType) {
-    return this.type === type || this.subtype === type
+    return this.keyword === type || this.type === type
   }
   
   toString() {
-    let out = ""
-    for (let i = 0; i < this.skips.length; i++) {
-      out += this.skips[i].text
+    if (this.preskips.length > 0 || this.postskips.length > 0) {
+      let out = ""
+      for (let i = 0; i < this.preskips.length; i++) {
+        out += this.preskips[i].text
+      }  
+      out += this.text
+      for (let i = 0; i < this.postskips.length; i++) {
+        out += this.postskips[i].text
+      }
+      return out
     }
-    out += this.text
-    return out
+    return this.text
   }
+}
+
+export declare type TokenPattern = {
+  type: TokenType,
+  re: RegExp | (() => RegExp),
+  skip?: boolean
+  separator?: boolean
+  eos?: boolean
+}
+
+export declare type LexerOptions = {
+  patternFilter?: (patterns: TokenPattern[]) => TokenPattern[]
+  [key: string]: any
 }
 
 export abstract class Lexer {
   constructor(
-    public type: string,
-    public patterns: {type: TokenType, re: RegExp | (() => RegExp), skip?: boolean }[],
-    public options: Record<string, any> = {},
+    public name: string,
+    public patterns: TokenPattern[], 
+    public options: LexerOptions = {},
   ) {
+    if (options.patternFilter) {
+      this.patterns = options.patternFilter(this.patterns)
+    }
   }
 
   lex(input: string, fileName?: string) {
-    const tokens = []
+    const state = {}
+
+    const tokens = new Array<Token>()
     let pos = 0
     let lineNumber = 1
     let columnNumber = 0
 
-    input = this.filter(input)
-
+    input = this.processInput(state, input)
+    
     if (input.startsWith("\uFEFF")) {
       pos = 1
     }
 
-    const skips = new Array<Token>()
+    let skips = []
     while (pos < input.length) {
       let token
-      for (const pattern of this.patterns) {
-        const re = (typeof pattern.re  === 'function') ?
-          pattern.re() : pattern.re
+      let skip = false
+      for (const pat of this.patterns) {
+        const re = (typeof pat.re  === 'function') ?
+          pat.re() : pat.re
 
         re.lastIndex = pos
         const m = re.exec(input)
         if (m) {
-          const loc = new SourceLocation()
-          loc.fileName = fileName
-          loc.position = pos
-          loc.lineNumber = lineNumber
-          loc.columnNumber = columnNumber
+          const location = new SourceLocation()
+          location.fileName = fileName
+          location.position = pos
+          location.lineNumber = lineNumber
+          location.columnNumber = columnNumber
 
-          token = new Token(pattern.type, m[0], [], loc)
+          token = new Token(pat.type, m[0], {
+            eos: !!pat.eos,
+            location,
+          })
+          skip = !!pat.skip
           pos = re.lastIndex
           break
         }
@@ -146,38 +185,47 @@ export abstract class Lexer {
         throw new Error(`Failed to tokenize: ${pos}`)
       }
 
-      if (token.type === TokenType.LineBreak || token.subtype === TokenType.LineBreak) {
-        lineNumber++
-        columnNumber = 0
+      let index = token.text.indexOf('\n')
+      if (index !== -1) {
+        const lastIndex = index
+        do {
+          lineNumber++
+          index = token.text.indexOf('\n', lastIndex)
+        } while (index !== -1)
+        columnNumber = token.text.length - lastIndex
       } else {
         columnNumber += token.text.length
       }
 
-      token = this.process(token, tokens)
-      if (token.type.options.skip) {
-        skips.push(token)
+      if (skip) {
+        skips.push(this.processToken(state, token))
       } else {
-        token.skips.push(...skips)
-        skips.length = 0
-        tokens.push(token)
+        token.preskips = skips
+        skips = []
+        tokens.push(this.processToken(state, token))
       }
     }
 
-    const loc = new SourceLocation()
-    loc.fileName = fileName
-    loc.position = pos
-    loc.lineNumber = lineNumber
-    loc.columnNumber = columnNumber
+    const location = new SourceLocation()
+    location.fileName = fileName
+    location.position = pos
+    location.lineNumber = lineNumber
+    location.columnNumber = columnNumber
 
-    tokens.push(new Token(TokenType.Eof, "", skips, loc))
+    const eofToken = new Token(TokenType.Eof, "", {
+      eos: true,
+      preskips: skips,
+      location,
+    })
+    tokens.push(this.processToken(state, eofToken))
     return tokens
   }
 
-  protected filter(input: string) {
+  protected processInput(state: Record<string, any>, input: string) {
     return input
   }
 
-  protected process(token: Token, tokens: Token[]) {
+  protected processToken(state: Record<string, any>, token: Token) {
     return token
   }
 }
