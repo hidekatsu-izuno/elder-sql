@@ -180,10 +180,11 @@ export abstract class Lexer {
 
       let index = token.text.indexOf('\n')
       if (index !== -1) {
-        const lastIndex = index
+        let lastIndex
         do {
+          lastIndex = index
           lineNumber++
-          index = token.text.indexOf('\n', lastIndex)
+          index = token.text.indexOf('\n', lastIndex + 1)
         } while (index !== -1)
         columnNumber = token.text.length - lastIndex
       } else {

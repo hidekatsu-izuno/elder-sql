@@ -10,7 +10,7 @@ describe("test oracle lexer", () => {
     const module = require("./lexer/" + target)
     const tokens = new OracleLexer().lex(module.actual)
 
-    if (target === "select") {
+    if (target === "create_package") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 
