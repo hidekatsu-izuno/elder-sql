@@ -148,6 +148,7 @@ export abstract class Lexer {
     }
 
     let skips = []
+    let lastSeparator: Token | undefined
     while (pos < input.length) {
       let token
       let pattern
@@ -191,9 +192,14 @@ export abstract class Lexer {
         columnNumber += token.text.length
       }
 
-      if (pattern?.separator && skips.length > 0 && tokens.length > 0) {
-        tokens[tokens.length - 1].postskips = skips
-        skips = []
+      if (pattern?.separator) {
+        if (skips.length > 0
+          && tokens.length > 0
+          && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
+          tokens[tokens.length - 1].postskips = skips
+          skips = []
+        }
+        lastSeparator = token
       }
 
       if (pattern?.skip) {
