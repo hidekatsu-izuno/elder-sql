@@ -1,8 +1,6 @@
 import fs from "node:fs"
-import { TokenType } from "../../src/lexer"
 import { OracleLexer } from "../../src/oracle/oracle_lexer"
-import { TokenReader } from "../../src/parser"
-import { toJSString } from "../../src/util"
+import { toJSString } from "../../src/debug"
 
 describe("test oracle lexer", () => {
   test.each([
@@ -12,7 +10,7 @@ describe("test oracle lexer", () => {
     const module = require("./lexer/" + target)
     const tokens = new OracleLexer().lex(module.actual)
 
-    if (target === "create_package") {
+    if (target === "select") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 

@@ -1,19 +1,20 @@
 export class TokenType {
-  static Eof = new TokenType("Eof", { separator: true })
-  static Command = new TokenType("Command")
-  static Delimiter = new TokenType("Delimiter", { separator: true })
-  static SemiColon = new TokenType("SemiColon", { separator: true })
+  static Eof = new TokenType("Eof")
   static WhiteSpace = new TokenType("WhiteSpace")
   static LineComment = new TokenType("LineComment")
   static BlockComment = new TokenType("BlockComment")
   static HintComment = new TokenType("HintComment")
-  static LeftParen = new TokenType("LeftParen", { separator: true })
-  static RightParen = new TokenType("RightParen", { separator: true })
-  static LeftBracket = new TokenType("LeftBracket", { separator: true })
-  static RightBracket = new TokenType("RightBracket", { separator: true })
-  static Comma = new TokenType("Comma", { separator: true })
-  static Dot = new TokenType("Dot", { separator: true })
-  static Operator = new TokenType("Operator", { separator: true })
+  static LineBreak = new TokenType("LineBreak")
+  static Command = new TokenType("Command")
+  static Delimiter = new TokenType("Delimiter")
+  static SemiColon = new TokenType("SemiColon")
+  static LeftParen = new TokenType("LeftParen")
+  static RightParen = new TokenType("RightParen")
+  static LeftBracket = new TokenType("LeftBracket")
+  static RightBracket = new TokenType("RightBracket")
+  static Comma = new TokenType("Comma")
+  static Dot = new TokenType("Dot")
+  static Operator = new TokenType("Operator")
   static Number = new TokenType("Number")
   static Size = new TokenType("Size")
   static String = new TokenType("String")
@@ -25,13 +26,8 @@ export class TokenType {
   static Error = new TokenType("Error")
 
   constructor(
-    public name: string,
-    public options: { [key: string]: any } = {},
+    public name: string
   ) {
-  }
-
-  this(value: string) {
-    return value
   }
 
   toString() {
@@ -75,21 +71,18 @@ export class Token {
   location?: SourceLocation
 
   constructor(
-    type: TokenType | [TokenType, TokenType],
+    type: TokenType,
     public text: string,
     options?: {
-      eos? :boolean
+      keyword?: TokenType,
+      eos? :boolean,
       preskips?: Token[],
       postskips?: Token[],
       location?: SourceLocation,
     }
   ) {
-    if (Array.isArray(type)) {
-      this.type = type[0]
-      this.keyword = type[1]
-    } else {
-      this.type = type
-    }
+    this.type = type
+    this.keyword = options?.keyword
     this.eos = !!options?.eos
     this.preskips = options?.preskips ?? []
     this.postskips = options?.postskips ?? []
@@ -157,7 +150,7 @@ export abstract class Lexer {
     let skips = []
     while (pos < input.length) {
       let token
-      let skip = false
+      let pattern
       for (const pat of this.patterns) {
         const re = (typeof pat.re  === 'function') ?
           pat.re() : pat.re
@@ -175,7 +168,7 @@ export abstract class Lexer {
             eos: !!pat.eos,
             location,
           })
-          skip = !!pat.skip
+          pattern = pat
           pos = re.lastIndex
           break
         }
@@ -197,11 +190,18 @@ export abstract class Lexer {
         columnNumber += token.text.length
       }
 
-      if (skip) {
+      if (pattern?.separator && skips.length > 0 && tokens.length > 0) {
+        tokens[tokens.length - 1].postskips = skips
+        skips = []
+      }
+
+      if (pattern?.skip) {
         skips.push(this.processToken(state, token))
       } else {
-        token.preskips = skips
-        skips = []
+        if (skips.length > 0) {
+          token.preskips = skips
+          skips = []
+        }
         tokens.push(this.processToken(state, token))
       }
     }

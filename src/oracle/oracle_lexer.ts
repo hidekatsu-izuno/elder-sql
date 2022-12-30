@@ -189,32 +189,37 @@ export declare type OracleLexerOptions = LexerOptions & {
 }
 
 export class OracleLexer extends Lexer {
-  private state = 0; // 0 CREATE 1 STATEMENT 2 / END 3 ; END
-
   constructor(
     options: OracleLexerOptions = {}
   ) {
     super("oracle", [
-      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my, eos: true, separator: true },
+      { type: TokenType.SemiColon, re: /;/y, separator: true },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.LineBreak, re: /\r?\n/y, skip: true, separator: true },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
       { type: TokenType.LineComment, re: /--.*/y, skip: true },
-      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my, eos: true },
-      { type: TokenType.SemiColon, re: /;/y },
-      { type: TokenType.Operator, re: /\(\+\)|\.\./y },
-      { type: TokenType.LeftParen, re: /\(/y },
-      { type: TokenType.RightParen, re: /\)/y },
-      { type: TokenType.Comma, re: /,/y },
+      { type: TokenType.Operator, re: /\(\+\)|\.\./y, separator: true },
+      { type: TokenType.LeftParen, re: /\(/y, separator: true },
+      { type: TokenType.RightParen, re: /\)/y, separator: true },
+      { type: TokenType.Comma, re: /,/y, separator: true },
       { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|((0|[1-9][0-9]*)(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
-      { type: TokenType.Dot, re: /\./y },
+      { type: TokenType.Dot, re: /\./y, separator: true },
       { type: TokenType.String, re: /[nN]?'([^']|'')*'/y },
       { type: TokenType.String, re: /[nN]?[qQ]'(?:\[.*?\]|\{.*?\}|\(.*?\)|([^ \t\r\n]).*?\1)'/my },
       { type: TokenType.QuotedIdentifier, re: /"([^"]|"")*"/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\||<<|>>|<>|[=<>!^:]=?|[%~&|*/+-]/y },
-      { type: TokenType.Error, re: /./y },
+      { type: TokenType.Operator, re: /\|\||<<|>>|<>|[=<>!^:]=?|[%~&|*/+-]/y, separator: true },
+      { type: TokenType.Error, re: /./y, separator: true },
     ], options)
+  }
+
+  protected processInput(state: Record<string, any>, input: string) {
+    const result = super.processInput(state, input)
+    state.pos = 0 // 0 CREATE 1 OBJECT 2 ... END 3 ;
+    return result
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
@@ -225,13 +230,15 @@ export class OracleLexer extends Lexer {
         if (ReservedSet.has(keyword)) {
           token.type = keyword
         }
-        if (this.state === 0) {
-          if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
-            this.state = 2
-          } else if (keyword === Keyword.CREATE) {
-            this.state = 1
+        if (state.pos === 0) {
+          if (keyword === Keyword.CREATE) {
+            state.pos = 1
+          } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+            state.pos = 2
+          } else {
+            state.pos = 3
           }
-        } else if (this.state === 1 && LookAheadSet.has(keyword)) {
+        } else if (state.pos === 1 && LookAheadSet.has(keyword)) {
           if (
             keyword === Keyword.FUNCTION
             || keyword === Keyword.LIBRARY
@@ -240,21 +247,19 @@ export class OracleLexer extends Lexer {
             || keyword === Keyword.TRIGGER
             || keyword === Keyword.TYPE
           ) {
-            this.state = 2
+            state.pos = 2
           } else {
-            this.state = 3
+            state.pos = 3
           }
         }
       }
     } else if (token.type === TokenType.SemiColon) {
-      if (this.state !== 2) {
-        this.state = 0
+      if (state.pos !== 2) {
+        state.pos = 0
         token.eos = true
       }
     } else if (token.type === TokenType.Delimiter) {
-      this.state = 0
-    } else if (this.state === 0 && !token.type.options.skip) {
-      this.state = 3
+      state.pos = 0
     }
     return token
   }

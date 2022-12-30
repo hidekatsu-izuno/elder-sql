@@ -94,19 +94,20 @@ export class PostgresLexer extends Lexer {
     options: PostgresLexerOptions = {}
   ) {
     super("postgres", [
-      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.SemiColon, re: /;/y, eos: true, separator: true },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.LineBreak, re: /\r?\n/y, skip: true, separator: true },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
       { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy, skip: true },
       { type: TokenType.LineComment, re: /--.*/y, skip: true },
       { type: TokenType.Command, re: /^\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\\|$)/my, eos: true },
-      { type: TokenType.SemiColon, re: /;/y, eos: true },
-      { type: TokenType.LeftParen, re: /\(/y },
-      { type: TokenType.RightParen, re: /\)/y },
-      { type: TokenType.Comma, re: /,/y },
+      { type: TokenType.LeftParen, re: /\(/y, separator: true },
+      { type: TokenType.RightParen, re: /\)/y, separator: true },
+      { type: TokenType.Comma, re: /,/y, separator: true },
       { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|((0|[1-9][0-9]*)(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
-      { type: TokenType.Dot, re: /\./y },
-      { type: TokenType.LeftBracket, re: /\[/y },
-      { type: TokenType.RightBracket, re: /\]/y },
+      { type: TokenType.Dot, re: /\./y, separator: true },
+      { type: TokenType.LeftBracket, re: /\[/y, separator: true },
+      { type: TokenType.RightBracket, re: /\]/y, separator: true },
       { type: TokenType.String, re: /([uU]&|[bBxX])?'([^']|'')*'/y },
       { type: TokenType.String, re: /\$([^$]+)\$.*\$\1\$/my },
       { type: TokenType.String, re: /\$\$.*\$\$/my },
@@ -114,8 +115,8 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.BindVariable, re: /\$([1-9][0-9]*)?/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /::|[*/<>=~!@#%^&|`?+-]+/y },
-      { type: TokenType.Error, re: /./y },
+      { type: TokenType.Operator, re: /::|[*/<>=~!@#%^&|`?+-]+/y, separator: true },
+      { type: TokenType.Error, re: /./y, separator: true },
     ], options)
   }
 

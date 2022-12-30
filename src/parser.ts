@@ -116,44 +116,21 @@ export class TokenReader {
     let columnNumber = token?.location?.columnNumber
 
     if (message == null) {
-      const lines = []
-      lineNumber = 1
-      const len = Math.min(this.pos + 1, this.tokens.length)
-      for (let i = 0; i < len; i++) {
-        const token = this.tokens[i]
-        for (const skipToken of token.skips) {
-          if (skipToken.type === TokenType.LineBreak) {
-            lineNumber++
-          } else {
-            if (!lines[lineNumber-1]) {
-              lines[lineNumber-1] = ""
-            }
-            if (skipToken.type === TokenType.Eof) {
-              lines[lineNumber-1] += "<EOF>"
-            } else {
-              lines[lineNumber-1] += skipToken.text
-            }
+      let start = this.pos
+      let end = this.pos
+      for (; start >= 0; start--) {
+        if (this.tokens[start].text.lastIndexOf('\n') != -1) {
+          if (start === end) {
+            start = Math.max(start - 3, 0)
           }
-        }
-        if (token.type === TokenType.LineBreak) {
-          lineNumber++
-        } else {
-          if (!lines[lineNumber-1]) {
-            lines[lineNumber-1] = ""
-          }
-          if (token.type === TokenType.Eof) {
-            lines[lineNumber-1] += "<EOF>"
-          } else {
-            lines[lineNumber-1] += token.text
-          }
+          break
         }
       }
-      let line = lines[lines.length-1] || ""
-      if (!line && lines.length > 1) {
-        const preLine = lines[lines.length-1]
-        line = `${preLine.substring(preLine.length - 16)}\u21B5 ${line}`
+      let line = ""
+      for (let i = start; i <= end; i++ ) {
+        line += this.tokens[i].toString()
       }
-      message = `Unexpected token: ${line}\u261C`
+      message = `Unexpected token: ${line.replace(/\r?\n/g, "\u21B5")}\u261C`
     }
 
     if (lineNumber == null) {

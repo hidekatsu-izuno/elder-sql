@@ -257,26 +257,27 @@ export class MysqlLexer extends Lexer {
     options: MysqlLexerOptions = {}
   ) {
     super("mysql", [
-      { type: TokenType.WhiteSpace, re: /[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.Delimiter, re: () => this.reDelimiter, eos: true, separator: true },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
+      { type: TokenType.LineBreak, re: /\r?\n/y, skip: true, separator: true },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
       { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my, skip: true },
       { type: TokenType.Command, re: () => this.reCommand, eos: true },
-      { type: TokenType.Delimiter, re: () => this.reDelimiter, eos: true },
-      { type: TokenType.LeftParen, re: /\(/y },
-      { type: TokenType.RightParen, re: /\)/y },
-      { type: TokenType.Comma, re: /,/y },
+      { type: TokenType.LeftParen, re: /\(/y, separator: true },
+      { type: TokenType.RightParen, re: /\)/y, separator: true },
+      { type: TokenType.Comma, re: /,/y, separator: true },
       { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|((0|[1-9][0-9]*)(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
       { type: TokenType.Size, re: /(0|[1-9][0-9]*)[KMG]/iy },
-      { type: TokenType.Dot, re: /\./y },
+      { type: TokenType.Dot, re: /\./y, separator: true },
       { type: TokenType.String, re: /([bBnN]|_[a-zA-Z]+)?'([^']|'')*'/y },
       { type: TokenType.QuotedValue, re: /([bBnN]|_[a-zA-Z]+)?"([^"]|"")*"/y },
       { type: TokenType.QuotedIdentifier, re: /`([^`]|``)*`/y },
       { type: TokenType.BindVariable, re: /\?/y },
       { type: TokenType.Variable, re: /@@?([a-zA-Z0-9._$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]+|`([^`]|``)*`|'([^']|'')*'|"([^"]|"")*")/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\|&&|<=>|<<|>>|<>|->>?|[=<>!:]=?|[~&|^*/%+-]/y },
-      { type: TokenType.Error, re: /./y },
+      { type: TokenType.Operator, re: /\|\|&&|<=>|<<|>>|<>|->>?|[=<>!:]=?|[~&|^*/%+-]/y, separator: true },
+      { type: TokenType.Error, re: /./y, separator: true },
     ], options)
 
     if (options.package === "mysql" && semver.satisfies("<8.0.0", options.version || "0")) {
