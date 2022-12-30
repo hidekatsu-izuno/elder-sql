@@ -1059,7 +1059,6 @@ export class Sqlite3Parser extends Parser {
         node.add(this.limitClause(r))
       }
     }
-
     return node
   }
 
@@ -1108,7 +1107,6 @@ export class Sqlite3Parser extends Parser {
         break
       }
     } while (!r.peek().eos)
-
     return node
   }
 
@@ -1120,7 +1118,9 @@ export class Sqlite3Parser extends Parser {
         const child = new Node("all column")
         child.add(r.consume())
         columNode.add(child)
-      } else if (r.peekIf(TokenType.Identifier, TokenType.Dot, { type: TokenType.Operator, text: "*" })) {
+      } else if (r.peekIf(TokenType.Identifier, TokenType.Dot, { type: TokenType.Operator, text: "*" })
+        || r.peekIf(TokenType.QuotedIdentifier, TokenType.Dot, { type: TokenType.Operator, text: "*" })
+        || r.peekIf(TokenType.QuotedValue, TokenType.Dot, { type: TokenType.Operator, text: "*" })) {
         const child = new Node("all column")
         child.add(this.identifier(r, "schema name"))
         child.add(r.consume())
