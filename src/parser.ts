@@ -33,8 +33,8 @@ export class Node {
   }
 }
 
-export declare type TokenCondition = TokenType | {
-  type?: TokenType,
+export declare type TokenCondition = TokenType | TokenType[] | {
+  type?: TokenType | TokenType[],
   text?: string | RegExp | ((text: string) => boolean)
 }
 
@@ -52,7 +52,7 @@ export class TokenReader {
 
   peekIf(...conditions: TokenCondition[]) {
     if (conditions.length === 0) {
-      throw new RangeError("conditions must be at least 1 length.")
+      throw new RangeError("conditions must be at least one.")
     }
     
     for (let i = 0; i < conditions.length; i++) {
@@ -86,24 +86,38 @@ export class TokenReader {
       if (!token.is(condition)) {
         return false
       }
-    } else {
-      if (condition.type && !token.is(condition.type)) {
+    } else if (Array.isArray(condition)) {
+      if (!token.is(...condition)) {
         return false
       }
-      if (typeof condition.text === "string") {
-        if (condition.text !== token.text) {
-          return false
+    } else {
+      if (condition.type) {
+        if (Array.isArray(condition.type)) {
+          if (!token.is(...condition.type)) {
+            return false
+          }
+        } else {
+          if (!token.is(condition.type)) {
+            return false
+          }
         }
-      } else if (typeof condition.text === "function") {
-        if (!condition.text(token.text)) {
-          return false
+      }
+      if (condition.text) {
+        if (typeof condition.text === "string") {
+          if (condition.text !== token.text) {
+            return false
+          }
+        } else if (typeof condition.text === "function") {
+          if (!condition.text(token.text)) {
+            return false
+          }
+        } else if (condition.text instanceof RegExp) {
+          if (!condition.text.test(token.text)) {
+            return false
+          }
+        } else {
+          throw new RangeError("condition.text is invalid.")          
         }
-      } else if (condition.text instanceof RegExp) {
-        if (!condition.text.test(token.text)) {
-          return false
-        }
-      } else if (!condition.text) {
-        return false
       }
     }
     return true

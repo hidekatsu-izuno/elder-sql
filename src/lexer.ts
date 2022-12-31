@@ -89,8 +89,17 @@ export class Token {
     this.location = options?.location
   }
 
-  is(type: TokenType) {
-    return this.keyword === type || this.type === type
+  is(...types: TokenType[]) {
+    if (types.length === 0) {
+      throw new RangeError("types must be at least one.")
+    }
+
+    for (let i = 0; i < types.length; i++) {
+      if (types[i] === this.keyword || types[i] === this.type) {
+        return true
+      }
+    }
+    return false
   }
   
   toString() {
