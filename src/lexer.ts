@@ -17,6 +17,7 @@ export class TokenType {
   static Operator = new TokenType("Operator")
   static Number = new TokenType("Number")
   static Size = new TokenType("Size")
+  static Bytes = new TokenType("Bytes")
   static String = new TokenType("String")
   static BindVariable = new TokenType("BindVariable")
   static Variable = new TokenType("Variable")
@@ -516,6 +517,7 @@ export const Keyword: Record<string, TokenType> = {
   CONNECT_TIME: new TokenType("CONNECT_TIME"),
   CONSIDER: new TokenType("CONSIDER"),
   CONSISTENT: new TokenType("CONSISTENT"),
+  CONSTANT: new TokenType("CONSTANT"),
   CONSTRAINT: new TokenType("CONSTRAINT"),
   CONSTRAINTS: new TokenType("CONSTRAINTS"),
   CONTAINER: new TokenType("CONTAINER"),
@@ -592,6 +594,7 @@ export const Keyword: Record<string, TokenType> = {
   DATAFILES: new TokenType("DATAFILES"),
   DATALENGTH: new TokenType("DATALENGTH"),
   DATAPUMP: new TokenType("DATAPUMP"),
+  DATATYPE: new TokenType("DATATYPE"),
   DATE: new TokenType("DATE"),
   DATEADD: new TokenType("DATEADD"),
   DATEDIFF: new TokenType("DATEDIFF"),
@@ -662,6 +665,7 @@ export const Keyword: Record<string, TokenType> = {
   DESCRIPTION: new TokenType("DESCRIPTION"),
   DES_KEY_FILE: new TokenType("DES_KEY_FILE"),
   DETACH: new TokenType("DETACH"),
+  DETAIL: new TokenType("DETAIL"),
   DETERMINES: new TokenType("DETERMINES"),
   DETERMINISTIC: new TokenType("DETERMINISTIC"),
   DIAGONAL: new TokenType("DIAGONAL"),
@@ -741,6 +745,7 @@ export const Keyword: Record<string, TokenType> = {
   ENUM_LAST: new TokenType("ENUM_LAST"),
   ENUM_RANGE: new TokenType("ENUM_RANGE"),
   EPOCH: new TokenType("EPOCH"),
+  ERRCODE: new TokenType("ERRCODE"),
   ERRLVL: new TokenType("ERRLVL"),
   ERRORS: new TokenType("ERRORS"),
   ERROR_CODE: new TokenType("ERROR_CODE"),
@@ -901,6 +906,7 @@ export const Keyword: Record<string, TokenType> = {
   HIER_ORDER: new TokenType("HIER_ORDER"),
   HIGH: new TokenType("HIGH"),
   HIGH_PRIORITY: new TokenType("HIGH_PRIORITY"),
+  HINT: new TokenType("HINT"),
   HISTORY: new TokenType("HISTORY"),
   HOLDLOCK: new TokenType("HOLDLOCK"),
   HOST: new TokenType("HOST"),
@@ -1288,6 +1294,7 @@ export const Keyword: Record<string, TokenType> = {
   MEMOPTIMIZE: new TokenType("MEMOPTIMIZE"),
   MEMORY: new TokenType("MEMORY"),
   MERGE: new TokenType("MERGE"),
+  MESSAGE: new TokenType("MESSAGE"),
   METADATA: new TokenType("METADATA"),
   METHOD: new TokenType("METHOD"),
   MICROSECOND: new TokenType("MICROSECOND"),
@@ -1340,6 +1347,7 @@ export const Keyword: Record<string, TokenType> = {
   NAME_CONST: new TokenType("NAME_CONST"),
   NATIONAL: new TokenType("NATIONAL"),
   NATURAL: new TokenType("NATURAL"),
+  NATURALN: new TokenType("NATURALN"),
   NAV: new TokenType("NAV"),
   NCHAR: new TokenType("NCHAR"),
   NCHR: new TokenType("NCHR"),
@@ -1433,6 +1441,7 @@ export const Keyword: Record<string, TokenType> = {
   OFFLINE: new TokenType("OFFLINE"),
   OFFSET: new TokenType("OFFSET"),
   OFFSETS: new TokenType("OFFSETS"),
+  OID: new TokenType("OID"),
   OIDINDEX: new TokenType("OIDINDEX"),
   OLD: new TokenType("OLD"),
   OLTP: new TokenType("OLTP"),
@@ -1598,6 +1607,8 @@ export const Keyword: Record<string, TokenType> = {
   POPEN: new TokenType("POPEN"),
   PORT: new TokenType("PORT"),
   POSITION: new TokenType("POSITION"),
+  POSITIVE: new TokenType("POSITIVE"),
+  POSITIVEN: new TokenType("POSITIVEN"),
   POST_TRANSACTION: new TokenType("POST_TRANSACTION"),
   POW: new TokenType("POW"),
   POWER: new TokenType("POWER"),
@@ -1865,8 +1876,10 @@ export const Keyword: Record<string, TokenType> = {
   SIGN: new TokenType("SIGN"),
   SIGNAL: new TokenType("SIGNAL"),
   SIGNED: new TokenType("SIGNED"),
+  SIGNTYPE: new TokenType("SIGNTYPE"),
   SIMILAR: new TokenType("SIMILAR"),
   SIMPLE: new TokenType("SIMPLE"),
+  SIMPLE_INTEGER: new TokenType("SIMPLE_INTEGER"),
   SIN: new TokenType("SIN"),
   SIND: new TokenType("SIND"),
   SINGLE: new TokenType("SINGLE"),
@@ -2369,5 +2382,6 @@ export const Keyword: Record<string, TokenType> = {
   ZEROFILL: new TokenType("ZEROFILL"),
   ZONE: new TokenType("ZONE"),
   ZONEMAP: new TokenType("ZONEMAP"),
+  _ROWID_: new TokenType("_ROWID_"),
 }
 Object.setPrototypeOf(Keyword, null)

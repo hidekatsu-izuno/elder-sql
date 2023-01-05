@@ -130,15 +130,16 @@ export class TokenReader {
     let columnNumber = token?.location?.columnNumber
 
     if (message == null) {
-      let start = this.pos
-      let end = this.pos
-      for (; start >= 0; start--) {
-        if (this.tokens[start].text.lastIndexOf('\n') != -1) {
+      const end = Math.min(this.pos, this.tokens.length - 1)
+      let start = end
+      while (start >= 0) {
+        if (start === 0 || this.tokens[start].text.lastIndexOf('\n') != -1) {
           if (start === end) {
             start = Math.max(start - 3, 0)
           }
           break
         }
+        start--
       }
       let line = ""
       for (let i = start; i <= end; i++ ) {

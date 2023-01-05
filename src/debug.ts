@@ -2,7 +2,12 @@
 import { Keyword, Token } from "./lexer"
 import { Node } from "./parser"
 
-export function toJSString(target: Node | Token | (Node |Token)[], space: number = 0) {
+export function toJSString(target: Node | Token | (Node |Token)[], options: {
+  space?: number,
+  
+} = {}) {
+  const space = options.space ?? 0
+
   const spaces = " ".repeat(space)
   let text = ""
   if (Array.isArray(target)) {
@@ -12,7 +17,7 @@ export function toJSString(target: Node | Token | (Node |Token)[], space: number
       if (index > 0) {
         text += ",\n"
       }
-      text += spaces + spaces + toJSString(item, space + 1)
+      text += spaces + spaces + toJSString(item, { space: space + 1 })
       index++
     }
     text += "\n" + spaces + "]"
@@ -23,7 +28,7 @@ export function toJSString(target: Node | Token | (Node |Token)[], space: number
       }
       text += ")"
       for (const child of target.children) {
-          const ctext = toJSString(child, space + 1).trimStart()
+          const ctext = toJSString(child, { space: space + 1 }).trimStart()
           text += "\n" + spaces + spaces + ".add(" + ctext
           if (ctext.includes("\n")) {
               if (child instanceof Node) {
@@ -53,10 +58,10 @@ export function toJSString(target: Node | Token | (Node |Token)[], space: number
           elems.push("eos: " + target.eos)
         }
         if (target.preskips.length) {
-          elems.push("preskips: [" + target.preskips.map(toJSString).join(", ") + "]")
+          elems.push("preskips: [" + target.preskips.map(t => toJSString(t)).join(", ") + "]")
         }
         if (target.postskips.length) {
-          elems.push("postskips: [" + target.postskips.map(toJSString).join(", ") + "]")
+          elems.push("postskips: [" + target.postskips.map(t => toJSString(t)).join(", ") + "]")
         }
         if (target.location) {
           let elem = "location: new SourceLocation("

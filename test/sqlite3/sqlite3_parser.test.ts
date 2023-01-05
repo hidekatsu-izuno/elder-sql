@@ -1,11 +1,11 @@
 import fs from "node:fs"
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser"
-import { toJSString } from "../../src/util"
+import { toJSString } from "../../src/debug"
 
 describe("test sqlite3 parser", () => {
   test.each([
-    "create_table",
     "select",
+    "create_table",
   ])("%s", (target) => {
     const module = require("./parser/" + target)
     const node = Sqlite3Parser.parse(module.actual)
