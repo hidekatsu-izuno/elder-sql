@@ -12,6 +12,7 @@ export class TokenType {
   static RightParen = new TokenType("RightParen")
   static LeftBracket = new TokenType("LeftBracket")
   static RightBracket = new TokenType("RightBracket")
+  static Label = new TokenType("Label")
   static Comma = new TokenType("Comma")
   static Dot = new TokenType("Dot")
   static Operator = new TokenType("Operator")

@@ -108,6 +108,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.Dot, re: /\./y, separator: true },
       { type: TokenType.LeftBracket, re: /\[/y, separator: true },
       { type: TokenType.RightBracket, re: /\]/y, separator: true },
+      { type: TokenType.Label, re: /<<[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*>>/y },
       { type: TokenType.String, re: /([uU]&|[bBxX])?'([^']|'')*'/y },
       { type: TokenType.String, re: /\$([^$]+)\$.*\$\1\$/my },
       { type: TokenType.String, re: /\$\$.*\$\$/my },
