@@ -37,7 +37,7 @@ export function ucamel(text: string) {
 }
 
 export function squote(text: string) {
-  return '"' + text.replace(/"/g, '""') + '"'
+  return "'" + text.replace(/"/g, "''") + "'"
 }
 
 export function dquote(text: string) {

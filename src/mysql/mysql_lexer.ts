@@ -267,7 +267,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.LeftParen, re: /\(/y, separator: true },
       { type: TokenType.RightParen, re: /\)/y, separator: true },
       { type: TokenType.Comma, re: /,/y, separator: true },
-      { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|((0|[1-9][0-9]*)(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
+      { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
       { type: TokenType.Size, re: /(0|[1-9][0-9]*)[KMG]/iy },
       { type: TokenType.Dot, re: /\./y, separator: true },
       { type: TokenType.String, re: /([bBnN]|_[a-zA-Z]+)?'([^']|'')*'/y },

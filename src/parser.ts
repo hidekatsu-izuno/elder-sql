@@ -39,7 +39,8 @@ export declare type TokenCondition = TokenType | TokenType[] | {
 }
 
 export class TokenReader {
-  public pos = 0
+  pos = 0
+  state: Record<string, any> = {}
 
   constructor(
     public tokens: Token[]

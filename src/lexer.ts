@@ -1664,6 +1664,7 @@ export const Keyword: Record<string, TokenType> = {
   RADIANS: new TokenType("RADIANS"),
   RADIUS: new TokenType("RADIUS"),
   RAISE: new TokenType("RAISE"),
+  RAISE_APPLICATION_ERROR: new TokenType("RAISE_APPLICATION_ERROR"),
   RAISERROR: new TokenType("RAISERROR"),
   RAND: new TokenType("RAND"),
   RANDOM: new TokenType("RANDOM"),

@@ -1604,20 +1604,20 @@ export class Sqlite3Parser extends Parser {
   private limitClause(r: TokenReader) {
     const node = new Node("limit clause")
     node.add(r.consume(Keyword.LIMIT))
-    const limit = new Node("limit")
+    const limit = new Node("limit expression")
     limit.add(this.expression(r))
     node.add(limit)
     if (r.peekIf(Keyword.OFFSET)) {
-      const offset = new Node("offset")
+      const offset = new Node("offset expression")
       offset.add(r.consume())
       offset.add(this.expression(r))
       node.add(offset)
     } else if (r.peekIf(TokenType.Comma)) {
-      limit.name = "offset"
+      limit.name = "offset expression"
       node.add(r.consume())
-      const offset = new Node("offset")
-      offset.add(this.expression(r))
-      node.add(offset)
+      const limit2 = new Node("limit expression")
+      limit2.add(this.expression(r))
+      node.add(limit2)
     }
     return node
   }
@@ -1655,7 +1655,7 @@ export class Sqlite3Parser extends Parser {
       node.add(this.identifier(r, "constraint name"))
     }
     if (r.peekIf(Keyword.PRIMARY)) {
-      const pkey = new Node("primary key")
+      const pkey = new Node("primary key constraint")
       pkey.add(r.consume())
       pkey.add(r.consume(Keyword.KEY))
 
@@ -1675,7 +1675,7 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(pkey)
     } else if (r.peekIf(Keyword.NOT)) {
-      const notNull = new Node("not null")
+      const notNull = new Node("not null constraint")
       notNull.add(r.consume())
       notNull.add(r.consume(Keyword.NULL))
       if (r.peekIf(Keyword.ON)) {
@@ -1686,7 +1686,7 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(notNull)
     } else if (r.peekIf(Keyword.NULL)) {
-      const nullable = new Node("null")
+      const nullable = new Node("null constraint")
       nullable.add(r.consume())
       if (r.peekIf(Keyword.ON)) {
         nullable.add(this.conflictAction(r, [
@@ -1696,7 +1696,7 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(nullable)
     } else if (r.peekIf(Keyword.UNIQUE)) {
-      const unique = new Node("unique")
+      const unique = new Node("unique constraint")
       unique.add(r.consume())
       if (r.peekIf(Keyword.ON)) {
         unique.add(this.conflictAction(r, [
@@ -1706,14 +1706,14 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(unique)
     } else if (r.peekIf(Keyword.CHECK)) {
-      const check = new Node("check")
+      const check = new Node("check constraint")
       check.add(r.consume())
       check.add(r.consume(TokenType.LeftParen))
       check.add(this.expression(r))
       check.add(r.consume(TokenType.RightParen))
       node.add(check)
     } else if (r.peekIf(Keyword.DEFAULT)) {
-      const def = new Node("default")
+      const def = new Node("default option")
       def.add(r.consume())
       if (r.peekIf(TokenType.LeftParen)) {
         def.add(r.consume())
@@ -1724,12 +1724,12 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(def)
     } else if (r.peekIf(Keyword.COLLATE)) {
-      const collate = new Node("collate")
+      const collate = new Node("collate option")
       collate.add(r.consume())
       collate.add(this.identifier(r, "collate name"))
       node.add(collate)
     } else if (r.peekIf(Keyword.REFERENCES)) {
-      const refs = new Node("references")
+      const refs = new Node("references constraint")
       refs.add(r.consume())
       refs.add(this.identifier(r, "object name"))
       refs.add(r.consume(TokenType.LeftParen))
@@ -1744,7 +1744,7 @@ export class Sqlite3Parser extends Parser {
       refs.add(r.consume(TokenType.RightParen))
       node.add(refs)
     } else if (r.peekIf(Keyword.GENERATED) || r.peekIf(Keyword.AS)) {
-      const genAlways = new Node("generated always")
+      const genAlways = new Node("generated column option")
       if (r.peekIf(Keyword.GENERATED)) {
         genAlways.add(r.consume())
         genAlways.add(r.consume(Keyword.ALWAYS))
@@ -1775,7 +1775,7 @@ export class Sqlite3Parser extends Parser {
       node.add(this.identifier(r, "constraint name"))
     }
     if (r.peekIf(Keyword.PRIMARY)) {
-      const pkey = new Node("primary key")
+      const pkey = new Node("primary key constraint")
       pkey.add(r.consume())
       pkey.add(r.consume(Keyword.KEY))
       pkey.add(r.consume(TokenType.LeftParen))
@@ -1796,7 +1796,7 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(pkey)
     } else if (r.peekIf(Keyword.UNIQUE)) {
-      const unique = new Node("unique")
+      const unique = new Node("unique constraint")
       unique.add(r.consume())
       unique.add(r.consume(TokenType.LeftParen))
       do {
@@ -1816,14 +1816,14 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(unique)
     } else if (r.peekIf(Keyword.CHECK)) {
-      const check = new Node("check")
+      const check = new Node("check constraint")
       check.add(r.consume())
       check.add(r.consume(TokenType.LeftParen))
       check.add(this.expression(r))
       check.add(r.consume(TokenType.RightParen))
       node.add(check)
     } else if (r.peekIf(Keyword.FOREIGN)) {
-      const fkey = new Node("foreign key")
+      const fkey = new Node("foreign key constraint")
       fkey.add(r.consume())
       fkey.add(r.consume(Keyword.KEY))
       fkey.add(r.consume(TokenType.LeftParen))
@@ -1946,7 +1946,13 @@ export class Sqlite3Parser extends Parser {
 
   private expression(r: TokenReader) {
     const node = this.expressionValue(r)
-    //TODO
+    while (!r.peek().eos) {
+      if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
+        
+      } else {
+        break
+      }
+    }
     return node
   }
 
@@ -1969,35 +1975,67 @@ export class Sqlite3Parser extends Parser {
         } while (!r.peek().eos)
       }
       node.add(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(Keyword.BindVariable)) {
-      node = new Node("bind variable")
+    } else if (r.peekIf(Keyword.CASE)) {
+      node = new Node("case expression")
+      node.add(r.consume())
+      if (!r.peekIf(Keyword.WHEN)) {
+        const target = new Node("target expression")
+        target.add(this.expression(r))
+        node.add(target)
+      }
+      do {
+        const when = new Node("when")
+        when.add(r.consume(Keyword.WHEN))
+        const condition = new Node("condition expression")
+        condition.add()
+        when.add(this.expression(r))
+        when.add(r.consume(Keyword.THEN))
+        const result = new Node("result expression")
+        result.add(this.expression(r))
+        when.add(result)
+        node.add(when)
+      } while (!r.peek().eos)
+      if (r.peekIf(Keyword.ELSE)) {
+        const els = new Node("else")
+        els.add(r.consume())
+        const result = new Node("result expression")
+        result.add(this.expression(r))
+        els.add(result)
+        node.add(els)
+      }
+      node.add(r.consume(Keyword.END))
+    } else if (r.peekIf(Keyword.CAST)) {
+      node = new Node("function")
       const token = r.consume()
-      node.add(token)
-      node.value = token.text.substring(1)
+      node.add(new Node("object name", token.text.toUpperCase()).add(token))
+      const args = new Node("function arguments")
+      args.add(r.consume(TokenType.LeftParen))
+
+      const arg = new Node("function argument")
+      arg.add(this.expression(r))
+      arg.add(r.consume(Keyword.AS))
+      arg.add(this.typeName(r))
+
+      args.add(arg)
+      args.add(r.consume(TokenType.RightParen))
+      node.add(args)
+    } else if (r.peekIf(Keyword.RAISE)) {
+      node = new Node("function")
+      const token = r.consume()
+      node.add(new Node("object name", token.text.toUpperCase()).add(token))
+      const args = new Node("function arguments")
+      args.add(r.consume(TokenType.LeftParen))
+      args.add(new Node("function argument").add(this.conflictAction(r)))
+      args.add(r.consume(TokenType.Comma))
+      args.add(new Node("function argument").add(this.expression(r)))
+      args.add(r.consume(TokenType.RightParen))
+      node.add(args)
     } else if (r.peekIf(Keyword.EXISTS)) {
-      node = new Node("exist")
+      node = new Node("exists operation")
       node.add(r.consume())
       node.add(r.consume(TokenType.LeftParen))
       node.add(this.selectStatement(r))
       node.add(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(Keyword.CAST)) {
-      node = new Node("cast")
-      node.add(r.consume())
-      node.add(r.consume(TokenType.LeftParen))
-      node.add(this.expression(r))
-      node.add(r.consume(Keyword.AS))
-      node.add(this.typeName(r))
-      node.add(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(Keyword.RAISE)) {
-      node = new Node("raise")
-      node.add(r.consume())
-      node.add(r.consume(TokenType.LeftParen))
-      node.add(this.conflictAction(r))
-      node.add(r.consume(TokenType.Comma))
-      node.add(this.expression(r))
-      node.add(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(TokenType.Number)) {
-      node = this.numericValue(r)
     } else if (r.peekIf(Keyword.NOT)) {
       node = new Node("not operation")
       node.add(r.consume())
@@ -2015,12 +2053,30 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(token)
       node.add(this.expression(r))
+    } else if (r.peekIf(Keyword.BindVariable)) {
+      const token = r.consume()
+      if (token.text.startsWith("?")) {
+        let value = token.text.substring(1)
+        if (value) {
+          r.state.bindPosition = Number.parseInt(value, 10)
+        } else {
+          const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
+          value = "${pos}"
+          r.state.bindPosition = pos
+        }
+        node = new Node("positional bind variable", value)
+      } else {
+        node = new Node("named bind variable", token.text.substring(1))
+      }
+      node.add(token)
+    } else if (r.peekIf(TokenType.Number)) {
+      node = this.numericValue(r)
     } else if (r.peekIf(TokenType.String)) {
       node = this.stringValue(r)
     } else if (r.peekIf(TokenType.Bytes)) {
       node = this.blobValue(r)
     } else if (r.peekIf(Keyword.NULL)) {
-      node = new Node("null")
+      node = new Node("null value")
       node.add(r.consume())
     } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       node = this.booleanValue(r)
@@ -2028,57 +2084,6 @@ export class Sqlite3Parser extends Parser {
       node =  new Node("function")
       const token = r.consume()
       node.add(new Node("object name", token.text.toUpperCase()).add(token))
-    } else if (r.peekIf(Keyword.CASE)) {
-      node = new Node("case formula")
-      node.add(r.consume())
-      if (!r.peekIf(Keyword.WHEN)) {
-        const target = new Node("target expression")
-        target.add(this.expression(r))
-        node.add(target)
-      }
-      do {
-        const when = new Node("when")
-        when.add(r.consume(Keyword.WHEN))
-        const condition = new Node("condition expression")
-        condition.add(this.expression(r))
-        when.add(condition)
-        when.add(r.consume(Keyword.THEN))
-        const result = new Node("result expression")
-        result.add(this.expression(r))
-        when.add(result)
-        node.add(when)
-      } while (!r.peek().eos)
-      if (r.peekIf(Keyword.ELSE)) {
-        const els = new Node("else")
-        els.add(r.consume())
-        const result = new Node("result expression")
-        result.add(this.expression(r))
-        els.add(result)
-        node.add(els)
-      }
-      node.add(r.consume(Keyword.END))
-    } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
-      node = new Node("column")
-      node.add(new Node("schema name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("object name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("column name").add(r.consume()))
-    } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
-      node = new Node("column")
-      node.add(new Node("object name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("column name").add(r.consume()))
     } else if (r.peekIf(
       [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
       TokenType.LeftParen
@@ -2131,6 +2136,28 @@ export class Sqlite3Parser extends Parser {
       }
       node.add(args)
     } else if (r.peekIf(
+      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+      TokenType.Dot,
+      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+      TokenType.Dot,
+      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
+    )) {
+      node = new Node("column")
+      node.add(new Node("schema name").add(r.consume()))
+      node.add(r.consume())
+      node.add(new Node("object name").add(r.consume()))
+      node.add(r.consume())
+      node.add(new Node("column name").add(r.consume()))
+    } else if (r.peekIf(
+      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+      TokenType.Dot,
+      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
+    )) {
+      node = new Node("column")
+      node.add(new Node("object name").add(r.consume()))
+      node.add(r.consume())
+      node.add(new Node("column name").add(r.consume()))
+    } else if (r.peekIf(
       [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
     )) {
       node = new Node("column")
@@ -2138,7 +2165,6 @@ export class Sqlite3Parser extends Parser {
     } else {
       throw r.createParseError()
     }
-
     return node
   }
 
@@ -2148,12 +2174,12 @@ export class Sqlite3Parser extends Parser {
       const token1 = r.consume()
       node.add(token1)
       const token2 = r.consume(TokenType.Number)
-      node.add(token2)
       node.value = new Decimal(token1.text + token2.text).toString()
+      node.add(token2)
     } else {
       const token = r.consume(TokenType.Number)
+      node.value = token.text.toLowerCase()
       node.add(token)
-      node.value = new Decimal(token.text).toString()
     }
     return node
   }
@@ -2161,16 +2187,16 @@ export class Sqlite3Parser extends Parser {
   private stringValue(r: TokenReader) {
     const node = new Node("string value")
     const token = r.consume(TokenType.String)
-    node.add(token)
     node.value = dequote(token.text)
+    node.add(token)
     return node
   }
 
   private blobValue(r: TokenReader) {
     const node = new Node("blob value")
     const token = r.consume(TokenType.Bytes)
-    node.add(token)
     node.value = token.text.substring(2, token.text.length-1).toUpperCase()
+    node.add(token)
     return node
   }
 
@@ -2178,8 +2204,8 @@ export class Sqlite3Parser extends Parser {
     const node = new Node("boolean value")
     if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       const token = r.consume()
-      node.add(token)
       node.value = token.text.toUpperCase()
+      node.add(token)
     } else {
       throw r.createParseError()
     }
