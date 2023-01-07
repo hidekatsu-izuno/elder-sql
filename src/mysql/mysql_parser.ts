@@ -38,19 +38,19 @@ export class MysqlParser extends Parser {
     while (r.peek()) {
       try {
         if (r.peekIf(TokenType.Eof)) {
-          root.add(r.consume())
+          root.append(r.consume())
           break
         } else if (r.peekIf(TokenType.Delimiter)) {
-          root.add(r.consume())
+          root.append(r.consume())
         } else if (r.peekIf(TokenType.Command)) {
-          root.add(this.command(r))
+          root.append(this.command(r))
         } else {
-          root.add(this.statement(r))
+          root.append(this.statement(r))
         }
       } catch (e) {
         if (e instanceof ParseError) {
           if (e.node) {
-            root.add(e.node)
+            root.append(e.node)
           }
           errors.push(e)
         } else {
@@ -61,7 +61,7 @@ export class MysqlParser extends Parser {
 
     if (r.peek() != null) {
       for (let i = r.pos; i < r.tokens.length; i++) {
-        root.add(r.tokens[i])
+        root.append(r.tokens[i])
       }
       
       try {
@@ -93,11 +93,11 @@ export class MysqlParser extends Parser {
 
     const sep = Math.max(token.text.indexOf(" "), token.text.indexOf("\t"))
     if (sep === -1) {
-      stmt.add(new Node("name", this.getLongCommandName(token.text)).add(token))
+      stmt.append(new Node("name", this.getLongCommandName(token.text)).append(token))
     } else {
       const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), [], token.location)
       const name = this.getLongCommandName(nameToken.text)
-      stmt.add(new Node("name", name).add(nameToken))
+      stmt.append(new Node("name", name).append(nameToken))
 
       const argTokens = []
       const args = token.text.substring(sep)
@@ -158,16 +158,16 @@ export class MysqlParser extends Parser {
         } else {
           argToken.skips.push(...skips)
           skips.length = 0
-          stmt.add(new Node("arg", dequote(argToken.text)).add(argToken))
+          stmt.append(new Node("arg", dequote(argToken.text)).append(argToken))
         }
       }
     }
 
     if (r.peekIf(TokenType.Delimiter)) {
-      stmt.add(r.consume())
+      stmt.append(r.consume())
     }
     if (r.peekIf(TokenType.Eof)) {
-      stmt.add(r.consume())
+      stmt.append(r.consume())
     }
     return stmt
   }
@@ -178,23 +178,23 @@ export class MysqlParser extends Parser {
     try {
 
       if (r.peekIf(TokenType.Delimiter)) {
-        stmt.add(r.consume())
+        stmt.append(r.consume())
       }
       if (r.peekIf(TokenType.Eof)) {
-        stmt.add(r.consume())
+        stmt.append(r.consume())
       }
     } catch (err) {
       if (err instanceof ParseError) {
         // skip tokens
         while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
           r.consume()
-          stmt.add(r.peek(-1))
+          stmt.append(r.peek(-1))
         }
         if (r.peekIf(TokenType.Delimiter)) {
-          stmt.add(r.consume())
+          stmt.append(r.consume())
         }
         if (r.peekIf(TokenType.Eof)) {
-          stmt.add(r.consume())
+          stmt.append(r.consume())
         }
         err.node = stmt
       }

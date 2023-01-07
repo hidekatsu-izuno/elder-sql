@@ -1,7 +1,7 @@
 import { TokenType, Token } from './lexer'
 
 export class Node {
-  parent?: Node
+  private parentNode?: Node
   children: (Node | Token)[] = []
 
   constructor(
@@ -10,14 +10,21 @@ export class Node {
   ) {
   }
 
-  add(...child: (Node | Token)[]) {
+  append(...child: (Node | Token)[]) {
     for (const elem of child) {
       if (elem instanceof Node) {
-        elem.parent = this
+        elem.parentNode = this
       }
       this.children.push(elem)
     }
     return this
+  }
+
+  parent() {
+    if (!this.parentNode) {
+      throw new Error("parent is missing")
+    }
+    return this.parentNode
   }
 
   has(name: string) {

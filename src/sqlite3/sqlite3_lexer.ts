@@ -6,6 +6,14 @@ import {
   LexerOptions,
 } from "../lexer"
 
+export const LookAheadSet = new Set<TokenType>([
+  Keyword.TABLE,
+  Keyword.VIEW,
+  Keyword.TRIGGER,
+  Keyword.INDEX,
+  Keyword.UNIQUE,
+])
+
 const ReservedSet = new Set<TokenType>([
   Keyword.ADD,
   Keyword.ALL,
@@ -90,12 +98,12 @@ export class Sqlite3Lexer extends Lexer {
     options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.SemiColon, re: /;/y, eos: true },
+      { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: /^\..+/my, eos: true },
+      { type: TokenType.Command, re: /^\..+/my },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -138,6 +146,14 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
+  protected processInput(state: Record<string, any>, input: string) {
+    const result = super.processInput(state, input)
+
+    // 0 CREATE 1 OBJECT 2 ... END 3 ;
+    state.pos = 0
+    return result
+  }
+
   protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
       const keyword = Keyword[token.text.toUpperCase()]
@@ -146,7 +162,26 @@ export class Sqlite3Lexer extends Lexer {
         if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
           token.type = keyword
         }
+        if (state.pos === 0) {
+          if (keyword === Keyword.CREATE) {
+            state.pos = 1
+          } else {
+            state.pos = 3
+          }
+        } else if (state.pos === 1 && LookAheadSet.has(keyword)) {
+          if (keyword === Keyword.TRIGGER) {
+            state.pos = 2
+          } else {
+            state.pos = 3
+          }
+        } else if (state.pos === 2 && keyword === Keyword.END) {
+          state.pos = 3
+        }
       }
+    } else if (token.type === TokenType.Command) {
+      token.eos = true
+    } else if (state.pos !== 2 && token.type === TokenType.SemiColon) {
+      token.eos = true
     }
 
     return token

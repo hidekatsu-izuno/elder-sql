@@ -132,7 +132,6 @@ export class Token {
 export declare type TokenPattern = {
   type: TokenType,
   re: RegExp | (() => RegExp),
-  eos?: boolean
 }
 
 export declare type LexerOptions = {
@@ -185,7 +184,6 @@ export abstract class Lexer {
               location.columnNumber = columnNumber
     
               token = new Token(pat.type, m[0], {
-                eos: !!pat.eos,
                 location,
               })
               pattern = pat

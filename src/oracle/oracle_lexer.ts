@@ -193,7 +193,7 @@ export class OracleLexer extends Lexer {
     options: OracleLexerOptions = {}
   ) {
     super("oracle", [
-      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my, eos: true },
+      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
@@ -219,7 +219,10 @@ export class OracleLexer extends Lexer {
 
   protected processInput(state: Record<string, any>, input: string) {
     const result = super.processInput(state, input)
-    state.pos = 0 // 0 CREATE 1 OBJECT 2 ... END 3 ;
+
+    // 0 CREATE 1 OBJECT 2 ... END 3 ;
+    // 0 DECLARE/BEGIN 2 ... END 3 ;
+    state.pos = 0
     return result
   }
 
@@ -261,6 +264,7 @@ export class OracleLexer extends Lexer {
       }
     } else if (token.type === TokenType.Delimiter) {
       state.pos = 0
+      token.eos = true
     }
     return token
   }

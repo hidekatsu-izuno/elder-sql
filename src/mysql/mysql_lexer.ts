@@ -257,13 +257,13 @@ export class MysqlLexer extends Lexer {
     options: MysqlLexerOptions = {}
   ) {
     super("mysql", [
-      { type: TokenType.Delimiter, re: () => this.reDelimiter, eos: true },
+      { type: TokenType.Delimiter, re: () => this.reDelimiter },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my },
-      { type: TokenType.Command, re: () => this.reCommand, eos: true },
+      { type: TokenType.Command, re: () => this.reCommand },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -347,7 +347,10 @@ export class MysqlLexer extends Lexer {
           token.type = keyword
         }
       }
+    } else if (token.type === TokenType.Delimiter) {
+      token.eos = true
     } else if (token.type === TokenType.Command) {
+      token.eos = true
       const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
       if (m) {
         const sep = escapeRegExp(m[1])

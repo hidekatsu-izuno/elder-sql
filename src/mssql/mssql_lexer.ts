@@ -234,6 +234,8 @@ export class MssqlLexer extends Lexer {
           token.type = keyword
         }
       }
+    } else if (token.type === TokenType.Delimiter) {
+      token.eos = true
     }
     return token
   }
