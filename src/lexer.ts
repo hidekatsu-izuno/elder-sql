@@ -1,21 +1,21 @@
 export class TokenType {
   static Eof = new TokenType("Eof")
-  static WhiteSpace = new TokenType("WhiteSpace")
-  static LineComment = new TokenType("LineComment")
-  static BlockComment = new TokenType("BlockComment")
-  static HintComment = new TokenType("HintComment")
-  static LineBreak = new TokenType("LineBreak")
+  static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
+  static LineComment = new TokenType("LineComment", { skip: true })
+  static BlockComment = new TokenType("BlockComment", { skip: true })
+  static HintComment = new TokenType("HintComment", { skip: true })
+  static LineBreak = new TokenType("LineBreak", { skip: true, separator: true })
   static Command = new TokenType("Command")
-  static Delimiter = new TokenType("Delimiter")
-  static SemiColon = new TokenType("SemiColon")
-  static LeftParen = new TokenType("LeftParen")
-  static RightParen = new TokenType("RightParen")
-  static LeftBracket = new TokenType("LeftBracket")
-  static RightBracket = new TokenType("RightBracket")
+  static Delimiter = new TokenType("Delimiter", { separator: true })
+  static SemiColon = new TokenType("SemiColon", { separator: true })
+  static LeftParen = new TokenType("LeftParen", { separator: true })
+  static RightParen = new TokenType("RightParen", { separator: true })
+  static LeftBracket = new TokenType("LeftBracket", { separator: true })
+  static RightBracket = new TokenType("RightBracket", { separator: true })
+  static Comma = new TokenType("Comma", { separator: true })
+  static Dot = new TokenType("Dot", { separator: true })
   static Label = new TokenType("Label")
-  static Comma = new TokenType("Comma")
-  static Dot = new TokenType("Dot")
-  static Operator = new TokenType("Operator")
+  static Operator = new TokenType("Operator", { separator: true })
   static Number = new TokenType("Number")
   static Size = new TokenType("Size")
   static Bytes = new TokenType("Bytes")
@@ -25,11 +25,20 @@ export class TokenType {
   static QuotedValue = new TokenType("QuotedValue")
   static QuotedIdentifier = new TokenType("QuotedIdentifier")
   static Identifier = new TokenType("Identifier")
-  static Error = new TokenType("Error")
+  static Error = new TokenType("Error", { separator: true })
+
+  skip: boolean
+  separator: boolean
 
   constructor(
-    public name: string
+    public name: string,
+    options?: {
+      skip?: boolean,
+      separator?: boolean
+    }
   ) {
+    this.skip = !!options?.skip
+    this.separator = !!options?.separator
   }
 
   toString() {
@@ -123,8 +132,6 @@ export class Token {
 export declare type TokenPattern = {
   type: TokenType,
   re: RegExp | (() => RegExp),
-  skip?: boolean
-  separator?: boolean
   eos?: boolean
 }
 
@@ -203,7 +210,7 @@ export abstract class Lexer {
         columnNumber += token.text.length
       }
 
-      if (pattern?.separator) {
+      if (token.type.separator) {
         if (skips.length > 0
           && tokens.length > 0
           && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
@@ -213,7 +220,7 @@ export abstract class Lexer {
         lastSeparator = token
       }
 
-      if (pattern?.skip) {
+      if (token.type.skip) {
         skips.push(this.processToken(state, token))
       } else {
         if (skips.length > 0) {

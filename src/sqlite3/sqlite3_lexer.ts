@@ -90,17 +90,17 @@ export class Sqlite3Lexer extends Lexer {
     options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.SemiColon, re: /;/y, eos: true, separator: true },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y, skip: true },
-      { type: TokenType.LineBreak, re: /\r?\n/y, skip: true, separator: true },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
-      { type: TokenType.LineComment, re: /--.*/y, skip: true },
+      { type: TokenType.SemiColon, re: /;/y, eos: true },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
+      { type: TokenType.LineBreak, re: /\r?\n/y },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
+      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command, re: /^\..+/my, eos: true },
-      { type: TokenType.LeftParen, re: /\(/y, separator: true },
-      { type: TokenType.RightParen, re: /\)/y, separator: true },
-      { type: TokenType.Comma, re: /,/y, separator: true },
+      { type: TokenType.LeftParen, re: /\(/y },
+      { type: TokenType.RightParen, re: /\)/y },
+      { type: TokenType.Comma, re: /,/y },
       { type: TokenType.Number, re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
-      { type: TokenType.Dot, re: /\./y, separator: true },
+      { type: TokenType.Dot, re: /\./y },
       { type: TokenType.String, re: /[Xx]'([^']|'')*'/y },
       { type: TokenType.String, re: /'([^']|'')*'/y },
       { type: TokenType.QuotedValue, re: /"([^"]|"")*"/y },
@@ -108,8 +108,8 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.BindVariable, re: /\?([1-9][0-9]*)?/y },
       { type: TokenType.BindVariable, re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y, separator: true },
-      { type: TokenType.Error, re: /./y, separator: true },
+      { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y },
+      { type: TokenType.Error, re: /./y },
     ], options)
 
     if (options.compileOptions) {
