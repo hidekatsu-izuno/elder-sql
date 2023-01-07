@@ -132,7 +132,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (LookAheadSet.has(token.type) || token.subtype && LookAheadSet.has(token.subtype)) {
+          if (token.keyword && LookAheadSet.has(token.keyword)) {
             break
           } else {
             r.consume()
@@ -292,7 +292,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (LookAheadSet.has(token.type) || token.subtype && LookAheadSet.has(token.subtype)) {
+          if (token.keyword && LookAheadSet.has(token.keyword)) {
             break
           } else {
             r.consume()
@@ -437,7 +437,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (LookAheadSet.has(token.type) || token.subtype && LookAheadSet.has(token.subtype)) {
+          if (token.keyword && LookAheadSet.has(token.keyword)) {
             break
           } else {
             r.consume()

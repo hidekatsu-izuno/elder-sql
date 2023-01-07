@@ -327,15 +327,15 @@ export class MysqlLexer extends Lexer {
     }
   }
 
-  protected processInput(state: Record<string, any>, input: string) {
-    return input.replace(/\/\*!([0-9]*)(.*?)\*\//sg, (m, p1, p2) => {
+  protected processInput(state: Record<string, any>, text: string) {
+    return [ text.replace(/\/\*!([0-9]*)(.*?)\*\//sg, (m, p1, p2) => {
       if (this.options.version && p1) {
         if (semver.lt(this.options.version, this.toSemverString(p1))) {
           return m
         }
       }
       return " ".repeat((p1 ? p1.length : 0) + 2) + p2 + "  "
-    })
+    }) ]
   }
 
   protected processToken(state: Record<string, any>, token: Token) {

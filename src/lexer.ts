@@ -151,7 +151,7 @@ export abstract class Lexer {
     }
   }
 
-  lex(input: string, fileName?: string) {
+  lex(text: string, fileName?: string) {
     const state = {}
 
     const tokens = new Array<Token>()
@@ -159,76 +159,84 @@ export abstract class Lexer {
     let lineNumber = 1
     let columnNumber = 0
 
-    input = this.processInput(state, input)
-    
-    if (input.startsWith("\uFEFF")) {
-      pos = 1
-    }
+    const segments = this.processInput(state, text)
 
     let skips = []
     let lastSeparator: Token | undefined
-    while (pos < input.length) {
-      let token
-      let pattern
-      for (const pat of this.patterns) {
-        const re = (typeof pat.re  === 'function') ?
-          pat.re() : pat.re
+    for (const segment of segments) {
+      const isString = typeof segment === "string"
+      let slen = isString ? segment.length : 1
+      let spos = 0
+      while (spos < slen) {
+        let token
+        if (isString) {
+          let pattern
+          for (const pat of this.patterns) {
+            const re = (typeof pat.re  === 'function') ?
+              pat.re() : pat.re
+    
+            re.lastIndex = spos
+            const m = re.exec(segment)
+            if (m) {
+              const location = new SourceLocation()
+              location.fileName = fileName
+              location.position = pos + spos
+              location.lineNumber = lineNumber
+              location.columnNumber = columnNumber
+    
+              token = new Token(pat.type, m[0], {
+                eos: !!pat.eos,
+                location,
+              })
+              pattern = pat
+              spos = re.lastIndex
+              break
+            }
+          }  
+        } else {
+          token = segment
+          spos++
+        }
 
-        re.lastIndex = pos
-        const m = re.exec(input)
-        if (m) {
-          const location = new SourceLocation()
-          location.fileName = fileName
-          location.position = pos
-          location.lineNumber = lineNumber
-          location.columnNumber = columnNumber
+        if (!token) {
+          throw new Error(`Failed to tokenize: ${pos + spos}`)
+        }
 
-          token = new Token(pat.type, m[0], {
-            eos: !!pat.eos,
-            location,
-          })
-          pattern = pat
-          pos = re.lastIndex
-          break
+        let index = token.text.indexOf('\n')
+        if (index !== -1) {
+          let lastIndex
+          do {
+            lastIndex = index
+            lineNumber++
+            index = token.text.indexOf('\n', lastIndex + 1)
+          } while (index !== -1)
+          columnNumber = token.text.length - lastIndex
+        } else {
+          columnNumber += token.text.length
+        }
+
+        if (token.type.separator) {
+          if (skips.length > 0
+            && tokens.length > 0
+            && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
+            tokens[tokens.length - 1].postskips = skips
+            skips = []
+          }
+          lastSeparator = token
+        }
+
+        if (token.type.skip) {
+          skips.push(this.processToken(state, token))
+        } else {
+          if (skips.length > 0) {
+            token.preskips = skips
+            skips = []
+          }
+          tokens.push(this.processToken(state, token))
         }
       }
 
-      if (!token) {
-        throw new Error(`Failed to tokenize: ${pos}`)
-      }
-
-      let index = token.text.indexOf('\n')
-      if (index !== -1) {
-        let lastIndex
-        do {
-          lastIndex = index
-          lineNumber++
-          index = token.text.indexOf('\n', lastIndex + 1)
-        } while (index !== -1)
-        columnNumber = token.text.length - lastIndex
-      } else {
-        columnNumber += token.text.length
-      }
-
-      if (token.type.separator) {
-        if (skips.length > 0
-          && tokens.length > 0
-          && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
-          tokens[tokens.length - 1].postskips = skips
-          skips = []
-        }
-        lastSeparator = token
-      }
-
-      if (token.type.skip) {
-        skips.push(this.processToken(state, token))
-      } else {
-        if (skips.length > 0) {
-          token.preskips = skips
-          skips = []
-        }
-        tokens.push(this.processToken(state, token))
-      }
+      pos += isString ? spos : segment.text.length
     }
 
     const location = new SourceLocation()
@@ -246,8 +254,8 @@ export abstract class Lexer {
     return tokens
   }
 
-  protected processInput(state: Record<string, any>, input: string) {
-    return input
+  protected processInput(state: Record<string, any>, text: string): (string | Token)[] {
+    return [ text ]
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
