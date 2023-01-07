@@ -84,19 +84,19 @@ export class Sqlite3Parser extends Parser {
   }
 
   private command(r: TokenReader) {
-    const stmt = new Node("command")
+    const stmt = new Node("command statement")
 
     const token = r.consume(TokenType.Command)
     const sep = token.text.indexOf(" ")
     if (sep === -1) {
-      stmt.add(new Node("name", token.text).add(token))
+      stmt.add(new Node("command name", token.text).add(token))
     } else {
       const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
         preskips: token.preskips, 
         postskips: token.postskips,
         location: token.location,
       })
-      stmt.add(new Node("name", nameToken.text).add(nameToken))
+      stmt.add(new Node("command name", nameToken.text).add(nameToken))
 
       const args = token.text.substring(sep)
       const argTokens = []
@@ -130,7 +130,7 @@ export class Sqlite3Parser extends Parser {
         } else {
           argToken.preskips.push(...skips)
           skips = []
-          stmt.add(new Node("arg", dequote(argToken.text)).add(argToken))
+          stmt.add(new Node("command argument", dequote(argToken.text)).add(argToken))
         }
       }
     }
@@ -151,12 +151,12 @@ export class Sqlite3Parser extends Parser {
     try {
       if (r.peekIf(Keyword.EXPLAIN)) {
         explain = new Node("explain statement")
-        explain.add(r.consume())
+          .add(r.consume())
         if (r.peekIf(Keyword.QUERY)) {
-          explain.add(new Node("query plan").add(
-            r.consume(), 
-            r.consume(Keyword.PLAN)
-          ))
+          explain.add(new Node("query plan clause")
+            .add(r.consume())
+            .add(r.consume(Keyword.PLAN))
+          )
         }
       }
 
@@ -771,7 +771,7 @@ export class Sqlite3Parser extends Parser {
     }
     if (r.peekIf(Keyword.TO)) {
       node.add(r.consume())
-      node.add(new Node("file name").add(this.stringValue(r)))
+      node.add(new Node("file name").add(this.stringLiteral(r)))
     }
     return node
   }
@@ -1631,10 +1631,10 @@ export class Sqlite3Parser extends Parser {
       columnType.add(this.typeName(r))
       if (r.peekIf(TokenType.LeftParen)) {
         columnType.add(r.consume())
-        columnType.add(new Node("length").add(this.numericValue(r)))
+        columnType.add(new Node("length").add(this.numericLiteral(r)))
         if (r.peekIf(TokenType.Comma)) {
           columnType.add(r.consume())
-          columnType.add(new Node("scale").add(this.numericValue(r)))
+          columnType.add(new Node("scale").add(this.numericLiteral(r)))
         }
         columnType.add(r.consume(TokenType.RightParen))
       }
@@ -1909,10 +1909,10 @@ export class Sqlite3Parser extends Parser {
     if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
       const token1 = r.consume()
       node.add(token1)
-      const token2 = r.consume(TokenType.Number)
+      const token2 = r.consume(TokenType.Numeric)
       node.add(token2)
       node.value = new Decimal(token1.text + token2.text).toString()
-    } else if (r.peekIf(TokenType.Number)) {
+    } else if (r.peekIf(TokenType.Numeric)) {
       const token = r.consume()
       node.add(token)
       node.value = new Decimal(token.text).toString()
@@ -1930,25 +1930,248 @@ export class Sqlite3Parser extends Parser {
     return node
   }
 
-  private identifier(r: TokenReader, name: string) {
-    const node = new Node(name)
-    if (r.peekIf(TokenType.Identifier)) {
-      node.add(r.consume())
-      node.value = r.peek(-1).text
-    } else if (r.peekIf([TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
-      node.add(r.consume())
-      node.value = dequote(r.peek(-1).text)
+  private expression(r: TokenReader, priority = 0) {
+    let node
+    if (priority < 9 && r.peekIf(Keyword.NOT)) {
+      node = new Node("not operation").add(r.consume())
+      node.add(this.expression(r, 9))
+    } else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
+      node = new Node("bitwise not operation").add(r.consume())
+      node.add(this.expression(r))
+    } else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
+      node = new Node("unary plus operation").add(r.consume())
+      node.add(this.expression(r))
+    } else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
+      node = new Node("unary minus operation").add(r.consume())
+      node.add(this.expression(r))
     } else {
-      throw r.createParseError()
+      node = this.expressionValue(r)
     }
-    return node
-  }
 
-  private expression(r: TokenReader) {
-    const node = this.expressionValue(r)
     while (!r.peek().eos) {
-      if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
-        
+      if (priority < 11 && r.peekIf(Keyword.OR)) {
+        node = new Node("or operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 11))
+      } else if (priority < 10 && r.peekIf(Keyword.AND)) {
+        node = new Node("and operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 10))
+      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "=", "==" ] })) {
+        node = new Node("equal operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "<>", "!=" ] })) {
+        node = new Node("not equal operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.IS)) {
+        const prefix = [ r.consume() ]
+        if (r.peekIf(Keyword.NOT)) {
+          prefix.push(r.consume())
+          if (r.peekIf(Keyword.DISTINCT)) {
+            node = new Node("is not distinct from operation").add(node)
+            node.add(...prefix)
+            node.add(r.consume())
+            node.add(r.consume(Keyword.FROM))
+          } else {
+            node = new Node("is not operation").add(node)
+            node.add(...prefix)
+            node.add(r.consume())
+          }
+        } else if (r.peekIf(Keyword.DISTINCT)) {
+          node = new Node("is distinct from operation").add(node)
+          node.add(...prefix)
+          node.add(r.consume())
+          node.add(r.consume(Keyword.FROM))
+        } else {
+          node = new Node("is operation").add(node)
+          node.add(...prefix)
+        }
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not between operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("between operation").add(node)
+        }
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+        node.add(r.consume(Keyword.AND))
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not in operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("in operation").add(node)
+        }
+        node.add(r.consume())
+        if (r.peekIf(TokenType.LeftParen, [Keyword.WITH, Keyword.SELECT])) {
+          node.add(r.consume())
+          node.add(this.selectStatement(r))
+          node.add(r.consume(TokenType.RightParen))
+        } else if (r.peekIf(TokenType.LeftParen)) {
+          const exprs = new Node("expression list")
+          exprs.add(r.consume())
+          while (!r.peek().eos) {
+            exprs.add(this.expression(r))
+            if (r.peekIf(TokenType.Comma)) {
+              exprs.add(r.consume())
+            } else {
+              break
+            }
+          }
+          exprs.add(r.consume(TokenType.RightParen))
+          node.add(exprs)
+        } else if (r.peekIf(
+          [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+          TokenType.LeftParen
+        )) {
+          node = new Node("function")
+          node.add(new Node("object name").add(r.consume()))
+          const args = new Node("function arguments")
+          args.add(r.consume(TokenType.LeftParen))
+          while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
+            const arg = new Node("function argument")
+            arg.add(this.expression(r))
+            args.add(arg)
+            if (r.peekIf(TokenType.Comma)) {
+              args.add(r.consume())
+            } else {
+              break
+            }
+          }
+          args.add(r.consume(TokenType.RightParen))
+          node.add(args)
+        } else if (r.peekIf([
+          TokenType.String,
+          TokenType.Identifier,
+          TokenType.QuotedIdentifier,
+          TokenType.QuotedValue
+        ])) {
+          node.add(this.columnReference(r))
+        } else {
+          throw r.createParseError()
+        }
+      } else if (priority < 8 && r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not match operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("match operation").add(node)
+        }
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not like operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("like operation").add(node)
+        }
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+        if (r.peekIf(Keyword.ESCAPE)) {
+          node.add(new Node("escape").add(this.expression(r, 6)))
+        }
+      } else if (priority < 8 && r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not regexp operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("regexp operation").add(node)
+        }
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB)) {
+        if (r.peekIf(Keyword.NOT)) {
+          node = new Node("not glob operation").add(node)
+          node.add(r.consume())
+        } else {
+          node = new Node("glob operation").add(node)
+        }
+        node.add(r.consume())
+        node.add(this.expression(r, 8))
+      } else if (priority < 8 && r.peekIf(Keyword.ISNULL)) {
+        node = new Node("is null operation").add(node)
+        node.add(r.consume())
+      } else if (priority < 8 && r.peekIf(Keyword.NOTNULL)) {
+        node = new Node("is not null operation").add(node)
+        node.add(r.consume())
+      } else if (priority < 8 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
+        node = new Node("is not null operation").add(node)
+        node.add(r.consume())
+        node.add(r.consume())
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<"})) {
+        node = new Node("less than operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 7))
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">"})) {
+        node = new Node("greater than operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 7))
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<="})) {
+        node = new Node("less than or equal operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 7))
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">="})) {
+        node = new Node("greater than or equal operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 7))
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "&"})) {
+        node = new Node("bitwise and operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 5))
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "|"})) {
+        node = new Node("bitwise or operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 5))
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "<<"})) {
+        node = new Node("bitwise left shift operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 5))
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: ">>"})) {
+        node = new Node("bitwise right shift operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 5))
+      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
+        node = new Node("add operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 4))
+      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
+        node = new Node("subtract operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 4))
+      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
+        node = new Node("multiply operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 3))
+      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
+        node = new Node("divide operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 3))
+      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
+        node = new Node("modulo operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 3))
+      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
+        node = new Node("concatenate operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 2))
+      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
+        node = new Node("json extract operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 2))
+      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
+        node = new Node("json extract and unquote operation").add(node)
+        node.add(r.consume())
+        node.add(this.expression(r, 2))
+      } else if (priority < 1 && r.peekIf(Keyword.COLLATE)) {
+        node = new Node("collate operation").add(node)
+        node.add(r.consume())
+        node.add(this.identifier(r, "collation name"))
       } else {
         break
       }
@@ -1958,23 +2181,15 @@ export class Sqlite3Parser extends Parser {
 
   private expressionValue(r: TokenReader) {
     let node
-    if (r.peekIf(TokenType.LeftParen)) {
-      node = new Node("expression")
+    if (r.peekIf(Keyword.NULL)) {
+      node = new Node("null value")
       node.add(r.consume())
-      node.add(this.expression(r))
-      if (r.peekIf(TokenType.Comma)) {
-        node.name = "expressions"
-        node.add(r.consume())
-        do {
-          node.add(this.expression(r))
-          if (r.peekIf(TokenType.Comma)) {
-            node.add(r.consume())
-          } else {
-            break
-          }
-        } while (!r.peek().eos)
-      }
-      node.add(r.consume(TokenType.RightParen))
+    } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+      node = this.booleanLiteral(r)
+    } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
+      node =  new Node("function")
+      const token = r.consume()
+      node.add(new Node("object name", token.text.toUpperCase()).add(token))
     } else if (r.peekIf(Keyword.CASE)) {
       node = new Node("case expression")
       node.add(r.consume())
@@ -2036,56 +2251,25 @@ export class Sqlite3Parser extends Parser {
       node.add(r.consume(TokenType.LeftParen))
       node.add(this.selectStatement(r))
       node.add(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(Keyword.NOT)) {
-      node = new Node("not operation")
+    } else if (r.peekIf(TokenType.LeftParen)) {
+      node = new Node("expression")
       node.add(r.consume())
       node.add(this.expression(r))
-    } else if (r.peekIf(TokenType.Operator)) {
-      const token = r.consume()
-      if (token.text === "~") {
-        node = new Node("bitwise not operation")
-      } else if (token.text === "+") {
-        node = new Node("unary plus operation")
-      } else if (token.text === "-") {
-        node = new Node("unary minus operation")
-      } else {
-        throw r.createParseError()
+      if (r.peekIf(TokenType.Comma)) {
+        node.name = "expression list"
+        node.add(r.consume())
+        do {
+          node.add(this.expression(r))
+          if (r.peekIf(TokenType.Comma)) {
+            node.add(r.consume())
+          } else {
+            break
+          }
+        } while (!r.peek().eos)
       }
-      node.add(token)
-      node.add(this.expression(r))
-    } else if (r.peekIf(Keyword.BindVariable)) {
-      const token = r.consume()
-      if (token.text.startsWith("?")) {
-        let value = token.text.substring(1)
-        if (value) {
-          r.state.bindPosition = Number.parseInt(value, 10)
-        } else {
-          const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
-          value = "${pos}"
-          r.state.bindPosition = pos
-        }
-        node = new Node("positional bind variable", value)
-      } else {
-        node = new Node("named bind variable", token.text.substring(1))
-      }
-      node.add(token)
-    } else if (r.peekIf(TokenType.Number)) {
-      node = this.numericValue(r)
-    } else if (r.peekIf(TokenType.String)) {
-      node = this.stringValue(r)
-    } else if (r.peekIf(TokenType.Bytes)) {
-      node = this.blobValue(r)
-    } else if (r.peekIf(Keyword.NULL)) {
-      node = new Node("null value")
-      node.add(r.consume())
-    } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
-      node = this.booleanValue(r)
-    } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
-      node =  new Node("function")
-      const token = r.consume()
-      node.add(new Node("object name", token.text.toUpperCase()).add(token))
+      node.add(r.consume(TokenType.RightParen))
     } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+      [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue],
       TokenType.LeftParen
     )) {
       node = new Node("function")
@@ -2131,77 +2315,116 @@ export class Sqlite3Parser extends Parser {
           node.add(over)
         } else {
           node.add(this.identifier(r, "window name"))
-          
         }
       }
       node.add(args)
-    } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
-      node = new Node("column")
-      node.add(new Node("schema name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("object name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("column name").add(r.consume()))
-    } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.Dot,
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
-      node = new Node("column")
-      node.add(new Node("object name").add(r.consume()))
-      node.add(r.consume())
-      node.add(new Node("column name").add(r.consume()))
-    } else if (r.peekIf(
-      [TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
-      node = new Node("column")
-      node.add(new Node("column name").add(r.consume()))
+    } else if (
+      r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue])
+      || r.peekIf(TokenType.String, TokenType.Dot)
+    ) {
+      node = this.columnReference(r)
+    } else if (r.peekIf(Keyword.BindVariable)) {
+      const token = r.consume()
+      if (token.text.startsWith("?")) {
+        let value = token.text.substring(1)
+        if (value) {
+          r.state.bindPosition = Number.parseInt(value, 10)
+        } else {
+          const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
+          value = "${pos}"
+          r.state.bindPosition = pos
+        }
+        node = new Node("positional bind variable", value)
+      } else {
+        node = new Node("named bind variable", token.text.substring(1))
+      }
+      node.add(token)
+    } else if (r.peekIf(TokenType.Numeric)) {
+      node = this.numericLiteral(r)
+    } else if (r.peekIf(TokenType.String)) {
+      node = this.stringLiteral(r)
+    } else if (r.peekIf(TokenType.Blob)) {
+      node = this.blobLiteral(r)
     } else {
       throw r.createParseError()
     }
     return node
   }
 
-  private numericValue(r: TokenReader) {
-    const node = new Node("numeric value")
+  private columnReference(r: TokenReader) {
+    const node = new Node("column reference")
+    const ident1 = this.identifier(r, "column name")
+    if (r.peekIf(TokenType.Dot)) {
+      const dot1 = r.consume()
+      const ident2 = this.identifier(r, "column name")
+      if (r.peekIf(TokenType.Dot)) {
+        ident2.name = "schema name"
+        node.add(ident1)
+        node.add(dot1)
+        ident2.name = "object name"
+        node.add(ident2)
+        node.add(dot1)
+        node.add(this.identifier(r, "column name"))
+      } else {
+        ident1.name = "object name"
+        node.add(ident1)
+        node.add(dot1)
+        node.add(ident2)
+      }
+    } else {
+      node.add(ident1)
+    }
+    return node
+  }
+  
+  private identifier(r: TokenReader, name: string) {
+    const node = new Node(name)
+    if (r.peekIf(TokenType.Identifier)) {
+      node.add(r.consume())
+      node.value = r.peek(-1).text
+    } else if (r.peekIf([TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
+      node.add(r.consume())
+      node.value = dequote(r.peek(-1).text)
+    } else {
+      throw r.createParseError()
+    }
+    return node
+  }
+
+  private numericLiteral(r: TokenReader) {
+    const node = new Node("numeric literal")
     if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
       const token1 = r.consume()
       node.add(token1)
-      const token2 = r.consume(TokenType.Number)
+      const token2 = r.consume(TokenType.Numeric)
       node.value = new Decimal(token1.text + token2.text).toString()
       node.add(token2)
     } else {
-      const token = r.consume(TokenType.Number)
+      const token = r.consume(TokenType.Numeric)
       node.value = token.text.toLowerCase()
       node.add(token)
     }
     return node
   }
 
-  private stringValue(r: TokenReader) {
-    const node = new Node("string value")
+  private stringLiteral(r: TokenReader) {
+    const node = new Node("string literal")
     const token = r.consume(TokenType.String)
     node.value = dequote(token.text)
     node.add(token)
     return node
   }
 
-  private blobValue(r: TokenReader) {
-    const node = new Node("blob value")
-    const token = r.consume(TokenType.Bytes)
+  private blobLiteral(r: TokenReader) {
+    const node = new Node("blob literal")
+    const token = r.consume(TokenType.Blob)
     node.value = token.text.substring(2, token.text.length-1).toUpperCase()
     node.add(token)
     return node
   }
 
-  private booleanValue(r: TokenReader) {
-    const node = new Node("boolean value")
+  private booleanLiteral(r: TokenReader) {
+    const node = new Node("boolean literal")
     if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       const token = r.consume()
       node.value = token.text.toUpperCase()

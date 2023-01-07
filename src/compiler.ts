@@ -263,11 +263,11 @@ export class ElderSqlCompiler {
                   tr.consume()
                 }
               }
-            } else if (tr.peekIf({ type: TokenType.Operator, text: /^[+-]$/ }, TokenType.Number)) {
+            } else if (tr.peekIf({ type: TokenType.Operator, text: /^[+-]$/ }, TokenType.Numeric)) {
               tr.consume()
               tr.consume()
             } else if (tr.peekIf(TokenType.String)
-              || tr.peekIf(TokenType.Number)
+              || tr.peekIf(TokenType.Numeric)
               || tr.peekIf(Keyword.TRUE)
               || tr.peekIf(Keyword.FALSE)
               || tr.peekIf(Keyword.NULL)) {

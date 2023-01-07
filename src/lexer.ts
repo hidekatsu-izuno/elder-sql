@@ -16,9 +16,9 @@ export class TokenType {
   static Dot = new TokenType("Dot", { separator: true })
   static Label = new TokenType("Label")
   static Operator = new TokenType("Operator", { separator: true })
-  static Number = new TokenType("Number")
+  static Numeric = new TokenType("Numeric")
   static Size = new TokenType("Size")
-  static Bytes = new TokenType("Bytes")
+  static Blob = new TokenType("Blob")
   static String = new TokenType("String")
   static BindVariable = new TokenType("BindVariable")
   static Variable = new TokenType("Variable")
@@ -1386,6 +1386,7 @@ export const Keyword: Record<string, TokenType> = {
   NOARCHIVELOG: new TokenType("NOARCHIVELOG"),
   NOAUDIT: new TokenType("NOAUDIT"),
   NOCACHE: new TokenType("NOCACHE"),
+  NOCASE: new TokenType("NOCASE"),
   NOCHECK: new TokenType("NOCHECK"),
   NOCOMPRESS: new TokenType("NOCOMPRESS"),
   NOCOPY: new TokenType("NOCOPY"),
