@@ -20,6 +20,18 @@ export class Node {
     return this
   }
 
+  remove() {
+    const parent = this.parent()
+    for (let i = 0; i < parent.children.length; i++) {
+      const child = parent.children[i]
+      if (child === this) {
+        parent.children.splice(i, 1)
+        child.parentNode = undefined
+        break
+      }
+    }
+  }
+
   parent() {
     if (!this.parentNode) {
       throw new Error("parent is missing")
@@ -188,23 +200,19 @@ export class TokenReader {
   }
 }
 
-export declare type ParserOptions = {
-  [key: string]: any
-}
-
 export abstract class Parser {
   constructor(
-    public options: ParserOptions = {},
+    public options: Record<string, any> = {},
     public lexer: Lexer,
   ) {
   }
 
   parse(text: string, filename?: string) {
     const tokens = this.lexer.lex(text, filename)
-    return this.parseTokens(tokens)
+    return this.processTokens(tokens)
   }
 
-  abstract parseTokens(tokens: Token[]): Node
+  abstract processTokens(tokens: Token[]): Node
 }
 
 export class AggregateParseError extends Error {

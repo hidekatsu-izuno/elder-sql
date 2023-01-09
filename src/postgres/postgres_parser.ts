@@ -20,7 +20,7 @@ export class PostgresParser extends Parser {
     super(options, options.lexer ?? new PostgresLexer(options))
   }
 
-  parseTokens(tokens: Token[]): Node {
+  processTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []

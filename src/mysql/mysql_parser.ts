@@ -24,7 +24,7 @@ export class MysqlParser extends Parser {
     this.setSqlMode(options.sqlMode)
   }
 
-  parseTokens(tokens: Token[]): Node {
+  processTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []
