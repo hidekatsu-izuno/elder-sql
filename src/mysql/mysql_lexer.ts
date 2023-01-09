@@ -362,7 +362,7 @@ export class MysqlLexer extends Lexer {
         this.reDelimiter = new RegExp(sep, "y")
       }
     }
-    return token
+    return [ token ]
   }
   
   private toSemverString(version: string) {

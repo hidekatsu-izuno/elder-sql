@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import { Sqlite3Lexer } from "../../src/sqlite3/sqlite3_lexer"
-import { toJSString } from "../../src/debug"
+import { toJSString } from "../utils/debug"
 
 describe("test sqlite3 lexer", () => {
   test.each([

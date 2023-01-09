@@ -169,7 +169,6 @@ export abstract class Lexer {
       while (spos < slen) {
         let token
         if (isString) {
-          let pattern
           for (const pat of this.patterns) {
             const re = (typeof pat.re  === 'function') ?
               pat.re() : pat.re
@@ -186,7 +185,6 @@ export abstract class Lexer {
               token = new Token(pat.type, m[0], {
                 location,
               })
-              pattern = pat
               spos = re.lastIndex
               break
             }
@@ -213,24 +211,27 @@ export abstract class Lexer {
           columnNumber += token.text.length
         }
 
-        if (token.type.separator) {
-          if (skips.length > 0
-            && tokens.length > 0
-            && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
-            tokens[tokens.length - 1].postskips = skips
-            skips = []
+        const newTokens = this.processToken(state, token)
+        for (const newToken of newTokens) {
+          if (token.type.separator) {
+            if (skips.length > 0
+              && tokens.length > 0
+              && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
+              tokens[tokens.length - 1].postskips = skips
+              skips = []
+            }
+            lastSeparator = token
           }
-          lastSeparator = token
-        }
-
-        if (token.type.skip) {
-          skips.push(this.processToken(state, token))
-        } else {
-          if (skips.length > 0) {
-            token.preskips = skips
-            skips = []
+  
+          if (token.type.skip) {
+            skips.push(newToken)
+          } else {
+            if (skips.length > 0) {
+              token.preskips = skips
+              skips = []
+            }
+            tokens.push(newToken)
           }
-          tokens.push(this.processToken(state, token))
         }
       }
 
@@ -248,7 +249,7 @@ export abstract class Lexer {
       preskips: skips,
       location,
     })
-    tokens.push(this.processToken(state, eofToken))
+    tokens.push(...this.processToken(state, eofToken))
     return tokens
   }
 
@@ -261,7 +262,11 @@ export abstract class Lexer {
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
-    return token
+    return [ token ]
+  }
+
+  protected processCommand(state: Record<string, any>, token: Token) {
+    return [ token ]
   }
 }
 

@@ -188,6 +188,6 @@ export class Sqlite3Lexer extends Lexer {
       token.eos = true
     }
 
-    return token
+    return [ token ]
   }
 }

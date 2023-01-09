@@ -270,6 +270,6 @@ export class OracleLexer extends Lexer {
       state.pos = 0
       token.eos = true
     }
-    return token
+    return [ token ]
   }
 }

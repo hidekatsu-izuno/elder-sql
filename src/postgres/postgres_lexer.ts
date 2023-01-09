@@ -138,6 +138,6 @@ export class PostgresLexer extends Lexer {
     } else if (token.type === TokenType.SemiColon || token.type === TokenType.Command) {
       token.eos = true
     }
-    return token
+    return [ token ]
   }
 }
