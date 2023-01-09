@@ -122,12 +122,16 @@ export class PostgresLexer extends Lexer {
     ], options)
   }
 
+  isReserved(type: TokenType) {
+    return ReservedSet.has(type)
+  }
+
   protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
-      const keyword = Keyword[token.text.toUpperCase()]
+      const keyword = Keyword.for(token.text)
       if (keyword) {
         token.keyword = keyword
-        if (ReservedSet.has(keyword)) {
+        if (this.isReserved(keyword)) {
           token.type = keyword
         }
       }

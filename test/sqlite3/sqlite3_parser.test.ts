@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser"
-import { toJSString } from "../../src/debug"
+import { toJSString } from "../utils/debug"
 
 describe("test sqlite3 parser", () => {
   test.each([
@@ -10,7 +10,7 @@ describe("test sqlite3 parser", () => {
     const module = require("./parser/" + target)
     const node = Sqlite3Parser.parse(module.actual)
 
-    if (target === "select") {
+    if (target === "") {
       fs.writeFileSync("temp.txt", toJSString(node))
     }
 

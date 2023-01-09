@@ -1134,26 +1134,22 @@ export class Sqlite3Parser extends Parser {
     do {
       current = this.selectClause(r)
       if (r.peekIf(Keyword.UNION, Keyword.ALL)) {
-        const unionAll = new Node("union all operation")
-        unionAll.append(current)
-        unionAll.append(r.consume())
-        unionAll.append(r.consume())
-        current = unionAll
+        current = new Node("union all operation")
+          .append(current)
+          .append(r.consume())
+          .append(r.consume())
       } else if (r.peekIf(Keyword.UNION)) {
-        const union = new Node("union operation")
-        union.append(current)
-        union.append(r.consume())
-        current = union
+        current = new Node("union operation")
+          .append(current)
+          .append(r.consume())
       } else if (r.peekIf(Keyword.INTERSECT)) {
-        const intersect = new Node("intersect operation")
-        intersect.append(current)
-        intersect.append(r.consume())
-        current = intersect
-      } else if (r.peekIf(Keyword.EXPECT)) {
-        const expect = new Node("expect operation")
-        expect.append(current)
-        expect.append(r.consume())
-        current = expect
+        current = new Node("intersect operation")
+          .append(current)
+          .append(r.consume())
+      } else if (r.peekIf(Keyword.EXCEPT)) {
+        current = new Node("except operation")
+          .append(current)
+          .append(r.consume())
       } else {
         break
       }
@@ -2378,7 +2374,7 @@ export class Sqlite3Parser extends Parser {
       || r.peekIf(TokenType.String, TokenType.Dot)
     ) {
       node = this.columnReference(r)
-    } else if (r.peekIf(Keyword.BindVariable)) {
+    } else if (r.peekIf(TokenType.BindVariable)) {
       const token = r.consume()
       if (token.text.startsWith("?")) {
         let value = token.text.substring(1)

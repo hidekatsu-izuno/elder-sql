@@ -337,13 +337,17 @@ export class MysqlLexer extends Lexer {
       return " ".repeat((p1 ? p1.length : 0) + 2) + p2 + "  "
     }) ]
   }
+  
+  isReserved(type: TokenType) {
+    return ReservedSet.has(type) || this.reserved.has(type)
+  }
 
   protected processToken(state: Record<string, any>, token: Token) {
     if (token.type === TokenType.Identifier) {
-      const keyword = Keyword[token.text.toUpperCase()]
+      const keyword = Keyword.for(token.text)
       if (keyword) {
         token.keyword = keyword
-        if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
+        if (this.isReserved(keyword)) {
           token.type = keyword
         }
       }

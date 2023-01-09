@@ -252,6 +252,10 @@ export abstract class Lexer {
     return tokens
   }
 
+  isReserved(type: TokenType) {
+    return false
+  }
+
   protected processInput(state: Record<string, any>, text: string): (string | Token)[] {
     return [ text ]
   }
@@ -261,2143 +265,2153 @@ export abstract class Lexer {
   }
 }
 
-export const Keyword: Record<string, TokenType> = {
-  ABBREV: new TokenType("ABBREV"),
-  ABORT: new TokenType("ABORT"),
-  ABS: new TokenType("ABS"),
-  ACCESS: new TokenType("ACCESS"),
-  ACCESSED: new TokenType("ACCESSED"),
-  ACCESSIBLE: new TokenType("ACCESSIBLE"),
-  ACCOUNT: new TokenType("ACCOUNT"),
-  ACLDEFAULT: new TokenType("ACLDEFAULT"),
-  ACLEXPLODE: new TokenType("ACLEXPLODE"),
-  ACOS: new TokenType("ACOS"),
-  ACOSD: new TokenType("ACOSD"),
-  ACOSH: new TokenType("ACOSH"),
-  ACTION: new TokenType("ACTION"),
-  ACTIONS: new TokenType("ACTIONS"),
-  ACTIVE: new TokenType("ACTIVE"),
-  ADD: new TokenType("ADD"),
-  ADDDATE: new TokenType("ADDDATE"),
-  ADDTIME: new TokenType("ADDTIME"),
-  ADMIN: new TokenType("ADMIN"),
-  ADMINISTER: new TokenType("ADMINISTER"),
-  ADVANCED: new TokenType("ADVANCED"),
-  ADVISE: new TokenType("ADVISE"),
-  AES_DECRYPT: new TokenType("AES_DECRYPT"),
-  AES_ENCRYPT: new TokenType("AES_ENCRYPT"),
-  AFFINITY: new TokenType("AFFINITY"),
-  AFTER: new TokenType("AFTER"),
-  AGAINST: new TokenType("AGAINST"),
-  AGE: new TokenType("AGE"),
-  AGENT: new TokenType("AGENT"),
-  AGGREGATE: new TokenType("AGGREGATE"),
-  ALGORITHM: new TokenType("ALGORITHM"),
-  ALIAS: new TokenType("ALIAS"),
-  ALL: new TokenType("ALL"),
-  ALLOCATE: new TokenType("ALLOCATE"),
-  ALLOW: new TokenType("ALLOW"),
-  ALLOW_CONNECTIONS: new TokenType("ALLOW_CONNECTIONS"),
-  ALTER: new TokenType("ALTER"),
-  ALTERNATE: new TokenType("ALTERNATE"),
-  ALWAYS: new TokenType("ALWAYS"),
-  ANALYSE: new TokenType("ANALYSE"),
-  ANALYTIC: new TokenType("ANALYTIC"),
-  ANALYZE: new TokenType("ANALYZE"),
-  ANCILLARY: new TokenType("ANCILLARY"),
-  AND: new TokenType("AND"),
-  ANY: new TokenType("ANY"),
-  ANYDATA: new TokenType("ANYDATA"),
-  ANYDATASET: new TokenType("ANYDATASET"),
-  ANYSCHEMA: new TokenType("ANYSCHEMA"),
-  ANYTYPE: new TokenType("ANYTYPE"),
-  ANY_VALUE: new TokenType("ANY_VALUE"),
-  APPICATION: new TokenType("APPICATION"),
-  APPLY: new TokenType("APPLY"),
-  ARCHIVAL: new TokenType("ARCHIVAL"),
-  ARCHIVE: new TokenType("ARCHIVE"),
-  ARCHIVED: new TokenType("ARCHIVED"),
-  ARCHIVELOG: new TokenType("ARCHIVELOG"),
-  AREA: new TokenType("AREA"),
-  ARRAY: new TokenType("ARRAY"),
-  ARRAY_AGG: new TokenType("ARRAY_AGG"),
-  ARRAY_APPEND: new TokenType("ARRAY_APPEND"),
-  ARRAY_CAT: new TokenType("ARRAY_CAT"),
-  ARRAY_DIMS: new TokenType("ARRAY_DIMS"),
-  ARRAY_FILL: new TokenType("ARRAY_FILL"),
-  ARRAY_LENGTH: new TokenType("ARRAY_LENGTH"),
-  ARRAY_LOWER: new TokenType("ARRAY_LOWER"),
-  ARRAY_NDIMS: new TokenType("ARRAY_NDIMS"),
-  ARRAY_POSITION: new TokenType("ARRAY_POSITION"),
-  ARRAY_POSITIONS: new TokenType("ARRAY_POSITIONS"),
-  ARRAY_PREPEND: new TokenType("ARRAY_PREPEND"),
-  ARRAY_REMOVE: new TokenType("ARRAY_REMOVE"),
-  ARRAY_REPLACE: new TokenType("ARRAY_REPLACE"),
-  ARRAY_TO_JSON: new TokenType("ARRAY_TO_JSON"),
-  ARRAY_TO_STRING: new TokenType("ARRAY_TO_STRING"),
-  ARRAY_TO_TSVECTOR: new TokenType("ARRAY_TO_TSVECTOR"),
-  ARRAY_UPPER: new TokenType("ARRAY_UPPER"),
-  AS: new TokenType("AS"),
-  ASC: new TokenType("ASC"),
-  ASCII: new TokenType("ASCII"),
-  ASCIISTR: new TokenType("ASCIISTR"),
-  ASENSITIVE: new TokenType("ASENSITIVE"),
-  ASIN: new TokenType("ASIN"),
-  ASIND: new TokenType("ASIND"),
-  ASINH: new TokenType("ASINH"),
-  ASSOCIATE: new TokenType("ASSOCIATE"),
-  ASYMMETRIC: new TokenType("ASYMMETRIC"),
-  ASYNCHRONOUS: new TokenType("ASYNCHRONOUS"),
-  AT: new TokenType("AT"),
-  ATAN: new TokenType("ATAN"),
-  ATAN2: new TokenType("ATAN2"),
-  ATAN2D: new TokenType("ATAN2D"),
-  ATAND: new TokenType("ATAND"),
-  ATANH: new TokenType("ATANH"),
-  ATTACH: new TokenType("ATTACH"),
-  ATTRIBUTE: new TokenType("ATTRIBUTE"),
-  ATTRIBUTES: new TokenType("ATTRIBUTES"),
-  AUDIT: new TokenType("AUDIT"),
-  AUTHENTICATED: new TokenType("AUTHENTICATED"),
-  AUTHENTICATION: new TokenType("AUTHENTICATION"),
-  AUTHID: new TokenType("AUTHID"),
-  AUTHORIZATION: new TokenType("AUTHORIZATION"),
-  AUTO: new TokenType("AUTO"),
-  AUTOALLOCATE: new TokenType("AUTOALLOCATE"),
-  AUTOEXTEND: new TokenType("AUTOEXTEND"),
-  AUTOEXTEND_SIZE: new TokenType("AUTOEXTEND_SIZE"),
-  AUTOINCREMENT: new TokenType("AUTOINCREMENT"),
-  AUTOMATIC: new TokenType("AUTOMATIC"),
-  AUTONOMOUS_TRANSACTION: new TokenType("AUTONOMOUS_TRANSACTION"),
-  AUTO_INCREMENT: new TokenType("AUTO_INCREMENT"),
-  AUTO_LOGIN: new TokenType("AUTO_LOGIN"),
-  AVAILABILITY: new TokenType("AVAILABILITY"),
-  AVG: new TokenType("AVG"),
-  AVG_ROW_LENGTH: new TokenType("AVG_ROW_LENGTH"),
-  AZURE_ROLE: new TokenType("AZURE_ROLE"),
-  AZURE_USER: new TokenType("AZURE_USER"),
-  BACKUP: new TokenType("BACKUP"),
-  BADFILE: new TokenType("BADFILE"),
-  BASICFILE: new TokenType("BASICFILE"),
-  BATCH: new TokenType("BATCH"),
-  BEFORE: new TokenType("BEFORE"),
-  BEGIN: new TokenType("BEGIN"),
-  BEGINNING: new TokenType("BEGINNING"),
-  BENCHMARK: new TokenType("BENCHMARK"),
-  BEQUEATH: new TokenType("BEQUEATH"),
-  BETWEEN: new TokenType("BETWEEN"),
-  BFILE: new TokenType("BFILE"),
-  BIGFILE: new TokenType("BIGFILE"),
-  BIGINT: new TokenType("BIGINT"),
-  BIN: new TokenType("BIN"),
-  BINARY: new TokenType("BINARY"),
-  BINARY_INTEGER: new TokenType("BINARY_INTEGER"),
-  BINDING: new TokenType("BINDING"),
-  BINLOG: new TokenType("BINLOG"),
-  BIN_TO_UUID: new TokenType("BIN_TO_UUID"),
-  BIT: new TokenType("BIT"),
-  BITMAP: new TokenType("BITMAP"),
-  BIT_AND: new TokenType("BIT_AND"),
-  BIT_COUNT: new TokenType("BIT_COUNT"),
-  BIT_LENGTH: new TokenType("BIT_LENGTH"),
-  BIT_OR: new TokenType("BIT_OR"),
-  BIT_XOR: new TokenType("BIT_XOR"),
-  BLOB: new TokenType("BLOB"),
-  BLOCK: new TokenType("BLOCK"),
-  BLOCKCHAIN: new TokenType("BLOCKCHAIN"),
-  BLOCKSIZE: new TokenType("BLOCKSIZE"),
-  BODY: new TokenType("BODY"),
-  BOOL: new TokenType("BOOL"),
-  BOOLEAN: new TokenType("BOOLEAN"),
-  BOOL_AND: new TokenType("BOOL_AND"),
-  BOOL_OR: new TokenType("BOOL_OR"),
-  BOTH: new TokenType("BOTH"),
-  BOUND_BOX: new TokenType("BOUND_BOX"),
-  BOX: new TokenType("BOX"),
-  BREADTH: new TokenType("BREADTH"),
-  BREAK: new TokenType("BREAK"),
-  BROADCAST: new TokenType("BROADCAST"),
-  BROWSE: new TokenType("BROWSE"),
-  BTREE: new TokenType("BTREE"),
-  BTRIM: new TokenType("BTRIM"),
-  BUFFER_CACHE: new TokenType("BUFFER_CACHE"),
-  BULK: new TokenType("BULK"),
-  BULK_EXCEPTIONS: new TokenType("BULK_EXCEPTIONS"),
-  BULK_ROWCOUNT: new TokenType("BULK_ROWCOUNT"),
-  BY: new TokenType("BY"),
-  BYTEA: new TokenType("BYTEA"),
-  CACHE: new TokenType("CACHE"),
-  CACHING: new TokenType("CACHING"),
-  CALL: new TokenType("CALL"),
-  CANCEL: new TokenType("CANCEL"),
-  CAPACITY: new TokenType("CAPACITY"),
-  CAPTION: new TokenType("CAPTION"),
-  CARDINALITY: new TokenType("CARDINALITY"),
-  CASCADE: new TokenType("CASCADE"),
-  CASCADED: new TokenType("CASCADED"),
-  CASE: new TokenType("CASE"),
-  CAST: new TokenType("CAST"),
-  CATCH: new TokenType("CATCH"),
-  CATEGORY: new TokenType("CATEGORY"),
-  CBRT: new TokenType("CBRT"),
-  CEIL: new TokenType("CEIL"),
-  CEILING: new TokenType("CEILING"),
-  CENTER: new TokenType("CENTER"),
-  CENTURY: new TokenType("CENTURY"),
-  CHAIN: new TokenType("CHAIN"),
-  CHAINED: new TokenType("CHAINED"),
-  CHANGE: new TokenType("CHANGE"),
-  CHANGES: new TokenType("CHANGES"),
-  CHAR: new TokenType("CHAR"),
-  CHAR2: new TokenType("CHAR2"),
-  CHARACTER: new TokenType("CHARACTER"),
-  CHARACTER_LENGTH: new TokenType("CHARACTER_LENGTH"),
-  CHARF: new TokenType("CHARF"),
-  CHARINDEX: new TokenType("CHARINDEX"),
-  CHARSET: new TokenType("CHARSET"),
-  CHARSETFORM: new TokenType("CHARSETFORM"),
-  CHARSETID: new TokenType("CHARSETID"),
-  CHARZ: new TokenType("CHARZ"),
-  CHAR_LENGTH: new TokenType("CHAR_LENGTH"),
-  CHECK: new TokenType("CHECK"),
-  CHECKPOINT: new TokenType("CHECKPOINT"),
-  CHECKSUM: new TokenType("CHECKSUM"),
-  CHILD: new TokenType("CHILD"),
-  CHOOSE: new TokenType("CHOOSE"),
-  CHR: new TokenType("CHR"),
-  CHUNK: new TokenType("CHUNK"),
-  CIPHER: new TokenType("CIPHER"),
-  CIRCLE: new TokenType("CIRCLE"),
-  CLASS: new TokenType("CLASS"),
-  CLASSIFICATION: new TokenType("CLASSIFICATION"),
-  CLASSIFIER: new TokenType("CLASSIFIER"),
-  CLAUSE: new TokenType("CLAUSE"),
-  CLEAN: new TokenType("CLEAN"),
-  CLEANUP: new TokenType("CLEANUP"),
-  CLEAR: new TokenType("CLEAR"),
-  CLIENT: new TokenType("CLIENT"),
-  CLOB: new TokenType("CLOB"),
-  CLOCK_TIMESTAMP: new TokenType("CLOCK_TIMESTAMP"),
-  CLONE: new TokenType("CLONE"),
-  CLOSE: new TokenType("CLOSE"),
-  CLS: new TokenType("CLS"),
-  CLUSTER: new TokenType("CLUSTER"),
-  CLUSTERED: new TokenType("CLUSTERED"),
-  CLUSTERING: new TokenType("CLUSTERING"),
-  CLUSTERS: new TokenType("CLUSTERS"),
-  CN: new TokenType("CN"),
-  COALESCE: new TokenType("COALESCE"),
-  COARSE: new TokenType("COARSE"),
-  COERCIBILITY: new TokenType("COERCIBILITY"),
-  COLAUTH: new TokenType("COLAUTH"),
-  COLD: new TokenType("COLD"),
-  COLLATE: new TokenType("COLLATE"),
-  COLLATION: new TokenType("COLLATION"),
-  COLLECT: new TokenType("COLLECT"),
-  COLLECTION: new TokenType("COLLECTION"),
-  COLUMN: new TokenType("COLUMN"),
-  COLUMNS: new TokenType("COLUMNS"),
-  COLUMNS_UPDATED: new TokenType("COLUMNS_UPDATED"),
-  COLUMN_FORMAT: new TokenType("COLUMN_FORMAT"),
-  COLUMN_VALUE: new TokenType("COLUMN_VALUE"),
-  COMMENT: new TokenType("COMMENT"),
-  COMMIT: new TokenType("COMMIT"),
-  COMMITTED: new TokenType("COMMITTED"),
-  COMPACT: new TokenType("COMPACT"),
-  COMPATIBILITY: new TokenType("COMPATIBILITY"),
-  COMPILE: new TokenType("COMPILE"),
-  COMPLETE: new TokenType("COMPLETE"),
-  COMPLETION: new TokenType("COMPLETION"),
-  COMPONENT: new TokenType("COMPONENT"),
-  COMPOSITE_LIMIT: new TokenType("COMPOSITE_LIMIT"),
-  COMPRESS: new TokenType("COMPRESS"),
-  COMPRESSED: new TokenType("COMPRESSED"),
-  COMPRESSION: new TokenType("COMPRESSION"),
-  COMPUTATION: new TokenType("COMPUTATION"),
-  COMPUTE: new TokenType("COMPUTE"),
-  CONCAT: new TokenType("CONCAT"),
-  CONCAT_WS: new TokenType("CONCAT_WS"),
-  CONCURRENT: new TokenType("CONCURRENT"),
-  CONCURRENTLY: new TokenType("CONCURRENTLY"),
-  CONDITION: new TokenType("CONDITION"),
-  CONFIGURATION: new TokenType("CONFIGURATION"),
-  CONFIRM: new TokenType("CONFIRM"),
-  CONFLICT: new TokenType("CONFLICT"),
-  CONNECT: new TokenType("CONNECT"),
-  CONNECTION: new TokenType("CONNECTION"),
-  CONNECTION_ID: new TokenType("CONNECTION_ID"),
-  CONNECT_BY_ISCYCLE: new TokenType("CONNECT_BY_ISCYCLE"),
-  CONNECT_BY_ISLEAF: new TokenType("CONNECT_BY_ISLEAF"),
-  CONNECT_TIME: new TokenType("CONNECT_TIME"),
-  CONSIDER: new TokenType("CONSIDER"),
-  CONSISTENT: new TokenType("CONSISTENT"),
-  CONSTANT: new TokenType("CONSTANT"),
-  CONSTRAINT: new TokenType("CONSTRAINT"),
-  CONSTRAINTS: new TokenType("CONSTRAINTS"),
-  CONTAINER: new TokenType("CONTAINER"),
-  CONTAINERS: new TokenType("CONTAINERS"),
-  CONTAINERS_DEFAULT: new TokenType("CONTAINERS_DEFAULT"),
-  CONTAINER_DATA: new TokenType("CONTAINER_DATA"),
-  CONTAINER_MAP: new TokenType("CONTAINER_MAP"),
-  CONTAINS: new TokenType("CONTAINS"),
-  CONTAINSTABLE: new TokenType("CONTAINSTABLE"),
-  CONTENTS: new TokenType("CONTENTS"),
-  CONTEXT: new TokenType("CONTEXT"),
-  CONTINUE: new TokenType("CONTINUE"),
-  CONTROLFILE: new TokenType("CONTROLFILE"),
-  CONV: new TokenType("CONV"),
-  CONVERSION: new TokenType("CONVERSION"),
-  CONVERT: new TokenType("CONVERT"),
-  CONVERT_FROM: new TokenType("CONVERT_FROM"),
-  CONVERT_TO: new TokenType("CONVERT_TO"),
-  CONVERT_TZ: new TokenType("CONVERT_TZ"),
-  COPY: new TokenType("COPY"),
-  CORR: new TokenType("CORR"),
-  CORRUPTION: new TokenType("CORRUPTION"),
-  COS: new TokenType("COS"),
-  COSD: new TokenType("COSD"),
-  COSH: new TokenType("COSH"),
-  COST: new TokenType("COST"),
-  COT: new TokenType("COT"),
-  COTD: new TokenType("COTD"),
-  COUNT: new TokenType("COUNT"),
-  COVAR_POP: new TokenType("COVAR_POP"),
-  COVAR_SAMP: new TokenType("COVAR_SAMP"),
-  COVERAGE: new TokenType("COVERAGE"),
-  CPU_PER_CALL: new TokenType("CPU_PER_CALL"),
-  CPU_PER_SESSION: new TokenType("CPU_PER_SESSION"),
-  CRASH: new TokenType("CRASH"),
-  CRC32: new TokenType("CRC32"),
-  CREATE: new TokenType("CREATE"),
-  CREATE_FILE_DEST: new TokenType("CREATE_FILE_DEST"),
-  CREATION: new TokenType("CREATION"),
-  CREDENTIALS: new TokenType("CREDENTIALS"),
-  CRITICAL: new TokenType("CRITICAL"),
-  CROSS: new TokenType("CROSS"),
-  CUBE: new TokenType("CUBE"),
-  CUME_DIST: new TokenType("CUME_DIST"),
-  CURDATE: new TokenType("CURDATE"),
-  CURRENT: new TokenType("CURRENT"),
-  CURRENT_CATALOG: new TokenType("CURRENT_CATALOG"),
-  CURRENT_DATABASE: new TokenType("CURRENT_DATABASE"),
-  CURRENT_DATE: new TokenType("CURRENT_DATE"),
-  CURRENT_QUERY: new TokenType("CURRENT_QUERY"),
-  CURRENT_ROLE: new TokenType("CURRENT_ROLE"),
-  CURRENT_SCHEMA: new TokenType("CURRENT_SCHEMA"),
-  CURRENT_SCHEMAS: new TokenType("CURRENT_SCHEMAS"),
-  CURRENT_TIME: new TokenType("CURRENT_TIME"),
-  CURRENT_TIMESTAMP: new TokenType("CURRENT_TIMESTAMP"),
-  CURRENT_TIMEZONE: new TokenType("CURRENT_TIMEZONE"),
-  CURRENT_TIMEZONE_ID: new TokenType("CURRENT_TIMEZONE_ID"),
-  CURRENT_USER: new TokenType("CURRENT_USER"),
-  CURRVAL: new TokenType("CURRVAL"),
-  CURSOR: new TokenType("CURSOR"),
-  CURSOR_TO_XML: new TokenType("CURSOR_TO_XML"),
-  CURSOR_TO_XMLSCHEMA: new TokenType("CURSOR_TO_XMLSCHEMA"),
-  CURTIME: new TokenType("CURTIME"),
-  CYCLE: new TokenType("CYCLE"),
-  D: new TokenType("D"),
-  DANGLING: new TokenType("DANGLING"),
-  DATA: new TokenType("DATA"),
-  DATABASE: new TokenType("DATABASE"),
-  DATABASES: new TokenType("DATABASES"),
-  DATABASE_TO_XML: new TokenType("DATABASE_TO_XML"),
-  DATABASE_TO_XMLSCHEMA: new TokenType("DATABASE_TO_XMLSCHEMA"),
-  DATABASE_TO_XML_AND_XMLSCHEMA: new TokenType("DATABASE_TO_XML_AND_XMLSCHEMA"),
-  DATAFILE: new TokenType("DATAFILE"),
-  DATAFILES: new TokenType("DATAFILES"),
-  DATALENGTH: new TokenType("DATALENGTH"),
-  DATAPUMP: new TokenType("DATAPUMP"),
-  DATATYPE: new TokenType("DATATYPE"),
-  DATE: new TokenType("DATE"),
-  DATEADD: new TokenType("DATEADD"),
-  DATEDIFF: new TokenType("DATEDIFF"),
-  DATEDIFF_BIG: new TokenType("DATEDIFF_BIG"),
-  DATEFROMPARTS: new TokenType("DATEFROMPARTS"),
-  DATENAME: new TokenType("DATENAME"),
-  DATEPART: new TokenType("DATEPART"),
-  DATETIME: new TokenType("DATETIME"),
-  DATETIMEFROMPARTS: new TokenType("DATETIMEFROMPARTS"),
-  DATETIMEOFFSET: new TokenType("DATETIMEOFFSET"),
-  DATETIMEOFFSETFROMPARTS: new TokenType("DATETIMEOFFSETFROMPARTS"),
-  DATETIME2: new TokenType("DATETIME2"),
-  DATETIME2FROMPARTS: new TokenType("DATETIME2FROMPARTS"),
-  DATE_ADD: new TokenType("DATE_ADD"),
-  DATE_BIN: new TokenType("DATE_BIN"),
-  DATE_BUCKET: new TokenType("DATE_BUCKET"),
-  DATE_FORMAT: new TokenType("DATE_FORMAT"),
-  DATE_PART: new TokenType("DATE_PART"),
-  DATE_SUB: new TokenType("DATE_SUB"),
-  DATE_TRUNC: new TokenType("DATE_TRUNC"),
-  DAY: new TokenType("DAY"),
-  DAYNAME: new TokenType("DAYNAME"),
-  DAYOFMONTH: new TokenType("DAYOFMONTH"),
-  DAYOFWEEK: new TokenType("DAYOFWEEK"),
-  DAYOFYEAR: new TokenType("DAYOFYEAR"),
-  DAYS: new TokenType("DAYS"),
-  DAY_HOUR: new TokenType("DAY_HOUR"),
-  DAY_MICROSECOND: new TokenType("DAY_MICROSECOND"),
-  DAY_MINUTE: new TokenType("DAY_MINUTE"),
-  DAY_SECOND: new TokenType("DAY_SECOND"),
-  DBA_RECYCLEBIN: new TokenType("DBA_RECYCLEBIN"),
-  DBCC: new TokenType("DBCC"),
-  DBURITYPE: new TokenType("DBURITYPE"),
-  DDL: new TokenType("DDL"),
-  DEALLOCATE: new TokenType("DEALLOCATE"),
-  DEBUG: new TokenType("DEBUG"),
-  DEC: new TokenType("DEC"),
-  DECADE: new TokenType("DECADE"),
-  DECIMAL: new TokenType("DECIMAL"),
-  DECLARE: new TokenType("DECLARE"),
-  DECODE: new TokenType("DECODE"),
-  DECREMENT: new TokenType("DECREMENT"),
-  DECRYPT: new TokenType("DECRYPT"),
-  DEDUPLICATE: new TokenType("DEDUPLICATE"),
-  DEFAULT: new TokenType("DEFAULT"),
-  DEFAULT_COLLATION: new TokenType("DEFAULT_COLLATION"),
-  DEFAULT_CREDENTIAL: new TokenType("DEFAULT_CREDENTIAL"),
-  DEFERRABLE: new TokenType("DEFERRABLE"),
-  DEFERRED: new TokenType("DEFERRED"),
-  DEFINE: new TokenType("DEFINE"),
-  DEFINER: new TokenType("DEFINER"),
-  DEFINITION: new TokenType("DEFINITION"),
-  DEGREES: new TokenType("DEGREES"),
-  DELAYED: new TokenType("DELAYED"),
-  DELAY_KEY_WRITE: new TokenType("DELAY_KEY_WRITE"),
-  DELETE: new TokenType("DELETE"),
-  DELETE_ALL: new TokenType("DELETE_ALL"),
-  DELETING: new TokenType("DELETING"),
-  DELIGATE: new TokenType("DELIGATE"),
-  DEMAND: new TokenType("DEMAND"),
-  DENSE_RANK: new TokenType("DENSE_RANK"),
-  DENY: new TokenType("DENY"),
-  DEPENDENT: new TokenType("DEPENDENT"),
-  DEPLICATE: new TokenType("DEPLICATE"),
-  DEPTH: new TokenType("DEPTH"),
-  DESC: new TokenType("DESC"),
-  DESCRIBE: new TokenType("DESCRIBE"),
-  DESCRIPTION: new TokenType("DESCRIPTION"),
-  DES_KEY_FILE: new TokenType("DES_KEY_FILE"),
-  DETACH: new TokenType("DETACH"),
-  DETAIL: new TokenType("DETAIL"),
-  DETERMINES: new TokenType("DETERMINES"),
-  DETERMINISTIC: new TokenType("DETERMINISTIC"),
-  DIAGONAL: new TokenType("DIAGONAL"),
-  DIAMETER: new TokenType("DIAMETER"),
-  DICTIONARY: new TokenType("DICTIONARY"),
-  DIFFERENCE: new TokenType("DIFFERENCE"),
-  DIGEST: new TokenType("DIGEST"),
-  DIMENSION: new TokenType("DIMENSION"),
-  DIRECTORY: new TokenType("DIRECTORY"),
-  DIRECT_LOAD: new TokenType("DIRECT_LOAD"),
-  DIRECT_PATH: new TokenType("DIRECT_PATH"),
-  DISABLE: new TokenType("DISABLE"),
-  DISABLE_ALL: new TokenType("DISABLE_ALL"),
-  DISALLOW: new TokenType("DISALLOW"),
-  DISASSOCIATE: new TokenType("DISASSOCIATE"),
-  DISCARD: new TokenType("DISCARD"),
-  DISCARDFILE: new TokenType("DISCARDFILE"),
-  DISCONNECT: new TokenType("DISCONNECT"),
-  DISK: new TokenType("DISK"),
-  DISKGROUP: new TokenType("DISKGROUP"),
-  DISKS: new TokenType("DISKS"),
-  DISMOUNT: new TokenType("DISMOUNT"),
-  DISPLAY: new TokenType("DISPLAY"),
-  DISTINCT: new TokenType("DISTINCT"),
-  DISTINCTROW: new TokenType("DISTINCTROW"),
-  DISTRIBUTE: new TokenType("DISTRIBUTE"),
-  DISTRIBUTED: new TokenType("DISTRIBUTED"),
-  DIV: new TokenType("DIV"),
-  DML: new TokenType("DML"),
-  DO: new TokenType("DO"),
-  DOCUMENT: new TokenType("DOCUMENT"),
-  DOMAIN: new TokenType("DOMAIN"),
-  DOUBLE: new TokenType("DOUBLE"),
-  DOW: new TokenType("DOW"),
-  DOWNGRADE: new TokenType("DOWNGRADE"),
-  DOY: new TokenType("DOY"),
-  DROP: new TokenType("DROP"),
-  DUAL: new TokenType("DUAL"),
-  DUMP: new TokenType("DUMP"),
-  DUPLICATE: new TokenType("DUPLICATE"),
-  DUPLICATED: new TokenType("DUPLICATED"),
-  DURATION: new TokenType("DURATION"),
-  DV: new TokenType("DV"),
-  DYNAMIC: new TokenType("DYNAMIC"),
-  E: new TokenType("E"),
-  EACH: new TokenType("EACH"),
-  EDITION: new TokenType("EDITION"),
-  EDITIONABLE: new TokenType("EDITIONABLE"),
-  EDITIONING: new TokenType("EDITIONING"),
-  EDITIONS: new TokenType("EDITIONS"),
-  ELEMENT: new TokenType("ELEMENT"),
-  ELSE: new TokenType("ELSE"),
-  ELSEIF: new TokenType("ELSEIF"),
-  ELSIF: new TokenType("ELSIF"),
-  ELT: new TokenType("ELT"),
-  EMPTY: new TokenType("EMPTY"),
-  EMPTY_BLOB: new TokenType("EMPTY_BLOB"),
-  EMPTY_CLOB: new TokenType("EMPTY_CLOB"),
-  ENABLE: new TokenType("ENABLE"),
-  ENABLE_ALL: new TokenType("ENABLE_ALL"),
-  ENCLOSED: new TokenType("ENCLOSED"),
-  ENCODE: new TokenType("ENCODE"),
-  ENCODING: new TokenType("ENCODING"),
-  ENCRYPT: new TokenType("ENCRYPT"),
-  ENCRYPTED: new TokenType("ENCRYPTED"),
-  ENCRYPTION: new TokenType("ENCRYPTION"),
-  ENCRYPTION_KEY_ID: new TokenType("ENCRYPTION_KEY_ID"),
-  END: new TokenType("END"),
-  ENDS: new TokenType("ENDS"),
-  ENFORCED: new TokenType("ENFORCED"),
-  ENGINE: new TokenType("ENGINE"),
-  ENGINE_ATTRIBUTE: new TokenType("ENGINE_ATTRIBUTE"),
-  EOMONTH: new TokenType("EOMONTH"),
-  ENTERPRISE: new TokenType("ENTERPRISE"),
-  ENUM: new TokenType("ENUM"),
-  ENUM_FIRST: new TokenType("ENUM_FIRST"),
-  ENUM_LAST: new TokenType("ENUM_LAST"),
-  ENUM_RANGE: new TokenType("ENUM_RANGE"),
-  EPOCH: new TokenType("EPOCH"),
-  ERRCODE: new TokenType("ERRCODE"),
-  ERRLVL: new TokenType("ERRLVL"),
-  ERRORS: new TokenType("ERRORS"),
-  ERROR_CODE: new TokenType("ERROR_CODE"),
-  ERROR_INDEX: new TokenType("ERROR_INDEX"),
-  ESCAPE: new TokenType("ESCAPE"),
-  ESCAPED: new TokenType("ESCAPED"),
-  EVALUATE: new TokenType("EVALUATE"),
-  EVENT: new TokenType("EVENT"),
-  EVENTDATA: new TokenType("EVENTDATA"),
-  EVERY: new TokenType("EVERY"),
-  EXCEPT: new TokenType("EXCEPT"),
-  EXCEPTION: new TokenType("EXCEPTION"),
-  EXCEPTIONS: new TokenType("EXCEPTIONS"),
-  EXCEPTION_INIT: new TokenType("EXCEPTION_INIT"),
-  EXCHANGE: new TokenType("EXCHANGE"),
-  EXCLUDE: new TokenType("EXCLUDE"),
-  EXCLUSIVE: new TokenType("EXCLUSIVE"),
-  EXEC: new TokenType("EXEC"),
-  EXECUTE: new TokenType("EXECUTE"),
-  EXISTS: new TokenType("EXISTS"),
-  EXIT: new TokenType("EXIT"),
-  EXP: new TokenType("EXP"),
-  EXPANSION: new TokenType("EXPANSION"),
-  EXPIRE: new TokenType("EXPIRE"),
-  EXPLAIN: new TokenType("EXPLAIN"),
-  EXPORT: new TokenType("EXPORT"),
-  EXPORT_SET: new TokenType("EXPORT_SET"),
-  EXPRESSION: new TokenType("EXPRESSION"),
-  EXTEND: new TokenType("EXTEND"),
-  EXTENDED: new TokenType("EXTENDED"),
-  EXTENSION: new TokenType("EXTENSION"),
-  EXTENT: new TokenType("EXTENT"),
-  EXTENT_SIZE: new TokenType("EXTENT_SIZE"),
-  EXTERNAL: new TokenType("EXTERNAL"),
-  EXTERNALLY: new TokenType("EXTERNALLY"),
-  EXTRACT: new TokenType("EXTRACT"),
-  EXTRACTVALUE: new TokenType("EXTRACTVALUE"),
-  FACT: new TokenType("FACT"),
-  FACTORIAL: new TokenType("FACTORIAL"),
-  FAIL: new TokenType("FAIL"),
-  FAILED: new TokenType("FAILED"),
-  FAILED_LOGIN_ATTEMPTS: new TokenType("FAILED_LOGIN_ATTEMPTS"),
-  FAILGROUP: new TokenType("FAILGROUP"),
-  FAILOVER: new TokenType("FAILOVER"),
-  FALSE: new TokenType("FALSE"),
-  FAMILY: new TokenType("FAMILY"),
-  FAR: new TokenType("FAR"),
-  FAST: new TokenType("FAST"),
-  FEATURE: new TokenType("FEATURE"),
-  FETCH: new TokenType("FETCH"),
-  FIELD: new TokenType("FIELD"),
-  FILE: new TokenType("FILE"),
-  FILEGROUP: new TokenType("FILEGROUP"),
-  FILESYSTEM_LIKE_LOGGING: new TokenType("FILESYSTEM_LIKE_LOGGING"),
-  FILE_BLOCK_SIZE: new TokenType("FILE_BLOCK_SIZE"),
-  FILE_NAME_CONVERT: new TokenType("FILE_NAME_CONVERT"),
-  FILLFACTOR: new TokenType("FILLFACTOR"),
-  FILTER: new TokenType("FILTER"),
-  FINAL: new TokenType("FINAL"),
-  FIND_IN_SET: new TokenType("FIND_IN_SET"),
-  FINE: new TokenType("FINE"),
-  FINISH: new TokenType("FINISH"),
-  FIRST: new TokenType("FIRST"),
-  FIRST_VALUE: new TokenType("FIRST_VALUE"),
-  FIXED: new TokenType("FIXED"),
-  FLASHBACK: new TokenType("FLASHBACK"),
-  FLASH_CACHE: new TokenType("FLASH_CACHE"),
-  FLEX: new TokenType("FLEX"),
-  FLOAT: new TokenType("FLOAT"),
-  FLOOR: new TokenType("FLOOR"),
-  FLUSH: new TokenType("FLUSH"),
-  FOLLOWING: new TokenType("FOLLOWING"),
-  FOLLOWS: new TokenType("FOLLOWS"),
-  FOR: new TokenType("FOR"),
-  FORALL: new TokenType("FORALL"),
-  FORCE: new TokenType("FORCE"),
-  FOREIGN: new TokenType("FOREIGN"),
-  FORMAT: new TokenType("FORMAT"),
-  FORMAT_BYTES: new TokenType("FORMAT_BYTES"),
-  FORMAT_PICO_TIME: new TokenType("FORMAT_PICO_TIME"),
-  FOUND: new TokenType("FOUND"),
-  FOUND_ROWS: new TokenType("FOUND_ROWS"),
-  FREEPOOLS: new TokenType("FREEPOOLS"),
-  FREETEXT: new TokenType("FREETEXT"),
-  FREETEXTTABLE: new TokenType("FREETEXTTABLE"),
-  FREEZE: new TokenType("FREEZE"),
-  FRESH: new TokenType("FRESH"),
-  FROM: new TokenType("FROM"),
-  FROM_BASE64: new TokenType("FROM_BASE64"),
-  FROM_DAYS: new TokenType("FROM_DAYS"),
-  FROM_UNIXTIME: new TokenType("FROM_UNIXTIME"),
-  FULL: new TokenType("FULL"),
-  FULLTEXT: new TokenType("FULLTEXT"),
-  FUNCTION: new TokenType("FUNCTION"),
-  FUNCTIONS: new TokenType("FUNCTIONS"),
-  G: new TokenType("G"),
-  GCD: new TokenType("GCD"),
-  GENERATED: new TokenType("GENERATED"),
-  GENERATE_SERIES: new TokenType("GENERATE_SERIES"),
-  GEN_RANDOM_UUID: new TokenType("GEN_RANDOM_UUID"),
-  GEOGRAPHY: new TokenType("GEOGRAPHY"),
-  GEOMCOLLECTION: new TokenType("GEOMCOLLECTION"),
-  GEOMETRY: new TokenType("GEOMETRY"),
-  GEOMETRYCOLLECTION: new TokenType("GEOMETRYCOLLECTION"),
-  GET: new TokenType("GET"),
-  GETDATE: new TokenType("GETDATE"),
-  GETUTCDATE: new TokenType("GETUTCDATE"),
-  GET_BIT: new TokenType("GET_BIT"),
-  GET_BYTE: new TokenType("GET_BYTE"),
-  GET_CURRENT_TS_CONFIG: new TokenType("GET_CURRENT_TS_CONFIG"),
-  GET_FORMAT: new TokenType("GET_FORMAT"),
-  GET_LOCK: new TokenType("GET_LOCK"),
-  GLOB: new TokenType("GLOB"),
-  GLOBAL: new TokenType("GLOBAL"),
-  GLOBALLY: new TokenType("GLOBALLY"),
-  GLOBAL_NAME: new TokenType("GLOBAL_NAME"),
-  GLOBAL_TOPIC_ENABLED: new TokenType("GLOBAL_TOPIC_ENABLED"),
-  GO: new TokenType("GO"),
-  GOTO: new TokenType("GOTO"),
-  GRANT: new TokenType("GRANT"),
-  GRANTED: new TokenType("GRANTED"),
-  GREATEST: new TokenType("GREATEST"),
-  GROUP: new TokenType("GROUP"),
-  GROUPING: new TokenType("GROUPING"),
-  GROUPING_ID: new TokenType("GROUPING_ID"),
-  GROUPS: new TokenType("GROUPS"),
-  GROUP_CONCAT: new TokenType("GROUP_CONCAT"),
-  GROUP_ID: new TokenType("GROUP_ID"),
-  GUARANTEE: new TokenType("GUARANTEE"),
-  GUARD: new TokenType("GUARD"),
-  H: new TokenType("H"),
-  HALF_YEARS: new TokenType("HALF_YEARS"),
-  HANDLER: new TokenType("HANDLER"),
-  HASH: new TokenType("HASH"),
-  HASHING: new TokenType("HASHING"),
-  HASHKEYS: new TokenType("HASHKEYS"),
-  HAS_ANY_COLUMN_PRIVILEGE: new TokenType("HAS_ANY_COLUMN_PRIVILEGE"),
-  HAS_COLUMN_PRIVILEGE: new TokenType("HAS_COLUMN_PRIVILEGE"),
-  HAS_DATABASE_PRIVILEGE: new TokenType("HAS_DATABASE_PRIVILEGE"),
-  HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE: new TokenType("HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE"),
-  HAS_FUNCTION_PRIVILEGE: new TokenType("HAS_FUNCTION_PRIVILEGE"),
-  HAS_LANGUAGE_PRIVILEGE: new TokenType("HAS_LANGUAGE_PRIVILEGE"),
-  HAS_PARAMETER_PRIVILEGE: new TokenType("HAS_PARAMETER_PRIVILEGE"),
-  HAS_SCHEMA_PRIVILEGE: new TokenType("HAS_SCHEMA_PRIVILEGE"),
-  HAS_SEQUENCE_PRIVILEGE: new TokenType("HAS_SEQUENCE_PRIVILEGE"),
-  HAS_SERVER_PRIVILEGE: new TokenType("HAS_SERVER_PRIVILEGE"),
-  HAS_TABLESPACE_PRIVILEGE: new TokenType("HAS_TABLESPACE_PRIVILEGE"),
-  HAS_TABLE_PRIVILEGE: new TokenType("HAS_TABLE_PRIVILEGE"),
-  HAS_TYPE_PRIVILEGE: new TokenType("HAS_TYPE_PRIVILEGE"),
-  HAVING: new TokenType("HAVING"),
-  HEAP: new TokenType("HEAP"),
-  HEIGHT: new TokenType("HEIGHT"),
-  HELP: new TokenType("HELP"),
-  HEX: new TokenType("HEX"),
-  HIERARCHIES: new TokenType("HIERARCHIES"),
-  HIERARCHY: new TokenType("HIERARCHY"),
-  HIERARCHYID: new TokenType("HIERARCHYID"),
-  HIER_ORDER: new TokenType("HIER_ORDER"),
-  HIGH: new TokenType("HIGH"),
-  HIGH_PRIORITY: new TokenType("HIGH_PRIORITY"),
-  HINT: new TokenType("HINT"),
-  HISTORY: new TokenType("HISTORY"),
-  HOLDLOCK: new TokenType("HOLDLOCK"),
-  HOST: new TokenType("HOST"),
-  HOSTMASK: new TokenType("HOSTMASK"),
-  HOT: new TokenType("HOT"),
-  HOUR: new TokenType("HOUR"),
-  HOURS: new TokenType("HOURS"),
-  HOUR_MICROSECOND: new TokenType("HOUR_MICROSECOND"),
-  HOUR_MINUTE: new TokenType("HOUR_MINUTE"),
-  HOUR_SECOND: new TokenType("HOUR_SECOND"),
-  HTTP: new TokenType("HTTP"),
-  HTTPURITYPE: new TokenType("HTTPURITYPE"),
-  IAM_GROUP_NAME: new TokenType("IAM_GROUP_NAME"),
-  IAM_PRINCIPAL_NAME: new TokenType("IAM_PRINCIPAL_NAME"),
-  ICU_VERSION: new TokenType("ICU_VERSION"),
-  ID: new TokenType("ID"),
-  IDENT_CURRENT: new TokenType("IDENT_CURRENT"),
-  IDENT_INCR: new TokenType("IDENT_INCR"),
-  IDENT_SEED: new TokenType("IDENT_SEED"),
-  IDENTIFIED: new TokenType("IDENTIFIED"),
-  IDENTITY: new TokenType("IDENTITY"),
-  IDENTITYCOL: new TokenType("IDENTITYCOL"),
-  IDENTITY_INSERT: new TokenType("IDENTITY_INSERT"),
-  IDLE_TIME: new TokenType("IDLE_TIME"),
-  IETF_QUOTES: new TokenType("IETF_QUOTES"),
-  IF: new TokenType("IF"),
-  IFNULL: new TokenType("IFNULL"),
-  IGNORE: new TokenType("IGNORE"),
-  IGNORED: new TokenType("IGNORED"),
-  IIF: new TokenType("IIF"),
-  ILIKE: new TokenType("ILIKE"),
-  IMMEDIATE: new TokenType("IMMEDIATE"),
-  IMMUTABLE: new TokenType("IMMUTABLE"),
-  IMPORT: new TokenType("IMPORT"),
-  IN: new TokenType("IN"),
-  INACTIVE: new TokenType("INACTIVE"),
-  INACTIVE_ACCOUNT_TIME: new TokenType("INACTIVE_ACCOUNT_TIME"),
-  INCLUDE: new TokenType("INCLUDE"),
-  INCLUDING: new TokenType("INCLUDING"),
-  INCREMENT: new TokenType("INCREMENT"),
-  INDEX: new TokenType("INDEX"),
-  INDEXED: new TokenType("INDEXED"),
-  INDEXES: new TokenType("INDEXES"),
-  INDEXING: new TokenType("INDEXING"),
-  INDEXTYPE: new TokenType("INDEXTYPE"),
-  INDEXTYPES: new TokenType("INDEXTYPES"),
-  INDICATOR: new TokenType("INDICATOR"),
-  INDICES: new TokenType("INDICES"),
-  INET6_ATON: new TokenType("INET6_ATON"),
-  INET6_NTOA: new TokenType("INET6_NTOA"),
-  INET_ATON: new TokenType("INET_ATON"),
-  INET_CLIENT_ADDR: new TokenType("INET_CLIENT_ADDR"),
-  INET_CLIENT_PORT: new TokenType("INET_CLIENT_PORT"),
-  INET_MERGE: new TokenType("INET_MERGE"),
-  INET_NTOA: new TokenType("INET_NTOA"),
-  INET_SAME_FAMILY: new TokenType("INET_SAME_FAMILY"),
-  INET_SERVER_ADDR: new TokenType("INET_SERVER_ADDR"),
-  INET_SERVER_PORT: new TokenType("INET_SERVER_PORT"),
-  INFILE: new TokenType("INFILE"),
-  INITCAP: new TokenType("INITCAP"),
-  INITIAL: new TokenType("INITIAL"),
-  INITIALIZED: new TokenType("INITIALIZED"),
-  INITIALLY: new TokenType("INITIALLY"),
-  INITIAL_SIZE: new TokenType("INITIAL_SIZE"),
-  INITRANS: new TokenType("INITRANS"),
-  INLINE: new TokenType("INLINE"),
-  INMEMORY: new TokenType("INMEMORY"),
-  INNER: new TokenType("INNER"),
-  INOUT: new TokenType("INOUT"),
-  INPLACE: new TokenType("INPLACE"),
-  INSTEAD: new TokenType("INSTEAD"),
-  INSENSITIVE: new TokenType("INSENSITIVE"),
-  INSERT: new TokenType("INSERT"),
-  INSERTING: new TokenType("INSERTING"),
-  INSERT_METHOD: new TokenType("INSERT_METHOD"),
-  INSTALL: new TokenType("INSTALL"),
-  INSTANCE: new TokenType("INSTANCE"),
-  INSTANCES: new TokenType("INSTANCES"),
-  INSTANTIABLE: new TokenType("INSTANTIABLE"),
-  INSTR: new TokenType("INSTR"),
-  INSTR4: new TokenType("INSTR4"),
-  INSTRB: new TokenType("INSTRB"),
-  INT: new TokenType("INT"),
-  INTEGER: new TokenType("INTEGER"),
-  INTERLEAVED: new TokenType("INTERLEAVED"),
-  INTERNAL: new TokenType("INTERNAL"),
-  INTERSECT: new TokenType("INTERSECT"),
-  INTERVAL: new TokenType("INTERVAL"),
-  INTO: new TokenType("INTO"),
-  INVALIDATION: new TokenType("INVALIDATION"),
-  INVISIBLE: new TokenType("INVISIBLE"),
-  INVOKER: new TokenType("INVOKER"),
-  IO_AFTER_GTIDS: new TokenType("IO_AFTER_GTIDS"),
-  IO_BEFORE_GTIDS: new TokenType("IO_BEFORE_GTIDS"),
-  IS: new TokenType("IS"),
-  ISCLOSED: new TokenType("ISCLOSED"),
-  ISDATE: new TokenType("ISDATE"),
-  ISEMPTY: new TokenType("ISEMPTY"),
-  ISFINITE: new TokenType("ISFINITE"),
-  ISJSON: new TokenType("ISJSON"),
-  ISNULL: new TokenType("ISNULL"),
-  ISNUMERIC: new TokenType("ISNUMERIC"),
-  ISODOW: new TokenType("ISODOW"),
-  ISOLATE: new TokenType("ISOLATE"),
-  ISOLATION: new TokenType("ISOLATION"),
-  ISOPEN: new TokenType("ISOPEN"),
-  ISOYEAR: new TokenType("ISOYEAR"),
-  ISSUER: new TokenType("ISSUER"),
-  IS_FREE_LOCK: new TokenType("IS_FREE_LOCK"),
-  IS_IPV4: new TokenType("IS_IPV4"),
-  IS_IPV4_COMPAT: new TokenType("IS_IPV4_COMPAT"),
-  IS_IPV4_MAPPED: new TokenType("IS_IPV4_MAPPED"),
-  IS_IPV6: new TokenType("IS_IPV6"),
-  IS_LEAF: new TokenType("IS_LEAF"),
-  IS_TEMPLATE: new TokenType("IS_TEMPLATE"),
-  IS_USED_LOCK: new TokenType("IS_USED_LOCK"),
-  IS_UUID: new TokenType("IS_UUID"),
-  ITERATE: new TokenType("ITERATE"),
-  JAVA: new TokenType("JAVA"),
-  JOB: new TokenType("JOB"),
-  JOIN: new TokenType("JOIN"),
-  JSON: new TokenType("JSON"),
-  JSONB_AGG: new TokenType("JSONB_AGG"),
-  JSONB_ARRAY_ELEMENTS: new TokenType("JSONB_ARRAY_ELEMENTS"),
-  JSONB_ARRAY_ELEMENTS_TEXT: new TokenType("JSONB_ARRAY_ELEMENTS_TEXT"),
-  JSONB_ARRAY_LENGTH: new TokenType("JSONB_ARRAY_LENGTH"),
-  JSONB_BUILD_ARRAY: new TokenType("JSONB_BUILD_ARRAY"),
-  JSONB_BUILD_OBJECT: new TokenType("JSONB_BUILD_OBJECT"),
-  JSONB_EACH: new TokenType("JSONB_EACH"),
-  JSONB_EACH_TEXT: new TokenType("JSONB_EACH_TEXT"),
-  JSONB_EXTRACT_PATH: new TokenType("JSONB_EXTRACT_PATH"),
-  JSONB_EXTRACT_PATH_TEXT: new TokenType("JSONB_EXTRACT_PATH_TEXT"),
-  JSONB_INSERT: new TokenType("JSONB_INSERT"),
-  JSONB_OBJECT: new TokenType("JSONB_OBJECT"),
-  JSONB_OBJECT_AGG: new TokenType("JSONB_OBJECT_AGG"),
-  JSONB_OBJECT_KEYS: new TokenType("JSONB_OBJECT_KEYS"),
-  JSONB_PATH_EXISTS: new TokenType("JSONB_PATH_EXISTS"),
-  JSONB_PATH_EXISTS_TZ: new TokenType("JSONB_PATH_EXISTS_TZ"),
-  JSONB_PATH_MATCH: new TokenType("JSONB_PATH_MATCH"),
-  JSONB_PATH_MATCH_TZ: new TokenType("JSONB_PATH_MATCH_TZ"),
-  JSONB_PATH_QUERY: new TokenType("JSONB_PATH_QUERY"),
-  JSONB_PATH_QUERY_ARRAY: new TokenType("JSONB_PATH_QUERY_ARRAY"),
-  JSONB_PATH_QUERY_ARRAY_TZ: new TokenType("JSONB_PATH_QUERY_ARRAY_TZ"),
-  JSONB_PATH_QUERY_FIRST: new TokenType("JSONB_PATH_QUERY_FIRST"),
-  JSONB_PATH_QUERY_FIRST_TZ: new TokenType("JSONB_PATH_QUERY_FIRST_TZ"),
-  JSONB_PATH_QUERY_TZ: new TokenType("JSONB_PATH_QUERY_TZ"),
-  JSONB_POPULATE_RECORD: new TokenType("JSONB_POPULATE_RECORD"),
-  JSONB_POPULATE_RECORDSET: new TokenType("JSONB_POPULATE_RECORDSET"),
-  JSONB_PRETTY: new TokenType("JSONB_PRETTY"),
-  JSONB_SET: new TokenType("JSONB_SET"),
-  JSONB_SET_LAX: new TokenType("JSONB_SET_LAX"),
-  JSONB_STRIP_NULLS: new TokenType("JSONB_STRIP_NULLS"),
-  JSONB_TO_RECORD: new TokenType("JSONB_TO_RECORD"),
-  JSONB_TO_RECORDSET: new TokenType("JSONB_TO_RECORDSET"),
-  JSONB_TO_TSVECTOR: new TokenType("JSONB_TO_TSVECTOR"),
-  JSONB_TYPEOF: new TokenType("JSONB_TYPEOF"),
-  JSON_AGG: new TokenType("JSON_AGG"),
-  JSON_ARRAY: new TokenType("JSON_ARRAY"),
-  JSON_ARRAYAGG: new TokenType("JSON_ARRAYAGG"),
-  JSON_ARRAY_APPEND: new TokenType("JSON_ARRAY_APPEND"),
-  JSON_ARRAY_ELEMENTS: new TokenType("JSON_ARRAY_ELEMENTS"),
-  JSON_ARRAY_ELEMENTS_TEXT: new TokenType("JSON_ARRAY_ELEMENTS_TEXT"),
-  JSON_ARRAY_INSERT: new TokenType("JSON_ARRAY_INSERT"),
-  JSON_ARRAY_LENGTH: new TokenType("JSON_ARRAY_LENGTH"),
-  JSON_BUILD_ARRAY: new TokenType("JSON_BUILD_ARRAY"),
-  JSON_BUILD_OBJECT: new TokenType("JSON_BUILD_OBJECT"),
-  JSON_CONTAINS: new TokenType("JSON_CONTAINS"),
-  JSON_CONTAINS_PATH: new TokenType("JSON_CONTAINS_PATH"),
-  JSON_DEPTH: new TokenType("JSON_DEPTH"),
-  JSON_EACH: new TokenType("JSON_EACH"),
-  JSON_EACH_TEXT: new TokenType("JSON_EACH_TEXT"),
-  JSON_EXTRACT: new TokenType("JSON_EXTRACT"),
-  JSON_EXTRACT_PATH: new TokenType("JSON_EXTRACT_PATH"),
-  JSON_EXTRACT_PATH_TEXT: new TokenType("JSON_EXTRACT_PATH_TEXT"),
-  JSON_GROUP_ARRAY: new TokenType("JSON_GROUP_ARRAY"),
-  JSON_GROUP_OBJECT: new TokenType("JSON_GROUP_OBJECT"),
-  JSON_INSERT: new TokenType("JSON_INSERT"),
-  JSON_KEYS: new TokenType("JSON_KEYS"),
-  JSON_LENGTH: new TokenType("JSON_LENGTH"),
-  JSON_MERGE: new TokenType("JSON_MERGE"),
-  JSON_MERGE_PATCH: new TokenType("JSON_MERGE_PATCH"),
-  JSON_MERGE_PRESERVE: new TokenType("JSON_MERGE_PRESERVE"),
-  JSON_MODIFY: new TokenType("JSON_MODIFY"),
-  JSON_OBJECT: new TokenType("JSON_OBJECT"),
-  JSON_OBJECTAGG: new TokenType("JSON_OBJECTAGG"),
-  JSON_OBJECT_AGG: new TokenType("JSON_OBJECT_AGG"),
-  JSON_OBJECT_KEYS: new TokenType("JSON_OBJECT_KEYS"),
-  JSON_OVERLAPS: new TokenType("JSON_OVERLAPS"),
-  JSON_PATCH: new TokenType("JSON_PATCH"),
-  JSON_PATH_EXISTS: new TokenType("JSON_PATH_EXISTS"),
-  JSON_POPULATE_RECORD: new TokenType("JSON_POPULATE_RECORD"),
-  JSON_POPULATE_RECORDSET: new TokenType("JSON_POPULATE_RECORDSET"),
-  JSON_PRETTY: new TokenType("JSON_PRETTY"),
-  JSON_QUERY: new TokenType("JSON_QUERY"),
-  JSON_QUOTE: new TokenType("JSON_QUOTE"),
-  JSON_REMOVE: new TokenType("JSON_REMOVE"),
-  JSON_REPLACE: new TokenType("JSON_REPLACE"),
-  JSON_SCHEMA_VALID: new TokenType("JSON_SCHEMA_VALID"),
-  JSON_SCHEMA_VALIDATION_REPORT: new TokenType("JSON_SCHEMA_VALIDATION_REPORT"),
-  JSON_SEARCH: new TokenType("JSON_SEARCH"),
-  JSON_SET: new TokenType("JSON_SET"),
-  JSON_STORAGE_FREE: new TokenType("JSON_STORAGE_FREE"),
-  JSON_STORAGE_SIZE: new TokenType("JSON_STORAGE_SIZE"),
-  JSON_STRIP_NULLS: new TokenType("JSON_STRIP_NULLS"),
-  JSON_TABLE: new TokenType("JSON_TABLE"),
-  JSON_TO_RECORD: new TokenType("JSON_TO_RECORD"),
-  JSON_TO_RECORDSET: new TokenType("JSON_TO_RECORDSET"),
-  JSON_TO_TSVECTOR: new TokenType("JSON_TO_TSVECTOR"),
-  JSON_TREE: new TokenType("JSON_TREE"),
-  JSON_TYPE: new TokenType("JSON_TYPE"),
-  JSON_TYPEOF: new TokenType("JSON_TYPEOF"),
-  JSON_UNQUOTE: new TokenType("JSON_UNQUOTE"),
-  JSON_VALID: new TokenType("JSON_VALID"),
-  JSON_VALUE: new TokenType("JSON_VALUE"),
-  JULIAN: new TokenType("JULIAN"),
-  JULIANDAY: new TokenType("JULIANDAY"),
-  JUSTIFY_DAYS: new TokenType("JUSTIFY_DAYS"),
-  JUSTIFY_HOURS: new TokenType("JUSTIFY_HOURS"),
-  JUSTIFY_INTERVAL: new TokenType("JUSTIFY_INTERVAL"),
-  KEEP: new TokenType("KEEP"),
-  KEEP_DUPLICATES: new TokenType("KEEP_DUPLICATES"),
-  KEY: new TokenType("KEY"),
-  KEYS: new TokenType("KEYS"),
-  KEYSTORE: new TokenType("KEYSTORE"),
-  KEY_BLOCK_SIZE: new TokenType("KEY_BLOCK_SIZE"),
-  KILL: new TokenType("KILL"),
-  LABEL: new TokenType("LABEL"),
-  LAG: new TokenType("LAG"),
-  LANGUAGE: new TokenType("LANGUAGE"),
-  LARGE: new TokenType("LARGE"),
-  LAST: new TokenType("LAST"),
-  LASTVAL: new TokenType("LASTVAL"),
-  LAST_DAY: new TokenType("LAST_DAY"),
-  LAST_INSERT_ID: new TokenType("LAST_INSERT_ID"),
-  LAST_INSERT_ROWID: new TokenType("LAST_INSERT_ROWID"),
-  LAST_VALUE: new TokenType("LAST_VALUE"),
-  LATERAL: new TokenType("LATERAL"),
-  LCASE: new TokenType("LCASE"),
-  LCM: new TokenType("LCM"),
-  LC_COLLATE: new TokenType("LC_COLLATE"),
-  LC_CTYPE: new TokenType("LC_CTYPE"),
-  LEAD: new TokenType("LEAD"),
-  LEADING: new TokenType("LEADING"),
-  LEAD_CDB: new TokenType("LEAD_CDB"),
-  LEAD_CDB_URI: new TokenType("LEAD_CDB_URI"),
-  LEAF: new TokenType("LEAF"),
-  LEAST: new TokenType("LEAST"),
-  LEAVE: new TokenType("LEAVE"),
-  LEFT: new TokenType("LEFT"),
-  LEN: new TokenType("LEN"),
-  LENGTH: new TokenType("LENGTH"),
-  LENGTH4: new TokenType("LENGTH4"),
-  LENGTHB: new TokenType("LENGTHB"),
-  LESS: new TokenType("LESS"),
-  LEVEL: new TokenType("LEVEL"),
-  LEVELS: new TokenType("LEVELS"),
-  LEVEL_NAME: new TokenType("LEVEL_NAME"),
-  LIBRARY: new TokenType("LIBRARY"),
-  LIKE: new TokenType("LIKE"),
-  LIKE2: new TokenType("LIKE2"),
-  LIKE4: new TokenType("LIKE4"),
-  LIKEC: new TokenType("LIKEC"),
-  LIKELIHOOD: new TokenType("LIKELIHOOD"),
-  LIKELY: new TokenType("LIKELY"),
-  LIMIT: new TokenType("LIMIT"),
-  LINE: new TokenType("LINE"),
-  LINEAR: new TokenType("LINEAR"),
-  LINENO: new TokenType("LINENO"),
-  LINES: new TokenType("LINES"),
-  LINESTRING: new TokenType("LINESTRING"),
-  LINK: new TokenType("LINK"),
-  LIST: new TokenType("LIST"),
-  LISTEN: new TokenType("LISTEN"),
-  LITERAL: new TokenType("LITERAL"),
-  LN: new TokenType("LN"),
-  LNNVL: new TokenType("LNNVL"),
-  LOAD: new TokenType("LOAD"),
-  LOAD_EXTENSION: new TokenType("LOAD_EXTENSION"),
-  LOAD_FILE: new TokenType("LOAD_FILE"),
-  LOB: new TokenType("LOB"),
-  LOBS: new TokenType("LOBS"),
-  LOCAL: new TokenType("LOCAL"),
-  LOCALTIME: new TokenType("LOCALTIME"),
-  LOCALTIMESTAMP: new TokenType("LOCALTIMESTAMP"),
-  LOCATE: new TokenType("LOCATE"),
-  LOCATION: new TokenType("LOCATION"),
-  LOCATOR: new TokenType("LOCATOR"),
-  LOCK: new TokenType("LOCK"),
-  LOCKDOWN: new TokenType("LOCKDOWN"),
-  LOCKED: new TokenType("LOCKED"),
-  LOCKING: new TokenType("LOCKING"),
-  LOG: new TokenType("LOG"),
-  LOG10: new TokenType("LOG10"),
-  LOG2: new TokenType("LOG2"),
-  LOGFILE: new TokenType("LOGFILE"),
-  LOGFILES: new TokenType("LOGFILES"),
-  LOGGING: new TokenType("LOGGING"),
-  LOGICAL: new TokenType("LOGICAL"),
-  LOGICAL_READS_PER_CALL: new TokenType("LOGICAL_READS_PER_CALL"),
-  LOGICAL_READS_PER_SESSION: new TokenType("LOGICAL_READS_PER_SESSION"),
-  LOGS: new TokenType("LOGS"),
-  LONG: new TokenType("LONG"),
-  LONGBLOB: new TokenType("LONGBLOB"),
-  LONGTEXT: new TokenType("LONGTEXT"),
-  LOOP: new TokenType("LOOP"),
-  LOST: new TokenType("LOST"),
-  LOW: new TokenType("LOW"),
-  LOWER: new TokenType("LOWER"),
-  LOWER_INC: new TokenType("LOWER_INC"),
-  LOWER_INF: new TokenType("LOWER_INF"),
-  LOW_PRIORITY: new TokenType("LOW_PRIORITY"),
-  LPAD: new TokenType("LPAD"),
-  LSEG: new TokenType("LSEG"),
-  LTRIM: new TokenType("LTRIM"),
-  M: new TokenType("M"),
-  MACADDR8_SET7BIT: new TokenType("MACADDR8_SET7BIT"),
-  MAIN: new TokenType("MAIN"),
-  MAKEACLITEM: new TokenType("MAKEACLITEM"),
-  MAKEDATE: new TokenType("MAKEDATE"),
-  MAKETIME: new TokenType("MAKETIME"),
-  MAKE_DATE: new TokenType("MAKE_DATE"),
-  MAKE_INTERVAL: new TokenType("MAKE_INTERVAL"),
-  MAKE_SET: new TokenType("MAKE_SET"),
-  MAKE_TIME: new TokenType("MAKE_TIME"),
-  MAKE_TIMESTAMP: new TokenType("MAKE_TIMESTAMP"),
-  MAKE_TIMESTAMPTZ: new TokenType("MAKE_TIMESTAMPTZ"),
-  MANAGED: new TokenType("MANAGED"),
-  MANAGEMENT: new TokenType("MANAGEMENT"),
-  MANUAL: new TokenType("MANUAL"),
-  MAP: new TokenType("MAP"),
-  MAPPING: new TokenType("MAPPING"),
-  MASKLEN: new TokenType("MASKLEN"),
-  MASTER: new TokenType("MASTER"),
-  MASTER_BIND: new TokenType("MASTER_BIND"),
-  MASTER_POS_WAIT: new TokenType("MASTER_POS_WAIT"),
-  MASTER_SERVER_ID: new TokenType("MASTER_SERVER_ID"),
-  MASTER_SSL_VERIFY_SERVER_CERT: new TokenType("MASTER_SSL_VERIFY_SERVER_CERT"),
-  MATCH: new TokenType("MATCH"),
-  MATCHED: new TokenType("MATCHED"),
-  MATCH_NUMBER: new TokenType("MATCH_NUMBER"),
-  MATCH_RECOGNIZE: new TokenType("MATCH_RECOGNIZE"),
-  MATERIALIZED: new TokenType("MATERIALIZED"),
-  MAX: new TokenType("MAX"),
-  MAXDATAFILES: new TokenType("MAXDATAFILES"),
-  MAXEXTENTS: new TokenType("MAXEXTENTS"),
-  MAXIMIZE: new TokenType("MAXIMIZE"),
-  MAXINSTANCES: new TokenType("MAXINSTANCES"),
-  MAXLEN: new TokenType("MAXLEN"),
-  MAXLOGFILES: new TokenType("MAXLOGFILES"),
-  MAXLOGHISTORY: new TokenType("MAXLOGHISTORY"),
-  MAXLOGMEMBERS: new TokenType("MAXLOGMEMBERS"),
-  MAXSIZE: new TokenType("MAXSIZE"),
-  MAXVALUE: new TokenType("MAXVALUE"),
-  MAX_AUDIT_SIZE: new TokenType("MAX_AUDIT_SIZE"),
-  MAX_CONNECTIONS_PER_HOUR: new TokenType("MAX_CONNECTIONS_PER_HOUR"),
-  MAX_DIAG_SIZE: new TokenType("MAX_DIAG_SIZE"),
-  MAX_QUERIES_PER_HOUR: new TokenType("MAX_QUERIES_PER_HOUR"),
-  MAX_ROWS: new TokenType("MAX_ROWS"),
-  MAX_SIZE: new TokenType("MAX_SIZE"),
-  MAX_UPDATES_PER_HOUR: new TokenType("MAX_UPDATES_PER_HOUR"),
-  MAX_USER_CONNECTIONS: new TokenType("MAX_USER_CONNECTIONS"),
-  MBRCONTAINS: new TokenType("MBRCONTAINS"),
-  MBRCOVEREDBY: new TokenType("MBRCOVEREDBY"),
-  MBRCOVERS: new TokenType("MBRCOVERS"),
-  MBRDISJOINT: new TokenType("MBRDISJOINT"),
-  MBREQUALS: new TokenType("MBREQUALS"),
-  MBRINTERSECTS: new TokenType("MBRINTERSECTS"),
-  MBROVERLAPS: new TokenType("MBROVERLAPS"),
-  MBRTOUCHES: new TokenType("MBRTOUCHES"),
-  MBRWITHIN: new TokenType("MBRWITHIN"),
-  MD5: new TokenType("MD5"),
-  MEASURE: new TokenType("MEASURE"),
-  MEASURES: new TokenType("MEASURES"),
-  MEDIUM: new TokenType("MEDIUM"),
-  MEDIUMBLOB: new TokenType("MEDIUMBLOB"),
-  MEDIUMINT: new TokenType("MEDIUMINT"),
-  MEDIUMTEXT: new TokenType("MEDIUMTEXT"),
-  MEMBER: new TokenType("MEMBER"),
-  MEMBER_CAPTION: new TokenType("MEMBER_CAPTION"),
-  MEMBER_DESCRIPTION: new TokenType("MEMBER_DESCRIPTION"),
-  MEMBER_NAME: new TokenType("MEMBER_NAME"),
-  MEMBER_OF: new TokenType("MEMBER_OF"),
-  MEMBER_UNIQUE_NAME: new TokenType("MEMBER_UNIQUE_NAME"),
-  MEMCOMPRESS: new TokenType("MEMCOMPRESS"),
-  MEMOPTIMIZE: new TokenType("MEMOPTIMIZE"),
-  MEMORY: new TokenType("MEMORY"),
-  MERGE: new TokenType("MERGE"),
-  MESSAGE: new TokenType("MESSAGE"),
-  METADATA: new TokenType("METADATA"),
-  METHOD: new TokenType("METHOD"),
-  MICROSECOND: new TokenType("MICROSECOND"),
-  MICROSECONDS: new TokenType("MICROSECONDS"),
-  MID: new TokenType("MID"),
-  MIDDLEINT: new TokenType("MIDDLEINT"),
-  MIGRATE: new TokenType("MIGRATE"),
-  MIGRATION: new TokenType("MIGRATION"),
-  MILLENNIUM: new TokenType("MILLENNIUM"),
-  MILLISECONDS: new TokenType("MILLISECONDS"),
-  MIN: new TokenType("MIN"),
-  MINIMUM: new TokenType("MINIMUM"),
-  MINING: new TokenType("MINING"),
-  MINUS: new TokenType("MINUS"),
-  MINUTE: new TokenType("MINUTE"),
-  MINUTES: new TokenType("MINUTES"),
-  MINUTE_MICROSECOND: new TokenType("MINUTE_MICROSECOND"),
-  MINUTE_SECOND: new TokenType("MINUTE_SECOND"),
-  MINVALUE: new TokenType("MINVALUE"),
-  MIN_ROWS: new TokenType("MIN_ROWS"),
-  MIN_SCALE: new TokenType("MIN_SCALE"),
-  MIRROR: new TokenType("MIRROR"),
-  MIRRORCOLD: new TokenType("MIRRORCOLD"),
-  MIRRORHOT: new TokenType("MIRRORHOT"),
-  MLSLABEL: new TokenType("MLSLABEL"),
-  MOD: new TokenType("MOD"),
-  MODE: new TokenType("MODE"),
-  MODEL: new TokenType("MODEL"),
-  MODIFICATION: new TokenType("MODIFICATION"),
-  MODIFIES: new TokenType("MODIFIES"),
-  MODIFY: new TokenType("MODIFY"),
-  MONEY: new TokenType("MONEY"),
-  MONITORING: new TokenType("MONITORING"),
-  MONTH: new TokenType("MONTH"),
-  MONTHNAME: new TokenType("MONTHNAME"),
-  MONTHS: new TokenType("MONTHS"),
-  MONTHS_BETWEEN: new TokenType("MONTHS_BETWEEN"),
-  MOUNT: new TokenType("MOUNT"),
-  MOUNTPATH: new TokenType("MOUNTPATH"),
-  MOVE: new TokenType("MOVE"),
-  MOVEMENT: new TokenType("MOVEMENT"),
-  MULTILINESTRING: new TokenType("MULTILINESTRING"),
-  MULTIPOINT: new TokenType("MULTIPOINT"),
-  MULTIPOLYGON: new TokenType("MULTIPOLYGON"),
-  MULTIRANGE: new TokenType("MULTIRANGE"),
-  NAME: new TokenType("NAME"),
-  NAMED: new TokenType("NAMED"),
-  NAMES: new TokenType("NAMES"),
-  NAMESPACE: new TokenType("NAMESPACE"),
-  NAME_CONST: new TokenType("NAME_CONST"),
-  NATIONAL: new TokenType("NATIONAL"),
-  NATURAL: new TokenType("NATURAL"),
-  NATURALN: new TokenType("NATURALN"),
-  NAV: new TokenType("NAV"),
-  NCHAR: new TokenType("NCHAR"),
-  NCHR: new TokenType("NCHR"),
-  NESTED: new TokenType("NESTED"),
-  NESTED_TABLE_ID: new TokenType("NESTED_TABLE_ID"),
-  NETMASK: new TokenType("NETMASK"),
-  NETWORK: new TokenType("NETWORK"),
-  NEVER: new TokenType("NEVER"),
-  NEW: new TokenType("NEW"),
-  NEXT: new TokenType("NEXT"),
-  NEXTVAL: new TokenType("NEXTVAL"),
-  NFC: new TokenType("NFC"),
-  NFD: new TokenType("NFD"),
-  NFKC: new TokenType("NFKC"),
-  NFKD: new TokenType("NFKD"),
-  NLSSORT: new TokenType("NLSSORT"),
-  NLS_CHARSET_ID: new TokenType("NLS_CHARSET_ID"),
-  NLS_CHARSET_NAME: new TokenType("NLS_CHARSET_NAME"),
-  NO: new TokenType("NO"),
-  NOARCHIVELOG: new TokenType("NOARCHIVELOG"),
-  NOAUDIT: new TokenType("NOAUDIT"),
-  NOCACHE: new TokenType("NOCACHE"),
-  NOCASE: new TokenType("NOCASE"),
-  NOCHECK: new TokenType("NOCHECK"),
-  NOCOMPRESS: new TokenType("NOCOMPRESS"),
-  NOCOPY: new TokenType("NOCOPY"),
-  NOCYCLE: new TokenType("NOCYCLE"),
-  NODEGROUP: new TokenType("NODEGROUP"),
-  NODELAY: new TokenType("NODELAY"),
-  NOFORCE: new TokenType("NOFORCE"),
-  NOGUARANTEE: new TokenType("NOGUARANTEE"),
-  NOKEEP: new TokenType("NOKEEP"),
-  NOMAPPING: new TokenType("NOMAPPING"),
-  NOMAXVALUE: new TokenType("NOMAXVALUE"),
-  NOMINVALUE: new TokenType("NOMINVALUE"),
-  NOMONITORING: new TokenType("NOMONITORING"),
-  NON: new TokenType("NON"),
-  NONCLUSTERED: new TokenType("NONCLUSTERED"),
-  NONE: new TokenType("NONE"),
-  NONEDITIONABLE: new TokenType("NONEDITIONABLE"),
-  NONSCHEMA: new TokenType("NONSCHEMA"),
-  NOORDER: new TokenType("NOORDER"),
-  NOPARALLEL: new TokenType("NOPARALLEL"),
-  NORELOCATE: new TokenType("NORELOCATE"),
-  NORELY: new TokenType("NORELY"),
-  NOREPAIR: new TokenType("NOREPAIR"),
-  NOREPLY: new TokenType("NOREPLY"),
-  NORESETLOGS: new TokenType("NORESETLOGS"),
-  NOREVERSE: new TokenType("NOREVERSE"),
-  NORMAL: new TokenType("NORMAL"),
-  NORMALIZED: new TokenType("NORMALIZED"),
-  NOROWDEPENDENCIES: new TokenType("NOROWDEPENDENCIES"),
-  NOSCALE: new TokenType("NOSCALE"),
-  NOSHARED: new TokenType("NOSHARED"),
-  NOSORT: new TokenType("NOSORT"),
-  NOSWITCH: new TokenType("NOSWITCH"),
-  NOT: new TokenType("NOT"),
-  NOTFOUND: new TokenType("NOTFOUND"),
-  NOTHING: new TokenType("NOTHING"),
-  NOTIFY: new TokenType("NOTIFY"),
-  NOTIFICATION: new TokenType("NOTIFICATION"),
-  NOTNULL: new TokenType("NOTNULL"),
-  NOT_FEASIBLE: new TokenType("NOT_FEASIBLE"),
-  NOT_FEASIBLE_END: new TokenType("NOT_FEASIBLE_END"),
-  NOT_FEASIBLE_START: new TokenType("NOT_FEASIBLE_START"),
-  NOVALIDATE: new TokenType("NOVALIDATE"),
-  NOW: new TokenType("NOW"),
-  NOWAIT: new TokenType("NOWAIT"),
-  NO_WRITE_TO_BINLOG: new TokenType("NO_WRITE_TO_BINLOG"),
-  NPOINTS: new TokenType("NPOINTS"),
-  NTH_VALUE: new TokenType("NTH_VALUE"),
-  NTILE: new TokenType("NTILE"),
-  NULL: new TokenType("NULL"),
-  NULLIF: new TokenType("NULLIF"),
-  NULLS: new TokenType("NULLS"),
-  NUMBER: new TokenType("NUMBER"),
-  NUMERIC: new TokenType("NUMERIC"),
-  NUMNODE: new TokenType("NUMNODE"),
-  NUMTODSINTERVAL: new TokenType("NUMTODSINTERVAL"),
-  NUMTOYMINTERVAL: new TokenType("NUMTOYMINTERVAL"),
-  NVARCHAR: new TokenType("NVARCHAR"),
-  NVARCHAR2: new TokenType("NVARCHAR2"),
-  NVL: new TokenType("NVL"),
-  NVL2: new TokenType("NVL2"),
-  OBJECT: new TokenType("OBJECT"),
-  OBJECT_ID: new TokenType("OBJECT_ID"),
-  OBJECT_VALUE: new TokenType("OBJECT_VALUE"),
-  OCT: new TokenType("OCT"),
-  OCTET_LENGTH: new TokenType("OCTET_LENGTH"),
-  OF: new TokenType("OF"),
-  OFF: new TokenType("OFF"),
-  OFFLINE: new TokenType("OFFLINE"),
-  OFFSET: new TokenType("OFFSET"),
-  OFFSETS: new TokenType("OFFSETS"),
-  OID: new TokenType("OID"),
-  OIDINDEX: new TokenType("OIDINDEX"),
-  OLD: new TokenType("OLD"),
-  OLTP: new TokenType("OLTP"),
-  ON: new TokenType("ON"),
-  ONE: new TokenType("ONE"),
-  ONLINE: new TokenType("ONLINE"),
-  ONLY: new TokenType("ONLY"),
-  OPAQUE: new TokenType("OPAQUE"),
-  OPEN: new TokenType("OPEN"),
-  OPENDATASOURCE: new TokenType("OPENDATASOURCE"),
-  OPENJSON: new TokenType("OPENJSON"),
-  OPENQUERY: new TokenType("OPENQUERY"),
-  OPENROWSET: new TokenType("OPENROWSET"),
-  OPENXML: new TokenType("OPENXML"),
-  OPERATOR: new TokenType("OPERATOR"),
-  OPTIMIZE: new TokenType("OPTIMIZE"),
-  OPTIMIZER_COSTS: new TokenType("OPTIMIZER_COSTS"),
-  OPTION: new TokenType("OPTION"),
-  OPTIONAL: new TokenType("OPTIONAL"),
-  OPTIONALLY: new TokenType("OPTIONALLY"),
-  OPTIONS: new TokenType("OPTIONS"),
-  OR: new TokenType("OR"),
-  ORA_ROWSCN: new TokenType("ORA_ROWSCN"),
-  ORD: new TokenType("ORD"),
-  ORDAUDIO: new TokenType("ORDAUDIO"),
-  ORDDICOM: new TokenType("ORDDICOM"),
-  ORDDOC: new TokenType("ORDDOC"),
-  ORDER: new TokenType("ORDER"),
-  ORDIMAGE: new TokenType("ORDIMAGE"),
-  ORDIMAGESIGNATURE: new TokenType("ORDIMAGESIGNATURE"),
-  ORDINALITY: new TokenType("ORDINALITY"),
-  ORDVIDEO: new TokenType("ORDVIDEO"),
-  ORGANIZATION: new TokenType("ORGANIZATION"),
-  OTHER: new TokenType("OTHER"),
-  OTHERS: new TokenType("OTHERS"),
-  OUT: new TokenType("OUT"),
-  OUTER: new TokenType("OUTER"),
-  OUTFILE: new TokenType("OUTFILE"),
-  OUTLINE: new TokenType("OUTLINE"),
-  OVER: new TokenType("OVER"),
-  OVERFLOW: new TokenType("OVERFLOW"),
-  OVERLAPS: new TokenType("OVERLAPS"),
-  OVERLAY: new TokenType("OVERLAY"),
-  OVERRIDING: new TokenType("OVERRIDING"),
-  OWNED: new TokenType("OWNED"),
-  OWNER: new TokenType("OWNER"),
-  OWNERSHIP: new TokenType("OWNERSHIP"),
-  P: new TokenType("P"),
-  PACKAGE: new TokenType("PACKAGE"),
-  PACKAGES: new TokenType("PACKAGES"),
-  PACK_KEYS: new TokenType("PACK_KEYS"),
-  PAGE_CHECKSUM: new TokenType("PAGE_CHECKSUM"),
-  PAGE_COMPRESSED: new TokenType("PAGE_COMPRESSED"),
-  PAGE_COMPRESSION_LEVEL: new TokenType("PAGE_COMPRESSION_LEVEL"),
-  PARALLEL: new TokenType("PARALLEL"),
-  PARALLEL_ENABLE: new TokenType("PARALLEL_ENABLE"),
-  PARAMETERS: new TokenType("PARAMETERS"),
-  PARENT_LEVEL_NAME: new TokenType("PARENT_LEVEL_NAME"),
-  PARENT_UNIQUE_NAME: new TokenType("PARENT_UNIQUE_NAME"),
-  PARITY: new TokenType("PARITY"),
-  PARSE: new TokenType("PARSE"),
-  PARSER: new TokenType("PARSER"),
-  PARSE_GCOL_EXPR: new TokenType("PARSE_GCOL_EXPR"),
-  PARSE_IDENT: new TokenType("PARSE_IDENT"),
-  PARTIAL: new TokenType("PARTIAL"),
-  PARTITION: new TokenType("PARTITION"),
-  PARTITIONS: new TokenType("PARTITIONS"),
-  PARTITIONSET: new TokenType("PARTITIONSET"),
-  PASSING: new TokenType("PASSING"),
-  PASSWORD: new TokenType("PASSWORD"),
-  PASSWORDFILE_METADATA_CACHE: new TokenType("PASSWORDFILE_METADATA_CACHE"),
-  PASSWORD_GRACE_TIME: new TokenType("PASSWORD_GRACE_TIME"),
-  PASSWORD_LIFE_TIME: new TokenType("PASSWORD_LIFE_TIME"),
-  PASSWORD_LOCK_TIME: new TokenType("PASSWORD_LOCK_TIME"),
-  PASSWORD_REUSE_MAX: new TokenType("PASSWORD_REUSE_MAX"),
-  PASSWORD_REUSE_TIME: new TokenType("PASSWORD_REUSE_TIME"),
-  PASSWORD_ROLLOVER_TIME: new TokenType("PASSWORD_ROLLOVER_TIME"),
-  PASSWORD_VERIFY_FUNCTION: new TokenType("PASSWORD_VERIFY_FUNCTION"),
-  PATCH: new TokenType("PATCH"),
-  PATH: new TokenType("PATH"),
-  PATH_PREFIX: new TokenType("PATH_PREFIX"),
-  PATINDEX: new TokenType("PATINDEX"),
-  PATTERN: new TokenType("PATTERN"),
-  PCLOSE: new TokenType("PCLOSE"),
-  PCTFREE: new TokenType("PCTFREE"),
-  PCTTHRESHOLD: new TokenType("PCTTHRESHOLD"),
-  PCTUSED: new TokenType("PCTUSED"),
-  PCTVERSION: new TokenType("PCTVERSION"),
-  PER: new TokenType("PER"),
-  PERCENT: new TokenType("PERCENT"),
-  PERCENTILE_CONT: new TokenType("PERCENTILE_CONT"),
-  PERCENTILE_DISC: new TokenType("PERCENTILE_DISC"),
-  PERCENT_RANK: new TokenType("PERCENT_RANK"),
-  PERFORMANCE: new TokenType("PERFORMANCE"),
-  PERIOD: new TokenType("PERIOD"),
-  PERIOD_ADD: new TokenType("PERIOD_ADD"),
-  PERIOD_DIFF: new TokenType("PERIOD_DIFF"),
-  PERMANENT: new TokenType("PERMANENT"),
-  PERMISSION: new TokenType("PERMISSION"),
-  PFILE: new TokenType("PFILE"),
-  PG_ADVISORY_LOCK: new TokenType("PG_ADVISORY_LOCK"),
-  PG_ADVISORY_LOCK_SHARED: new TokenType("PG_ADVISORY_LOCK_SHARED"),
-  PG_ADVISORY_UNLOCK: new TokenType("PG_ADVISORY_UNLOCK"),
-  PG_ADVISORY_UNLOCK_ALL: new TokenType("PG_ADVISORY_UNLOCK_ALL"),
-  PG_ADVISORY_UNLOCK_SHARED: new TokenType("PG_ADVISORY_UNLOCK_SHARED"),
-  PG_ADVISORY_XACT_LOCK: new TokenType("PG_ADVISORY_XACT_LOCK"),
-  PG_ADVISORY_XACT_LOCK_SHARED: new TokenType("PG_ADVISORY_XACT_LOCK_SHARED"),
-  PG_BACKEND_PID: new TokenType("PG_BACKEND_PID"),
-  PG_BLOCKING_PIDS: new TokenType("PG_BLOCKING_PIDS"),
-  PG_CLIENT_ENCODING: new TokenType("PG_CLIENT_ENCODING"),
-  PG_COLLATION_IS_VISIBLE: new TokenType("PG_COLLATION_IS_VISIBLE"),
-  PG_CONF_LOAD_TIME: new TokenType("PG_CONF_LOAD_TIME"),
-  PG_CONVERSION_IS_VISIBLE: new TokenType("PG_CONVERSION_IS_VISIBLE"),
-  PG_CURRENT_LOGFILE: new TokenType("PG_CURRENT_LOGFILE"),
-  PG_EVENT_TRIGGER_DDL_COMMANDS: new TokenType("PG_EVENT_TRIGGER_DDL_COMMANDS"),
-  PG_EVENT_TRIGGER_DROPPED_OBJECTS: new TokenType("PG_EVENT_TRIGGER_DROPPED_OBJECTS"),
-  PG_EVENT_TRIGGER_TABLE_REWRITE_OID: new TokenType("PG_EVENT_TRIGGER_TABLE_REWRITE_OID"),
-  PG_EVENT_TRIGGER_TABLE_REWRITE_REASON: new TokenType("PG_EVENT_TRIGGER_TABLE_REWRITE_REASON"),
-  PG_HAS_ROLE: new TokenType("PG_HAS_ROLE"),
-  PG_IS_OTHER_TEMP_SCHEMA: new TokenType("PG_IS_OTHER_TEMP_SCHEMA"),
-  PG_JIT_AVAILABLE: new TokenType("PG_JIT_AVAILABLE"),
-  PG_LISTENING_CHANNELS: new TokenType("PG_LISTENING_CHANNELS"),
-  PG_LS_ARCHIVE_STATUSDIR: new TokenType("PG_LS_ARCHIVE_STATUSDIR"),
-  PG_LS_DIR: new TokenType("PG_LS_DIR"),
-  PG_LS_LOGDIR: new TokenType("PG_LS_LOGDIR"),
-  PG_LS_LOGICALMAPDIR: new TokenType("PG_LS_LOGICALMAPDIR"),
-  PG_LS_LOGICALSNAPDIR: new TokenType("PG_LS_LOGICALSNAPDIR"),
-  PG_LS_REPLSLOTDIR: new TokenType("PG_LS_REPLSLOTDIR"),
-  PG_LS_TMPDIR: new TokenType("PG_LS_TMPDIR"),
-  PG_LS_WALDIR: new TokenType("PG_LS_WALDIR"),
-  PG_MCV_LIST_ITEMS: new TokenType("PG_MCV_LIST_ITEMS"),
-  PG_MY_TEMP_SCHEMA: new TokenType("PG_MY_TEMP_SCHEMA"),
-  PG_NOTIFICATION_QUEUE_USAGE: new TokenType("PG_NOTIFICATION_QUEUE_USAGE"),
-  PG_POSTMASTER_START_TIME: new TokenType("PG_POSTMASTER_START_TIME"),
-  PG_READ_BINARY_FILE: new TokenType("PG_READ_BINARY_FILE"),
-  PG_READ_FILE: new TokenType("PG_READ_FILE"),
-  PG_SAFE_SNAPSHOT_BLOCKING_PIDS: new TokenType("PG_SAFE_SNAPSHOT_BLOCKING_PIDS"),
-  PG_SLEEP: new TokenType("PG_SLEEP"),
-  PG_SLEEP_FOR: new TokenType("PG_SLEEP_FOR"),
-  PG_SLEEP_UNTIL: new TokenType("PG_SLEEP_UNTIL"),
-  PG_STAT_FILE: new TokenType("PG_STAT_FILE"),
-  PG_TRIGGER_DEPTH: new TokenType("PG_TRIGGER_DEPTH"),
-  PG_TRY_ADVISORY_LOCK: new TokenType("PG_TRY_ADVISORY_LOCK"),
-  PG_TRY_ADVISORY_LOCK_SHARED: new TokenType("PG_TRY_ADVISORY_LOCK_SHARED"),
-  PG_TRY_ADVISORY_XACT_LOCK: new TokenType("PG_TRY_ADVISORY_XACT_LOCK"),
-  PG_TRY_ADVISORY_XACT_LOCK_SHARED: new TokenType("PG_TRY_ADVISORY_XACT_LOCK_SHARED"),
-  PHRASETO_TSQUERY: new TokenType("PHRASETO_TSQUERY"),
-  PHYSICAL: new TokenType("PHYSICAL"),
-  PI: new TokenType("PI"),
-  PIPE: new TokenType("PIPE"),
-  PIPELINED: new TokenType("PIPELINED"),
-  PIVOT: new TokenType("PIVOT"),
-  PLACING: new TokenType("PLACING"),
-  PLAINTO_TSQUERY: new TokenType("PLAINTO_TSQUERY"),
-  PLAN: new TokenType("PLAN"),
-  PLS_INTEGER: new TokenType("PLS_INTEGER"),
-  PLUGGABLE: new TokenType("PLUGGABLE"),
-  PLUGIN: new TokenType("PLUGIN"),
-  POINT: new TokenType("POINT"),
-  POLICY: new TokenType("POLICY"),
-  POLYGON: new TokenType("POLYGON"),
-  POLYMORPHIC: new TokenType("POLYMORPHIC"),
-  POPEN: new TokenType("POPEN"),
-  PORT: new TokenType("PORT"),
-  POSITION: new TokenType("POSITION"),
-  POSITIVE: new TokenType("POSITIVE"),
-  POSITIVEN: new TokenType("POSITIVEN"),
-  POST_TRANSACTION: new TokenType("POST_TRANSACTION"),
-  POW: new TokenType("POW"),
-  POWER: new TokenType("POWER"),
-  PRAGMA: new TokenType("PRAGMA"),
-  PREBUILD: new TokenType("PREBUILD"),
-  PRECEDES: new TokenType("PRECEDES"),
-  PRECEDING: new TokenType("PRECEDING"),
-  PRECISION: new TokenType("PRECISION"),
-  PREDICT: new TokenType("PREDICT"),
-  PREPARE: new TokenType("PREPARE"),
-  PREPARED: new TokenType("PREPARED"),
-  PRESERVE: new TokenType("PRESERVE"),
-  PREV: new TokenType("PREV"),
-  PRIMARY: new TokenType("PRIMARY"),
-  PRINT: new TokenType("PRINT"),
-  PRINTF: new TokenType("PRINTF"),
-  PRIOR: new TokenType("PRIOR"),
-  PRIORITY: new TokenType("PRIORITY"),
-  PRIVATE: new TokenType("PRIVATE"),
-  PRIVATE_SGA: new TokenType("PRIVATE_SGA"),
-  PRIVILEGES: new TokenType("PRIVILEGES"),
-  PROC: new TokenType("PROC"),
-  PROCEDURAL: new TokenType("PROCEDURAL"),
-  PROCEDURE: new TokenType("PROCEDURE"),
-  PROFILE: new TokenType("PROFILE"),
-  PROJECT: new TokenType("PROJECT"),
-  PROPERTY: new TokenType("PROPERTY"),
-  PROTECTION: new TokenType("PROTECTION"),
-  PROXY: new TokenType("PROXY"),
-  PRUNING: new TokenType("PRUNING"),
-  PS_CURRENT_THREAD_ID: new TokenType("PS_CURRENT_THREAD_ID"),
-  PS_THREAD_ID: new TokenType("PS_THREAD_ID"),
-  PUBLIC: new TokenType("PUBLIC"),
-  PUBLICATION: new TokenType("PUBLICATION"),
-  PURGE: new TokenType("PURGE"),
-  QUARTER: new TokenType("QUARTER"),
-  QUARTERS: new TokenType("QUARTERS"),
-  QUERY: new TokenType("QUERY"),
-  QUERYTREE: new TokenType("QUERYTREE"),
-  QUERY_TO_XML: new TokenType("QUERY_TO_XML"),
-  QUERY_TO_XMLSCHEMA: new TokenType("QUERY_TO_XMLSCHEMA"),
-  QUERY_TO_XML_AND_XMLSCHEMA: new TokenType("QUERY_TO_XML_AND_XMLSCHEMA"),
-  QUICK: new TokenType("QUICK"),
-  QUIESCE: new TokenType("QUIESCE"),
-  QUORUM: new TokenType("QUORUM"),
-  QUOTA: new TokenType("QUOTA"),
-  QUOTAGROUP: new TokenType("QUOTAGROUP"),
-  QUOTE: new TokenType("QUOTE"),
-  QUOTENAME: new TokenType("QUOTENAME"),
-  QUOTE_IDENT: new TokenType("QUOTE_IDENT"),
-  QUOTE_LITERAL: new TokenType("QUOTE_LITERAL"),
-  QUOTE_NULLABLE: new TokenType("QUOTE_NULLABLE"),
-  RADIANS: new TokenType("RADIANS"),
-  RADIUS: new TokenType("RADIUS"),
-  RAISE: new TokenType("RAISE"),
-  RAISE_APPLICATION_ERROR: new TokenType("RAISE_APPLICATION_ERROR"),
-  RAISERROR: new TokenType("RAISERROR"),
-  RAND: new TokenType("RAND"),
-  RANDOM: new TokenType("RANDOM"),
-  RANDOMBLOB: new TokenType("RANDOMBLOB"),
-  RANDOM_BYTES: new TokenType("RANDOM_BYTES"),
-  RANGE: new TokenType("RANGE"),
-  RANGE_AGG: new TokenType("RANGE_AGG"),
-  RANGE_INTERSECT_AGG: new TokenType("RANGE_INTERSECT_AGG"),
-  RANGE_MERGE: new TokenType("RANGE_MERGE"),
-  RANK: new TokenType("RANK"),
-  RAW: new TokenType("RAW"),
-  READ: new TokenType("READ"),
-  READS: new TokenType("READS"),
-  READTEXT: new TokenType("READTEXT"),
-  READ_WRITE: new TokenType("READ_WRITE"),
-  REAL: new TokenType("REAL"),
-  REASSIGN: new TokenType("REASSIGN"),
-  REBUILD: new TokenType("REBUILD"),
-  RECONFIGURE: new TokenType("RECONFIGURE"),
-  RECORD: new TokenType("RECORD"),
-  RECOVER: new TokenType("RECOVER"),
-  RECURSIVE: new TokenType("RECURSIVE"),
-  RECYCLEBIN: new TokenType("RECYCLEBIN"),
-  REDO: new TokenType("REDO"),
-  REDOFILE: new TokenType("REDOFILE"),
-  REDO_BUFFER_SIZE: new TokenType("REDO_BUFFER_SIZE"),
-  REDUCED: new TokenType("REDUCED"),
-  REDUNDANCY: new TokenType("REDUNDANCY"),
-  REDUNDANT: new TokenType("REDUNDANT"),
-  REF: new TokenType("REF"),
-  REFCURSOR: new TokenType("REFCURSOR"),
-  REFERENCE: new TokenType("REFERENCE"),
-  REFERENCED: new TokenType("REFERENCED"),
-  REFERENCES: new TokenType("REFERENCES"),
-  REFRESH: new TokenType("REFRESH"),
-  REGEXP: new TokenType("REGEXP"),
-  REGEXP_COUNT: new TokenType("REGEXP_COUNT"),
-  REGEXP_INSTR: new TokenType("REGEXP_INSTR"),
-  REGEXP_LIKE: new TokenType("REGEXP_LIKE"),
-  REGEXP_MATCH: new TokenType("REGEXP_MATCH"),
-  REGEXP_MATCHES: new TokenType("REGEXP_MATCHES"),
-  REGEXP_REPLACE: new TokenType("REGEXP_REPLACE"),
-  REGEXP_SPLIT_TO_ARRAY: new TokenType("REGEXP_SPLIT_TO_ARRAY"),
-  REGEXP_SPLIT_TO_TABLE: new TokenType("REGEXP_SPLIT_TO_TABLE"),
-  REGEXP_SUBSTR: new TokenType("REGEXP_SUBSTR"),
-  REGISTER: new TokenType("REGISTER"),
-  REGR_AVGX: new TokenType("REGR_AVGX"),
-  REGR_AVGY: new TokenType("REGR_AVGY"),
-  REGR_COUNT: new TokenType("REGR_COUNT"),
-  REGR_INTERCEPT: new TokenType("REGR_INTERCEPT"),
-  REGR_R2: new TokenType("REGR_R2"),
-  REGR_SLOPE: new TokenType("REGR_SLOPE"),
-  REGR_SXX: new TokenType("REGR_SXX"),
-  REGR_SXY: new TokenType("REGR_SXY"),
-  REGR_SYY: new TokenType("REGR_SYY"),
-  REGULAR: new TokenType("REGULAR"),
-  REINDEX: new TokenType("REINDEX"),
-  REJECT: new TokenType("REJECT"),
-  REKEY: new TokenType("REKEY"),
-  RELATIONAL: new TokenType("RELATIONAL"),
-  RELEASE: new TokenType("RELEASE"),
-  RELEASE_ALL_LOCKS: new TokenType("RELEASE_ALL_LOCKS"),
-  RELEASE_LOCK: new TokenType("RELEASE_LOCK"),
-  RELIES_ON: new TokenType("RELIES_ON"),
-  RELOCATE: new TokenType("RELOCATE"),
-  RELY: new TokenType("RELY"),
-  RENAME: new TokenType("RENAME"),
-  REPAIR: new TokenType("REPAIR"),
-  REPEAT: new TokenType("REPEAT"),
-  REPEATABLE: new TokenType("REPEATABLE"),
-  REPLACE: new TokenType("REPLACE"),
-  REPLICA: new TokenType("REPLICA"),
-  REPLICATE: new TokenType("REPLICATE"),
-  REPLICATION: new TokenType("REPLICATION"),
-  REQUIRE: new TokenType("REQUIRE"),
-  REQUIRED: new TokenType("REQUIRED"),
-  RESET: new TokenType("RESET"),
-  RESETLOGS: new TokenType("RESETLOGS"),
-  RESIGNAL: new TokenType("RESIGNAL"),
-  RESIZE: new TokenType("RESIZE"),
-  RESOLVE: new TokenType("RESOLVE"),
-  RESOLVER: new TokenType("RESOLVER"),
-  RESOURCE: new TokenType("RESOURCE"),
-  RESTART: new TokenType("RESTART"),
-  RESTORE: new TokenType("RESTORE"),
-  RESTRICT: new TokenType("RESTRICT"),
-  RESTRICTED: new TokenType("RESTRICTED"),
-  RESTRICT_REFERENCES: new TokenType("RESTRICT_REFERENCES"),
-  RESULT_CACHE: new TokenType("RESULT_CACHE"),
-  RESUMABLE: new TokenType("RESUMABLE"),
-  RESUME: new TokenType("RESUME"),
-  RETAIN: new TokenType("RETAIN"),
-  RETENTION: new TokenType("RETENTION"),
-  RETURN: new TokenType("RETURN"),
-  RETURNING: new TokenType("RETURNING"),
-  REUSE: new TokenType("REUSE"),
-  REVERSE: new TokenType("REVERSE"),
-  REVERT: new TokenType("REVERT"),
-  REVOKE: new TokenType("REVOKE"),
-  REWRITE: new TokenType("REWRITE"),
-  RIGHT: new TokenType("RIGHT"),
-  RLIKE: new TokenType("RLIKE"),
-  RNDS: new TokenType("RNDS"),
-  RNPS: new TokenType("RNPS"),
-  ROLE: new TokenType("ROLE"),
-  ROLES: new TokenType("ROLES"),
-  ROLES_GRAPHML: new TokenType("ROLES_GRAPHML"),
-  ROLLBACK: new TokenType("ROLLBACK"),
-  ROLLING: new TokenType("ROLLING"),
-  ROLLUP: new TokenType("ROLLUP"),
-  ROOT: new TokenType("ROOT"),
-  ROUND: new TokenType("ROUND"),
-  ROUTINE: new TokenType("ROUTINE"),
-  ROW: new TokenType("ROW"),
-  ROWCOUNT: new TokenType("ROWCOUNT"),
-  ROWDEPENDENCIES: new TokenType("ROWDEPENDENCIES"),
-  ROWGUIDCOL: new TokenType("ROWGUIDCOL"),
-  ROWID: new TokenType("ROWID"),
-  ROWLABEL: new TokenType("ROWLABEL"),
-  ROWNUM: new TokenType("ROWNUM"),
-  ROWS: new TokenType("ROWS"),
-  ROWTYPE: new TokenType("ROWTYPE"),
-  ROWVERSION: new TokenType("ROWVERSION"),
-  ROW_COUNT: new TokenType("ROW_COUNT"),
-  ROW_FORMAT: new TokenType("ROW_FORMAT"),
-  ROW_NUMBER: new TokenType("ROW_NUMBER"),
-  ROW_SECURITY_ACTIVE: new TokenType("ROW_SECURITY_ACTIVE"),
-  ROW_TO_JSON: new TokenType("ROW_TO_JSON"),
-  RPAD: new TokenType("RPAD"),
-  RTREE: new TokenType("RTREE"),
-  RTRIM: new TokenType("RTRIM"),
-  RULE: new TokenType("RULE"),
-  RULES: new TokenType("RULES"),
-  RUNNING: new TokenType("RUNNING"),
-  SALT: new TokenType("SALT"),
-  SAMPLE: new TokenType("SAMPLE"),
-  SAVE: new TokenType("SAVE"),
-  SAVEPOINT: new TokenType("SAVEPOINT"),
-  SCALE: new TokenType("SCALE"),
-  SCAN: new TokenType("SCAN"),
-  SCHEDULE: new TokenType("SCHEDULE"),
-  SCHEMA: new TokenType("SCHEMA"),
-  SCHEMAS: new TokenType("SCHEMAS"),
-  SCHEMA_TO_XML: new TokenType("SCHEMA_TO_XML"),
-  SCHEMA_TO_XMLSCHEMA: new TokenType("SCHEMA_TO_XMLSCHEMA"),
-  SCHEMA_TO_XML_AND_XMLSCHEMA: new TokenType("SCHEMA_TO_XML_AND_XMLSCHEMA"),
-  SCN: new TokenType("SCN"),
-  SCOPE: new TokenType("SCOPE"),
-  SCRUB: new TokenType("SCRUB"),
-  SDO_GEOMETRY: new TokenType("SDO_GEOMETRY"),
-  SDO_GEORASTER: new TokenType("SDO_GEORASTER"),
-  SDO_TOPO_GEOMETRY: new TokenType("SDO_TOPO_GEOMETRY"),
-  SEARCH: new TokenType("SEARCH"),
-  SECOND: new TokenType("SECOND"),
-  SECONDARY_ENGINE_ATTRIBUTE: new TokenType("SECONDARY_ENGINE_ATTRIBUTE"),
-  SECONDS: new TokenType("SECONDS"),
-  SECOND_MICROSECOND: new TokenType("SECOND_MICROSECOND"),
-  SECRET: new TokenType("SECRET"),
-  SECUREFILE: new TokenType("SECUREFILE"),
-  SECURITY: new TokenType("SECURITY"),
-  SECURITYAUDIT: new TokenType("SECURITYAUDIT"),
-  SEC_TO_TIME: new TokenType("SEC_TO_TIME"),
-  SEED: new TokenType("SEED"),
-  SEGMENT: new TokenType("SEGMENT"),
-  SELECT: new TokenType("SELECT"),
-  SELECTIVITY: new TokenType("SELECTIVITY"),
-  SELF: new TokenType("SELF"),
-  SEMANTICKEYPHRASETABLE: new TokenType("SEMANTICKEYPHRASETABLE"),
-  SEMANTICSIMILARITYDETAILSTABLE: new TokenType("SEMANTICSIMILARITYDETAILSTABLE"),
-  SEMANTICSIMILARITYTABLE: new TokenType("SEMANTICSIMILARITYTABLE"),
-  SENSITIVE: new TokenType("SENSITIVE"),
-  SEPARATOR: new TokenType("SEPARATOR"),
-  SEQUENCE: new TokenType("SEQUENCE"),
-  SEQUENTIAL: new TokenType("SEQUENTIAL"),
-  SERIALIZABLE: new TokenType("SERIALIZABLE"),
-  SERIALLY_REUSABLE: new TokenType("SERIALLY_REUSABLE"),
-  SERVER: new TokenType("SERVER"),
-  SERVICE: new TokenType("SERVICE"),
-  SERVICE_NAME_CONVERT: new TokenType("SERVICE_NAME_CONVERT"),
-  SESSION: new TokenType("SESSION"),
-  SESSIONPROPERTY: new TokenType("SESSIONPROPERTY"),
-  SESSIONS_PER_USER: new TokenType("SESSIONS_PER_USER"),
-  SESSION_USER: new TokenType("SESSION_USER"),
-  SET: new TokenType("SET"),
-  SETOF: new TokenType("SETOF"),
-  SETS: new TokenType("SETS"),
-  SETSEED: new TokenType("SETSEED"),
-  SETTINGS: new TokenType("SETTINGS"),
-  SETUSER: new TokenType("SETUSER"),
-  SETVAL: new TokenType("SETVAL"),
-  SETWEIGHT: new TokenType("SETWEIGHT"),
-  SET_BIT: new TokenType("SET_BIT"),
-  SET_BYTE: new TokenType("SET_BYTE"),
-  SET_MASKLEN: new TokenType("SET_MASKLEN"),
-  SHA1: new TokenType("SHA1"),
-  SHA2: new TokenType("SHA2"),
-  SHA224: new TokenType("SHA224"),
-  SHA256: new TokenType("SHA256"),
-  SHA384: new TokenType("SHA384"),
-  SHA512: new TokenType("SHA512"),
-  SHARE: new TokenType("SHARE"),
-  SHARED: new TokenType("SHARED"),
-  SHAREDSPACE: new TokenType("SHAREDSPACE"),
-  SHARED_POOL: new TokenType("SHARED_POOL"),
-  SHARING: new TokenType("SHARING"),
-  SHOW: new TokenType("SHOW"),
-  SHRINK: new TokenType("SHRINK"),
-  SHUTDOWN: new TokenType("SHUTDOWN"),
-  SID: new TokenType("SID"),
-  SIGN: new TokenType("SIGN"),
-  SIGNAL: new TokenType("SIGNAL"),
-  SIGNED: new TokenType("SIGNED"),
-  SIGNTYPE: new TokenType("SIGNTYPE"),
-  SIMILAR: new TokenType("SIMILAR"),
-  SIMPLE: new TokenType("SIMPLE"),
-  SIMPLE_INTEGER: new TokenType("SIMPLE_INTEGER"),
-  SIN: new TokenType("SIN"),
-  SIND: new TokenType("SIND"),
-  SINGLE: new TokenType("SINGLE"),
-  SINH: new TokenType("SINH"),
-  SITE: new TokenType("SITE"),
-  SIZE: new TokenType("SIZE"),
-  SI_AVERAGECOLOR: new TokenType("SI_AVERAGECOLOR"),
-  SI_COLOR: new TokenType("SI_COLOR"),
-  SI_COLORHISTOGRAM: new TokenType("SI_COLORHISTOGRAM"),
-  SI_FEATURELIST: new TokenType("SI_FEATURELIST"),
-  SI_POSITIONALCOLOR: new TokenType("SI_POSITIONALCOLOR"),
-  SI_STILLIMAGE: new TokenType("SI_STILLIMAGE"),
-  SI_TEXTURE: new TokenType("SI_TEXTURE"),
-  SKIP: new TokenType("SKIP"),
-  SKIP_LOCKED: new TokenType("SKIP_LOCKED"),
-  SLAVE: new TokenType("SLAVE"),
-  SLEEP: new TokenType("SLEEP"),
-  SLOPE: new TokenType("SLOPE"),
-  SMALLDATETIME: new TokenType("SMALLDATETIME"),
-  SMALLDATETIMEFROMPARTS: new TokenType("SMALLDATETIMEFROMPARTS"),
-  SMALLFILE: new TokenType("SMALLFILE"),
-  SMALLINT: new TokenType("SMALLINT"),
-  SMALLMONEY: new TokenType("SMALLMONEY"),
-  SNAPSHOT: new TokenType("SNAPSHOT"),
-  SOCKET: new TokenType("SOCKET"),
-  SOME: new TokenType("SOME"),
-  SORT: new TokenType("SORT"),
-  SOUNDEX: new TokenType("SOUNDEX"),
-  SOUNDS: new TokenType("SOUNDS"),
-  SOURCE: new TokenType("SOURCE"),
-  SOURCE_FILE_DIRECTORY: new TokenType("SOURCE_FILE_DIRECTORY"),
-  SOURCE_FILE_NAME_CONVERT: new TokenType("SOURCE_FILE_NAME_CONVERT"),
-  SPACE: new TokenType("SPACE"),
-  SPATIAL: new TokenType("SPATIAL"),
-  SPECIFIC: new TokenType("SPECIFIC"),
-  SPECIFICATION: new TokenType("SPECIFICATION"),
-  SPFILE: new TokenType("SPFILE"),
-  SPLIT: new TokenType("SPLIT"),
-  SPLIT_PART: new TokenType("SPLIT_PART"),
-  SQL: new TokenType("SQL"),
-  SQLCODE: new TokenType("SQLCODE"),
-  SQLERRM: new TokenType("SQLERRM"),
-  SQLEXCEPTION: new TokenType("SQLEXCEPTION"),
-  SQLITE_COMPILEOPTION_GET: new TokenType("SQLITE_COMPILEOPTION_GET"),
-  SQLITE_COMPILEOPTION_USED: new TokenType("SQLITE_COMPILEOPTION_USED"),
-  SQLITE_OFFSET: new TokenType("SQLITE_OFFSET"),
-  SQLITE_SOURCE_ID: new TokenType("SQLITE_SOURCE_ID"),
-  SQLITE_VERSION: new TokenType("SQLITE_VERSION"),
-  SQLSTATE: new TokenType("SQLSTATE"),
-  SQLWARNING: new TokenType("SQLWARNING"),
-  SQUARE: new TokenType("SQUARE"),
-  SQL_BIG_RESULT: new TokenType("SQL_BIG_RESULT"),
-  SQL_CACHE: new TokenType("SQL_CACHE"),
-  SQL_CALC_FOUND_ROWS: new TokenType("SQL_CALC_FOUND_ROWS"),
-  SQL_MACRO: new TokenType("SQL_MACRO"),
-  SQL_SMALL_RESULT: new TokenType("SQL_SMALL_RESULT"),
-  SQL_VARIANT: new TokenType("SQL_VARIANT"),
-  SQL_VARIANT_PROPERTY: new TokenType("SQL_VARIANT_PROPERTY"),
-  SQRT: new TokenType("SQRT"),
-  SSL: new TokenType("SSL"),
-  STANDARD: new TokenType("STANDARD"),
-  STANDBY: new TokenType("STANDBY"),
-  STANDBYS: new TokenType("STANDBYS"),
-  START: new TokenType("START"),
-  STARTING: new TokenType("STARTING"),
-  STARTS: new TokenType("STARTS"),
-  STARTS_WITH: new TokenType("STARTS_WITH"),
-  STATE: new TokenType("STATE"),
-  STATEMENT: new TokenType("STATEMENT"),
-  STATEMENTS: new TokenType("STATEMENTS"),
-  STATEMENT_DIGEST: new TokenType("STATEMENT_DIGEST"),
-  STATEMENT_DIGEST_TEXT: new TokenType("STATEMENT_DIGEST_TEXT"),
-  STATEMENT_ID: new TokenType("STATEMENT_ID"),
-  STATEMENT_TIMESTAMP: new TokenType("STATEMENT_TIMESTAMP"),
-  STATIC: new TokenType("STATIC"),
-  STATISTICS: new TokenType("STATISTICS"),
-  STATS: new TokenType("STATS"),
-  STATS_AUTO_RECALC: new TokenType("STATS_AUTO_RECALC"),
-  STATS_PERSISTENT: new TokenType("STATS_PERSISTENT"),
-  STATS_SAMPLE_PAGES: new TokenType("STATS_SAMPLE_PAGES"),
-  STD: new TokenType("STD"),
-  STDDEV: new TokenType("STDDEV"),
-  STDDEV_POP: new TokenType("STDDEV_POP"),
-  STDDEV_SAMP: new TokenType("STDDEV_SAMP"),
-  STOP: new TokenType("STOP"),
-  STORAGE: new TokenType("STORAGE"),
-  STORE: new TokenType("STORE"),
-  STORED: new TokenType("STORED"),
-  STR: new TokenType("STR"),
-  STRAIGHT_JOIN: new TokenType("STRAIGHT_JOIN"),
-  STRCMP: new TokenType("STRCMP"),
-  STRFTIME: new TokenType("STRFTIME"),
-  STRING: new TokenType("STRING"),
-  STRING_AGG: new TokenType("STRING_AGG"),
-  STRING_SPLIT: new TokenType("STRING_SPLIT"),
-  STRING_TO_ARRAY: new TokenType("STRING_TO_ARRAY"),
-  STRING_TO_TABLE: new TokenType("STRING_TO_TABLE"),
-  STRIP: new TokenType("STRIP"),
-  STRIPE_COLUMNS: new TokenType("STRIPE_COLUMNS"),
-  STRIPE_WIDTH: new TokenType("STRIPE_WIDTH"),
-  STRPOS: new TokenType("STRPOS"),
-  STRUCT: new TokenType("STRUCT"),
-  STRUCTURE: new TokenType("STRUCTURE"),
-  STR_TO_DATE: new TokenType("STR_TO_DATE"),
-  STUFF: new TokenType("STUFF"),
-  ST_AREA: new TokenType("ST_AREA"),
-  ST_ASBINARY: new TokenType("ST_ASBINARY"),
-  ST_ASGEOJSON: new TokenType("ST_ASGEOJSON"),
-  ST_ASTEXT: new TokenType("ST_ASTEXT"),
-  ST_BUFFER: new TokenType("ST_BUFFER"),
-  ST_BUFFER_STRATEGY: new TokenType("ST_BUFFER_STRATEGY"),
-  ST_CENTROID: new TokenType("ST_CENTROID"),
-  ST_COLLECT: new TokenType("ST_COLLECT"),
-  ST_CONTAINS: new TokenType("ST_CONTAINS"),
-  ST_CONVEXHULL: new TokenType("ST_CONVEXHULL"),
-  ST_CROSSES: new TokenType("ST_CROSSES"),
-  ST_DIFFERENCE: new TokenType("ST_DIFFERENCE"),
-  ST_DIMENSION: new TokenType("ST_DIMENSION"),
-  ST_DISJOINT: new TokenType("ST_DISJOINT"),
-  ST_DISTANCE: new TokenType("ST_DISTANCE"),
-  ST_DISTANCE_SPHERE: new TokenType("ST_DISTANCE_SPHERE"),
-  ST_ENDPOINT: new TokenType("ST_ENDPOINT"),
-  ST_ENVELOPE: new TokenType("ST_ENVELOPE"),
-  ST_EQUALS: new TokenType("ST_EQUALS"),
-  ST_EXTERIORRING: new TokenType("ST_EXTERIORRING"),
-  ST_FRECHETDISTANCE: new TokenType("ST_FRECHETDISTANCE"),
-  ST_GEOHASH: new TokenType("ST_GEOHASH"),
-  ST_GEOMCOLLFROMTEXT: new TokenType("ST_GEOMCOLLFROMTEXT"),
-  ST_GEOMCOLLFROMWKB: new TokenType("ST_GEOMCOLLFROMWKB"),
-  ST_GEOMETRYN: new TokenType("ST_GEOMETRYN"),
-  ST_GEOMETRYTYPE: new TokenType("ST_GEOMETRYTYPE"),
-  ST_GEOMFROMGEOJSON: new TokenType("ST_GEOMFROMGEOJSON"),
-  ST_GEOMFROMTEXT: new TokenType("ST_GEOMFROMTEXT"),
-  ST_GEOMFROMWKB: new TokenType("ST_GEOMFROMWKB"),
-  ST_HAUSDORFFDISTANCE: new TokenType("ST_HAUSDORFFDISTANCE"),
-  ST_INTERIORRINGN: new TokenType("ST_INTERIORRINGN"),
-  ST_INTERSECTION: new TokenType("ST_INTERSECTION"),
-  ST_INTERSECTS: new TokenType("ST_INTERSECTS"),
-  ST_ISCLOSED: new TokenType("ST_ISCLOSED"),
-  ST_ISEMPTY: new TokenType("ST_ISEMPTY"),
-  ST_ISSIMPLE: new TokenType("ST_ISSIMPLE"),
-  ST_ISVALID: new TokenType("ST_ISVALID"),
-  ST_LATFROMGEOHASH: new TokenType("ST_LATFROMGEOHASH"),
-  ST_LATITUDE: new TokenType("ST_LATITUDE"),
-  ST_LENGTH: new TokenType("ST_LENGTH"),
-  ST_LINEFROMTEXT: new TokenType("ST_LINEFROMTEXT"),
-  ST_LINEFROMWKB: new TokenType("ST_LINEFROMWKB"),
-  ST_LINEINTERPOLATEPOINT: new TokenType("ST_LINEINTERPOLATEPOINT"),
-  ST_LINEINTERPOLATEPOINTS: new TokenType("ST_LINEINTERPOLATEPOINTS"),
-  ST_LONGFROMGEOHASH: new TokenType("ST_LONGFROMGEOHASH"),
-  ST_LONGITUDE: new TokenType("ST_LONGITUDE"),
-  ST_MAKEENVELOPE: new TokenType("ST_MAKEENVELOPE"),
-  ST_MLINEFROMTEXT: new TokenType("ST_MLINEFROMTEXT"),
-  ST_MLINEFROMWKB: new TokenType("ST_MLINEFROMWKB"),
-  ST_MPOINTFROMTEXT: new TokenType("ST_MPOINTFROMTEXT"),
-  ST_MPOINTFROMWKB: new TokenType("ST_MPOINTFROMWKB"),
-  ST_MPOLYFROMTEXT: new TokenType("ST_MPOLYFROMTEXT"),
-  ST_MPOLYFROMWKB: new TokenType("ST_MPOLYFROMWKB"),
-  ST_NUMGEOMETRIES: new TokenType("ST_NUMGEOMETRIES"),
-  ST_NUMINTERIORRING: new TokenType("ST_NUMINTERIORRING"),
-  ST_NUMPOINTS: new TokenType("ST_NUMPOINTS"),
-  ST_OVERLAPS: new TokenType("ST_OVERLAPS"),
-  ST_POINTATDISTANCE: new TokenType("ST_POINTATDISTANCE"),
-  ST_POINTFROMGEOHASH: new TokenType("ST_POINTFROMGEOHASH"),
-  ST_POINTFROMTEXT: new TokenType("ST_POINTFROMTEXT"),
-  ST_POINTFROMWKB: new TokenType("ST_POINTFROMWKB"),
-  ST_POINTN: new TokenType("ST_POINTN"),
-  ST_POLYFROMTEXT: new TokenType("ST_POLYFROMTEXT"),
-  ST_POLYFROMWKB: new TokenType("ST_POLYFROMWKB"),
-  ST_SIMPLIFY: new TokenType("ST_SIMPLIFY"),
-  ST_SRID: new TokenType("ST_SRID"),
-  ST_STARTPOINT: new TokenType("ST_STARTPOINT"),
-  ST_SWAPXY: new TokenType("ST_SWAPXY"),
-  ST_SYMDIFFERENCE: new TokenType("ST_SYMDIFFERENCE"),
-  ST_TOUCHES: new TokenType("ST_TOUCHES"),
-  ST_TRANSFORM: new TokenType("ST_TRANSFORM"),
-  ST_UNION: new TokenType("ST_UNION"),
-  ST_VALIDATE: new TokenType("ST_VALIDATE"),
-  ST_WITHIN: new TokenType("ST_WITHIN"),
-  ST_X: new TokenType("ST_X"),
-  ST_Y: new TokenType("ST_Y"),
-  SUBDATE: new TokenType("SUBDATE"),
-  SUBJECT: new TokenType("SUBJECT"),
-  SUBPARTITION: new TokenType("SUBPARTITION"),
-  SUBPARTITIONS: new TokenType("SUBPARTITIONS"),
-  SUBSCRIPTION: new TokenType("SUBSCRIPTION"),
-  SUBSET: new TokenType("SUBSET"),
-  SUBSTITUTABLE: new TokenType("SUBSTITUTABLE"),
-  SUBSTR: new TokenType("SUBSTR"),
-  SUBSTR4: new TokenType("SUBSTR4"),
-  SUBSTRB: new TokenType("SUBSTRB"),
-  SUBSTRING: new TokenType("SUBSTRING"),
-  SUBSTRING_INDEX: new TokenType("SUBSTRING_INDEX"),
-  SUBTIME: new TokenType("SUBTIME"),
-  SUBTYPE: new TokenType("SUBTYPE"),
-  SUCCESSFUL: new TokenType("SUCCESSFUL"),
-  SUM: new TokenType("SUM"),
-  SUPPLEMENTAL: new TokenType("SUPPLEMENTAL"),
-  SUPPRESS_REDUNDANT_UPDATES_TRIGGER: new TokenType("SUPPRESS_REDUNDANT_UPDATES_TRIGGER"),
-  SUSPEND: new TokenType("SUSPEND"),
-  SWITCH: new TokenType("SWITCH"),
-  SWITCHOFFSET: new TokenType("SWITCHOFFSET"),
-  SWITCHOVER: new TokenType("SWITCHOVER"),
-  SYMMETRIC: new TokenType("SYMMETRIC"),
-  SYNC: new TokenType("SYNC"),
-  SYNCHRONOUS: new TokenType("SYNCHRONOUS"),
-  SYNONYM: new TokenType("SYNONYM"),
-  SYS: new TokenType("SYS"),
-  SYSAUX: new TokenType("SYSAUX"),
-  SYSDATE: new TokenType("SYSDATE"),
-  SYSDATETIME: new TokenType("SYSDATETIME"),
-  SYSDATETIMEOFFSET: new TokenType("SYSDATETIMEOFFSET"),
-  SYSTEM: new TokenType("SYSTEM"),
-  SYSTEM_USER: new TokenType("SYSTEM_USER"),
-  SYSTIMESTAMP: new TokenType("SYSTIMESTAMP"),
-  SYSUTCDATETIME: new TokenType("SYSUTCDATETIME"),
-  SYS_CONTEXT: new TokenType("SYS_CONTEXT"),
-  T: new TokenType("T"),
-  TABAUTH: new TokenType("TABAUTH"),
-  TABLE: new TokenType("TABLE"),
-  TABLES: new TokenType("TABLES"),
-  TABLESAMPLE: new TokenType("TABLESAMPLE"),
-  TABLESPACE: new TokenType("TABLESPACE"),
-  TABLE_TO_XML: new TokenType("TABLE_TO_XML"),
-  TABLE_TO_XMLSCHEMA: new TokenType("TABLE_TO_XMLSCHEMA"),
-  TABLE_TO_XML_AND_XMLSCHEMA: new TokenType("TABLE_TO_XML_AND_XMLSCHEMA"),
-  TAG: new TokenType("TAG"),
-  TAN: new TokenType("TAN"),
-  TAND: new TokenType("TAND"),
-  TANH: new TokenType("TANH"),
-  TARGET: new TokenType("TARGET"),
-  TDO: new TokenType("TDO"),
-  TEMP: new TokenType("TEMP"),
-  TEMPFILE: new TokenType("TEMPFILE"),
-  TEMPLATE: new TokenType("TEMPLATE"),
-  TEMPORARY: new TokenType("TEMPORARY"),
-  TEMPTABLE: new TokenType("TEMPTABLE"),
-  TERMINATED: new TokenType("TERMINATED"),
-  TEST: new TokenType("TEST"),
-  TEXT: new TokenType("TEXT"),
-  TEXTSIZE: new TokenType("TEXTSIZE"),
-  TEXTPTR: new TokenType("TEXTPTR"),
-  TEXTVALID: new TokenType("TEXTVALID"),
-  THAN: new TokenType("THAN"),
-  THEN: new TokenType("THEN"),
-  THREAD: new TokenType("THREAD"),
-  THREAD_PRIORITY: new TokenType("THREAD_PRIORITY"),
-  THROUGH: new TokenType("THROUGH"),
-  THROW: new TokenType("THROW"),
-  TIER: new TokenType("TIER"),
-  TIES: new TokenType("TIES"),
-  TIME: new TokenType("TIME"),
-  TIMEDIFF: new TokenType("TIMEDIFF"),
-  TIMEFROMPARTS: new TokenType("TIMEFROMPARTS"),
-  TIMEOFDAY: new TokenType("TIMEOFDAY"),
-  TIMEOUT: new TokenType("TIMEOUT"),
-  TIMESTAMP: new TokenType("TIMESTAMP"),
-  TIMESTAMPADD: new TokenType("TIMESTAMPADD"),
-  TIMESTAMPDIFF: new TokenType("TIMESTAMPDIFF"),
-  TIMESTAMPZ: new TokenType("TIMESTAMPZ"),
-  TIMEZONE_HOUR: new TokenType("TIMEZONE_HOUR"),
-  TIMEZONE_MINUTE: new TokenType("TIMEZONE_MINUTE"),
-  TIME_FORMAT: new TokenType("TIME_FORMAT"),
-  TIME_TO_SEC: new TokenType("TIME_TO_SEC"),
-  TIME_ZONE: new TokenType("TIME_ZONE"),
-  TINYBLOB: new TokenType("TINYBLOB"),
-  TINYINT: new TokenType("TINYINT"),
-  TINYTEXT: new TokenType("TINYTEXT"),
-  TO: new TokenType("TO"),
-  TODATETIMEOFFSET: new TokenType("TODATETIMEOFFSET"),
-  TOP: new TokenType("TOP"),
-  TOPLEVEL: new TokenType("TOPLEVEL"),
-  TOTAL: new TokenType("TOTAL"),
-  TOTAL_CHANGES: new TokenType("TOTAL_CHANGES"),
-  TO_ASCII: new TokenType("TO_ASCII"),
-  TO_BASE64: new TokenType("TO_BASE64"),
-  TO_BLOB: new TokenType("TO_BLOB"),
-  TO_CHAR: new TokenType("TO_CHAR"),
-  TO_CLOB: new TokenType("TO_CLOB"),
-  TO_DATE: new TokenType("TO_DATE"),
-  TO_DAYS: new TokenType("TO_DAYS"),
-  TO_HEX: new TokenType("TO_HEX"),
-  TO_JSON: new TokenType("TO_JSON"),
-  TO_LOB: new TokenType("TO_LOB"),
-  TO_NCLOB: new TokenType("TO_NCLOB"),
-  TO_NUMBER: new TokenType("TO_NUMBER"),
-  TO_SECONDS: new TokenType("TO_SECONDS"),
-  TO_TIMESTAMP: new TokenType("TO_TIMESTAMP"),
-  TO_TSQUERY: new TokenType("TO_TSQUERY"),
-  TO_TSVECTOR: new TokenType("TO_TSVECTOR"),
-  TRACE: new TokenType("TRACE"),
-  TRACKING: new TokenType("TRACKING"),
-  TRAILING: new TokenType("TRAILING"),
-  TRAN: new TokenType("TRAN"),
-  TRANSACTION: new TokenType("TRANSACTION"),
-  TRANSACTIONAL: new TokenType("TRANSACTIONAL"),
-  TRANSACTION_TIMESTAMP: new TokenType("TRANSACTION_TIMESTAMP"),
-  TRANSFORM: new TokenType("TRANSFORM"),
-  TRANSLATE: new TokenType("TRANSLATE"),
-  TRANSLATION: new TokenType("TRANSLATION"),
-  TRIGGER: new TokenType("TRIGGER"),
-  TRIGGERS: new TokenType("TRIGGERS"),
-  TRIGGER_NESTLEVEL: new TokenType("TRIGGER_NESTLEVEL"),
-  TRIM: new TokenType("TRIM"),
-  TRIM_ARRAY: new TokenType("TRIM_ARRAY"),
-  TRIM_SCALE: new TokenType("TRIM_SCALE"),
-  TRUE: new TokenType("TRUE"),
-  TRUNC: new TokenType("TRUNC"),
-  TRUNCATE: new TokenType("TRUNCATE"),
-  TRUST: new TokenType("TRUST"),
-  TRUSTED: new TokenType("TRUSTED"),
-  TRY_CAST: new TokenType("TRY_CAST"),
-  TRY_CONVERT: new TokenType("TRY_CONVERT"),
-  TRY_PARSE: new TokenType("TRY_PARSE"),
-  TS: new TokenType("TS"),
-  TSEQUAL: new TokenType("TSEQUAL"),
-  TSQUERY_PHRASE: new TokenType("TSQUERY_PHRASE"),
-  TSVECTOR_TO_ARRAY: new TokenType("TSVECTOR_TO_ARRAY"),
-  TSVECTOR_UPDATE_TRIGGER: new TokenType("TSVECTOR_UPDATE_TRIGGER"),
-  TSVECTOR_UPDATE_TRIGGER_COLUMN: new TokenType("TSVECTOR_UPDATE_TRIGGER_COLUMN"),
-  TS_DEBUG: new TokenType("TS_DEBUG"),
-  TS_DELETE: new TokenType("TS_DELETE"),
-  TS_FILTER: new TokenType("TS_FILTER"),
-  TS_HEADLINE: new TokenType("TS_HEADLINE"),
-  TS_LEXIZE: new TokenType("TS_LEXIZE"),
-  TS_PARSE: new TokenType("TS_PARSE"),
-  TS_RANK: new TokenType("TS_RANK"),
-  TS_RANK_CD: new TokenType("TS_RANK_CD"),
-  TS_REWRITE: new TokenType("TS_REWRITE"),
-  TS_STAT: new TokenType("TS_STAT"),
-  TS_TOKEN_TYPE: new TokenType("TS_TOKEN_TYPE"),
-  TTGRIDMEMBERID: new TokenType("TTGRIDMEMBERID"),
-  TTGRIDNODENAME: new TokenType("TTGRIDNODENAME"),
-  TTGRIDUSERASSIGNEDNAME: new TokenType("TTGRIDUSERASSIGNEDNAME"),
-  TYPE: new TokenType("TYPE"),
-  TYPEOF: new TokenType("TYPEOF"),
-  TYPES: new TokenType("TYPES"),
-  UCASE: new TokenType("UCASE"),
-  UDF: new TokenType("UDF"),
-  UID: new TokenType("UID"),
-  UNARCHIVED: new TokenType("UNARCHIVED"),
-  UNBOUNDED: new TokenType("UNBOUNDED"),
-  UNCOMMITTED: new TokenType("UNCOMMITTED"),
-  UNCOMPRESS: new TokenType("UNCOMPRESS"),
-  UNCOMPRESSED_LENGTH: new TokenType("UNCOMPRESSED_LENGTH"),
-  UNDEFINED: new TokenType("UNDEFINED"),
-  UNDER: new TokenType("UNDER"),
-  UNDO: new TokenType("UNDO"),
-  UNDOFILE: new TokenType("UNDOFILE"),
-  UNDO_BUFFER_SIZE: new TokenType("UNDO_BUFFER_SIZE"),
-  UNDROP: new TokenType("UNDROP"),
-  UNHEX: new TokenType("UNHEX"),
-  UNICODE: new TokenType("UNICODE"),
-  UNIFORM: new TokenType("UNIFORM"),
-  UNINSTALL: new TokenType("UNINSTALL"),
-  UNION: new TokenType("UNION"),
-  UNIQUE: new TokenType("UNIQUE"),
-  UNIQUEIDENTIFIER: new TokenType("UNIQUEIDENTIFIER"),
-  UNISTR: new TokenType("UNISTR"),
-  UNITE: new TokenType("UNITE"),
-  UNIXEPOCH: new TokenType("UNIXEPOCH"),
-  UNIX_TIMESTAMP: new TokenType("UNIX_TIMESTAMP"),
-  UNKNOWN: new TokenType("UNKNOWN"),
-  UNLIKELY: new TokenType("UNLIKELY"),
-  UNLIMITED: new TokenType("UNLIMITED"),
-  UNLISTEN: new TokenType("UNLISTEN"),
-  UNLOCK: new TokenType("UNLOCK"),
-  UNLOGGED: new TokenType("UNLOGGED"),
-  UNNEST: new TokenType("UNNEST"),
-  UNPIVOT: new TokenType("UNPIVOT"),
-  UNPLUG: new TokenType("UNPLUG"),
-  UNPROTECTED: new TokenType("UNPROTECTED"),
-  UNQUIESCE: new TokenType("UNQUIESCE"),
-  UNRECOVERABLE: new TokenType("UNRECOVERABLE"),
-  UNSIGNED: new TokenType("UNSIGNED"),
-  UNTIL: new TokenType("UNTIL"),
-  UNUSABLE: new TokenType("UNUSABLE"),
-  UNUSED: new TokenType("UNUSED"),
-  UPDATE: new TokenType("UPDATE"),
-  UPDATED: new TokenType("UPDATED"),
-  UPDATETEXT: new TokenType("UPDATETEXT"),
-  UPDATEXML: new TokenType("UPDATEXML"),
-  UPDATING: new TokenType("UPDATING"),
-  UPGRADE: new TokenType("UPGRADE"),
-  UPPER: new TokenType("UPPER"),
-  UPPER_INC: new TokenType("UPPER_INC"),
-  UPPER_INF: new TokenType("UPPER_INF"),
-  UPSERT: new TokenType("UPSERT"),
-  URITYPE: new TokenType("URITYPE"),
-  UROWID: new TokenType("UROWID"),
-  USAGE: new TokenType("USAGE"),
-  USE: new TokenType("USE"),
-  USER: new TokenType("USER"),
-  USERGROUP: new TokenType("USERGROUP"),
-  USERS: new TokenType("USERS"),
-  USER_DATA: new TokenType("USER_DATA"),
-  USER_NAME: new TokenType("USER_NAME"),
-  USER_TABLESPACES: new TokenType("USER_TABLESPACES"),
-  USE_STORED_OUTLINES: new TokenType("USE_STORED_OUTLINES"),
-  USING: new TokenType("USING"),
-  USING_NLS_COMP: new TokenType("USING_NLS_COMP"),
-  UTC_DATE: new TokenType("UTC_DATE"),
-  UTC_TIME: new TokenType("UTC_TIME"),
-  UTC_TIMESTAMP: new TokenType("UTC_TIMESTAMP"),
-  UUID: new TokenType("UUID"),
-  UUID_SHORT: new TokenType("UUID_SHORT"),
-  UUID_TO_BIN: new TokenType("UUID_TO_BIN"),
-  VACUUM: new TokenType("VACUUM"),
-  VALIDATE: new TokenType("VALIDATE"),
-  VALIDATE_PASSWORD_STRENGTH: new TokenType("VALIDATE_PASSWORD_STRENGTH"),
-  VALUE: new TokenType("VALUE"),
-  VALUES: new TokenType("VALUES"),
-  VARBINARY: new TokenType("VARBINARY"),
-  VARCHAR: new TokenType("VARCHAR"),
-  VARCHAR2: new TokenType("VARCHAR2"),
-  VARCHARACTER: new TokenType("VARCHARACTER"),
-  VARIADIC: new TokenType("VARIADIC"),
-  VARIANCE: new TokenType("VARIANCE"),
-  VARNUM: new TokenType("VARNUM"),
-  VARRAW: new TokenType("VARRAW"),
-  VARRAY: new TokenType("VARRAY"),
-  VARRAYS: new TokenType("VARRAYS"),
-  VARYING: new TokenType("VARYING"),
-  VAR_POP: new TokenType("VAR_POP"),
-  VAR_SAMP: new TokenType("VAR_SAMP"),
-  VCPU: new TokenType("VCPU"),
-  VERBOSE: new TokenType("VERBOSE"),
-  VERIFY: new TokenType("VERIFY"),
-  VERSION: new TokenType("VERSION"),
-  VERSIONING: new TokenType("VERSIONING"),
-  VERSIONS: new TokenType("VERSIONS"),
-  VERSIONS_ENDSCN: new TokenType("VERSIONS_ENDSCN"),
-  VERSIONS_ENDTIME: new TokenType("VERSIONS_ENDTIME"),
-  VERSIONS_OPERATION: new TokenType("VERSIONS_OPERATION"),
-  VERSIONS_STARTSCN: new TokenType("VERSIONS_STARTSCN"),
-  VERSIONS_STARTTIME: new TokenType("VERSIONS_STARTTIME"),
-  VERSIONS_XID: new TokenType("VERSIONS_XID"),
-  VIEW: new TokenType("VIEW"),
-  VIEWS: new TokenType("VIEWS"),
-  VIRTUAL: new TokenType("VIRTUAL"),
-  VISIBILITY: new TokenType("VISIBILITY"),
-  VISIBLE: new TokenType("VISIBLE"),
-  VOLUME: new TokenType("VOLUME"),
-  WAIT: new TokenType("WAIT"),
-  WAITFOR: new TokenType("WAITFOR"),
-  WALLET: new TokenType("WALLET"),
-  WEBSEARCH_TO_TSQUERY: new TokenType("WEBSEARCH_TO_TSQUERY"),
-  WEEK: new TokenType("WEEK"),
-  WEEKDAY: new TokenType("WEEKDAY"),
-  WEEKOFYEAR: new TokenType("WEEKOFYEAR"),
-  WEEKS: new TokenType("WEEKS"),
-  WEIGHT_STRING: new TokenType("WEIGHT_STRING"),
-  WHEN: new TokenType("WHEN"),
-  WHENEVER: new TokenType("WHENEVER"),
-  WHERE: new TokenType("WHERE"),
-  WHILE: new TokenType("WHILE"),
-  WIDTH: new TokenType("WIDTH"),
-  WIDTH_BUCKET: new TokenType("WIDTH_BUCKET"),
-  WINDOW: new TokenType("WINDOW"),
-  WITH: new TokenType("WITH"),
-  WITHIN: new TokenType("WITHIN"),
-  WITHOUT: new TokenType("WITHOUT"),
-  WNDS: new TokenType("WNDS"),
-  WNPS: new TokenType("WNPS"),
-  WORK: new TokenType("WORK"),
-  WORKLOAD: new TokenType("WORKLOAD"),
-  WRAPPER: new TokenType("WRAPPER"),
-  WRITE: new TokenType("WRITE"),
-  WRITETEXT: new TokenType("WRITETEXT"),
-  X509: new TokenType("X509"),
-  XA: new TokenType("XA"),
-  XDB: new TokenType("XDB"),
-  XDBURITYPE: new TokenType("XDBURITYPE"),
-  XML: new TokenType("XML"),
-  XMLAGG: new TokenType("XMLAGG"),
-  XMLCOMMENT: new TokenType("XMLCOMMENT"),
-  XMLCONCAT: new TokenType("XMLCONCAT"),
-  XMLELEMENT: new TokenType("XMLELEMENT"),
-  XMLEXISTS: new TokenType("XMLEXISTS"),
-  XMLFOREST: new TokenType("XMLFOREST"),
-  XMLNAMESPACES: new TokenType("XMLNAMESPACES"),
-  XMLPI: new TokenType("XMLPI"),
-  XMLROOT: new TokenType("XMLROOT"),
-  XMLSCHEMA: new TokenType("XMLSCHEMA"),
-  XMLTABLE: new TokenType("XMLTABLE"),
-  XMLTYPE: new TokenType("XMLTYPE"),
-  XML_IS_WELL_FORMED: new TokenType("XML_IS_WELL_FORMED"),
-  XML_IS_WELL_FORMED_CONTENT: new TokenType("XML_IS_WELL_FORMED_CONTENT"),
-  XML_IS_WELL_FORMED_DOCUMENT: new TokenType("XML_IS_WELL_FORMED_DOCUMENT"),
-  XOR: new TokenType("XOR"),
-  XPATH: new TokenType("XPATH"),
-  XPATH_EXISTS: new TokenType("XPATH_EXISTS"),
-  XS: new TokenType("XS"),
-  YEAR: new TokenType("YEAR"),
-  YEARS: new TokenType("YEARS"),
-  YEARWEEK: new TokenType("YEARWEEK"),
-  YEAR_MONTH: new TokenType("YEAR_MONTH"),
-  YES: new TokenType("YES"),
-  ZEROBLOB: new TokenType("ZEROBLOB"),
-  ZEROFILL: new TokenType("ZEROFILL"),
-  ZONE: new TokenType("ZONE"),
-  ZONEMAP: new TokenType("ZONEMAP"),
-  _ROWID_: new TokenType("_ROWID_"),
+export class Keyword {
+  static ABBREV = new TokenType("ABBREV")
+  static ABORT = new TokenType("ABORT")
+  static ABS = new TokenType("ABS")
+  static ACCESS = new TokenType("ACCESS")
+  static ACCESSED = new TokenType("ACCESSED")
+  static ACCESSIBLE = new TokenType("ACCESSIBLE")
+  static ACCOUNT = new TokenType("ACCOUNT")
+  static ACLDEFAULT = new TokenType("ACLDEFAULT")
+  static ACLEXPLODE = new TokenType("ACLEXPLODE")
+  static ACOS = new TokenType("ACOS")
+  static ACOSD = new TokenType("ACOSD")
+  static ACOSH = new TokenType("ACOSH")
+  static ACTION = new TokenType("ACTION")
+  static ACTIONS = new TokenType("ACTIONS")
+  static ACTIVE = new TokenType("ACTIVE")
+  static ADD = new TokenType("ADD")
+  static ADDDATE = new TokenType("ADDDATE")
+  static ADDTIME = new TokenType("ADDTIME")
+  static ADMIN = new TokenType("ADMIN")
+  static ADMINISTER = new TokenType("ADMINISTER")
+  static ADVANCED = new TokenType("ADVANCED")
+  static ADVISE = new TokenType("ADVISE")
+  static AES_DECRYPT = new TokenType("AES_DECRYPT")
+  static AES_ENCRYPT = new TokenType("AES_ENCRYPT")
+  static AFFINITY = new TokenType("AFFINITY")
+  static AFTER = new TokenType("AFTER")
+  static AGAINST = new TokenType("AGAINST")
+  static AGE = new TokenType("AGE")
+  static AGENT = new TokenType("AGENT")
+  static AGGREGATE = new TokenType("AGGREGATE")
+  static ALGORITHM = new TokenType("ALGORITHM")
+  static ALIAS = new TokenType("ALIAS")
+  static ALL = new TokenType("ALL")
+  static ALLOCATE = new TokenType("ALLOCATE")
+  static ALLOW = new TokenType("ALLOW")
+  static ALLOW_CONNECTIONS = new TokenType("ALLOW_CONNECTIONS")
+  static ALTER = new TokenType("ALTER")
+  static ALTERNATE = new TokenType("ALTERNATE")
+  static ALWAYS = new TokenType("ALWAYS")
+  static ANALYSE = new TokenType("ANALYSE")
+  static ANALYTIC = new TokenType("ANALYTIC")
+  static ANALYZE = new TokenType("ANALYZE")
+  static ANCILLARY = new TokenType("ANCILLARY")
+  static AND = new TokenType("AND")
+  static ANY = new TokenType("ANY")
+  static ANYDATA = new TokenType("ANYDATA")
+  static ANYDATASET = new TokenType("ANYDATASET")
+  static ANYSCHEMA = new TokenType("ANYSCHEMA")
+  static ANYTYPE = new TokenType("ANYTYPE")
+  static ANY_VALUE = new TokenType("ANY_VALUE")
+  static APPICATION = new TokenType("APPICATION")
+  static APPLY = new TokenType("APPLY")
+  static ARCHIVAL = new TokenType("ARCHIVAL")
+  static ARCHIVE = new TokenType("ARCHIVE")
+  static ARCHIVED = new TokenType("ARCHIVED")
+  static ARCHIVELOG = new TokenType("ARCHIVELOG")
+  static AREA = new TokenType("AREA")
+  static ARRAY = new TokenType("ARRAY")
+  static ARRAY_AGG = new TokenType("ARRAY_AGG")
+  static ARRAY_APPEND = new TokenType("ARRAY_APPEND")
+  static ARRAY_CAT = new TokenType("ARRAY_CAT")
+  static ARRAY_DIMS = new TokenType("ARRAY_DIMS")
+  static ARRAY_FILL = new TokenType("ARRAY_FILL")
+  static ARRAY_LENGTH = new TokenType("ARRAY_LENGTH")
+  static ARRAY_LOWER = new TokenType("ARRAY_LOWER")
+  static ARRAY_NDIMS = new TokenType("ARRAY_NDIMS")
+  static ARRAY_POSITION = new TokenType("ARRAY_POSITION")
+  static ARRAY_POSITIONS = new TokenType("ARRAY_POSITIONS")
+  static ARRAY_PREPEND = new TokenType("ARRAY_PREPEND")
+  static ARRAY_REMOVE = new TokenType("ARRAY_REMOVE")
+  static ARRAY_REPLACE = new TokenType("ARRAY_REPLACE")
+  static ARRAY_TO_JSON = new TokenType("ARRAY_TO_JSON")
+  static ARRAY_TO_STRING = new TokenType("ARRAY_TO_STRING")
+  static ARRAY_TO_TSVECTOR = new TokenType("ARRAY_TO_TSVECTOR")
+  static ARRAY_UPPER = new TokenType("ARRAY_UPPER")
+  static AS = new TokenType("AS")
+  static ASC = new TokenType("ASC")
+  static ASCII = new TokenType("ASCII")
+  static ASCIISTR = new TokenType("ASCIISTR")
+  static ASENSITIVE = new TokenType("ASENSITIVE")
+  static ASIN = new TokenType("ASIN")
+  static ASIND = new TokenType("ASIND")
+  static ASINH = new TokenType("ASINH")
+  static ASSOCIATE = new TokenType("ASSOCIATE")
+  static ASYMMETRIC = new TokenType("ASYMMETRIC")
+  static ASYNCHRONOUS = new TokenType("ASYNCHRONOUS")
+  static AT = new TokenType("AT")
+  static ATAN = new TokenType("ATAN")
+  static ATAN2 = new TokenType("ATAN2")
+  static ATAN2D = new TokenType("ATAN2D")
+  static ATAND = new TokenType("ATAND")
+  static ATANH = new TokenType("ATANH")
+  static ATTACH = new TokenType("ATTACH")
+  static ATTRIBUTE = new TokenType("ATTRIBUTE")
+  static ATTRIBUTES = new TokenType("ATTRIBUTES")
+  static AUDIT = new TokenType("AUDIT")
+  static AUTHENTICATED = new TokenType("AUTHENTICATED")
+  static AUTHENTICATION = new TokenType("AUTHENTICATION")
+  static AUTHID = new TokenType("AUTHID")
+  static AUTHORIZATION = new TokenType("AUTHORIZATION")
+  static AUTO = new TokenType("AUTO")
+  static AUTOALLOCATE = new TokenType("AUTOALLOCATE")
+  static AUTOEXTEND = new TokenType("AUTOEXTEND")
+  static AUTOEXTEND_SIZE = new TokenType("AUTOEXTEND_SIZE")
+  static AUTOINCREMENT = new TokenType("AUTOINCREMENT")
+  static AUTOMATIC = new TokenType("AUTOMATIC")
+  static AUTONOMOUS_TRANSACTION = new TokenType("AUTONOMOUS_TRANSACTION")
+  static AUTO_INCREMENT = new TokenType("AUTO_INCREMENT")
+  static AUTO_LOGIN = new TokenType("AUTO_LOGIN")
+  static AVAILABILITY = new TokenType("AVAILABILITY")
+  static AVG = new TokenType("AVG")
+  static AVG_ROW_LENGTH = new TokenType("AVG_ROW_LENGTH")
+  static AZURE_ROLE = new TokenType("AZURE_ROLE")
+  static AZURE_USER = new TokenType("AZURE_USER")
+  static BACKUP = new TokenType("BACKUP")
+  static BADFILE = new TokenType("BADFILE")
+  static BASICFILE = new TokenType("BASICFILE")
+  static BATCH = new TokenType("BATCH")
+  static BEFORE = new TokenType("BEFORE")
+  static BEGIN = new TokenType("BEGIN")
+  static BEGINNING = new TokenType("BEGINNING")
+  static BENCHMARK = new TokenType("BENCHMARK")
+  static BEQUEATH = new TokenType("BEQUEATH")
+  static BETWEEN = new TokenType("BETWEEN")
+  static BFILE = new TokenType("BFILE")
+  static BIGFILE = new TokenType("BIGFILE")
+  static BIGINT = new TokenType("BIGINT")
+  static BIN = new TokenType("BIN")
+  static BINARY = new TokenType("BINARY")
+  static BINARY_INTEGER = new TokenType("BINARY_INTEGER")
+  static BINDING = new TokenType("BINDING")
+  static BINLOG = new TokenType("BINLOG")
+  static BIN_TO_UUID = new TokenType("BIN_TO_UUID")
+  static BIT = new TokenType("BIT")
+  static BITMAP = new TokenType("BITMAP")
+  static BIT_AND = new TokenType("BIT_AND")
+  static BIT_COUNT = new TokenType("BIT_COUNT")
+  static BIT_LENGTH = new TokenType("BIT_LENGTH")
+  static BIT_OR = new TokenType("BIT_OR")
+  static BIT_XOR = new TokenType("BIT_XOR")
+  static BLOB = new TokenType("BLOB")
+  static BLOCK = new TokenType("BLOCK")
+  static BLOCKCHAIN = new TokenType("BLOCKCHAIN")
+  static BLOCKSIZE = new TokenType("BLOCKSIZE")
+  static BODY = new TokenType("BODY")
+  static BOOL = new TokenType("BOOL")
+  static BOOLEAN = new TokenType("BOOLEAN")
+  static BOOL_AND = new TokenType("BOOL_AND")
+  static BOOL_OR = new TokenType("BOOL_OR")
+  static BOTH = new TokenType("BOTH")
+  static BOUND_BOX = new TokenType("BOUND_BOX")
+  static BOX = new TokenType("BOX")
+  static BREADTH = new TokenType("BREADTH")
+  static BREAK = new TokenType("BREAK")
+  static BROADCAST = new TokenType("BROADCAST")
+  static BROWSE = new TokenType("BROWSE")
+  static BTREE = new TokenType("BTREE")
+  static BTRIM = new TokenType("BTRIM")
+  static BUFFER_CACHE = new TokenType("BUFFER_CACHE")
+  static BULK = new TokenType("BULK")
+  static BULK_EXCEPTIONS = new TokenType("BULK_EXCEPTIONS")
+  static BULK_ROWCOUNT = new TokenType("BULK_ROWCOUNT")
+  static BY = new TokenType("BY")
+  static BYTEA = new TokenType("BYTEA")
+  static CACHE = new TokenType("CACHE")
+  static CACHING = new TokenType("CACHING")
+  static CALL = new TokenType("CALL")
+  static CANCEL = new TokenType("CANCEL")
+  static CAPACITY = new TokenType("CAPACITY")
+  static CAPTION = new TokenType("CAPTION")
+  static CARDINALITY = new TokenType("CARDINALITY")
+  static CASCADE = new TokenType("CASCADE")
+  static CASCADED = new TokenType("CASCADED")
+  static CASE = new TokenType("CASE")
+  static CAST = new TokenType("CAST")
+  static CATCH = new TokenType("CATCH")
+  static CATEGORY = new TokenType("CATEGORY")
+  static CBRT = new TokenType("CBRT")
+  static CEIL = new TokenType("CEIL")
+  static CEILING = new TokenType("CEILING")
+  static CENTER = new TokenType("CENTER")
+  static CENTURY = new TokenType("CENTURY")
+  static CHAIN = new TokenType("CHAIN")
+  static CHAINED = new TokenType("CHAINED")
+  static CHANGE = new TokenType("CHANGE")
+  static CHANGES = new TokenType("CHANGES")
+  static CHAR = new TokenType("CHAR")
+  static CHAR2 = new TokenType("CHAR2")
+  static CHARACTER = new TokenType("CHARACTER")
+  static CHARACTER_LENGTH = new TokenType("CHARACTER_LENGTH")
+  static CHARF = new TokenType("CHARF")
+  static CHARINDEX = new TokenType("CHARINDEX")
+  static CHARSET = new TokenType("CHARSET")
+  static CHARSETFORM = new TokenType("CHARSETFORM")
+  static CHARSETID = new TokenType("CHARSETID")
+  static CHARZ = new TokenType("CHARZ")
+  static CHAR_LENGTH = new TokenType("CHAR_LENGTH")
+  static CHECK = new TokenType("CHECK")
+  static CHECKPOINT = new TokenType("CHECKPOINT")
+  static CHECKSUM = new TokenType("CHECKSUM")
+  static CHILD = new TokenType("CHILD")
+  static CHOOSE = new TokenType("CHOOSE")
+  static CHR = new TokenType("CHR")
+  static CHUNK = new TokenType("CHUNK")
+  static CIPHER = new TokenType("CIPHER")
+  static CIRCLE = new TokenType("CIRCLE")
+  static CLASS = new TokenType("CLASS")
+  static CLASSIFICATION = new TokenType("CLASSIFICATION")
+  static CLASSIFIER = new TokenType("CLASSIFIER")
+  static CLAUSE = new TokenType("CLAUSE")
+  static CLEAN = new TokenType("CLEAN")
+  static CLEANUP = new TokenType("CLEANUP")
+  static CLEAR = new TokenType("CLEAR")
+  static CLIENT = new TokenType("CLIENT")
+  static CLOB = new TokenType("CLOB")
+  static CLOCK_TIMESTAMP = new TokenType("CLOCK_TIMESTAMP")
+  static CLONE = new TokenType("CLONE")
+  static CLOSE = new TokenType("CLOSE")
+  static CLS = new TokenType("CLS")
+  static CLUSTER = new TokenType("CLUSTER")
+  static CLUSTERED = new TokenType("CLUSTERED")
+  static CLUSTERING = new TokenType("CLUSTERING")
+  static CLUSTERS = new TokenType("CLUSTERS")
+  static CN = new TokenType("CN")
+  static COALESCE = new TokenType("COALESCE")
+  static COARSE = new TokenType("COARSE")
+  static COERCIBILITY = new TokenType("COERCIBILITY")
+  static COLAUTH = new TokenType("COLAUTH")
+  static COLD = new TokenType("COLD")
+  static COLLATE = new TokenType("COLLATE")
+  static COLLATION = new TokenType("COLLATION")
+  static COLLECT = new TokenType("COLLECT")
+  static COLLECTION = new TokenType("COLLECTION")
+  static COLUMN = new TokenType("COLUMN")
+  static COLUMNS = new TokenType("COLUMNS")
+  static COLUMNS_UPDATED = new TokenType("COLUMNS_UPDATED")
+  static COLUMN_FORMAT = new TokenType("COLUMN_FORMAT")
+  static COLUMN_VALUE = new TokenType("COLUMN_VALUE")
+  static COMMENT = new TokenType("COMMENT")
+  static COMMIT = new TokenType("COMMIT")
+  static COMMITTED = new TokenType("COMMITTED")
+  static COMPACT = new TokenType("COMPACT")
+  static COMPATIBILITY = new TokenType("COMPATIBILITY")
+  static COMPILE = new TokenType("COMPILE")
+  static COMPLETE = new TokenType("COMPLETE")
+  static COMPLETION = new TokenType("COMPLETION")
+  static COMPONENT = new TokenType("COMPONENT")
+  static COMPOSITE_LIMIT = new TokenType("COMPOSITE_LIMIT")
+  static COMPRESS = new TokenType("COMPRESS")
+  static COMPRESSED = new TokenType("COMPRESSED")
+  static COMPRESSION = new TokenType("COMPRESSION")
+  static COMPUTATION = new TokenType("COMPUTATION")
+  static COMPUTE = new TokenType("COMPUTE")
+  static CONCAT = new TokenType("CONCAT")
+  static CONCAT_WS = new TokenType("CONCAT_WS")
+  static CONCURRENT = new TokenType("CONCURRENT")
+  static CONCURRENTLY = new TokenType("CONCURRENTLY")
+  static CONDITION = new TokenType("CONDITION")
+  static CONFIGURATION = new TokenType("CONFIGURATION")
+  static CONFIRM = new TokenType("CONFIRM")
+  static CONFLICT = new TokenType("CONFLICT")
+  static CONNECT = new TokenType("CONNECT")
+  static CONNECTION = new TokenType("CONNECTION")
+  static CONNECTION_ID = new TokenType("CONNECTION_ID")
+  static CONNECT_BY_ISCYCLE = new TokenType("CONNECT_BY_ISCYCLE")
+  static CONNECT_BY_ISLEAF = new TokenType("CONNECT_BY_ISLEAF")
+  static CONNECT_TIME = new TokenType("CONNECT_TIME")
+  static CONSIDER = new TokenType("CONSIDER")
+  static CONSISTENT = new TokenType("CONSISTENT")
+  static CONSTANT = new TokenType("CONSTANT")
+  static CONSTRAINT = new TokenType("CONSTRAINT")
+  static CONSTRAINTS = new TokenType("CONSTRAINTS")
+  static CONTAINER = new TokenType("CONTAINER")
+  static CONTAINERS = new TokenType("CONTAINERS")
+  static CONTAINERS_DEFAULT = new TokenType("CONTAINERS_DEFAULT")
+  static CONTAINER_DATA = new TokenType("CONTAINER_DATA")
+  static CONTAINER_MAP = new TokenType("CONTAINER_MAP")
+  static CONTAINS = new TokenType("CONTAINS")
+  static CONTAINSTABLE = new TokenType("CONTAINSTABLE")
+  static CONTENTS = new TokenType("CONTENTS")
+  static CONTEXT = new TokenType("CONTEXT")
+  static CONTINUE = new TokenType("CONTINUE")
+  static CONTROLFILE = new TokenType("CONTROLFILE")
+  static CONV = new TokenType("CONV")
+  static CONVERSION = new TokenType("CONVERSION")
+  static CONVERT = new TokenType("CONVERT")
+  static CONVERT_FROM = new TokenType("CONVERT_FROM")
+  static CONVERT_TO = new TokenType("CONVERT_TO")
+  static CONVERT_TZ = new TokenType("CONVERT_TZ")
+  static COPY = new TokenType("COPY")
+  static CORR = new TokenType("CORR")
+  static CORRUPTION = new TokenType("CORRUPTION")
+  static COS = new TokenType("COS")
+  static COSD = new TokenType("COSD")
+  static COSH = new TokenType("COSH")
+  static COST = new TokenType("COST")
+  static COT = new TokenType("COT")
+  static COTD = new TokenType("COTD")
+  static COUNT = new TokenType("COUNT")
+  static COVAR_POP = new TokenType("COVAR_POP")
+  static COVAR_SAMP = new TokenType("COVAR_SAMP")
+  static COVERAGE = new TokenType("COVERAGE")
+  static CPU_PER_CALL = new TokenType("CPU_PER_CALL")
+  static CPU_PER_SESSION = new TokenType("CPU_PER_SESSION")
+  static CRASH = new TokenType("CRASH")
+  static CRC32 = new TokenType("CRC32")
+  static CREATE = new TokenType("CREATE")
+  static CREATE_FILE_DEST = new TokenType("CREATE_FILE_DEST")
+  static CREATION = new TokenType("CREATION")
+  static CREDENTIALS = new TokenType("CREDENTIALS")
+  static CRITICAL = new TokenType("CRITICAL")
+  static CROSS = new TokenType("CROSS")
+  static CUBE = new TokenType("CUBE")
+  static CUME_DIST = new TokenType("CUME_DIST")
+  static CURDATE = new TokenType("CURDATE")
+  static CURRENT = new TokenType("CURRENT")
+  static CURRENT_CATALOG = new TokenType("CURRENT_CATALOG")
+  static CURRENT_DATABASE = new TokenType("CURRENT_DATABASE")
+  static CURRENT_DATE = new TokenType("CURRENT_DATE")
+  static CURRENT_QUERY = new TokenType("CURRENT_QUERY")
+  static CURRENT_ROLE = new TokenType("CURRENT_ROLE")
+  static CURRENT_SCHEMA = new TokenType("CURRENT_SCHEMA")
+  static CURRENT_SCHEMAS = new TokenType("CURRENT_SCHEMAS")
+  static CURRENT_TIME = new TokenType("CURRENT_TIME")
+  static CURRENT_TIMESTAMP = new TokenType("CURRENT_TIMESTAMP")
+  static CURRENT_TIMEZONE = new TokenType("CURRENT_TIMEZONE")
+  static CURRENT_TIMEZONE_ID = new TokenType("CURRENT_TIMEZONE_ID")
+  static CURRENT_USER = new TokenType("CURRENT_USER")
+  static CURRVAL = new TokenType("CURRVAL")
+  static CURSOR = new TokenType("CURSOR")
+  static CURSOR_TO_XML = new TokenType("CURSOR_TO_XML")
+  static CURSOR_TO_XMLSCHEMA = new TokenType("CURSOR_TO_XMLSCHEMA")
+  static CURTIME = new TokenType("CURTIME")
+  static CYCLE = new TokenType("CYCLE")
+  static D = new TokenType("D")
+  static DANGLING = new TokenType("DANGLING")
+  static DATA = new TokenType("DATA")
+  static DATABASE = new TokenType("DATABASE")
+  static DATABASES = new TokenType("DATABASES")
+  static DATABASE_TO_XML = new TokenType("DATABASE_TO_XML")
+  static DATABASE_TO_XMLSCHEMA = new TokenType("DATABASE_TO_XMLSCHEMA")
+  static DATABASE_TO_XML_AND_XMLSCHEMA = new TokenType("DATABASE_TO_XML_AND_XMLSCHEMA")
+  static DATAFILE = new TokenType("DATAFILE")
+  static DATAFILES = new TokenType("DATAFILES")
+  static DATALENGTH = new TokenType("DATALENGTH")
+  static DATAPUMP = new TokenType("DATAPUMP")
+  static DATATYPE = new TokenType("DATATYPE")
+  static DATE = new TokenType("DATE")
+  static DATEADD = new TokenType("DATEADD")
+  static DATEDIFF = new TokenType("DATEDIFF")
+  static DATEDIFF_BIG = new TokenType("DATEDIFF_BIG")
+  static DATEFROMPARTS = new TokenType("DATEFROMPARTS")
+  static DATENAME = new TokenType("DATENAME")
+  static DATEPART = new TokenType("DATEPART")
+  static DATETIME = new TokenType("DATETIME")
+  static DATETIMEFROMPARTS = new TokenType("DATETIMEFROMPARTS")
+  static DATETIMEOFFSET = new TokenType("DATETIMEOFFSET")
+  static DATETIMEOFFSETFROMPARTS = new TokenType("DATETIMEOFFSETFROMPARTS")
+  static DATETIME2 = new TokenType("DATETIME2")
+  static DATETIME2FROMPARTS = new TokenType("DATETIME2FROMPARTS")
+  static DATE_ADD = new TokenType("DATE_ADD")
+  static DATE_BIN = new TokenType("DATE_BIN")
+  static DATE_BUCKET = new TokenType("DATE_BUCKET")
+  static DATE_FORMAT = new TokenType("DATE_FORMAT")
+  static DATE_PART = new TokenType("DATE_PART")
+  static DATE_SUB = new TokenType("DATE_SUB")
+  static DATE_TRUNC = new TokenType("DATE_TRUNC")
+  static DAY = new TokenType("DAY")
+  static DAYNAME = new TokenType("DAYNAME")
+  static DAYOFMONTH = new TokenType("DAYOFMONTH")
+  static DAYOFWEEK = new TokenType("DAYOFWEEK")
+  static DAYOFYEAR = new TokenType("DAYOFYEAR")
+  static DAYS = new TokenType("DAYS")
+  static DAY_HOUR = new TokenType("DAY_HOUR")
+  static DAY_MICROSECOND = new TokenType("DAY_MICROSECOND")
+  static DAY_MINUTE = new TokenType("DAY_MINUTE")
+  static DAY_SECOND = new TokenType("DAY_SECOND")
+  static DBA_RECYCLEBIN = new TokenType("DBA_RECYCLEBIN")
+  static DBCC = new TokenType("DBCC")
+  static DBURITYPE = new TokenType("DBURITYPE")
+  static DDL = new TokenType("DDL")
+  static DEALLOCATE = new TokenType("DEALLOCATE")
+  static DEBUG = new TokenType("DEBUG")
+  static DEC = new TokenType("DEC")
+  static DECADE = new TokenType("DECADE")
+  static DECIMAL = new TokenType("DECIMAL")
+  static DECLARE = new TokenType("DECLARE")
+  static DECODE = new TokenType("DECODE")
+  static DECREMENT = new TokenType("DECREMENT")
+  static DECRYPT = new TokenType("DECRYPT")
+  static DEDUPLICATE = new TokenType("DEDUPLICATE")
+  static DEFAULT = new TokenType("DEFAULT")
+  static DEFAULT_COLLATION = new TokenType("DEFAULT_COLLATION")
+  static DEFAULT_CREDENTIAL = new TokenType("DEFAULT_CREDENTIAL")
+  static DEFERRABLE = new TokenType("DEFERRABLE")
+  static DEFERRED = new TokenType("DEFERRED")
+  static DEFINE = new TokenType("DEFINE")
+  static DEFINER = new TokenType("DEFINER")
+  static DEFINITION = new TokenType("DEFINITION")
+  static DEGREES = new TokenType("DEGREES")
+  static DELAYED = new TokenType("DELAYED")
+  static DELAY_KEY_WRITE = new TokenType("DELAY_KEY_WRITE")
+  static DELETE = new TokenType("DELETE")
+  static DELETE_ALL = new TokenType("DELETE_ALL")
+  static DELETING = new TokenType("DELETING")
+  static DELIGATE = new TokenType("DELIGATE")
+  static DEMAND = new TokenType("DEMAND")
+  static DENSE_RANK = new TokenType("DENSE_RANK")
+  static DENY = new TokenType("DENY")
+  static DEPENDENT = new TokenType("DEPENDENT")
+  static DEPLICATE = new TokenType("DEPLICATE")
+  static DEPTH = new TokenType("DEPTH")
+  static DESC = new TokenType("DESC")
+  static DESCRIBE = new TokenType("DESCRIBE")
+  static DESCRIPTION = new TokenType("DESCRIPTION")
+  static DES_KEY_FILE = new TokenType("DES_KEY_FILE")
+  static DETACH = new TokenType("DETACH")
+  static DETAIL = new TokenType("DETAIL")
+  static DETERMINES = new TokenType("DETERMINES")
+  static DETERMINISTIC = new TokenType("DETERMINISTIC")
+  static DIAGONAL = new TokenType("DIAGONAL")
+  static DIAMETER = new TokenType("DIAMETER")
+  static DICTIONARY = new TokenType("DICTIONARY")
+  static DIFFERENCE = new TokenType("DIFFERENCE")
+  static DIGEST = new TokenType("DIGEST")
+  static DIMENSION = new TokenType("DIMENSION")
+  static DIRECTORY = new TokenType("DIRECTORY")
+  static DIRECT_LOAD = new TokenType("DIRECT_LOAD")
+  static DIRECT_PATH = new TokenType("DIRECT_PATH")
+  static DISABLE = new TokenType("DISABLE")
+  static DISABLE_ALL = new TokenType("DISABLE_ALL")
+  static DISALLOW = new TokenType("DISALLOW")
+  static DISASSOCIATE = new TokenType("DISASSOCIATE")
+  static DISCARD = new TokenType("DISCARD")
+  static DISCARDFILE = new TokenType("DISCARDFILE")
+  static DISCONNECT = new TokenType("DISCONNECT")
+  static DISK = new TokenType("DISK")
+  static DISKGROUP = new TokenType("DISKGROUP")
+  static DISKS = new TokenType("DISKS")
+  static DISMOUNT = new TokenType("DISMOUNT")
+  static DISPLAY = new TokenType("DISPLAY")
+  static DISTINCT = new TokenType("DISTINCT")
+  static DISTINCTROW = new TokenType("DISTINCTROW")
+  static DISTRIBUTE = new TokenType("DISTRIBUTE")
+  static DISTRIBUTED = new TokenType("DISTRIBUTED")
+  static DIV = new TokenType("DIV")
+  static DML = new TokenType("DML")
+  static DO = new TokenType("DO")
+  static DOCUMENT = new TokenType("DOCUMENT")
+  static DOMAIN = new TokenType("DOMAIN")
+  static DOUBLE = new TokenType("DOUBLE")
+  static DOW = new TokenType("DOW")
+  static DOWNGRADE = new TokenType("DOWNGRADE")
+  static DOY = new TokenType("DOY")
+  static DROP = new TokenType("DROP")
+  static DUAL = new TokenType("DUAL")
+  static DUMP = new TokenType("DUMP")
+  static DUPLICATE = new TokenType("DUPLICATE")
+  static DUPLICATED = new TokenType("DUPLICATED")
+  static DURATION = new TokenType("DURATION")
+  static DV = new TokenType("DV")
+  static DYNAMIC = new TokenType("DYNAMIC")
+  static E = new TokenType("E")
+  static EACH = new TokenType("EACH")
+  static EDITION = new TokenType("EDITION")
+  static EDITIONABLE = new TokenType("EDITIONABLE")
+  static EDITIONING = new TokenType("EDITIONING")
+  static EDITIONS = new TokenType("EDITIONS")
+  static ELEMENT = new TokenType("ELEMENT")
+  static ELSE = new TokenType("ELSE")
+  static ELSEIF = new TokenType("ELSEIF")
+  static ELSIF = new TokenType("ELSIF")
+  static ELT = new TokenType("ELT")
+  static EMPTY = new TokenType("EMPTY")
+  static EMPTY_BLOB = new TokenType("EMPTY_BLOB")
+  static EMPTY_CLOB = new TokenType("EMPTY_CLOB")
+  static ENABLE = new TokenType("ENABLE")
+  static ENABLE_ALL = new TokenType("ENABLE_ALL")
+  static ENCLOSED = new TokenType("ENCLOSED")
+  static ENCODE = new TokenType("ENCODE")
+  static ENCODING = new TokenType("ENCODING")
+  static ENCRYPT = new TokenType("ENCRYPT")
+  static ENCRYPTED = new TokenType("ENCRYPTED")
+  static ENCRYPTION = new TokenType("ENCRYPTION")
+  static ENCRYPTION_KEY_ID = new TokenType("ENCRYPTION_KEY_ID")
+  static END = new TokenType("END")
+  static ENDS = new TokenType("ENDS")
+  static ENFORCED = new TokenType("ENFORCED")
+  static ENGINE = new TokenType("ENGINE")
+  static ENGINE_ATTRIBUTE = new TokenType("ENGINE_ATTRIBUTE")
+  static EOMONTH = new TokenType("EOMONTH")
+  static ENTERPRISE = new TokenType("ENTERPRISE")
+  static ENUM = new TokenType("ENUM")
+  static ENUM_FIRST = new TokenType("ENUM_FIRST")
+  static ENUM_LAST = new TokenType("ENUM_LAST")
+  static ENUM_RANGE = new TokenType("ENUM_RANGE")
+  static EPOCH = new TokenType("EPOCH")
+  static ERRCODE = new TokenType("ERRCODE")
+  static ERRLVL = new TokenType("ERRLVL")
+  static ERRORS = new TokenType("ERRORS")
+  static ERROR_CODE = new TokenType("ERROR_CODE")
+  static ERROR_INDEX = new TokenType("ERROR_INDEX")
+  static ESCAPE = new TokenType("ESCAPE")
+  static ESCAPED = new TokenType("ESCAPED")
+  static EVALUATE = new TokenType("EVALUATE")
+  static EVENT = new TokenType("EVENT")
+  static EVENTDATA = new TokenType("EVENTDATA")
+  static EVERY = new TokenType("EVERY")
+  static EXCEPT = new TokenType("EXCEPT")
+  static EXCEPTION = new TokenType("EXCEPTION")
+  static EXCEPTIONS = new TokenType("EXCEPTIONS")
+  static EXCEPTION_INIT = new TokenType("EXCEPTION_INIT")
+  static EXCHANGE = new TokenType("EXCHANGE")
+  static EXCLUDE = new TokenType("EXCLUDE")
+  static EXCLUSIVE = new TokenType("EXCLUSIVE")
+  static EXEC = new TokenType("EXEC")
+  static EXECUTE = new TokenType("EXECUTE")
+  static EXISTS = new TokenType("EXISTS")
+  static EXIT = new TokenType("EXIT")
+  static EXP = new TokenType("EXP")
+  static EXPANSION = new TokenType("EXPANSION")
+  static EXPIRE = new TokenType("EXPIRE")
+  static EXPLAIN = new TokenType("EXPLAIN")
+  static EXPORT = new TokenType("EXPORT")
+  static EXPORT_SET = new TokenType("EXPORT_SET")
+  static EXPRESSION = new TokenType("EXPRESSION")
+  static EXTEND = new TokenType("EXTEND")
+  static EXTENDED = new TokenType("EXTENDED")
+  static EXTENSION = new TokenType("EXTENSION")
+  static EXTENT = new TokenType("EXTENT")
+  static EXTENT_SIZE = new TokenType("EXTENT_SIZE")
+  static EXTERNAL = new TokenType("EXTERNAL")
+  static EXTERNALLY = new TokenType("EXTERNALLY")
+  static EXTRACT = new TokenType("EXTRACT")
+  static EXTRACTVALUE = new TokenType("EXTRACTVALUE")
+  static FACT = new TokenType("FACT")
+  static FACTORIAL = new TokenType("FACTORIAL")
+  static FAIL = new TokenType("FAIL")
+  static FAILED = new TokenType("FAILED")
+  static FAILED_LOGIN_ATTEMPTS = new TokenType("FAILED_LOGIN_ATTEMPTS")
+  static FAILGROUP = new TokenType("FAILGROUP")
+  static FAILOVER = new TokenType("FAILOVER")
+  static FALSE = new TokenType("FALSE")
+  static FAMILY = new TokenType("FAMILY")
+  static FAR = new TokenType("FAR")
+  static FAST = new TokenType("FAST")
+  static FEATURE = new TokenType("FEATURE")
+  static FETCH = new TokenType("FETCH")
+  static FIELD = new TokenType("FIELD")
+  static FILE = new TokenType("FILE")
+  static FILEGROUP = new TokenType("FILEGROUP")
+  static FILESYSTEM_LIKE_LOGGING = new TokenType("FILESYSTEM_LIKE_LOGGING")
+  static FILE_BLOCK_SIZE = new TokenType("FILE_BLOCK_SIZE")
+  static FILE_NAME_CONVERT = new TokenType("FILE_NAME_CONVERT")
+  static FILLFACTOR = new TokenType("FILLFACTOR")
+  static FILTER = new TokenType("FILTER")
+  static FINAL = new TokenType("FINAL")
+  static FIND_IN_SET = new TokenType("FIND_IN_SET")
+  static FINE = new TokenType("FINE")
+  static FINISH = new TokenType("FINISH")
+  static FIRST = new TokenType("FIRST")
+  static FIRST_VALUE = new TokenType("FIRST_VALUE")
+  static FIXED = new TokenType("FIXED")
+  static FLASHBACK = new TokenType("FLASHBACK")
+  static FLASH_CACHE = new TokenType("FLASH_CACHE")
+  static FLEX = new TokenType("FLEX")
+  static FLOAT = new TokenType("FLOAT")
+  static FLOOR = new TokenType("FLOOR")
+  static FLUSH = new TokenType("FLUSH")
+  static FOLLOWING = new TokenType("FOLLOWING")
+  static FOLLOWS = new TokenType("FOLLOWS")
+  static FOR = new TokenType("FOR")
+  static FORALL = new TokenType("FORALL")
+  static FORCE = new TokenType("FORCE")
+  static FOREIGN = new TokenType("FOREIGN")
+  static FORMAT = new TokenType("FORMAT")
+  static FORMAT_BYTES = new TokenType("FORMAT_BYTES")
+  static FORMAT_PICO_TIME = new TokenType("FORMAT_PICO_TIME")
+  static FOUND = new TokenType("FOUND")
+  static FOUND_ROWS = new TokenType("FOUND_ROWS")
+  static FREEPOOLS = new TokenType("FREEPOOLS")
+  static FREETEXT = new TokenType("FREETEXT")
+  static FREETEXTTABLE = new TokenType("FREETEXTTABLE")
+  static FREEZE = new TokenType("FREEZE")
+  static FRESH = new TokenType("FRESH")
+  static FROM = new TokenType("FROM")
+  static FROM_BASE64 = new TokenType("FROM_BASE64")
+  static FROM_DAYS = new TokenType("FROM_DAYS")
+  static FROM_UNIXTIME = new TokenType("FROM_UNIXTIME")
+  static FULL = new TokenType("FULL")
+  static FULLTEXT = new TokenType("FULLTEXT")
+  static FUNCTION = new TokenType("FUNCTION")
+  static FUNCTIONS = new TokenType("FUNCTIONS")
+  static G = new TokenType("G")
+  static GCD = new TokenType("GCD")
+  static GENERATED = new TokenType("GENERATED")
+  static GENERATE_SERIES = new TokenType("GENERATE_SERIES")
+  static GEN_RANDOM_UUID = new TokenType("GEN_RANDOM_UUID")
+  static GEOGRAPHY = new TokenType("GEOGRAPHY")
+  static GEOMCOLLECTION = new TokenType("GEOMCOLLECTION")
+  static GEOMETRY = new TokenType("GEOMETRY")
+  static GEOMETRYCOLLECTION = new TokenType("GEOMETRYCOLLECTION")
+  static GET = new TokenType("GET")
+  static GETDATE = new TokenType("GETDATE")
+  static GETUTCDATE = new TokenType("GETUTCDATE")
+  static GET_BIT = new TokenType("GET_BIT")
+  static GET_BYTE = new TokenType("GET_BYTE")
+  static GET_CURRENT_TS_CONFIG = new TokenType("GET_CURRENT_TS_CONFIG")
+  static GET_FORMAT = new TokenType("GET_FORMAT")
+  static GET_LOCK = new TokenType("GET_LOCK")
+  static GLOB = new TokenType("GLOB")
+  static GLOBAL = new TokenType("GLOBAL")
+  static GLOBALLY = new TokenType("GLOBALLY")
+  static GLOBAL_NAME = new TokenType("GLOBAL_NAME")
+  static GLOBAL_TOPIC_ENABLED = new TokenType("GLOBAL_TOPIC_ENABLED")
+  static GO = new TokenType("GO")
+  static GOTO = new TokenType("GOTO")
+  static GRANT = new TokenType("GRANT")
+  static GRANTED = new TokenType("GRANTED")
+  static GREATEST = new TokenType("GREATEST")
+  static GROUP = new TokenType("GROUP")
+  static GROUPING = new TokenType("GROUPING")
+  static GROUPING_ID = new TokenType("GROUPING_ID")
+  static GROUPS = new TokenType("GROUPS")
+  static GROUP_CONCAT = new TokenType("GROUP_CONCAT")
+  static GROUP_ID = new TokenType("GROUP_ID")
+  static GUARANTEE = new TokenType("GUARANTEE")
+  static GUARD = new TokenType("GUARD")
+  static H = new TokenType("H")
+  static HALF_YEARS = new TokenType("HALF_YEARS")
+  static HANDLER = new TokenType("HANDLER")
+  static HASH = new TokenType("HASH")
+  static HASHING = new TokenType("HASHING")
+  static HASHKEYS = new TokenType("HASHKEYS")
+  static HAS_ANY_COLUMN_PRIVILEGE = new TokenType("HAS_ANY_COLUMN_PRIVILEGE")
+  static HAS_COLUMN_PRIVILEGE = new TokenType("HAS_COLUMN_PRIVILEGE")
+  static HAS_DATABASE_PRIVILEGE = new TokenType("HAS_DATABASE_PRIVILEGE")
+  static HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE = new TokenType("HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE")
+  static HAS_FUNCTION_PRIVILEGE = new TokenType("HAS_FUNCTION_PRIVILEGE")
+  static HAS_LANGUAGE_PRIVILEGE = new TokenType("HAS_LANGUAGE_PRIVILEGE")
+  static HAS_PARAMETER_PRIVILEGE = new TokenType("HAS_PARAMETER_PRIVILEGE")
+  static HAS_SCHEMA_PRIVILEGE = new TokenType("HAS_SCHEMA_PRIVILEGE")
+  static HAS_SEQUENCE_PRIVILEGE = new TokenType("HAS_SEQUENCE_PRIVILEGE")
+  static HAS_SERVER_PRIVILEGE = new TokenType("HAS_SERVER_PRIVILEGE")
+  static HAS_TABLESPACE_PRIVILEGE = new TokenType("HAS_TABLESPACE_PRIVILEGE")
+  static HAS_TABLE_PRIVILEGE = new TokenType("HAS_TABLE_PRIVILEGE")
+  static HAS_TYPE_PRIVILEGE = new TokenType("HAS_TYPE_PRIVILEGE")
+  static HAVING = new TokenType("HAVING")
+  static HEAP = new TokenType("HEAP")
+  static HEIGHT = new TokenType("HEIGHT")
+  static HELP = new TokenType("HELP")
+  static HEX = new TokenType("HEX")
+  static HIERARCHIES = new TokenType("HIERARCHIES")
+  static HIERARCHY = new TokenType("HIERARCHY")
+  static HIERARCHYID = new TokenType("HIERARCHYID")
+  static HIER_ORDER = new TokenType("HIER_ORDER")
+  static HIGH = new TokenType("HIGH")
+  static HIGH_PRIORITY = new TokenType("HIGH_PRIORITY")
+  static HINT = new TokenType("HINT")
+  static HISTORY = new TokenType("HISTORY")
+  static HOLDLOCK = new TokenType("HOLDLOCK")
+  static HOST = new TokenType("HOST")
+  static HOSTMASK = new TokenType("HOSTMASK")
+  static HOT = new TokenType("HOT")
+  static HOUR = new TokenType("HOUR")
+  static HOURS = new TokenType("HOURS")
+  static HOUR_MICROSECOND = new TokenType("HOUR_MICROSECOND")
+  static HOUR_MINUTE = new TokenType("HOUR_MINUTE")
+  static HOUR_SECOND = new TokenType("HOUR_SECOND")
+  static HTTP = new TokenType("HTTP")
+  static HTTPURITYPE = new TokenType("HTTPURITYPE")
+  static IAM_GROUP_NAME = new TokenType("IAM_GROUP_NAME")
+  static IAM_PRINCIPAL_NAME = new TokenType("IAM_PRINCIPAL_NAME")
+  static ICU_VERSION = new TokenType("ICU_VERSION")
+  static ID = new TokenType("ID")
+  static IDENT_CURRENT = new TokenType("IDENT_CURRENT")
+  static IDENT_INCR = new TokenType("IDENT_INCR")
+  static IDENT_SEED = new TokenType("IDENT_SEED")
+  static IDENTIFIED = new TokenType("IDENTIFIED")
+  static IDENTITY = new TokenType("IDENTITY")
+  static IDENTITYCOL = new TokenType("IDENTITYCOL")
+  static IDENTITY_INSERT = new TokenType("IDENTITY_INSERT")
+  static IDLE_TIME = new TokenType("IDLE_TIME")
+  static IETF_QUOTES = new TokenType("IETF_QUOTES")
+  static IF = new TokenType("IF")
+  static IFNULL = new TokenType("IFNULL")
+  static IGNORE = new TokenType("IGNORE")
+  static IGNORED = new TokenType("IGNORED")
+  static IIF = new TokenType("IIF")
+  static ILIKE = new TokenType("ILIKE")
+  static IMMEDIATE = new TokenType("IMMEDIATE")
+  static IMMUTABLE = new TokenType("IMMUTABLE")
+  static IMPORT = new TokenType("IMPORT")
+  static IN = new TokenType("IN")
+  static INACTIVE = new TokenType("INACTIVE")
+  static INACTIVE_ACCOUNT_TIME = new TokenType("INACTIVE_ACCOUNT_TIME")
+  static INCLUDE = new TokenType("INCLUDE")
+  static INCLUDING = new TokenType("INCLUDING")
+  static INCREMENT = new TokenType("INCREMENT")
+  static INDEX = new TokenType("INDEX")
+  static INDEXED = new TokenType("INDEXED")
+  static INDEXES = new TokenType("INDEXES")
+  static INDEXING = new TokenType("INDEXING")
+  static INDEXTYPE = new TokenType("INDEXTYPE")
+  static INDEXTYPES = new TokenType("INDEXTYPES")
+  static INDICATOR = new TokenType("INDICATOR")
+  static INDICES = new TokenType("INDICES")
+  static INET6_ATON = new TokenType("INET6_ATON")
+  static INET6_NTOA = new TokenType("INET6_NTOA")
+  static INET_ATON = new TokenType("INET_ATON")
+  static INET_CLIENT_ADDR = new TokenType("INET_CLIENT_ADDR")
+  static INET_CLIENT_PORT = new TokenType("INET_CLIENT_PORT")
+  static INET_MERGE = new TokenType("INET_MERGE")
+  static INET_NTOA = new TokenType("INET_NTOA")
+  static INET_SAME_FAMILY = new TokenType("INET_SAME_FAMILY")
+  static INET_SERVER_ADDR = new TokenType("INET_SERVER_ADDR")
+  static INET_SERVER_PORT = new TokenType("INET_SERVER_PORT")
+  static INFILE = new TokenType("INFILE")
+  static INITCAP = new TokenType("INITCAP")
+  static INITIAL = new TokenType("INITIAL")
+  static INITIALIZED = new TokenType("INITIALIZED")
+  static INITIALLY = new TokenType("INITIALLY")
+  static INITIAL_SIZE = new TokenType("INITIAL_SIZE")
+  static INITRANS = new TokenType("INITRANS")
+  static INLINE = new TokenType("INLINE")
+  static INMEMORY = new TokenType("INMEMORY")
+  static INNER = new TokenType("INNER")
+  static INOUT = new TokenType("INOUT")
+  static INPLACE = new TokenType("INPLACE")
+  static INSTEAD = new TokenType("INSTEAD")
+  static INSENSITIVE = new TokenType("INSENSITIVE")
+  static INSERT = new TokenType("INSERT")
+  static INSERTING = new TokenType("INSERTING")
+  static INSERT_METHOD = new TokenType("INSERT_METHOD")
+  static INSTALL = new TokenType("INSTALL")
+  static INSTANCE = new TokenType("INSTANCE")
+  static INSTANCES = new TokenType("INSTANCES")
+  static INSTANTIABLE = new TokenType("INSTANTIABLE")
+  static INSTR = new TokenType("INSTR")
+  static INSTR4 = new TokenType("INSTR4")
+  static INSTRB = new TokenType("INSTRB")
+  static INT = new TokenType("INT")
+  static INTEGER = new TokenType("INTEGER")
+  static INTERLEAVED = new TokenType("INTERLEAVED")
+  static INTERNAL = new TokenType("INTERNAL")
+  static INTERSECT = new TokenType("INTERSECT")
+  static INTERVAL = new TokenType("INTERVAL")
+  static INTO = new TokenType("INTO")
+  static INVALIDATION = new TokenType("INVALIDATION")
+  static INVISIBLE = new TokenType("INVISIBLE")
+  static INVOKER = new TokenType("INVOKER")
+  static IO_AFTER_GTIDS = new TokenType("IO_AFTER_GTIDS")
+  static IO_BEFORE_GTIDS = new TokenType("IO_BEFORE_GTIDS")
+  static IS = new TokenType("IS")
+  static ISCLOSED = new TokenType("ISCLOSED")
+  static ISDATE = new TokenType("ISDATE")
+  static ISEMPTY = new TokenType("ISEMPTY")
+  static ISFINITE = new TokenType("ISFINITE")
+  static ISJSON = new TokenType("ISJSON")
+  static ISNULL = new TokenType("ISNULL")
+  static ISNUMERIC = new TokenType("ISNUMERIC")
+  static ISODOW = new TokenType("ISODOW")
+  static ISOLATE = new TokenType("ISOLATE")
+  static ISOLATION = new TokenType("ISOLATION")
+  static ISOPEN = new TokenType("ISOPEN")
+  static ISOYEAR = new TokenType("ISOYEAR")
+  static ISSUER = new TokenType("ISSUER")
+  static IS_FREE_LOCK = new TokenType("IS_FREE_LOCK")
+  static IS_IPV4 = new TokenType("IS_IPV4")
+  static IS_IPV4_COMPAT = new TokenType("IS_IPV4_COMPAT")
+  static IS_IPV4_MAPPED = new TokenType("IS_IPV4_MAPPED")
+  static IS_IPV6 = new TokenType("IS_IPV6")
+  static IS_LEAF = new TokenType("IS_LEAF")
+  static IS_TEMPLATE = new TokenType("IS_TEMPLATE")
+  static IS_USED_LOCK = new TokenType("IS_USED_LOCK")
+  static IS_UUID = new TokenType("IS_UUID")
+  static ITERATE = new TokenType("ITERATE")
+  static JAVA = new TokenType("JAVA")
+  static JOB = new TokenType("JOB")
+  static JOIN = new TokenType("JOIN")
+  static JSON = new TokenType("JSON")
+  static JSONB_AGG = new TokenType("JSONB_AGG")
+  static JSONB_ARRAY_ELEMENTS = new TokenType("JSONB_ARRAY_ELEMENTS")
+  static JSONB_ARRAY_ELEMENTS_TEXT = new TokenType("JSONB_ARRAY_ELEMENTS_TEXT")
+  static JSONB_ARRAY_LENGTH = new TokenType("JSONB_ARRAY_LENGTH")
+  static JSONB_BUILD_ARRAY = new TokenType("JSONB_BUILD_ARRAY")
+  static JSONB_BUILD_OBJECT = new TokenType("JSONB_BUILD_OBJECT")
+  static JSONB_EACH = new TokenType("JSONB_EACH")
+  static JSONB_EACH_TEXT = new TokenType("JSONB_EACH_TEXT")
+  static JSONB_EXTRACT_PATH = new TokenType("JSONB_EXTRACT_PATH")
+  static JSONB_EXTRACT_PATH_TEXT = new TokenType("JSONB_EXTRACT_PATH_TEXT")
+  static JSONB_INSERT = new TokenType("JSONB_INSERT")
+  static JSONB_OBJECT = new TokenType("JSONB_OBJECT")
+  static JSONB_OBJECT_AGG = new TokenType("JSONB_OBJECT_AGG")
+  static JSONB_OBJECT_KEYS = new TokenType("JSONB_OBJECT_KEYS")
+  static JSONB_PATH_EXISTS = new TokenType("JSONB_PATH_EXISTS")
+  static JSONB_PATH_EXISTS_TZ = new TokenType("JSONB_PATH_EXISTS_TZ")
+  static JSONB_PATH_MATCH = new TokenType("JSONB_PATH_MATCH")
+  static JSONB_PATH_MATCH_TZ = new TokenType("JSONB_PATH_MATCH_TZ")
+  static JSONB_PATH_QUERY = new TokenType("JSONB_PATH_QUERY")
+  static JSONB_PATH_QUERY_ARRAY = new TokenType("JSONB_PATH_QUERY_ARRAY")
+  static JSONB_PATH_QUERY_ARRAY_TZ = new TokenType("JSONB_PATH_QUERY_ARRAY_TZ")
+  static JSONB_PATH_QUERY_FIRST = new TokenType("JSONB_PATH_QUERY_FIRST")
+  static JSONB_PATH_QUERY_FIRST_TZ = new TokenType("JSONB_PATH_QUERY_FIRST_TZ")
+  static JSONB_PATH_QUERY_TZ = new TokenType("JSONB_PATH_QUERY_TZ")
+  static JSONB_POPULATE_RECORD = new TokenType("JSONB_POPULATE_RECORD")
+  static JSONB_POPULATE_RECORDSET = new TokenType("JSONB_POPULATE_RECORDSET")
+  static JSONB_PRETTY = new TokenType("JSONB_PRETTY")
+  static JSONB_SET = new TokenType("JSONB_SET")
+  static JSONB_SET_LAX = new TokenType("JSONB_SET_LAX")
+  static JSONB_STRIP_NULLS = new TokenType("JSONB_STRIP_NULLS")
+  static JSONB_TO_RECORD = new TokenType("JSONB_TO_RECORD")
+  static JSONB_TO_RECORDSET = new TokenType("JSONB_TO_RECORDSET")
+  static JSONB_TO_TSVECTOR = new TokenType("JSONB_TO_TSVECTOR")
+  static JSONB_TYPEOF = new TokenType("JSONB_TYPEOF")
+  static JSON_AGG = new TokenType("JSON_AGG")
+  static JSON_ARRAY = new TokenType("JSON_ARRAY")
+  static JSON_ARRAYAGG = new TokenType("JSON_ARRAYAGG")
+  static JSON_ARRAY_APPEND = new TokenType("JSON_ARRAY_APPEND")
+  static JSON_ARRAY_ELEMENTS = new TokenType("JSON_ARRAY_ELEMENTS")
+  static JSON_ARRAY_ELEMENTS_TEXT = new TokenType("JSON_ARRAY_ELEMENTS_TEXT")
+  static JSON_ARRAY_INSERT = new TokenType("JSON_ARRAY_INSERT")
+  static JSON_ARRAY_LENGTH = new TokenType("JSON_ARRAY_LENGTH")
+  static JSON_BUILD_ARRAY = new TokenType("JSON_BUILD_ARRAY")
+  static JSON_BUILD_OBJECT = new TokenType("JSON_BUILD_OBJECT")
+  static JSON_CONTAINS = new TokenType("JSON_CONTAINS")
+  static JSON_CONTAINS_PATH = new TokenType("JSON_CONTAINS_PATH")
+  static JSON_DEPTH = new TokenType("JSON_DEPTH")
+  static JSON_EACH = new TokenType("JSON_EACH")
+  static JSON_EACH_TEXT = new TokenType("JSON_EACH_TEXT")
+  static JSON_EXTRACT = new TokenType("JSON_EXTRACT")
+  static JSON_EXTRACT_PATH = new TokenType("JSON_EXTRACT_PATH")
+  static JSON_EXTRACT_PATH_TEXT = new TokenType("JSON_EXTRACT_PATH_TEXT")
+  static JSON_GROUP_ARRAY = new TokenType("JSON_GROUP_ARRAY")
+  static JSON_GROUP_OBJECT = new TokenType("JSON_GROUP_OBJECT")
+  static JSON_INSERT = new TokenType("JSON_INSERT")
+  static JSON_KEYS = new TokenType("JSON_KEYS")
+  static JSON_LENGTH = new TokenType("JSON_LENGTH")
+  static JSON_MERGE = new TokenType("JSON_MERGE")
+  static JSON_MERGE_PATCH = new TokenType("JSON_MERGE_PATCH")
+  static JSON_MERGE_PRESERVE = new TokenType("JSON_MERGE_PRESERVE")
+  static JSON_MODIFY = new TokenType("JSON_MODIFY")
+  static JSON_OBJECT = new TokenType("JSON_OBJECT")
+  static JSON_OBJECTAGG = new TokenType("JSON_OBJECTAGG")
+  static JSON_OBJECT_AGG = new TokenType("JSON_OBJECT_AGG")
+  static JSON_OBJECT_KEYS = new TokenType("JSON_OBJECT_KEYS")
+  static JSON_OVERLAPS = new TokenType("JSON_OVERLAPS")
+  static JSON_PATCH = new TokenType("JSON_PATCH")
+  static JSON_PATH_EXISTS = new TokenType("JSON_PATH_EXISTS")
+  static JSON_POPULATE_RECORD = new TokenType("JSON_POPULATE_RECORD")
+  static JSON_POPULATE_RECORDSET = new TokenType("JSON_POPULATE_RECORDSET")
+  static JSON_PRETTY = new TokenType("JSON_PRETTY")
+  static JSON_QUERY = new TokenType("JSON_QUERY")
+  static JSON_QUOTE = new TokenType("JSON_QUOTE")
+  static JSON_REMOVE = new TokenType("JSON_REMOVE")
+  static JSON_REPLACE = new TokenType("JSON_REPLACE")
+  static JSON_SCHEMA_VALID = new TokenType("JSON_SCHEMA_VALID")
+  static JSON_SCHEMA_VALIDATION_REPORT = new TokenType("JSON_SCHEMA_VALIDATION_REPORT")
+  static JSON_SEARCH = new TokenType("JSON_SEARCH")
+  static JSON_SET = new TokenType("JSON_SET")
+  static JSON_STORAGE_FREE = new TokenType("JSON_STORAGE_FREE")
+  static JSON_STORAGE_SIZE = new TokenType("JSON_STORAGE_SIZE")
+  static JSON_STRIP_NULLS = new TokenType("JSON_STRIP_NULLS")
+  static JSON_TABLE = new TokenType("JSON_TABLE")
+  static JSON_TO_RECORD = new TokenType("JSON_TO_RECORD")
+  static JSON_TO_RECORDSET = new TokenType("JSON_TO_RECORDSET")
+  static JSON_TO_TSVECTOR = new TokenType("JSON_TO_TSVECTOR")
+  static JSON_TREE = new TokenType("JSON_TREE")
+  static JSON_TYPE = new TokenType("JSON_TYPE")
+  static JSON_TYPEOF = new TokenType("JSON_TYPEOF")
+  static JSON_UNQUOTE = new TokenType("JSON_UNQUOTE")
+  static JSON_VALID = new TokenType("JSON_VALID")
+  static JSON_VALUE = new TokenType("JSON_VALUE")
+  static JULIAN = new TokenType("JULIAN")
+  static JULIANDAY = new TokenType("JULIANDAY")
+  static JUSTIFY_DAYS = new TokenType("JUSTIFY_DAYS")
+  static JUSTIFY_HOURS = new TokenType("JUSTIFY_HOURS")
+  static JUSTIFY_INTERVAL = new TokenType("JUSTIFY_INTERVAL")
+  static KEEP = new TokenType("KEEP")
+  static KEEP_DUPLICATES = new TokenType("KEEP_DUPLICATES")
+  static KEY = new TokenType("KEY")
+  static KEYS = new TokenType("KEYS")
+  static KEYSTORE = new TokenType("KEYSTORE")
+  static KEY_BLOCK_SIZE = new TokenType("KEY_BLOCK_SIZE")
+  static KILL = new TokenType("KILL")
+  static LABEL = new TokenType("LABEL")
+  static LAG = new TokenType("LAG")
+  static LANGUAGE = new TokenType("LANGUAGE")
+  static LARGE = new TokenType("LARGE")
+  static LAST = new TokenType("LAST")
+  static LASTVAL = new TokenType("LASTVAL")
+  static LAST_DAY = new TokenType("LAST_DAY")
+  static LAST_INSERT_ID = new TokenType("LAST_INSERT_ID")
+  static LAST_INSERT_ROWID = new TokenType("LAST_INSERT_ROWID")
+  static LAST_VALUE = new TokenType("LAST_VALUE")
+  static LATERAL = new TokenType("LATERAL")
+  static LCASE = new TokenType("LCASE")
+  static LCM = new TokenType("LCM")
+  static LC_COLLATE = new TokenType("LC_COLLATE")
+  static LC_CTYPE = new TokenType("LC_CTYPE")
+  static LEAD = new TokenType("LEAD")
+  static LEADING = new TokenType("LEADING")
+  static LEAD_CDB = new TokenType("LEAD_CDB")
+  static LEAD_CDB_URI = new TokenType("LEAD_CDB_URI")
+  static LEAF = new TokenType("LEAF")
+  static LEAST = new TokenType("LEAST")
+  static LEAVE = new TokenType("LEAVE")
+  static LEFT = new TokenType("LEFT")
+  static LEN = new TokenType("LEN")
+  static LENGTH = new TokenType("LENGTH")
+  static LENGTH4 = new TokenType("LENGTH4")
+  static LENGTHB = new TokenType("LENGTHB")
+  static LESS = new TokenType("LESS")
+  static LEVEL = new TokenType("LEVEL")
+  static LEVELS = new TokenType("LEVELS")
+  static LEVEL_NAME = new TokenType("LEVEL_NAME")
+  static LIBRARY = new TokenType("LIBRARY")
+  static LIKE = new TokenType("LIKE")
+  static LIKE2 = new TokenType("LIKE2")
+  static LIKE4 = new TokenType("LIKE4")
+  static LIKEC = new TokenType("LIKEC")
+  static LIKELIHOOD = new TokenType("LIKELIHOOD")
+  static LIKELY = new TokenType("LIKELY")
+  static LIMIT = new TokenType("LIMIT")
+  static LINE = new TokenType("LINE")
+  static LINEAR = new TokenType("LINEAR")
+  static LINENO = new TokenType("LINENO")
+  static LINES = new TokenType("LINES")
+  static LINESTRING = new TokenType("LINESTRING")
+  static LINK = new TokenType("LINK")
+  static LIST = new TokenType("LIST")
+  static LISTEN = new TokenType("LISTEN")
+  static LITERAL = new TokenType("LITERAL")
+  static LN = new TokenType("LN")
+  static LNNVL = new TokenType("LNNVL")
+  static LOAD = new TokenType("LOAD")
+  static LOAD_EXTENSION = new TokenType("LOAD_EXTENSION")
+  static LOAD_FILE = new TokenType("LOAD_FILE")
+  static LOB = new TokenType("LOB")
+  static LOBS = new TokenType("LOBS")
+  static LOCAL = new TokenType("LOCAL")
+  static LOCALTIME = new TokenType("LOCALTIME")
+  static LOCALTIMESTAMP = new TokenType("LOCALTIMESTAMP")
+  static LOCATE = new TokenType("LOCATE")
+  static LOCATION = new TokenType("LOCATION")
+  static LOCATOR = new TokenType("LOCATOR")
+  static LOCK = new TokenType("LOCK")
+  static LOCKDOWN = new TokenType("LOCKDOWN")
+  static LOCKED = new TokenType("LOCKED")
+  static LOCKING = new TokenType("LOCKING")
+  static LOG = new TokenType("LOG")
+  static LOG10 = new TokenType("LOG10")
+  static LOG2 = new TokenType("LOG2")
+  static LOGFILE = new TokenType("LOGFILE")
+  static LOGFILES = new TokenType("LOGFILES")
+  static LOGGING = new TokenType("LOGGING")
+  static LOGICAL = new TokenType("LOGICAL")
+  static LOGICAL_READS_PER_CALL = new TokenType("LOGICAL_READS_PER_CALL")
+  static LOGICAL_READS_PER_SESSION = new TokenType("LOGICAL_READS_PER_SESSION")
+  static LOGS = new TokenType("LOGS")
+  static LONG = new TokenType("LONG")
+  static LONGBLOB = new TokenType("LONGBLOB")
+  static LONGTEXT = new TokenType("LONGTEXT")
+  static LOOP = new TokenType("LOOP")
+  static LOST = new TokenType("LOST")
+  static LOW = new TokenType("LOW")
+  static LOWER = new TokenType("LOWER")
+  static LOWER_INC = new TokenType("LOWER_INC")
+  static LOWER_INF = new TokenType("LOWER_INF")
+  static LOW_PRIORITY = new TokenType("LOW_PRIORITY")
+  static LPAD = new TokenType("LPAD")
+  static LSEG = new TokenType("LSEG")
+  static LTRIM = new TokenType("LTRIM")
+  static M = new TokenType("M")
+  static MACADDR8_SET7BIT = new TokenType("MACADDR8_SET7BIT")
+  static MAIN = new TokenType("MAIN")
+  static MAKEACLITEM = new TokenType("MAKEACLITEM")
+  static MAKEDATE = new TokenType("MAKEDATE")
+  static MAKETIME = new TokenType("MAKETIME")
+  static MAKE_DATE = new TokenType("MAKE_DATE")
+  static MAKE_INTERVAL = new TokenType("MAKE_INTERVAL")
+  static MAKE_SET = new TokenType("MAKE_SET")
+  static MAKE_TIME = new TokenType("MAKE_TIME")
+  static MAKE_TIMESTAMP = new TokenType("MAKE_TIMESTAMP")
+  static MAKE_TIMESTAMPTZ = new TokenType("MAKE_TIMESTAMPTZ")
+  static MANAGED = new TokenType("MANAGED")
+  static MANAGEMENT = new TokenType("MANAGEMENT")
+  static MANUAL = new TokenType("MANUAL")
+  static MAP = new TokenType("MAP")
+  static MAPPING = new TokenType("MAPPING")
+  static MASKLEN = new TokenType("MASKLEN")
+  static MASTER = new TokenType("MASTER")
+  static MASTER_BIND = new TokenType("MASTER_BIND")
+  static MASTER_POS_WAIT = new TokenType("MASTER_POS_WAIT")
+  static MASTER_SERVER_ID = new TokenType("MASTER_SERVER_ID")
+  static MASTER_SSL_VERIFY_SERVER_CERT = new TokenType("MASTER_SSL_VERIFY_SERVER_CERT")
+  static MATCH = new TokenType("MATCH")
+  static MATCHED = new TokenType("MATCHED")
+  static MATCH_NUMBER = new TokenType("MATCH_NUMBER")
+  static MATCH_RECOGNIZE = new TokenType("MATCH_RECOGNIZE")
+  static MATERIALIZED = new TokenType("MATERIALIZED")
+  static MAX = new TokenType("MAX")
+  static MAXDATAFILES = new TokenType("MAXDATAFILES")
+  static MAXEXTENTS = new TokenType("MAXEXTENTS")
+  static MAXIMIZE = new TokenType("MAXIMIZE")
+  static MAXINSTANCES = new TokenType("MAXINSTANCES")
+  static MAXLEN = new TokenType("MAXLEN")
+  static MAXLOGFILES = new TokenType("MAXLOGFILES")
+  static MAXLOGHISTORY = new TokenType("MAXLOGHISTORY")
+  static MAXLOGMEMBERS = new TokenType("MAXLOGMEMBERS")
+  static MAXSIZE = new TokenType("MAXSIZE")
+  static MAXVALUE = new TokenType("MAXVALUE")
+  static MAX_AUDIT_SIZE = new TokenType("MAX_AUDIT_SIZE")
+  static MAX_CONNECTIONS_PER_HOUR = new TokenType("MAX_CONNECTIONS_PER_HOUR")
+  static MAX_DIAG_SIZE = new TokenType("MAX_DIAG_SIZE")
+  static MAX_QUERIES_PER_HOUR = new TokenType("MAX_QUERIES_PER_HOUR")
+  static MAX_ROWS = new TokenType("MAX_ROWS")
+  static MAX_SIZE = new TokenType("MAX_SIZE")
+  static MAX_UPDATES_PER_HOUR = new TokenType("MAX_UPDATES_PER_HOUR")
+  static MAX_USER_CONNECTIONS = new TokenType("MAX_USER_CONNECTIONS")
+  static MBRCONTAINS = new TokenType("MBRCONTAINS")
+  static MBRCOVEREDBY = new TokenType("MBRCOVEREDBY")
+  static MBRCOVERS = new TokenType("MBRCOVERS")
+  static MBRDISJOINT = new TokenType("MBRDISJOINT")
+  static MBREQUALS = new TokenType("MBREQUALS")
+  static MBRINTERSECTS = new TokenType("MBRINTERSECTS")
+  static MBROVERLAPS = new TokenType("MBROVERLAPS")
+  static MBRTOUCHES = new TokenType("MBRTOUCHES")
+  static MBRWITHIN = new TokenType("MBRWITHIN")
+  static MD5 = new TokenType("MD5")
+  static MEASURE = new TokenType("MEASURE")
+  static MEASURES = new TokenType("MEASURES")
+  static MEDIUM = new TokenType("MEDIUM")
+  static MEDIUMBLOB = new TokenType("MEDIUMBLOB")
+  static MEDIUMINT = new TokenType("MEDIUMINT")
+  static MEDIUMTEXT = new TokenType("MEDIUMTEXT")
+  static MEMBER = new TokenType("MEMBER")
+  static MEMBER_CAPTION = new TokenType("MEMBER_CAPTION")
+  static MEMBER_DESCRIPTION = new TokenType("MEMBER_DESCRIPTION")
+  static MEMBER_NAME = new TokenType("MEMBER_NAME")
+  static MEMBER_OF = new TokenType("MEMBER_OF")
+  static MEMBER_UNIQUE_NAME = new TokenType("MEMBER_UNIQUE_NAME")
+  static MEMCOMPRESS = new TokenType("MEMCOMPRESS")
+  static MEMOPTIMIZE = new TokenType("MEMOPTIMIZE")
+  static MEMORY = new TokenType("MEMORY")
+  static MERGE = new TokenType("MERGE")
+  static MESSAGE = new TokenType("MESSAGE")
+  static METADATA = new TokenType("METADATA")
+  static METHOD = new TokenType("METHOD")
+  static MICROSECOND = new TokenType("MICROSECOND")
+  static MICROSECONDS = new TokenType("MICROSECONDS")
+  static MID = new TokenType("MID")
+  static MIDDLEINT = new TokenType("MIDDLEINT")
+  static MIGRATE = new TokenType("MIGRATE")
+  static MIGRATION = new TokenType("MIGRATION")
+  static MILLENNIUM = new TokenType("MILLENNIUM")
+  static MILLISECONDS = new TokenType("MILLISECONDS")
+  static MIN = new TokenType("MIN")
+  static MINIMUM = new TokenType("MINIMUM")
+  static MINING = new TokenType("MINING")
+  static MINUS = new TokenType("MINUS")
+  static MINUTE = new TokenType("MINUTE")
+  static MINUTES = new TokenType("MINUTES")
+  static MINUTE_MICROSECOND = new TokenType("MINUTE_MICROSECOND")
+  static MINUTE_SECOND = new TokenType("MINUTE_SECOND")
+  static MINVALUE = new TokenType("MINVALUE")
+  static MIN_ROWS = new TokenType("MIN_ROWS")
+  static MIN_SCALE = new TokenType("MIN_SCALE")
+  static MIRROR = new TokenType("MIRROR")
+  static MIRRORCOLD = new TokenType("MIRRORCOLD")
+  static MIRRORHOT = new TokenType("MIRRORHOT")
+  static MLSLABEL = new TokenType("MLSLABEL")
+  static MOD = new TokenType("MOD")
+  static MODE = new TokenType("MODE")
+  static MODEL = new TokenType("MODEL")
+  static MODIFICATION = new TokenType("MODIFICATION")
+  static MODIFIES = new TokenType("MODIFIES")
+  static MODIFY = new TokenType("MODIFY")
+  static MONEY = new TokenType("MONEY")
+  static MONITORING = new TokenType("MONITORING")
+  static MONTH = new TokenType("MONTH")
+  static MONTHNAME = new TokenType("MONTHNAME")
+  static MONTHS = new TokenType("MONTHS")
+  static MONTHS_BETWEEN = new TokenType("MONTHS_BETWEEN")
+  static MOUNT = new TokenType("MOUNT")
+  static MOUNTPATH = new TokenType("MOUNTPATH")
+  static MOVE = new TokenType("MOVE")
+  static MOVEMENT = new TokenType("MOVEMENT")
+  static MULTILINESTRING = new TokenType("MULTILINESTRING")
+  static MULTIPOINT = new TokenType("MULTIPOINT")
+  static MULTIPOLYGON = new TokenType("MULTIPOLYGON")
+  static MULTIRANGE = new TokenType("MULTIRANGE")
+  static NAME = new TokenType("NAME")
+  static NAMED = new TokenType("NAMED")
+  static NAMES = new TokenType("NAMES")
+  static NAMESPACE = new TokenType("NAMESPACE")
+  static NAME_CONST = new TokenType("NAME_CONST")
+  static NATIONAL = new TokenType("NATIONAL")
+  static NATURAL = new TokenType("NATURAL")
+  static NATURALN = new TokenType("NATURALN")
+  static NAV = new TokenType("NAV")
+  static NCHAR = new TokenType("NCHAR")
+  static NCHR = new TokenType("NCHR")
+  static NESTED = new TokenType("NESTED")
+  static NESTED_TABLE_ID = new TokenType("NESTED_TABLE_ID")
+  static NETMASK = new TokenType("NETMASK")
+  static NETWORK = new TokenType("NETWORK")
+  static NEVER = new TokenType("NEVER")
+  static NEW = new TokenType("NEW")
+  static NEXT = new TokenType("NEXT")
+  static NEXTVAL = new TokenType("NEXTVAL")
+  static NFC = new TokenType("NFC")
+  static NFD = new TokenType("NFD")
+  static NFKC = new TokenType("NFKC")
+  static NFKD = new TokenType("NFKD")
+  static NLSSORT = new TokenType("NLSSORT")
+  static NLS_CHARSET_ID = new TokenType("NLS_CHARSET_ID")
+  static NLS_CHARSET_NAME = new TokenType("NLS_CHARSET_NAME")
+  static NO = new TokenType("NO")
+  static NOARCHIVELOG = new TokenType("NOARCHIVELOG")
+  static NOAUDIT = new TokenType("NOAUDIT")
+  static NOCACHE = new TokenType("NOCACHE")
+  static NOCASE = new TokenType("NOCASE")
+  static NOCHECK = new TokenType("NOCHECK")
+  static NOCOMPRESS = new TokenType("NOCOMPRESS")
+  static NOCOPY = new TokenType("NOCOPY")
+  static NOCYCLE = new TokenType("NOCYCLE")
+  static NODEGROUP = new TokenType("NODEGROUP")
+  static NODELAY = new TokenType("NODELAY")
+  static NOFORCE = new TokenType("NOFORCE")
+  static NOGUARANTEE = new TokenType("NOGUARANTEE")
+  static NOKEEP = new TokenType("NOKEEP")
+  static NOMAPPING = new TokenType("NOMAPPING")
+  static NOMAXVALUE = new TokenType("NOMAXVALUE")
+  static NOMINVALUE = new TokenType("NOMINVALUE")
+  static NOMONITORING = new TokenType("NOMONITORING")
+  static NON = new TokenType("NON")
+  static NONCLUSTERED = new TokenType("NONCLUSTERED")
+  static NONE = new TokenType("NONE")
+  static NONEDITIONABLE = new TokenType("NONEDITIONABLE")
+  static NONSCHEMA = new TokenType("NONSCHEMA")
+  static NOORDER = new TokenType("NOORDER")
+  static NOPARALLEL = new TokenType("NOPARALLEL")
+  static NORELOCATE = new TokenType("NORELOCATE")
+  static NORELY = new TokenType("NORELY")
+  static NOREPAIR = new TokenType("NOREPAIR")
+  static NOREPLY = new TokenType("NOREPLY")
+  static NORESETLOGS = new TokenType("NORESETLOGS")
+  static NOREVERSE = new TokenType("NOREVERSE")
+  static NORMAL = new TokenType("NORMAL")
+  static NORMALIZED = new TokenType("NORMALIZED")
+  static NOROWDEPENDENCIES = new TokenType("NOROWDEPENDENCIES")
+  static NOSCALE = new TokenType("NOSCALE")
+  static NOSHARED = new TokenType("NOSHARED")
+  static NOSORT = new TokenType("NOSORT")
+  static NOSWITCH = new TokenType("NOSWITCH")
+  static NOT = new TokenType("NOT")
+  static NOTFOUND = new TokenType("NOTFOUND")
+  static NOTHING = new TokenType("NOTHING")
+  static NOTIFY = new TokenType("NOTIFY")
+  static NOTIFICATION = new TokenType("NOTIFICATION")
+  static NOTNULL = new TokenType("NOTNULL")
+  static NOT_FEASIBLE = new TokenType("NOT_FEASIBLE")
+  static NOT_FEASIBLE_END = new TokenType("NOT_FEASIBLE_END")
+  static NOT_FEASIBLE_START = new TokenType("NOT_FEASIBLE_START")
+  static NOVALIDATE = new TokenType("NOVALIDATE")
+  static NOW = new TokenType("NOW")
+  static NOWAIT = new TokenType("NOWAIT")
+  static NO_WRITE_TO_BINLOG = new TokenType("NO_WRITE_TO_BINLOG")
+  static NPOINTS = new TokenType("NPOINTS")
+  static NTH_VALUE = new TokenType("NTH_VALUE")
+  static NTILE = new TokenType("NTILE")
+  static NULL = new TokenType("NULL")
+  static NULLIF = new TokenType("NULLIF")
+  static NULLS = new TokenType("NULLS")
+  static NUMBER = new TokenType("NUMBER")
+  static NUMERIC = new TokenType("NUMERIC")
+  static NUMNODE = new TokenType("NUMNODE")
+  static NUMTODSINTERVAL = new TokenType("NUMTODSINTERVAL")
+  static NUMTOYMINTERVAL = new TokenType("NUMTOYMINTERVAL")
+  static NVARCHAR = new TokenType("NVARCHAR")
+  static NVARCHAR2 = new TokenType("NVARCHAR2")
+  static NVL = new TokenType("NVL")
+  static NVL2 = new TokenType("NVL2")
+  static OBJECT = new TokenType("OBJECT")
+  static OBJECT_ID = new TokenType("OBJECT_ID")
+  static OBJECT_VALUE = new TokenType("OBJECT_VALUE")
+  static OCT = new TokenType("OCT")
+  static OCTET_LENGTH = new TokenType("OCTET_LENGTH")
+  static OF = new TokenType("OF")
+  static OFF = new TokenType("OFF")
+  static OFFLINE = new TokenType("OFFLINE")
+  static OFFSET = new TokenType("OFFSET")
+  static OFFSETS = new TokenType("OFFSETS")
+  static OID = new TokenType("OID")
+  static OIDINDEX = new TokenType("OIDINDEX")
+  static OLD = new TokenType("OLD")
+  static OLTP = new TokenType("OLTP")
+  static ON = new TokenType("ON")
+  static ONE = new TokenType("ONE")
+  static ONLINE = new TokenType("ONLINE")
+  static ONLY = new TokenType("ONLY")
+  static OPAQUE = new TokenType("OPAQUE")
+  static OPEN = new TokenType("OPEN")
+  static OPENDATASOURCE = new TokenType("OPENDATASOURCE")
+  static OPENJSON = new TokenType("OPENJSON")
+  static OPENQUERY = new TokenType("OPENQUERY")
+  static OPENROWSET = new TokenType("OPENROWSET")
+  static OPENXML = new TokenType("OPENXML")
+  static OPERATOR = new TokenType("OPERATOR")
+  static OPTIMIZE = new TokenType("OPTIMIZE")
+  static OPTIMIZER_COSTS = new TokenType("OPTIMIZER_COSTS")
+  static OPTION = new TokenType("OPTION")
+  static OPTIONAL = new TokenType("OPTIONAL")
+  static OPTIONALLY = new TokenType("OPTIONALLY")
+  static OPTIONS = new TokenType("OPTIONS")
+  static OR = new TokenType("OR")
+  static ORA_ROWSCN = new TokenType("ORA_ROWSCN")
+  static ORD = new TokenType("ORD")
+  static ORDAUDIO = new TokenType("ORDAUDIO")
+  static ORDDICOM = new TokenType("ORDDICOM")
+  static ORDDOC = new TokenType("ORDDOC")
+  static ORDER = new TokenType("ORDER")
+  static ORDIMAGE = new TokenType("ORDIMAGE")
+  static ORDIMAGESIGNATURE = new TokenType("ORDIMAGESIGNATURE")
+  static ORDINALITY = new TokenType("ORDINALITY")
+  static ORDVIDEO = new TokenType("ORDVIDEO")
+  static ORGANIZATION = new TokenType("ORGANIZATION")
+  static OTHER = new TokenType("OTHER")
+  static OTHERS = new TokenType("OTHERS")
+  static OUT = new TokenType("OUT")
+  static OUTER = new TokenType("OUTER")
+  static OUTFILE = new TokenType("OUTFILE")
+  static OUTLINE = new TokenType("OUTLINE")
+  static OVER = new TokenType("OVER")
+  static OVERFLOW = new TokenType("OVERFLOW")
+  static OVERLAPS = new TokenType("OVERLAPS")
+  static OVERLAY = new TokenType("OVERLAY")
+  static OVERRIDING = new TokenType("OVERRIDING")
+  static OWNED = new TokenType("OWNED")
+  static OWNER = new TokenType("OWNER")
+  static OWNERSHIP = new TokenType("OWNERSHIP")
+  static P = new TokenType("P")
+  static PACKAGE = new TokenType("PACKAGE")
+  static PACKAGES = new TokenType("PACKAGES")
+  static PACK_KEYS = new TokenType("PACK_KEYS")
+  static PAGE_CHECKSUM = new TokenType("PAGE_CHECKSUM")
+  static PAGE_COMPRESSED = new TokenType("PAGE_COMPRESSED")
+  static PAGE_COMPRESSION_LEVEL = new TokenType("PAGE_COMPRESSION_LEVEL")
+  static PARALLEL = new TokenType("PARALLEL")
+  static PARALLEL_ENABLE = new TokenType("PARALLEL_ENABLE")
+  static PARAMETERS = new TokenType("PARAMETERS")
+  static PARENT_LEVEL_NAME = new TokenType("PARENT_LEVEL_NAME")
+  static PARENT_UNIQUE_NAME = new TokenType("PARENT_UNIQUE_NAME")
+  static PARITY = new TokenType("PARITY")
+  static PARSE = new TokenType("PARSE")
+  static PARSER = new TokenType("PARSER")
+  static PARSE_GCOL_EXPR = new TokenType("PARSE_GCOL_EXPR")
+  static PARSE_IDENT = new TokenType("PARSE_IDENT")
+  static PARTIAL = new TokenType("PARTIAL")
+  static PARTITION = new TokenType("PARTITION")
+  static PARTITIONS = new TokenType("PARTITIONS")
+  static PARTITIONSET = new TokenType("PARTITIONSET")
+  static PASSING = new TokenType("PASSING")
+  static PASSWORD = new TokenType("PASSWORD")
+  static PASSWORDFILE_METADATA_CACHE = new TokenType("PASSWORDFILE_METADATA_CACHE")
+  static PASSWORD_GRACE_TIME = new TokenType("PASSWORD_GRACE_TIME")
+  static PASSWORD_LIFE_TIME = new TokenType("PASSWORD_LIFE_TIME")
+  static PASSWORD_LOCK_TIME = new TokenType("PASSWORD_LOCK_TIME")
+  static PASSWORD_REUSE_MAX = new TokenType("PASSWORD_REUSE_MAX")
+  static PASSWORD_REUSE_TIME = new TokenType("PASSWORD_REUSE_TIME")
+  static PASSWORD_ROLLOVER_TIME = new TokenType("PASSWORD_ROLLOVER_TIME")
+  static PASSWORD_VERIFY_FUNCTION = new TokenType("PASSWORD_VERIFY_FUNCTION")
+  static PATCH = new TokenType("PATCH")
+  static PATH = new TokenType("PATH")
+  static PATH_PREFIX = new TokenType("PATH_PREFIX")
+  static PATINDEX = new TokenType("PATINDEX")
+  static PATTERN = new TokenType("PATTERN")
+  static PCLOSE = new TokenType("PCLOSE")
+  static PCTFREE = new TokenType("PCTFREE")
+  static PCTTHRESHOLD = new TokenType("PCTTHRESHOLD")
+  static PCTUSED = new TokenType("PCTUSED")
+  static PCTVERSION = new TokenType("PCTVERSION")
+  static PER = new TokenType("PER")
+  static PERCENT = new TokenType("PERCENT")
+  static PERCENTILE_CONT = new TokenType("PERCENTILE_CONT")
+  static PERCENTILE_DISC = new TokenType("PERCENTILE_DISC")
+  static PERCENT_RANK = new TokenType("PERCENT_RANK")
+  static PERFORMANCE = new TokenType("PERFORMANCE")
+  static PERIOD = new TokenType("PERIOD")
+  static PERIOD_ADD = new TokenType("PERIOD_ADD")
+  static PERIOD_DIFF = new TokenType("PERIOD_DIFF")
+  static PERMANENT = new TokenType("PERMANENT")
+  static PERMISSION = new TokenType("PERMISSION")
+  static PFILE = new TokenType("PFILE")
+  static PG_ADVISORY_LOCK = new TokenType("PG_ADVISORY_LOCK")
+  static PG_ADVISORY_LOCK_SHARED = new TokenType("PG_ADVISORY_LOCK_SHARED")
+  static PG_ADVISORY_UNLOCK = new TokenType("PG_ADVISORY_UNLOCK")
+  static PG_ADVISORY_UNLOCK_ALL = new TokenType("PG_ADVISORY_UNLOCK_ALL")
+  static PG_ADVISORY_UNLOCK_SHARED = new TokenType("PG_ADVISORY_UNLOCK_SHARED")
+  static PG_ADVISORY_XACT_LOCK = new TokenType("PG_ADVISORY_XACT_LOCK")
+  static PG_ADVISORY_XACT_LOCK_SHARED = new TokenType("PG_ADVISORY_XACT_LOCK_SHARED")
+  static PG_BACKEND_PID = new TokenType("PG_BACKEND_PID")
+  static PG_BLOCKING_PIDS = new TokenType("PG_BLOCKING_PIDS")
+  static PG_CLIENT_ENCODING = new TokenType("PG_CLIENT_ENCODING")
+  static PG_COLLATION_IS_VISIBLE = new TokenType("PG_COLLATION_IS_VISIBLE")
+  static PG_CONF_LOAD_TIME = new TokenType("PG_CONF_LOAD_TIME")
+  static PG_CONVERSION_IS_VISIBLE = new TokenType("PG_CONVERSION_IS_VISIBLE")
+  static PG_CURRENT_LOGFILE = new TokenType("PG_CURRENT_LOGFILE")
+  static PG_EVENT_TRIGGER_DDL_COMMANDS = new TokenType("PG_EVENT_TRIGGER_DDL_COMMANDS")
+  static PG_EVENT_TRIGGER_DROPPED_OBJECTS = new TokenType("PG_EVENT_TRIGGER_DROPPED_OBJECTS")
+  static PG_EVENT_TRIGGER_TABLE_REWRITE_OID = new TokenType("PG_EVENT_TRIGGER_TABLE_REWRITE_OID")
+  static PG_EVENT_TRIGGER_TABLE_REWRITE_REASON = new TokenType("PG_EVENT_TRIGGER_TABLE_REWRITE_REASON")
+  static PG_HAS_ROLE = new TokenType("PG_HAS_ROLE")
+  static PG_IS_OTHER_TEMP_SCHEMA = new TokenType("PG_IS_OTHER_TEMP_SCHEMA")
+  static PG_JIT_AVAILABLE = new TokenType("PG_JIT_AVAILABLE")
+  static PG_LISTENING_CHANNELS = new TokenType("PG_LISTENING_CHANNELS")
+  static PG_LS_ARCHIVE_STATUSDIR = new TokenType("PG_LS_ARCHIVE_STATUSDIR")
+  static PG_LS_DIR = new TokenType("PG_LS_DIR")
+  static PG_LS_LOGDIR = new TokenType("PG_LS_LOGDIR")
+  static PG_LS_LOGICALMAPDIR = new TokenType("PG_LS_LOGICALMAPDIR")
+  static PG_LS_LOGICALSNAPDIR = new TokenType("PG_LS_LOGICALSNAPDIR")
+  static PG_LS_REPLSLOTDIR = new TokenType("PG_LS_REPLSLOTDIR")
+  static PG_LS_TMPDIR = new TokenType("PG_LS_TMPDIR")
+  static PG_LS_WALDIR = new TokenType("PG_LS_WALDIR")
+  static PG_MCV_LIST_ITEMS = new TokenType("PG_MCV_LIST_ITEMS")
+  static PG_MY_TEMP_SCHEMA = new TokenType("PG_MY_TEMP_SCHEMA")
+  static PG_NOTIFICATION_QUEUE_USAGE = new TokenType("PG_NOTIFICATION_QUEUE_USAGE")
+  static PG_POSTMASTER_START_TIME = new TokenType("PG_POSTMASTER_START_TIME")
+  static PG_READ_BINARY_FILE = new TokenType("PG_READ_BINARY_FILE")
+  static PG_READ_FILE = new TokenType("PG_READ_FILE")
+  static PG_SAFE_SNAPSHOT_BLOCKING_PIDS = new TokenType("PG_SAFE_SNAPSHOT_BLOCKING_PIDS")
+  static PG_SLEEP = new TokenType("PG_SLEEP")
+  static PG_SLEEP_FOR = new TokenType("PG_SLEEP_FOR")
+  static PG_SLEEP_UNTIL = new TokenType("PG_SLEEP_UNTIL")
+  static PG_STAT_FILE = new TokenType("PG_STAT_FILE")
+  static PG_TRIGGER_DEPTH = new TokenType("PG_TRIGGER_DEPTH")
+  static PG_TRY_ADVISORY_LOCK = new TokenType("PG_TRY_ADVISORY_LOCK")
+  static PG_TRY_ADVISORY_LOCK_SHARED = new TokenType("PG_TRY_ADVISORY_LOCK_SHARED")
+  static PG_TRY_ADVISORY_XACT_LOCK = new TokenType("PG_TRY_ADVISORY_XACT_LOCK")
+  static PG_TRY_ADVISORY_XACT_LOCK_SHARED = new TokenType("PG_TRY_ADVISORY_XACT_LOCK_SHARED")
+  static PHRASETO_TSQUERY = new TokenType("PHRASETO_TSQUERY")
+  static PHYSICAL = new TokenType("PHYSICAL")
+  static PI = new TokenType("PI")
+  static PIPE = new TokenType("PIPE")
+  static PIPELINED = new TokenType("PIPELINED")
+  static PIVOT = new TokenType("PIVOT")
+  static PLACING = new TokenType("PLACING")
+  static PLAINTO_TSQUERY = new TokenType("PLAINTO_TSQUERY")
+  static PLAN = new TokenType("PLAN")
+  static PLS_INTEGER = new TokenType("PLS_INTEGER")
+  static PLUGGABLE = new TokenType("PLUGGABLE")
+  static PLUGIN = new TokenType("PLUGIN")
+  static POINT = new TokenType("POINT")
+  static POLICY = new TokenType("POLICY")
+  static POLYGON = new TokenType("POLYGON")
+  static POLYMORPHIC = new TokenType("POLYMORPHIC")
+  static POPEN = new TokenType("POPEN")
+  static PORT = new TokenType("PORT")
+  static POSITION = new TokenType("POSITION")
+  static POSITIVE = new TokenType("POSITIVE")
+  static POSITIVEN = new TokenType("POSITIVEN")
+  static POST_TRANSACTION = new TokenType("POST_TRANSACTION")
+  static POW = new TokenType("POW")
+  static POWER = new TokenType("POWER")
+  static PRAGMA = new TokenType("PRAGMA")
+  static PREBUILD = new TokenType("PREBUILD")
+  static PRECEDES = new TokenType("PRECEDES")
+  static PRECEDING = new TokenType("PRECEDING")
+  static PRECISION = new TokenType("PRECISION")
+  static PREDICT = new TokenType("PREDICT")
+  static PREPARE = new TokenType("PREPARE")
+  static PREPARED = new TokenType("PREPARED")
+  static PRESERVE = new TokenType("PRESERVE")
+  static PREV = new TokenType("PREV")
+  static PRIMARY = new TokenType("PRIMARY")
+  static PRINT = new TokenType("PRINT")
+  static PRINTF = new TokenType("PRINTF")
+  static PRIOR = new TokenType("PRIOR")
+  static PRIORITY = new TokenType("PRIORITY")
+  static PRIVATE = new TokenType("PRIVATE")
+  static PRIVATE_SGA = new TokenType("PRIVATE_SGA")
+  static PRIVILEGES = new TokenType("PRIVILEGES")
+  static PROC = new TokenType("PROC")
+  static PROCEDURAL = new TokenType("PROCEDURAL")
+  static PROCEDURE = new TokenType("PROCEDURE")
+  static PROFILE = new TokenType("PROFILE")
+  static PROJECT = new TokenType("PROJECT")
+  static PROPERTY = new TokenType("PROPERTY")
+  static PROTECTION = new TokenType("PROTECTION")
+  static PROXY = new TokenType("PROXY")
+  static PRUNING = new TokenType("PRUNING")
+  static PS_CURRENT_THREAD_ID = new TokenType("PS_CURRENT_THREAD_ID")
+  static PS_THREAD_ID = new TokenType("PS_THREAD_ID")
+  static PUBLIC = new TokenType("PUBLIC")
+  static PUBLICATION = new TokenType("PUBLICATION")
+  static PURGE = new TokenType("PURGE")
+  static QUARTER = new TokenType("QUARTER")
+  static QUARTERS = new TokenType("QUARTERS")
+  static QUERY = new TokenType("QUERY")
+  static QUERYTREE = new TokenType("QUERYTREE")
+  static QUERY_TO_XML = new TokenType("QUERY_TO_XML")
+  static QUERY_TO_XMLSCHEMA = new TokenType("QUERY_TO_XMLSCHEMA")
+  static QUERY_TO_XML_AND_XMLSCHEMA = new TokenType("QUERY_TO_XML_AND_XMLSCHEMA")
+  static QUICK = new TokenType("QUICK")
+  static QUIESCE = new TokenType("QUIESCE")
+  static QUORUM = new TokenType("QUORUM")
+  static QUOTA = new TokenType("QUOTA")
+  static QUOTAGROUP = new TokenType("QUOTAGROUP")
+  static QUOTE = new TokenType("QUOTE")
+  static QUOTENAME = new TokenType("QUOTENAME")
+  static QUOTE_IDENT = new TokenType("QUOTE_IDENT")
+  static QUOTE_LITERAL = new TokenType("QUOTE_LITERAL")
+  static QUOTE_NULLABLE = new TokenType("QUOTE_NULLABLE")
+  static RADIANS = new TokenType("RADIANS")
+  static RADIUS = new TokenType("RADIUS")
+  static RAISE = new TokenType("RAISE")
+  static RAISE_APPLICATION_ERROR = new TokenType("RAISE_APPLICATION_ERROR")
+  static RAISERROR = new TokenType("RAISERROR")
+  static RAND = new TokenType("RAND")
+  static RANDOM = new TokenType("RANDOM")
+  static RANDOMBLOB = new TokenType("RANDOMBLOB")
+  static RANDOM_BYTES = new TokenType("RANDOM_BYTES")
+  static RANGE = new TokenType("RANGE")
+  static RANGE_AGG = new TokenType("RANGE_AGG")
+  static RANGE_INTERSECT_AGG = new TokenType("RANGE_INTERSECT_AGG")
+  static RANGE_MERGE = new TokenType("RANGE_MERGE")
+  static RANK = new TokenType("RANK")
+  static RAW = new TokenType("RAW")
+  static READ = new TokenType("READ")
+  static READS = new TokenType("READS")
+  static READTEXT = new TokenType("READTEXT")
+  static READ_WRITE = new TokenType("READ_WRITE")
+  static REAL = new TokenType("REAL")
+  static REASSIGN = new TokenType("REASSIGN")
+  static REBUILD = new TokenType("REBUILD")
+  static RECONFIGURE = new TokenType("RECONFIGURE")
+  static RECORD = new TokenType("RECORD")
+  static RECOVER = new TokenType("RECOVER")
+  static RECURSIVE = new TokenType("RECURSIVE")
+  static RECYCLEBIN = new TokenType("RECYCLEBIN")
+  static REDO = new TokenType("REDO")
+  static REDOFILE = new TokenType("REDOFILE")
+  static REDO_BUFFER_SIZE = new TokenType("REDO_BUFFER_SIZE")
+  static REDUCED = new TokenType("REDUCED")
+  static REDUNDANCY = new TokenType("REDUNDANCY")
+  static REDUNDANT = new TokenType("REDUNDANT")
+  static REF = new TokenType("REF")
+  static REFCURSOR = new TokenType("REFCURSOR")
+  static REFERENCE = new TokenType("REFERENCE")
+  static REFERENCED = new TokenType("REFERENCED")
+  static REFERENCES = new TokenType("REFERENCES")
+  static REFRESH = new TokenType("REFRESH")
+  static REGEXP = new TokenType("REGEXP")
+  static REGEXP_COUNT = new TokenType("REGEXP_COUNT")
+  static REGEXP_INSTR = new TokenType("REGEXP_INSTR")
+  static REGEXP_LIKE = new TokenType("REGEXP_LIKE")
+  static REGEXP_MATCH = new TokenType("REGEXP_MATCH")
+  static REGEXP_MATCHES = new TokenType("REGEXP_MATCHES")
+  static REGEXP_REPLACE = new TokenType("REGEXP_REPLACE")
+  static REGEXP_SPLIT_TO_ARRAY = new TokenType("REGEXP_SPLIT_TO_ARRAY")
+  static REGEXP_SPLIT_TO_TABLE = new TokenType("REGEXP_SPLIT_TO_TABLE")
+  static REGEXP_SUBSTR = new TokenType("REGEXP_SUBSTR")
+  static REGISTER = new TokenType("REGISTER")
+  static REGR_AVGX = new TokenType("REGR_AVGX")
+  static REGR_AVGY = new TokenType("REGR_AVGY")
+  static REGR_COUNT = new TokenType("REGR_COUNT")
+  static REGR_INTERCEPT = new TokenType("REGR_INTERCEPT")
+  static REGR_R2 = new TokenType("REGR_R2")
+  static REGR_SLOPE = new TokenType("REGR_SLOPE")
+  static REGR_SXX = new TokenType("REGR_SXX")
+  static REGR_SXY = new TokenType("REGR_SXY")
+  static REGR_SYY = new TokenType("REGR_SYY")
+  static REGULAR = new TokenType("REGULAR")
+  static REINDEX = new TokenType("REINDEX")
+  static REJECT = new TokenType("REJECT")
+  static REKEY = new TokenType("REKEY")
+  static RELATIONAL = new TokenType("RELATIONAL")
+  static RELEASE = new TokenType("RELEASE")
+  static RELEASE_ALL_LOCKS = new TokenType("RELEASE_ALL_LOCKS")
+  static RELEASE_LOCK = new TokenType("RELEASE_LOCK")
+  static RELIES_ON = new TokenType("RELIES_ON")
+  static RELOCATE = new TokenType("RELOCATE")
+  static RELY = new TokenType("RELY")
+  static RENAME = new TokenType("RENAME")
+  static REPAIR = new TokenType("REPAIR")
+  static REPEAT = new TokenType("REPEAT")
+  static REPEATABLE = new TokenType("REPEATABLE")
+  static REPLACE = new TokenType("REPLACE")
+  static REPLICA = new TokenType("REPLICA")
+  static REPLICATE = new TokenType("REPLICATE")
+  static REPLICATION = new TokenType("REPLICATION")
+  static REQUIRE = new TokenType("REQUIRE")
+  static REQUIRED = new TokenType("REQUIRED")
+  static RESET = new TokenType("RESET")
+  static RESETLOGS = new TokenType("RESETLOGS")
+  static RESIGNAL = new TokenType("RESIGNAL")
+  static RESIZE = new TokenType("RESIZE")
+  static RESOLVE = new TokenType("RESOLVE")
+  static RESOLVER = new TokenType("RESOLVER")
+  static RESOURCE = new TokenType("RESOURCE")
+  static RESTART = new TokenType("RESTART")
+  static RESTORE = new TokenType("RESTORE")
+  static RESTRICT = new TokenType("RESTRICT")
+  static RESTRICTED = new TokenType("RESTRICTED")
+  static RESTRICT_REFERENCES = new TokenType("RESTRICT_REFERENCES")
+  static RESULT_CACHE = new TokenType("RESULT_CACHE")
+  static RESUMABLE = new TokenType("RESUMABLE")
+  static RESUME = new TokenType("RESUME")
+  static RETAIN = new TokenType("RETAIN")
+  static RETENTION = new TokenType("RETENTION")
+  static RETURN = new TokenType("RETURN")
+  static RETURNING = new TokenType("RETURNING")
+  static REUSE = new TokenType("REUSE")
+  static REVERSE = new TokenType("REVERSE")
+  static REVERT = new TokenType("REVERT")
+  static REVOKE = new TokenType("REVOKE")
+  static REWRITE = new TokenType("REWRITE")
+  static RIGHT = new TokenType("RIGHT")
+  static RLIKE = new TokenType("RLIKE")
+  static RNDS = new TokenType("RNDS")
+  static RNPS = new TokenType("RNPS")
+  static ROLE = new TokenType("ROLE")
+  static ROLES = new TokenType("ROLES")
+  static ROLES_GRAPHML = new TokenType("ROLES_GRAPHML")
+  static ROLLBACK = new TokenType("ROLLBACK")
+  static ROLLING = new TokenType("ROLLING")
+  static ROLLUP = new TokenType("ROLLUP")
+  static ROOT = new TokenType("ROOT")
+  static ROUND = new TokenType("ROUND")
+  static ROUTINE = new TokenType("ROUTINE")
+  static ROW = new TokenType("ROW")
+  static ROWCOUNT = new TokenType("ROWCOUNT")
+  static ROWDEPENDENCIES = new TokenType("ROWDEPENDENCIES")
+  static ROWGUIDCOL = new TokenType("ROWGUIDCOL")
+  static ROWID = new TokenType("ROWID")
+  static ROWLABEL = new TokenType("ROWLABEL")
+  static ROWNUM = new TokenType("ROWNUM")
+  static ROWS = new TokenType("ROWS")
+  static ROWTYPE = new TokenType("ROWTYPE")
+  static ROWVERSION = new TokenType("ROWVERSION")
+  static ROW_COUNT = new TokenType("ROW_COUNT")
+  static ROW_FORMAT = new TokenType("ROW_FORMAT")
+  static ROW_NUMBER = new TokenType("ROW_NUMBER")
+  static ROW_SECURITY_ACTIVE = new TokenType("ROW_SECURITY_ACTIVE")
+  static ROW_TO_JSON = new TokenType("ROW_TO_JSON")
+  static RPAD = new TokenType("RPAD")
+  static RTREE = new TokenType("RTREE")
+  static RTRIM = new TokenType("RTRIM")
+  static RULE = new TokenType("RULE")
+  static RULES = new TokenType("RULES")
+  static RUNNING = new TokenType("RUNNING")
+  static SALT = new TokenType("SALT")
+  static SAMPLE = new TokenType("SAMPLE")
+  static SAVE = new TokenType("SAVE")
+  static SAVEPOINT = new TokenType("SAVEPOINT")
+  static SCALE = new TokenType("SCALE")
+  static SCAN = new TokenType("SCAN")
+  static SCHEDULE = new TokenType("SCHEDULE")
+  static SCHEMA = new TokenType("SCHEMA")
+  static SCHEMAS = new TokenType("SCHEMAS")
+  static SCHEMA_TO_XML = new TokenType("SCHEMA_TO_XML")
+  static SCHEMA_TO_XMLSCHEMA = new TokenType("SCHEMA_TO_XMLSCHEMA")
+  static SCHEMA_TO_XML_AND_XMLSCHEMA = new TokenType("SCHEMA_TO_XML_AND_XMLSCHEMA")
+  static SCN = new TokenType("SCN")
+  static SCOPE = new TokenType("SCOPE")
+  static SCRUB = new TokenType("SCRUB")
+  static SDO_GEOMETRY = new TokenType("SDO_GEOMETRY")
+  static SDO_GEORASTER = new TokenType("SDO_GEORASTER")
+  static SDO_TOPO_GEOMETRY = new TokenType("SDO_TOPO_GEOMETRY")
+  static SEARCH = new TokenType("SEARCH")
+  static SECOND = new TokenType("SECOND")
+  static SECONDARY_ENGINE_ATTRIBUTE = new TokenType("SECONDARY_ENGINE_ATTRIBUTE")
+  static SECONDS = new TokenType("SECONDS")
+  static SECOND_MICROSECOND = new TokenType("SECOND_MICROSECOND")
+  static SECRET = new TokenType("SECRET")
+  static SECUREFILE = new TokenType("SECUREFILE")
+  static SECURITY = new TokenType("SECURITY")
+  static SECURITYAUDIT = new TokenType("SECURITYAUDIT")
+  static SEC_TO_TIME = new TokenType("SEC_TO_TIME")
+  static SEED = new TokenType("SEED")
+  static SEGMENT = new TokenType("SEGMENT")
+  static SELECT = new TokenType("SELECT")
+  static SELECTIVITY = new TokenType("SELECTIVITY")
+  static SELF = new TokenType("SELF")
+  static SEMANTICKEYPHRASETABLE = new TokenType("SEMANTICKEYPHRASETABLE")
+  static SEMANTICSIMILARITYDETAILSTABLE = new TokenType("SEMANTICSIMILARITYDETAILSTABLE")
+  static SEMANTICSIMILARITYTABLE = new TokenType("SEMANTICSIMILARITYTABLE")
+  static SENSITIVE = new TokenType("SENSITIVE")
+  static SEPARATOR = new TokenType("SEPARATOR")
+  static SEQUENCE = new TokenType("SEQUENCE")
+  static SEQUENTIAL = new TokenType("SEQUENTIAL")
+  static SERIALIZABLE = new TokenType("SERIALIZABLE")
+  static SERIALLY_REUSABLE = new TokenType("SERIALLY_REUSABLE")
+  static SERVER = new TokenType("SERVER")
+  static SERVICE = new TokenType("SERVICE")
+  static SERVICE_NAME_CONVERT = new TokenType("SERVICE_NAME_CONVERT")
+  static SESSION = new TokenType("SESSION")
+  static SESSIONPROPERTY = new TokenType("SESSIONPROPERTY")
+  static SESSIONS_PER_USER = new TokenType("SESSIONS_PER_USER")
+  static SESSION_USER = new TokenType("SESSION_USER")
+  static SET = new TokenType("SET")
+  static SETOF = new TokenType("SETOF")
+  static SETS = new TokenType("SETS")
+  static SETSEED = new TokenType("SETSEED")
+  static SETTINGS = new TokenType("SETTINGS")
+  static SETUSER = new TokenType("SETUSER")
+  static SETVAL = new TokenType("SETVAL")
+  static SETWEIGHT = new TokenType("SETWEIGHT")
+  static SET_BIT = new TokenType("SET_BIT")
+  static SET_BYTE = new TokenType("SET_BYTE")
+  static SET_MASKLEN = new TokenType("SET_MASKLEN")
+  static SHA1 = new TokenType("SHA1")
+  static SHA2 = new TokenType("SHA2")
+  static SHA224 = new TokenType("SHA224")
+  static SHA256 = new TokenType("SHA256")
+  static SHA384 = new TokenType("SHA384")
+  static SHA512 = new TokenType("SHA512")
+  static SHARE = new TokenType("SHARE")
+  static SHARED = new TokenType("SHARED")
+  static SHAREDSPACE = new TokenType("SHAREDSPACE")
+  static SHARED_POOL = new TokenType("SHARED_POOL")
+  static SHARING = new TokenType("SHARING")
+  static SHOW = new TokenType("SHOW")
+  static SHRINK = new TokenType("SHRINK")
+  static SHUTDOWN = new TokenType("SHUTDOWN")
+  static SID = new TokenType("SID")
+  static SIGN = new TokenType("SIGN")
+  static SIGNAL = new TokenType("SIGNAL")
+  static SIGNED = new TokenType("SIGNED")
+  static SIGNTYPE = new TokenType("SIGNTYPE")
+  static SIMILAR = new TokenType("SIMILAR")
+  static SIMPLE = new TokenType("SIMPLE")
+  static SIMPLE_INTEGER = new TokenType("SIMPLE_INTEGER")
+  static SIN = new TokenType("SIN")
+  static SIND = new TokenType("SIND")
+  static SINGLE = new TokenType("SINGLE")
+  static SINH = new TokenType("SINH")
+  static SITE = new TokenType("SITE")
+  static SIZE = new TokenType("SIZE")
+  static SI_AVERAGECOLOR = new TokenType("SI_AVERAGECOLOR")
+  static SI_COLOR = new TokenType("SI_COLOR")
+  static SI_COLORHISTOGRAM = new TokenType("SI_COLORHISTOGRAM")
+  static SI_FEATURELIST = new TokenType("SI_FEATURELIST")
+  static SI_POSITIONALCOLOR = new TokenType("SI_POSITIONALCOLOR")
+  static SI_STILLIMAGE = new TokenType("SI_STILLIMAGE")
+  static SI_TEXTURE = new TokenType("SI_TEXTURE")
+  static SKIP = new TokenType("SKIP")
+  static SKIP_LOCKED = new TokenType("SKIP_LOCKED")
+  static SLAVE = new TokenType("SLAVE")
+  static SLEEP = new TokenType("SLEEP")
+  static SLOPE = new TokenType("SLOPE")
+  static SMALLDATETIME = new TokenType("SMALLDATETIME")
+  static SMALLDATETIMEFROMPARTS = new TokenType("SMALLDATETIMEFROMPARTS")
+  static SMALLFILE = new TokenType("SMALLFILE")
+  static SMALLINT = new TokenType("SMALLINT")
+  static SMALLMONEY = new TokenType("SMALLMONEY")
+  static SNAPSHOT = new TokenType("SNAPSHOT")
+  static SOCKET = new TokenType("SOCKET")
+  static SOME = new TokenType("SOME")
+  static SORT = new TokenType("SORT")
+  static SOUNDEX = new TokenType("SOUNDEX")
+  static SOUNDS = new TokenType("SOUNDS")
+  static SOURCE = new TokenType("SOURCE")
+  static SOURCE_FILE_DIRECTORY = new TokenType("SOURCE_FILE_DIRECTORY")
+  static SOURCE_FILE_NAME_CONVERT = new TokenType("SOURCE_FILE_NAME_CONVERT")
+  static SPACE = new TokenType("SPACE")
+  static SPATIAL = new TokenType("SPATIAL")
+  static SPECIFIC = new TokenType("SPECIFIC")
+  static SPECIFICATION = new TokenType("SPECIFICATION")
+  static SPFILE = new TokenType("SPFILE")
+  static SPLIT = new TokenType("SPLIT")
+  static SPLIT_PART = new TokenType("SPLIT_PART")
+  static SQL = new TokenType("SQL")
+  static SQLCODE = new TokenType("SQLCODE")
+  static SQLERRM = new TokenType("SQLERRM")
+  static SQLEXCEPTION = new TokenType("SQLEXCEPTION")
+  static SQLITE_COMPILEOPTION_GET = new TokenType("SQLITE_COMPILEOPTION_GET")
+  static SQLITE_COMPILEOPTION_USED = new TokenType("SQLITE_COMPILEOPTION_USED")
+  static SQLITE_OFFSET = new TokenType("SQLITE_OFFSET")
+  static SQLITE_SOURCE_ID = new TokenType("SQLITE_SOURCE_ID")
+  static SQLITE_VERSION = new TokenType("SQLITE_VERSION")
+  static SQLSTATE = new TokenType("SQLSTATE")
+  static SQLWARNING = new TokenType("SQLWARNING")
+  static SQUARE = new TokenType("SQUARE")
+  static SQL_BIG_RESULT = new TokenType("SQL_BIG_RESULT")
+  static SQL_CACHE = new TokenType("SQL_CACHE")
+  static SQL_CALC_FOUND_ROWS = new TokenType("SQL_CALC_FOUND_ROWS")
+  static SQL_MACRO = new TokenType("SQL_MACRO")
+  static SQL_SMALL_RESULT = new TokenType("SQL_SMALL_RESULT")
+  static SQL_VARIANT = new TokenType("SQL_VARIANT")
+  static SQL_VARIANT_PROPERTY = new TokenType("SQL_VARIANT_PROPERTY")
+  static SQRT = new TokenType("SQRT")
+  static SSL = new TokenType("SSL")
+  static STANDARD = new TokenType("STANDARD")
+  static STANDBY = new TokenType("STANDBY")
+  static STANDBYS = new TokenType("STANDBYS")
+  static START = new TokenType("START")
+  static STARTING = new TokenType("STARTING")
+  static STARTS = new TokenType("STARTS")
+  static STARTS_WITH = new TokenType("STARTS_WITH")
+  static STATE = new TokenType("STATE")
+  static STATEMENT = new TokenType("STATEMENT")
+  static STATEMENTS = new TokenType("STATEMENTS")
+  static STATEMENT_DIGEST = new TokenType("STATEMENT_DIGEST")
+  static STATEMENT_DIGEST_TEXT = new TokenType("STATEMENT_DIGEST_TEXT")
+  static STATEMENT_ID = new TokenType("STATEMENT_ID")
+  static STATEMENT_TIMESTAMP = new TokenType("STATEMENT_TIMESTAMP")
+  static STATIC = new TokenType("STATIC")
+  static STATISTICS = new TokenType("STATISTICS")
+  static STATS = new TokenType("STATS")
+  static STATS_AUTO_RECALC = new TokenType("STATS_AUTO_RECALC")
+  static STATS_PERSISTENT = new TokenType("STATS_PERSISTENT")
+  static STATS_SAMPLE_PAGES = new TokenType("STATS_SAMPLE_PAGES")
+  static STD = new TokenType("STD")
+  static STDDEV = new TokenType("STDDEV")
+  static STDDEV_POP = new TokenType("STDDEV_POP")
+  static STDDEV_SAMP = new TokenType("STDDEV_SAMP")
+  static STOP = new TokenType("STOP")
+  static STORAGE = new TokenType("STORAGE")
+  static STORE = new TokenType("STORE")
+  static STORED = new TokenType("STORED")
+  static STR = new TokenType("STR")
+  static STRAIGHT_JOIN = new TokenType("STRAIGHT_JOIN")
+  static STRCMP = new TokenType("STRCMP")
+  static STRFTIME = new TokenType("STRFTIME")
+  static STRING = new TokenType("STRING")
+  static STRING_AGG = new TokenType("STRING_AGG")
+  static STRING_SPLIT = new TokenType("STRING_SPLIT")
+  static STRING_TO_ARRAY = new TokenType("STRING_TO_ARRAY")
+  static STRING_TO_TABLE = new TokenType("STRING_TO_TABLE")
+  static STRIP = new TokenType("STRIP")
+  static STRIPE_COLUMNS = new TokenType("STRIPE_COLUMNS")
+  static STRIPE_WIDTH = new TokenType("STRIPE_WIDTH")
+  static STRPOS = new TokenType("STRPOS")
+  static STRUCT = new TokenType("STRUCT")
+  static STRUCTURE = new TokenType("STRUCTURE")
+  static STR_TO_DATE = new TokenType("STR_TO_DATE")
+  static STUFF = new TokenType("STUFF")
+  static ST_AREA = new TokenType("ST_AREA")
+  static ST_ASBINARY = new TokenType("ST_ASBINARY")
+  static ST_ASGEOJSON = new TokenType("ST_ASGEOJSON")
+  static ST_ASTEXT = new TokenType("ST_ASTEXT")
+  static ST_BUFFER = new TokenType("ST_BUFFER")
+  static ST_BUFFER_STRATEGY = new TokenType("ST_BUFFER_STRATEGY")
+  static ST_CENTROID = new TokenType("ST_CENTROID")
+  static ST_COLLECT = new TokenType("ST_COLLECT")
+  static ST_CONTAINS = new TokenType("ST_CONTAINS")
+  static ST_CONVEXHULL = new TokenType("ST_CONVEXHULL")
+  static ST_CROSSES = new TokenType("ST_CROSSES")
+  static ST_DIFFERENCE = new TokenType("ST_DIFFERENCE")
+  static ST_DIMENSION = new TokenType("ST_DIMENSION")
+  static ST_DISJOINT = new TokenType("ST_DISJOINT")
+  static ST_DISTANCE = new TokenType("ST_DISTANCE")
+  static ST_DISTANCE_SPHERE = new TokenType("ST_DISTANCE_SPHERE")
+  static ST_ENDPOINT = new TokenType("ST_ENDPOINT")
+  static ST_ENVELOPE = new TokenType("ST_ENVELOPE")
+  static ST_EQUALS = new TokenType("ST_EQUALS")
+  static ST_EXTERIORRING = new TokenType("ST_EXTERIORRING")
+  static ST_FRECHETDISTANCE = new TokenType("ST_FRECHETDISTANCE")
+  static ST_GEOHASH = new TokenType("ST_GEOHASH")
+  static ST_GEOMCOLLFROMTEXT = new TokenType("ST_GEOMCOLLFROMTEXT")
+  static ST_GEOMCOLLFROMWKB = new TokenType("ST_GEOMCOLLFROMWKB")
+  static ST_GEOMETRYN = new TokenType("ST_GEOMETRYN")
+  static ST_GEOMETRYTYPE = new TokenType("ST_GEOMETRYTYPE")
+  static ST_GEOMFROMGEOJSON = new TokenType("ST_GEOMFROMGEOJSON")
+  static ST_GEOMFROMTEXT = new TokenType("ST_GEOMFROMTEXT")
+  static ST_GEOMFROMWKB = new TokenType("ST_GEOMFROMWKB")
+  static ST_HAUSDORFFDISTANCE = new TokenType("ST_HAUSDORFFDISTANCE")
+  static ST_INTERIORRINGN = new TokenType("ST_INTERIORRINGN")
+  static ST_INTERSECTION = new TokenType("ST_INTERSECTION")
+  static ST_INTERSECTS = new TokenType("ST_INTERSECTS")
+  static ST_ISCLOSED = new TokenType("ST_ISCLOSED")
+  static ST_ISEMPTY = new TokenType("ST_ISEMPTY")
+  static ST_ISSIMPLE = new TokenType("ST_ISSIMPLE")
+  static ST_ISVALID = new TokenType("ST_ISVALID")
+  static ST_LATFROMGEOHASH = new TokenType("ST_LATFROMGEOHASH")
+  static ST_LATITUDE = new TokenType("ST_LATITUDE")
+  static ST_LENGTH = new TokenType("ST_LENGTH")
+  static ST_LINEFROMTEXT = new TokenType("ST_LINEFROMTEXT")
+  static ST_LINEFROMWKB = new TokenType("ST_LINEFROMWKB")
+  static ST_LINEINTERPOLATEPOINT = new TokenType("ST_LINEINTERPOLATEPOINT")
+  static ST_LINEINTERPOLATEPOINTS = new TokenType("ST_LINEINTERPOLATEPOINTS")
+  static ST_LONGFROMGEOHASH = new TokenType("ST_LONGFROMGEOHASH")
+  static ST_LONGITUDE = new TokenType("ST_LONGITUDE")
+  static ST_MAKEENVELOPE = new TokenType("ST_MAKEENVELOPE")
+  static ST_MLINEFROMTEXT = new TokenType("ST_MLINEFROMTEXT")
+  static ST_MLINEFROMWKB = new TokenType("ST_MLINEFROMWKB")
+  static ST_MPOINTFROMTEXT = new TokenType("ST_MPOINTFROMTEXT")
+  static ST_MPOINTFROMWKB = new TokenType("ST_MPOINTFROMWKB")
+  static ST_MPOLYFROMTEXT = new TokenType("ST_MPOLYFROMTEXT")
+  static ST_MPOLYFROMWKB = new TokenType("ST_MPOLYFROMWKB")
+  static ST_NUMGEOMETRIES = new TokenType("ST_NUMGEOMETRIES")
+  static ST_NUMINTERIORRING = new TokenType("ST_NUMINTERIORRING")
+  static ST_NUMPOINTS = new TokenType("ST_NUMPOINTS")
+  static ST_OVERLAPS = new TokenType("ST_OVERLAPS")
+  static ST_POINTATDISTANCE = new TokenType("ST_POINTATDISTANCE")
+  static ST_POINTFROMGEOHASH = new TokenType("ST_POINTFROMGEOHASH")
+  static ST_POINTFROMTEXT = new TokenType("ST_POINTFROMTEXT")
+  static ST_POINTFROMWKB = new TokenType("ST_POINTFROMWKB")
+  static ST_POINTN = new TokenType("ST_POINTN")
+  static ST_POLYFROMTEXT = new TokenType("ST_POLYFROMTEXT")
+  static ST_POLYFROMWKB = new TokenType("ST_POLYFROMWKB")
+  static ST_SIMPLIFY = new TokenType("ST_SIMPLIFY")
+  static ST_SRID = new TokenType("ST_SRID")
+  static ST_STARTPOINT = new TokenType("ST_STARTPOINT")
+  static ST_SWAPXY = new TokenType("ST_SWAPXY")
+  static ST_SYMDIFFERENCE = new TokenType("ST_SYMDIFFERENCE")
+  static ST_TOUCHES = new TokenType("ST_TOUCHES")
+  static ST_TRANSFORM = new TokenType("ST_TRANSFORM")
+  static ST_UNION = new TokenType("ST_UNION")
+  static ST_VALIDATE = new TokenType("ST_VALIDATE")
+  static ST_WITHIN = new TokenType("ST_WITHIN")
+  static ST_X = new TokenType("ST_X")
+  static ST_Y = new TokenType("ST_Y")
+  static SUBDATE = new TokenType("SUBDATE")
+  static SUBJECT = new TokenType("SUBJECT")
+  static SUBPARTITION = new TokenType("SUBPARTITION")
+  static SUBPARTITIONS = new TokenType("SUBPARTITIONS")
+  static SUBSCRIPTION = new TokenType("SUBSCRIPTION")
+  static SUBSET = new TokenType("SUBSET")
+  static SUBSTITUTABLE = new TokenType("SUBSTITUTABLE")
+  static SUBSTR = new TokenType("SUBSTR")
+  static SUBSTR4 = new TokenType("SUBSTR4")
+  static SUBSTRB = new TokenType("SUBSTRB")
+  static SUBSTRING = new TokenType("SUBSTRING")
+  static SUBSTRING_INDEX = new TokenType("SUBSTRING_INDEX")
+  static SUBTIME = new TokenType("SUBTIME")
+  static SUBTYPE = new TokenType("SUBTYPE")
+  static SUCCESSFUL = new TokenType("SUCCESSFUL")
+  static SUM = new TokenType("SUM")
+  static SUPPLEMENTAL = new TokenType("SUPPLEMENTAL")
+  static SUPPRESS_REDUNDANT_UPDATES_TRIGGER = new TokenType("SUPPRESS_REDUNDANT_UPDATES_TRIGGER")
+  static SUSPEND = new TokenType("SUSPEND")
+  static SWITCH = new TokenType("SWITCH")
+  static SWITCHOFFSET = new TokenType("SWITCHOFFSET")
+  static SWITCHOVER = new TokenType("SWITCHOVER")
+  static SYMMETRIC = new TokenType("SYMMETRIC")
+  static SYNC = new TokenType("SYNC")
+  static SYNCHRONOUS = new TokenType("SYNCHRONOUS")
+  static SYNONYM = new TokenType("SYNONYM")
+  static SYS = new TokenType("SYS")
+  static SYSAUX = new TokenType("SYSAUX")
+  static SYSDATE = new TokenType("SYSDATE")
+  static SYSDATETIME = new TokenType("SYSDATETIME")
+  static SYSDATETIMEOFFSET = new TokenType("SYSDATETIMEOFFSET")
+  static SYSTEM = new TokenType("SYSTEM")
+  static SYSTEM_USER = new TokenType("SYSTEM_USER")
+  static SYSTIMESTAMP = new TokenType("SYSTIMESTAMP")
+  static SYSUTCDATETIME = new TokenType("SYSUTCDATETIME")
+  static SYS_CONTEXT = new TokenType("SYS_CONTEXT")
+  static T = new TokenType("T")
+  static TABAUTH = new TokenType("TABAUTH")
+  static TABLE = new TokenType("TABLE")
+  static TABLES = new TokenType("TABLES")
+  static TABLESAMPLE = new TokenType("TABLESAMPLE")
+  static TABLESPACE = new TokenType("TABLESPACE")
+  static TABLE_TO_XML = new TokenType("TABLE_TO_XML")
+  static TABLE_TO_XMLSCHEMA = new TokenType("TABLE_TO_XMLSCHEMA")
+  static TABLE_TO_XML_AND_XMLSCHEMA = new TokenType("TABLE_TO_XML_AND_XMLSCHEMA")
+  static TAG = new TokenType("TAG")
+  static TAN = new TokenType("TAN")
+  static TAND = new TokenType("TAND")
+  static TANH = new TokenType("TANH")
+  static TARGET = new TokenType("TARGET")
+  static TDO = new TokenType("TDO")
+  static TEMP = new TokenType("TEMP")
+  static TEMPFILE = new TokenType("TEMPFILE")
+  static TEMPLATE = new TokenType("TEMPLATE")
+  static TEMPORARY = new TokenType("TEMPORARY")
+  static TEMPTABLE = new TokenType("TEMPTABLE")
+  static TERMINATED = new TokenType("TERMINATED")
+  static TEST = new TokenType("TEST")
+  static TEXT = new TokenType("TEXT")
+  static TEXTSIZE = new TokenType("TEXTSIZE")
+  static TEXTPTR = new TokenType("TEXTPTR")
+  static TEXTVALID = new TokenType("TEXTVALID")
+  static THAN = new TokenType("THAN")
+  static THEN = new TokenType("THEN")
+  static THREAD = new TokenType("THREAD")
+  static THREAD_PRIORITY = new TokenType("THREAD_PRIORITY")
+  static THROUGH = new TokenType("THROUGH")
+  static THROW = new TokenType("THROW")
+  static TIER = new TokenType("TIER")
+  static TIES = new TokenType("TIES")
+  static TIME = new TokenType("TIME")
+  static TIMEDIFF = new TokenType("TIMEDIFF")
+  static TIMEFROMPARTS = new TokenType("TIMEFROMPARTS")
+  static TIMEOFDAY = new TokenType("TIMEOFDAY")
+  static TIMEOUT = new TokenType("TIMEOUT")
+  static TIMESTAMP = new TokenType("TIMESTAMP")
+  static TIMESTAMPADD = new TokenType("TIMESTAMPADD")
+  static TIMESTAMPDIFF = new TokenType("TIMESTAMPDIFF")
+  static TIMESTAMPZ = new TokenType("TIMESTAMPZ")
+  static TIMEZONE_HOUR = new TokenType("TIMEZONE_HOUR")
+  static TIMEZONE_MINUTE = new TokenType("TIMEZONE_MINUTE")
+  static TIME_FORMAT = new TokenType("TIME_FORMAT")
+  static TIME_TO_SEC = new TokenType("TIME_TO_SEC")
+  static TIME_ZONE = new TokenType("TIME_ZONE")
+  static TINYBLOB = new TokenType("TINYBLOB")
+  static TINYINT = new TokenType("TINYINT")
+  static TINYTEXT = new TokenType("TINYTEXT")
+  static TO = new TokenType("TO")
+  static TODATETIMEOFFSET = new TokenType("TODATETIMEOFFSET")
+  static TOP = new TokenType("TOP")
+  static TOPLEVEL = new TokenType("TOPLEVEL")
+  static TOTAL = new TokenType("TOTAL")
+  static TOTAL_CHANGES = new TokenType("TOTAL_CHANGES")
+  static TO_ASCII = new TokenType("TO_ASCII")
+  static TO_BASE64 = new TokenType("TO_BASE64")
+  static TO_BLOB = new TokenType("TO_BLOB")
+  static TO_CHAR = new TokenType("TO_CHAR")
+  static TO_CLOB = new TokenType("TO_CLOB")
+  static TO_DATE = new TokenType("TO_DATE")
+  static TO_DAYS = new TokenType("TO_DAYS")
+  static TO_HEX = new TokenType("TO_HEX")
+  static TO_JSON = new TokenType("TO_JSON")
+  static TO_LOB = new TokenType("TO_LOB")
+  static TO_NCLOB = new TokenType("TO_NCLOB")
+  static TO_NUMBER = new TokenType("TO_NUMBER")
+  static TO_SECONDS = new TokenType("TO_SECONDS")
+  static TO_TIMESTAMP = new TokenType("TO_TIMESTAMP")
+  static TO_TSQUERY = new TokenType("TO_TSQUERY")
+  static TO_TSVECTOR = new TokenType("TO_TSVECTOR")
+  static TRACE = new TokenType("TRACE")
+  static TRACKING = new TokenType("TRACKING")
+  static TRAILING = new TokenType("TRAILING")
+  static TRAN = new TokenType("TRAN")
+  static TRANSACTION = new TokenType("TRANSACTION")
+  static TRANSACTIONAL = new TokenType("TRANSACTIONAL")
+  static TRANSACTION_TIMESTAMP = new TokenType("TRANSACTION_TIMESTAMP")
+  static TRANSFORM = new TokenType("TRANSFORM")
+  static TRANSLATE = new TokenType("TRANSLATE")
+  static TRANSLATION = new TokenType("TRANSLATION")
+  static TRIGGER = new TokenType("TRIGGER")
+  static TRIGGERS = new TokenType("TRIGGERS")
+  static TRIGGER_NESTLEVEL = new TokenType("TRIGGER_NESTLEVEL")
+  static TRIM = new TokenType("TRIM")
+  static TRIM_ARRAY = new TokenType("TRIM_ARRAY")
+  static TRIM_SCALE = new TokenType("TRIM_SCALE")
+  static TRUE = new TokenType("TRUE")
+  static TRUNC = new TokenType("TRUNC")
+  static TRUNCATE = new TokenType("TRUNCATE")
+  static TRUST = new TokenType("TRUST")
+  static TRUSTED = new TokenType("TRUSTED")
+  static TRY_CAST = new TokenType("TRY_CAST")
+  static TRY_CONVERT = new TokenType("TRY_CONVERT")
+  static TRY_PARSE = new TokenType("TRY_PARSE")
+  static TS = new TokenType("TS")
+  static TSEQUAL = new TokenType("TSEQUAL")
+  static TSQUERY_PHRASE = new TokenType("TSQUERY_PHRASE")
+  static TSVECTOR_TO_ARRAY = new TokenType("TSVECTOR_TO_ARRAY")
+  static TSVECTOR_UPDATE_TRIGGER = new TokenType("TSVECTOR_UPDATE_TRIGGER")
+  static TSVECTOR_UPDATE_TRIGGER_COLUMN = new TokenType("TSVECTOR_UPDATE_TRIGGER_COLUMN")
+  static TS_DEBUG = new TokenType("TS_DEBUG")
+  static TS_DELETE = new TokenType("TS_DELETE")
+  static TS_FILTER = new TokenType("TS_FILTER")
+  static TS_HEADLINE = new TokenType("TS_HEADLINE")
+  static TS_LEXIZE = new TokenType("TS_LEXIZE")
+  static TS_PARSE = new TokenType("TS_PARSE")
+  static TS_RANK = new TokenType("TS_RANK")
+  static TS_RANK_CD = new TokenType("TS_RANK_CD")
+  static TS_REWRITE = new TokenType("TS_REWRITE")
+  static TS_STAT = new TokenType("TS_STAT")
+  static TS_TOKEN_TYPE = new TokenType("TS_TOKEN_TYPE")
+  static TTGRIDMEMBERID = new TokenType("TTGRIDMEMBERID")
+  static TTGRIDNODENAME = new TokenType("TTGRIDNODENAME")
+  static TTGRIDUSERASSIGNEDNAME = new TokenType("TTGRIDUSERASSIGNEDNAME")
+  static TYPE = new TokenType("TYPE")
+  static TYPEOF = new TokenType("TYPEOF")
+  static TYPES = new TokenType("TYPES")
+  static UCASE = new TokenType("UCASE")
+  static UDF = new TokenType("UDF")
+  static UID = new TokenType("UID")
+  static UNARCHIVED = new TokenType("UNARCHIVED")
+  static UNBOUNDED = new TokenType("UNBOUNDED")
+  static UNCOMMITTED = new TokenType("UNCOMMITTED")
+  static UNCOMPRESS = new TokenType("UNCOMPRESS")
+  static UNCOMPRESSED_LENGTH = new TokenType("UNCOMPRESSED_LENGTH")
+  static UNDEFINED = new TokenType("UNDEFINED")
+  static UNDER = new TokenType("UNDER")
+  static UNDO = new TokenType("UNDO")
+  static UNDOFILE = new TokenType("UNDOFILE")
+  static UNDO_BUFFER_SIZE = new TokenType("UNDO_BUFFER_SIZE")
+  static UNDROP = new TokenType("UNDROP")
+  static UNHEX = new TokenType("UNHEX")
+  static UNICODE = new TokenType("UNICODE")
+  static UNIFORM = new TokenType("UNIFORM")
+  static UNINSTALL = new TokenType("UNINSTALL")
+  static UNION = new TokenType("UNION")
+  static UNIQUE = new TokenType("UNIQUE")
+  static UNIQUEIDENTIFIER = new TokenType("UNIQUEIDENTIFIER")
+  static UNISTR = new TokenType("UNISTR")
+  static UNITE = new TokenType("UNITE")
+  static UNIXEPOCH = new TokenType("UNIXEPOCH")
+  static UNIX_TIMESTAMP = new TokenType("UNIX_TIMESTAMP")
+  static UNKNOWN = new TokenType("UNKNOWN")
+  static UNLIKELY = new TokenType("UNLIKELY")
+  static UNLIMITED = new TokenType("UNLIMITED")
+  static UNLISTEN = new TokenType("UNLISTEN")
+  static UNLOCK = new TokenType("UNLOCK")
+  static UNLOGGED = new TokenType("UNLOGGED")
+  static UNNEST = new TokenType("UNNEST")
+  static UNPIVOT = new TokenType("UNPIVOT")
+  static UNPLUG = new TokenType("UNPLUG")
+  static UNPROTECTED = new TokenType("UNPROTECTED")
+  static UNQUIESCE = new TokenType("UNQUIESCE")
+  static UNRECOVERABLE = new TokenType("UNRECOVERABLE")
+  static UNSIGNED = new TokenType("UNSIGNED")
+  static UNTIL = new TokenType("UNTIL")
+  static UNUSABLE = new TokenType("UNUSABLE")
+  static UNUSED = new TokenType("UNUSED")
+  static UPDATE = new TokenType("UPDATE")
+  static UPDATED = new TokenType("UPDATED")
+  static UPDATETEXT = new TokenType("UPDATETEXT")
+  static UPDATEXML = new TokenType("UPDATEXML")
+  static UPDATING = new TokenType("UPDATING")
+  static UPGRADE = new TokenType("UPGRADE")
+  static UPPER = new TokenType("UPPER")
+  static UPPER_INC = new TokenType("UPPER_INC")
+  static UPPER_INF = new TokenType("UPPER_INF")
+  static UPSERT = new TokenType("UPSERT")
+  static URITYPE = new TokenType("URITYPE")
+  static UROWID = new TokenType("UROWID")
+  static USAGE = new TokenType("USAGE")
+  static USE = new TokenType("USE")
+  static USER = new TokenType("USER")
+  static USERGROUP = new TokenType("USERGROUP")
+  static USERS = new TokenType("USERS")
+  static USER_DATA = new TokenType("USER_DATA")
+  static USER_NAME = new TokenType("USER_NAME")
+  static USER_TABLESPACES = new TokenType("USER_TABLESPACES")
+  static USE_STORED_OUTLINES = new TokenType("USE_STORED_OUTLINES")
+  static USING = new TokenType("USING")
+  static USING_NLS_COMP = new TokenType("USING_NLS_COMP")
+  static UTC_DATE = new TokenType("UTC_DATE")
+  static UTC_TIME = new TokenType("UTC_TIME")
+  static UTC_TIMESTAMP = new TokenType("UTC_TIMESTAMP")
+  static UUID = new TokenType("UUID")
+  static UUID_SHORT = new TokenType("UUID_SHORT")
+  static UUID_TO_BIN = new TokenType("UUID_TO_BIN")
+  static VACUUM = new TokenType("VACUUM")
+  static VALIDATE = new TokenType("VALIDATE")
+  static VALIDATE_PASSWORD_STRENGTH = new TokenType("VALIDATE_PASSWORD_STRENGTH")
+  static VALUE = new TokenType("VALUE")
+  static VALUES = new TokenType("VALUES")
+  static VARBINARY = new TokenType("VARBINARY")
+  static VARCHAR = new TokenType("VARCHAR")
+  static VARCHAR2 = new TokenType("VARCHAR2")
+  static VARCHARACTER = new TokenType("VARCHARACTER")
+  static VARIADIC = new TokenType("VARIADIC")
+  static VARIANCE = new TokenType("VARIANCE")
+  static VARNUM = new TokenType("VARNUM")
+  static VARRAW = new TokenType("VARRAW")
+  static VARRAY = new TokenType("VARRAY")
+  static VARRAYS = new TokenType("VARRAYS")
+  static VARYING = new TokenType("VARYING")
+  static VAR_POP = new TokenType("VAR_POP")
+  static VAR_SAMP = new TokenType("VAR_SAMP")
+  static VCPU = new TokenType("VCPU")
+  static VERBOSE = new TokenType("VERBOSE")
+  static VERIFY = new TokenType("VERIFY")
+  static VERSION = new TokenType("VERSION")
+  static VERSIONING = new TokenType("VERSIONING")
+  static VERSIONS = new TokenType("VERSIONS")
+  static VERSIONS_ENDSCN = new TokenType("VERSIONS_ENDSCN")
+  static VERSIONS_ENDTIME = new TokenType("VERSIONS_ENDTIME")
+  static VERSIONS_OPERATION = new TokenType("VERSIONS_OPERATION")
+  static VERSIONS_STARTSCN = new TokenType("VERSIONS_STARTSCN")
+  static VERSIONS_STARTTIME = new TokenType("VERSIONS_STARTTIME")
+  static VERSIONS_XID = new TokenType("VERSIONS_XID")
+  static VIEW = new TokenType("VIEW")
+  static VIEWS = new TokenType("VIEWS")
+  static VIRTUAL = new TokenType("VIRTUAL")
+  static VISIBILITY = new TokenType("VISIBILITY")
+  static VISIBLE = new TokenType("VISIBLE")
+  static VOLUME = new TokenType("VOLUME")
+  static WAIT = new TokenType("WAIT")
+  static WAITFOR = new TokenType("WAITFOR")
+  static WALLET = new TokenType("WALLET")
+  static WEBSEARCH_TO_TSQUERY = new TokenType("WEBSEARCH_TO_TSQUERY")
+  static WEEK = new TokenType("WEEK")
+  static WEEKDAY = new TokenType("WEEKDAY")
+  static WEEKOFYEAR = new TokenType("WEEKOFYEAR")
+  static WEEKS = new TokenType("WEEKS")
+  static WEIGHT_STRING = new TokenType("WEIGHT_STRING")
+  static WHEN = new TokenType("WHEN")
+  static WHENEVER = new TokenType("WHENEVER")
+  static WHERE = new TokenType("WHERE")
+  static WHILE = new TokenType("WHILE")
+  static WIDTH = new TokenType("WIDTH")
+  static WIDTH_BUCKET = new TokenType("WIDTH_BUCKET")
+  static WINDOW = new TokenType("WINDOW")
+  static WITH = new TokenType("WITH")
+  static WITHIN = new TokenType("WITHIN")
+  static WITHOUT = new TokenType("WITHOUT")
+  static WNDS = new TokenType("WNDS")
+  static WNPS = new TokenType("WNPS")
+  static WORK = new TokenType("WORK")
+  static WORKLOAD = new TokenType("WORKLOAD")
+  static WRAPPER = new TokenType("WRAPPER")
+  static WRITE = new TokenType("WRITE")
+  static WRITETEXT = new TokenType("WRITETEXT")
+  static X509 = new TokenType("X509")
+  static XA = new TokenType("XA")
+  static XDB = new TokenType("XDB")
+  static XDBURITYPE = new TokenType("XDBURITYPE")
+  static XML = new TokenType("XML")
+  static XMLAGG = new TokenType("XMLAGG")
+  static XMLCOMMENT = new TokenType("XMLCOMMENT")
+  static XMLCONCAT = new TokenType("XMLCONCAT")
+  static XMLELEMENT = new TokenType("XMLELEMENT")
+  static XMLEXISTS = new TokenType("XMLEXISTS")
+  static XMLFOREST = new TokenType("XMLFOREST")
+  static XMLNAMESPACES = new TokenType("XMLNAMESPACES")
+  static XMLPI = new TokenType("XMLPI")
+  static XMLROOT = new TokenType("XMLROOT")
+  static XMLSCHEMA = new TokenType("XMLSCHEMA")
+  static XMLTABLE = new TokenType("XMLTABLE")
+  static XMLTYPE = new TokenType("XMLTYPE")
+  static XML_IS_WELL_FORMED = new TokenType("XML_IS_WELL_FORMED")
+  static XML_IS_WELL_FORMED_CONTENT = new TokenType("XML_IS_WELL_FORMED_CONTENT")
+  static XML_IS_WELL_FORMED_DOCUMENT = new TokenType("XML_IS_WELL_FORMED_DOCUMENT")
+  static XOR = new TokenType("XOR")
+  static XPATH = new TokenType("XPATH")
+  static XPATH_EXISTS = new TokenType("XPATH_EXISTS")
+  static XS = new TokenType("XS")
+  static YEAR = new TokenType("YEAR")
+  static YEARS = new TokenType("YEARS")
+  static YEARWEEK = new TokenType("YEARWEEK")
+  static YEAR_MONTH = new TokenType("YEAR_MONTH")
+  static YES = new TokenType("YES")
+  static ZEROBLOB = new TokenType("ZEROBLOB")
+  static ZEROFILL = new TokenType("ZEROFILL")
+  static ZONE = new TokenType("ZONE")
+  static ZONEMAP = new TokenType("ZONEMAP")
+  static _ROWID_ = new TokenType("_ROWID_")
+
+  static for(name: string) {
+    const keyword = Keyword[name.toUpperCase() as keyof Keyword] as any
+    if (keyword instanceof TokenType) {
+      return keyword
+    }
+    return undefined
+  }
+
+  private constructor() {
+  }
 }
-Object.setPrototypeOf(Keyword, null)
