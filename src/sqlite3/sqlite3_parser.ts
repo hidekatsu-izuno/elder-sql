@@ -10,26 +10,19 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
-  ParseFunction,
   TokenReader,
 } from "../parser"
 import { dequote } from "../util"
 import { Sqlite3Lexer } from "./sqlite3_lexer"
 
 export class Sqlite3Parser extends Parser {
-  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new Sqlite3Lexer(options).lex(input, options.fileName)
-    const root = new Sqlite3Parser(options).parse(tokens)
-    return root
-  }
-
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options)
+    super(options, options.lexer ?? new Sqlite3Lexer(options))
   }
 
-  parse(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
 
     const root = new Node("root")

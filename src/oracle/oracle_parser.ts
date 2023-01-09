@@ -8,25 +8,19 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
-  ParseFunction,
   TokenReader,
 } from "../parser"
 import { dequote } from "../util"
 import { OracleLexer, LookAheadSet } from "./oracle_lexer"
 
 export class OracleParser extends Parser {
-  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new OracleLexer(options).lex(input)
-    return new OracleParser(options).parse(tokens)
-  }
-
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options)
+    super(options, options.lexer ?? new OracleLexer(options))
   }
 
-  parse(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []

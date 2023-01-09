@@ -1,4 +1,4 @@
-import { TokenType, Token } from './lexer'
+import { TokenType, Token, Lexer } from './lexer'
 
 export class Node {
   private parentNode?: Node
@@ -188,15 +188,23 @@ export class TokenReader {
   }
 }
 
-export type ParseFunction = (input: string, options?: Record<string, any>) => Node
+export declare type ParserOptions = {
+  [key: string]: any
+}
 
 export abstract class Parser {
   constructor(
-    public options: Record<string, any> = {},
+    public options: ParserOptions = {},
+    public lexer: Lexer,
   ) {
   }
 
-  abstract parse(tokens: Token[]): Node
+  parse(text: string, filename?: string) {
+    const tokens = this.lexer.lex(text, filename)
+    return this.parseTokens(tokens)
+  }
+
+  abstract parseTokens(tokens: Token[]): Node
 }
 
 export class AggregateParseError extends Error {

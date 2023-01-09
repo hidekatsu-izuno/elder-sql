@@ -9,28 +9,22 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
-  ParseFunction,
   TokenReader,
 } from "../parser"
 import { dequote, ucase } from "../util"
 import { MysqlLexer } from "./mysql_lexer"
 
 export class MysqlParser extends Parser {
-  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new MysqlLexer(options).lex(input)
-    return new MysqlParser(options).parse(tokens)
-  }
-
   private sqlMode = new Set<string>()
 
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options)
+    super(options, options.lexer ?? new MysqlLexer(options))
     this.setSqlMode(options.sqlMode)
   }
 
-  parse(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []
@@ -95,7 +89,9 @@ export class MysqlParser extends Parser {
     if (sep === -1) {
       stmt.append(new Node("name", this.getLongCommandName(token.text)).append(token))
     } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), [], token.location)
+      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
+        location: token.location
+      })
       const name = this.getLongCommandName(nameToken.text)
       stmt.append(new Node("name", name).append(nameToken))
 
@@ -114,19 +110,23 @@ export class MysqlParser extends Parser {
             loc.columnNumber = token.location?.columnNumber + loc.position
           }
 
-          argTokens.push(new Token(TokenType.WhiteSpace, m[0], [], token.location))
+          argTokens.push(new Token(TokenType.WhiteSpace, m[0], {
+            location: token.location
+          }))
           sep2 += m[0].length
         }
         if (sep2 < args.length) {
-          const loc = new SourceLocation()
-          loc.fileName = token.location?.fileName
-          loc.position = sep2
-          loc.lineNumber = token.location?.lineNumber
+          const location = new SourceLocation()
+          location.fileName = token.location?.fileName
+          location.position = sep2
+          location.lineNumber = token.location?.lineNumber
           if (token.location?.columnNumber != null) {
-            loc.columnNumber = token.location?.columnNumber + loc.position
+            location.columnNumber = token.location?.columnNumber + location.position
           }
 
-          argTokens.push(new Token(TokenType.Identifier, args.substring(sep2), [], loc))
+          argTokens.push(new Token(TokenType.Identifier, args.substring(sep2), {
+            location
+          }))
         }
       } else {
         const re = /([ \t]+)|('(?:''|[^']+)*'|`(?:``|[^`]+)*`)|([^ \t'`]+)/y
@@ -137,26 +137,28 @@ export class MysqlParser extends Parser {
           if (m) {
             const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
 
-            const loc = new SourceLocation()
-            loc.fileName = token.location?.fileName
-            loc.position = re.lastIndex
-            loc.lineNumber = token.location?.lineNumber
+            const location = new SourceLocation()
+            location.fileName = token.location?.fileName
+            location.position = re.lastIndex
+            location.lineNumber = token.location?.lineNumber
             if (token.location?.columnNumber != null) {
-              loc.columnNumber = token.location?.columnNumber + loc.position
+              location.columnNumber = token.location?.columnNumber + location.position
             }
 
-            argTokens.push(new Token(type, m[0], [], loc))
+            argTokens.push(new Token(type, m[0], {
+              location
+            }))
             pos = re.lastIndex
           }
         }
       }
 
-      const skips = new Array<Token>()
+      const skips = token.postskips
       for (const argToken of argTokens) {
-        if (argToken.type.options.skip) {
+        if (argToken.type.skip) {
           skips.push(argToken)
         } else {
-          argToken.skips.push(...skips)
+          argToken.preskips.push(...skips)
           skips.length = 0
           stmt.append(new Node("arg", dequote(argToken.text)).append(argToken))
         }

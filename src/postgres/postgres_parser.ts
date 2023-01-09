@@ -8,25 +8,19 @@ import {
   Parser,
   ParseError,
   AggregateParseError,
-  ParseFunction,
   TokenReader,
 } from "../parser"
 import { dequote } from "../util"
 import { PostgresLexer } from "./postgres_lexer"
 
 export class PostgresParser extends Parser {
-  static parse: ParseFunction = (input: string, options: Record<string, any> = {}) => {
-    const tokens = new PostgresLexer(options).lex(input, options.fileName)
-    return new PostgresParser(options).parse(tokens)
-  }
-
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options)
+    super(options, options.lexer ?? new PostgresLexer(options))
   }
 
-  parse(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []
@@ -91,7 +85,10 @@ export class PostgresParser extends Parser {
     if (sep === -1) {
       stmt.append(new Node("name", token.text).append(token))
     } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), token.skips, token.location)
+      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
+        preskips: token.preskips,
+        location: token.location,
+      })
       stmt.append(new Node("name", nameToken.text).append(nameToken))
 
       const args = token.text.substring(sep)
@@ -104,25 +101,27 @@ export class PostgresParser extends Parser {
         if (m) {
           const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
 
-          const loc = new SourceLocation()
-          loc.fileName = token.location?.fileName
-          loc.position = re.lastIndex
-          loc.lineNumber = token.location?.lineNumber
+          const location = new SourceLocation()
+          location.fileName = token.location?.fileName
+          location.position = re.lastIndex
+          location.lineNumber = token.location?.lineNumber
           if (token.location?.columnNumber != null) {
-            loc.columnNumber = token.location?.columnNumber + loc.position
+            location.columnNumber = token.location?.columnNumber + location.position
           }
 
-          argTokens.push(new Token(type, m[0], [], loc))
+          argTokens.push(new Token(type, m[0], {
+            location
+          }))
           pos = re.lastIndex
         }
       }
 
-      const skips = new Array<Token>()
+      const skips = token.postskips
       for (const argToken of argTokens) {
-        if (argToken.type.options.skip) {
+        if (argToken.type.skip) {
           skips.push(argToken)
         } else {
-          argToken.skips.push(...skips)
+          argToken.preskips.push(...skips)
           skips.length = 0
           stmt.append(new Node("arg", dequote(argToken.text)).append(argToken))
         }
