@@ -264,10 +264,6 @@ export abstract class Lexer {
   protected processToken(state: Record<string, any>, token: Token) {
     return [ token ]
   }
-
-  protected processCommand(state: Record<string, any>, token: Token) {
-    return [ token ]
-  }
 }
 
 export class Keyword {

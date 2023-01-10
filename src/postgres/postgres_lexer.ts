@@ -4,6 +4,7 @@ import {
   Lexer,
   Keyword,
   LexerOptions,
+  SourceLocation,
 } from "../lexer"
 
 const ReservedSet = new Set<TokenType>([
@@ -100,7 +101,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: /^\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\\|$)/my },
+      { type: TokenType.Command, re: /(?<=^|\n)\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\r?\n|$)/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -135,9 +136,68 @@ export class PostgresLexer extends Lexer {
           token.type = keyword
         }
       }
-    } else if (token.type === TokenType.SemiColon || token.type === TokenType.Command) {
+    } else if (token.type === TokenType.SemiColon) {
       token.eos = true
+    } else if (token.type === TokenType.Command) {
+      return this.parseCommand(token)
     }
     return [ token ]
+  }
+
+  private parseCommand(token: Token) {
+    const m = /[ \t]/.exec(token.text)
+    if (!m) {
+      return [ token ]
+    }
+
+    const command = []
+    const nameToken = new Token(TokenType.Command, token.text.substring(0, m.index), {
+      preskips: token.preskips, 
+      postskips: token.postskips,
+      location: token.location,
+    })
+    command.push(nameToken)
+
+    const args = token.text.substring(m.index)
+    const argTokens = []
+    const re = /([ \t]+)|("[^"]*"|'[^']*'|`[^`]*`)|([^ \t"']+)/y
+    let pos = 0
+    while (pos < args.length) {
+      re.lastIndex = pos
+      const m = re.exec(args)
+      if (m) {
+        const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
+
+        const location = new SourceLocation()
+        location.fileName = token.location?.fileName
+        location.position = re.lastIndex
+        location.lineNumber = token.location?.lineNumber
+        if (token.location?.columnNumber != null) {
+          location.columnNumber = token.location?.columnNumber + location.position
+        }
+
+        argTokens.push(new Token(type, m[0], {
+          location
+        }))
+        pos = re.lastIndex
+      }
+    }
+
+    let skips = []
+    for (const argToken of argTokens) {
+      if (argToken.is(TokenType.WhiteSpace)) {
+        skips.push(argToken)
+      } else {
+        argToken.preskips = skips
+        skips = []
+        command.push(argToken)
+      }
+    }
+    if (skips.length > 0) {
+      command[command.length - 1].postskips = skips
+    }
+    command[command.length - 1].eos = true
+
+    return command
   }
 }

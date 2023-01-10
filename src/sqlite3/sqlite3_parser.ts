@@ -2,7 +2,6 @@ import Decimal from "decimal.js"
 import {
   TokenType,
   Token,
-  SourceLocation,
   Keyword,
 } from "../lexer"
 import {
@@ -78,58 +77,18 @@ export class Sqlite3Parser extends Parser {
 
   private command(r: TokenReader) {
     const stmt = new Node("command statement")
-
-    const token = r.consume(TokenType.Command)
-    const sep = token.text.indexOf(" ")
-    if (sep === -1) {
-      stmt.append(new Node("command name", token.text).append(token))
-    } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
-        preskips: token.preskips, 
-        postskips: token.postskips,
-        location: token.location,
-      })
-      stmt.append(new Node("command name", nameToken.text).append(nameToken))
-
-      const args = token.text.substring(sep)
-      const argTokens = []
-      const re = /([ \t]+)|("[^"]*"|'[^']*')|([^ \t"']+)/y
-      let pos = 0
-      while (pos < args.length) {
-        re.lastIndex = pos
-        const m = re.exec(args)
-        if (m) {
-          const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-
-          const location = new SourceLocation()
-          location.fileName = token.location?.fileName
-          location.position = re.lastIndex
-          location.lineNumber = token.location?.lineNumber
-          if (token.location?.columnNumber != null) {
-            location.columnNumber = token.location?.columnNumber + location.position
-          }
-
-          argTokens.push(new Token(type, m[0], {
-            location
-          }))
-          pos = re.lastIndex
-        }
+    const command = r.consume(TokenType.Command)
+    stmt.append(new Node("command name", command.text)
+      .append(command)
+    )
+    while (r.peek()) {
+      const arg = r.consume()
+      stmt.append(new Node("command argument", dequote(arg.text))
+        .append(arg)
+      )
+      if (!r.peek().eos) {
+        break
       }
-
-      let skips = []
-      for (const argToken of argTokens) {
-        if (argToken.is(TokenType.WhiteSpace)) {
-          skips.push(argToken)
-        } else {
-          argToken.preskips.push(...skips)
-          skips = []
-          stmt.append(new Node("command argument", dequote(argToken.text)).append(argToken))
-        }
-      }
-    }
-
-    if (r.peekIf(TokenType.SemiColon)) {
-      stmt.append(r.consume())
     }
     if (r.peekIf(TokenType.Eof)) {
       stmt.append(r.consume())
@@ -253,8 +212,7 @@ export class Sqlite3Parser extends Parser {
       if (explain) {
         stmt = explain.append(stmt)
       }
-
-      if (r.peekIf(TokenType.Delimiter)) {
+      if (r.peekIf(TokenType.SemiColon)) {
         stmt.append(r.consume())
       }
       if (r.peekIf(TokenType.Eof)) {
