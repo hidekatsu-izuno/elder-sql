@@ -11,7 +11,7 @@ describe("test sqlite3 lexer", () => {
     const module = require("./lexer/" + target)
     const tokens = new Sqlite3Lexer().lex(module.actual)
 
-    if (target === "") {
+    if (target === "create_table") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 

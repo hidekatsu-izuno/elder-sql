@@ -161,7 +161,7 @@ export abstract class Lexer {
     const segments = this.processInput(state, text)
 
     let skips = []
-    let lastSeparator: Token | undefined
+    let separated = false
     for (const segment of segments) {
       const isString = typeof segment === "string"
       let slen = isString ? segment.length : 1
@@ -213,24 +213,25 @@ export abstract class Lexer {
 
         const newTokens = this.processToken(state, token)
         for (const newToken of newTokens) {
+          if (token.type.skip) {
+            skips.push(newToken)
+          }
+
           if (token.type.separator) {
-            if (skips.length > 0
-              && tokens.length > 0
-              && (skips[skips.length-1] === lastSeparator || tokens[tokens.length - 1] === lastSeparator)) {
+            if (tokens.length > 0 && skips.length > 0) {
               tokens[tokens.length - 1].postskips = skips
               skips = []
             }
-            lastSeparator = token
+            separated = true
           }
   
-          if (token.type.skip) {
-            skips.push(newToken)
-          } else {
+          if (!token.type.skip) {
             if (skips.length > 0) {
               token.preskips = skips
               skips = []
             }
             tokens.push(newToken)
+            separated = false
           }
         }
       }
