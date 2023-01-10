@@ -8,7 +8,7 @@ describe("test sqlite3 parser", () => {
     "create_table",
   ])("%s", (target) => {
     const module = require("./parser/" + target)
-    const node = Sqlite3Parser.parse(module.actual)
+    const node = new Sqlite3Parser().parse(module.actual)
 
     if (target === "") {
       fs.writeFileSync("temp.txt", toJSString(node))

@@ -4,13 +4,14 @@ import { toJSString } from "../utils/debug"
 
 describe("test sqlite3 lexer", () => {
   test.each([
+    "create_table",
     "select",
     "pragma",
   ])("%s", (target) => {
     const module = require("./lexer/" + target)
     const tokens = new Sqlite3Lexer().lex(module.actual)
 
-    if (target === "pragma") {
+    if (target === "") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 
