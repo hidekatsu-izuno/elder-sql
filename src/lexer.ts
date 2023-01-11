@@ -1993,6 +1993,7 @@ export class Keyword {
   static STR = new TokenType("STR")
   static STRAIGHT_JOIN = new TokenType("STRAIGHT_JOIN")
   static STRCMP = new TokenType("STRCMP")
+  static STRICT = new TokenType("STRICT")
   static STRFTIME = new TokenType("STRFTIME")
   static STRING = new TokenType("STRING")
   static STRING_AGG = new TokenType("STRING_AGG")
