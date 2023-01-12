@@ -7,7 +7,7 @@ import {
   SourceLocation,
 } from "../lexer"
 
-export const LookAheadSet = new Set<TokenType>([
+export const LookAheadSet = new Set<Keyword>([
   Keyword.TABLE,
   Keyword.VIEW,
   Keyword.TRIGGER,
@@ -15,7 +15,7 @@ export const LookAheadSet = new Set<TokenType>([
   Keyword.UNIQUE,
 ])
 
-const ReservedSet = new Set<TokenType>([
+const ReservedSet = new Set<Keyword>([
   Keyword.ADD,
   Keyword.ALL,
   Keyword.ALTER,
@@ -93,7 +93,7 @@ export declare type Sqlite3LexerOptions = LexerOptions & {
 }
 
 export class Sqlite3Lexer extends Lexer {
-  private reserved = new Set<TokenType>()
+  private reserved = new Set<Keyword>()
 
   constructor(
     options: Sqlite3LexerOptions = {}
@@ -147,8 +147,8 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
-  isReserved(type: TokenType) {
-    return ReservedSet.has(type) || this.reserved.has(type)
+  isReserved(keyword: Keyword) {
+    return ReservedSet.has(keyword) || this.reserved.has(keyword)
   }
 
   protected processInput(state: Record<string, any>, input: string) {
@@ -165,7 +165,7 @@ export class Sqlite3Lexer extends Lexer {
       if (keyword) {
         token.keyword = keyword
         if (this.isReserved(keyword)) {
-          token.type = keyword
+          token.type = TokenType.Reserved
         }
         if (state.pos === 0) {
           if (keyword === Keyword.CREATE) {

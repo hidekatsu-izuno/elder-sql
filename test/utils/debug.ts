@@ -39,11 +39,7 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
     }
   } else if (target instanceof Token) {
     text += " ".repeat(space * 2) + "new Token("
-    if (Keyword[target.type.name as keyof Keyword]) {
-      text += "Keyword." + target.type.name
-    } else {
-      text += "TokenType." + target.type.name
-    }
+    text += "TokenType." + target.type.name
     text += ", " + JSON.stringify(target.text)
     if (target.keyword || target.preskips.length || target.postskips.length || target.location) {
       text += ", { "

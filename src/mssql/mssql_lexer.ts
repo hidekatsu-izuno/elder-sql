@@ -6,7 +6,7 @@ import {
   LexerOptions,
 } from "../lexer"
 
-const ReservedSet = new Set<TokenType>([
+const ReservedSet = new Set<Keyword>([
   Keyword.ADD,
 	Keyword.ALL,
 	Keyword.ALTER,
@@ -225,8 +225,8 @@ export class MssqlLexer extends Lexer {
     ], options)
   }
   
-  isReserved(type: TokenType) {
-    return ReservedSet.has(type)
+  isReserved(keyword: Keyword) {
+    return ReservedSet.has(keyword)
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
@@ -235,7 +235,7 @@ export class MssqlLexer extends Lexer {
       if (keyword) {
         token.keyword = keyword
         if (this.isReserved(keyword)) {
-          token.type = keyword
+          token.type = TokenType.Reserved
         }
       }
     } else if (token.type === TokenType.Delimiter) {

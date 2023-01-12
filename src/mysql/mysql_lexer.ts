@@ -9,7 +9,7 @@ import {
   LexerOptions,
 } from "../lexer"
 
-const ReservedSet = new Set<TokenType>([
+const ReservedSet = new Set<Keyword>([
   Keyword.ACCESSIBLE,
   Keyword.ADD,
   Keyword.ALL,
@@ -249,7 +249,7 @@ export declare type MysqlLexerOptions = LexerOptions & {
 }
 
 export class MysqlLexer extends Lexer {
-  private reserved = new Set<TokenType>()
+  private reserved = new Set<Keyword>()
   private reCommand = new RegExp(`${CommandPattern}(;|$)`, "imy")
   private reDelimiter = new RegExp(";", "y")
 
@@ -338,8 +338,8 @@ export class MysqlLexer extends Lexer {
     }) ]
   }
   
-  isReserved(type: TokenType) {
-    return ReservedSet.has(type) || this.reserved.has(type)
+  isReserved(keyword: Keyword) {
+    return ReservedSet.has(keyword) || this.reserved.has(keyword)
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
@@ -348,7 +348,7 @@ export class MysqlLexer extends Lexer {
       if (keyword) {
         token.keyword = keyword
         if (this.isReserved(keyword)) {
-          token.type = keyword
+          token.type = TokenType.Reserved
         }
       }
     } else if (token.type === TokenType.Delimiter) {

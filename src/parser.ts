@@ -1,4 +1,4 @@
-import { TokenType, Token, Lexer } from './lexer'
+import { TokenType, Token, Lexer, Keyword } from './lexer'
 
 export class Node {
   private parentNode?: Node
@@ -60,10 +60,13 @@ export class Node {
   }
 }
 
-export declare type TokenCondition = TokenType | TokenType[] | {
-  type?: TokenType | TokenType[],
-  text?: string | string[] | RegExp
-} | ((token: Token) => boolean)
+export declare type TokenCondition = Keyword | TokenType | 
+  (Keyword | TokenType)[] | 
+  {
+    type?: TokenType | TokenType[],
+    text?: string | string[] | RegExp
+  } |
+  ((token: Token) => boolean)
 
 export class TokenReader {
   pos = 0
@@ -110,7 +113,7 @@ export class TokenReader {
   }
 
   private matchToken(condition: TokenCondition, token: Token) {
-    if (condition instanceof TokenType) {
+    if (condition instanceof TokenType || condition instanceof Keyword) {
       if (!token.is(condition)) {
         return false
       }

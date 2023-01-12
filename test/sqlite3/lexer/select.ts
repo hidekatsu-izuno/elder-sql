@@ -1,7 +1,7 @@
 import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
 
 export default [
-  new Token(Keyword.SELECT, "SELECT", { keyword: Keyword.SELECT, location: new SourceLocation(0, 1, 0)}),
+  new Token(TokenType.Reserved, "SELECT", { keyword: Keyword.SELECT, location: new SourceLocation(0, 1, 0)}),
   new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}),
   new Token(TokenType.Operator, "+", { location: new SourceLocation(8, 1, 8)}),
   new Token(TokenType.Numeric, "2", { location: new SourceLocation(9, 1, 9)}),
@@ -22,7 +22,7 @@ export default [
   new Token(TokenType.Numeric, "2", { location: new SourceLocation(28, 1, 28)}),
   new Token(TokenType.Operator, "*", { location: new SourceLocation(29, 1, 29)}),
   new Token(TokenType.Numeric, "3", { location: new SourceLocation(30, 1, 30)}),
-  new Token(Keyword.AS, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(31, 1, 31)})], location: new SourceLocation(32, 1, 32)}),
+  new Token(TokenType.Reserved, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(31, 1, 31)})], location: new SourceLocation(32, 1, 32)}),
   new Token(TokenType.Identifier, "c2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(34, 1, 34)})], location: new SourceLocation(35, 1, 35)}),
   new Token(TokenType.Eof, "", { eos: true, location: new SourceLocation(37, 1, 37)})
 ]

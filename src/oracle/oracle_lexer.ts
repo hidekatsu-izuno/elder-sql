@@ -6,7 +6,7 @@ import {
   LexerOptions,
 } from "../lexer"
 
-export const LookAheadSet = new Set<TokenType>([
+export const LookAheadSet = new Set<Keyword>([
   Keyword.ANALYTIC,
   Keyword.ATTRIBUTE,
   Keyword.AUDIT,
@@ -50,7 +50,7 @@ export const LookAheadSet = new Set<TokenType>([
   Keyword.VIEW,
 ])
 
-export const ReservedSet = new Set<TokenType>([
+export const ReservedSet = new Set<Keyword>([
   Keyword.ACCESS,
   Keyword.ADD,
   Keyword.ALL,
@@ -217,8 +217,8 @@ export class OracleLexer extends Lexer {
     ], options)
   }
   
-  isReserved(type: TokenType) {
-    return ReservedSet.has(type)
+  isReserved(keyword: Keyword) {
+    return ReservedSet.has(keyword)
   }
 
   protected processInput(state: Record<string, any>, input: string) {
@@ -236,7 +236,7 @@ export class OracleLexer extends Lexer {
       if (keyword) {
         token.keyword = keyword
         if (this.isReserved(keyword)) {
-          token.type = keyword
+          token.type = TokenType.Reserved
         }
         if (state.pos === 0) {
           if (keyword === Keyword.CREATE) {

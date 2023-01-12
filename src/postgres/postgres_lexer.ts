@@ -7,7 +7,7 @@ import {
   SourceLocation,
 } from "../lexer"
 
-const ReservedSet = new Set<TokenType>([
+const ReservedSet = new Set<Keyword>([
   Keyword.ALL,
   Keyword.ANALYSE,
   Keyword.ANALYZE,
@@ -123,8 +123,8 @@ export class PostgresLexer extends Lexer {
     ], options)
   }
 
-  isReserved(type: TokenType) {
-    return ReservedSet.has(type)
+  isReserved(keyword: Keyword) {
+    return ReservedSet.has(keyword)
   }
 
   protected processToken(state: Record<string, any>, token: Token) {
@@ -133,7 +133,7 @@ export class PostgresLexer extends Lexer {
       if (keyword) {
         token.keyword = keyword
         if (this.isReserved(keyword)) {
-          token.type = keyword
+          token.type = TokenType.Reserved
         }
       }
     } else if (token.type === TokenType.SemiColon) {
