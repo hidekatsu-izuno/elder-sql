@@ -13,7 +13,7 @@ describe("test sqlite3 parser", () => {
     const expected = (await import("./parser/" + target)).default
     const node = new Sqlite3Parser().parse(script)
 
-    if (target === "create_table") {
+    if (target === "pragma") {
       fs.writeFileSync("temp.txt", toJSString(node))
     }
 

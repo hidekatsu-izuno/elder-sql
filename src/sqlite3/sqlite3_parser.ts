@@ -783,11 +783,12 @@ export class Sqlite3Parser extends Parser {
 
     if (r.peekIf({ type: TokenType.Operator, text: "=" })) {
       node.append(r.consume())
-      node.append(this.pragmaValue(r))
+      node.append(this.pragmaValue(r, "PragmaValue"))
     } else if (r.peekIf(TokenType.LeftParen)) {
-      node.append(r.consume())
-      node.append(this.pragmaValue(r))
-      node.append(r.consume(TokenType.RightParen))
+      const args = new Node("ArgumentList")
+      args.append(r.consume())
+      args.append(this.pragmaValue(r, "Argument"))
+      args.append(r.consume(TokenType.RightParen))
     }
     return node
   }
@@ -2023,26 +2024,16 @@ export class Sqlite3Parser extends Parser {
     return node
   }
 
-  private pragmaValue(r: TokenReader) {
-    const node = new Node("PragmaValue")
+  private pragmaValue(r: TokenReader, name: string) {
+    const node = new Node(name)
     if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
-      const token1 = r.consume()
-      node.append(token1)
-      const token2 = r.consume(TokenType.Numeric)
-      node.append(token2)
-      node.value = new Decimal(token1.text + token2.text).toString()
+      node.append(this.numericLiteral(r))
     } else if (r.peekIf(TokenType.Numeric)) {
-      const token = r.consume()
-      node.append(token)
-      node.value = new Decimal(token.text).toString()
-    } else if (r.peekIf([TokenType.String, TokenType.QuotedValue])) {
-      const token = r.consume()
-      node.append(token)
-      node.value = dequote(token.text)
+      node.append(this.numericLiteral(r))
+    } else if (r.peekIf([TokenType.String])) {
+      node.append(this.stringLiteral(r))
     } else if (r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
-      const token = r.consume()
-      node.append(token)
-      node.value = token.text
+      node.append(this.identifier(r, "PragmaLiteral"))
     } else {
       throw r.createParseError()
     }

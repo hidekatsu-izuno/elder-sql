@@ -165,7 +165,7 @@ export class TokenReader {
       const end = Math.min(this.pos, this.tokens.length - 1)
       let start = end
       while (start >= 0) {
-        if (start === 0 || this.tokens[start].text.lastIndexOf('\n') != -1) {
+        if (start === 0 || this.tokens[start].toString().indexOf('\n') != -1) {
           if (start === end) {
             start = Math.max(start - 3, 0)
           }
