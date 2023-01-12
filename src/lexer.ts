@@ -1,3 +1,5 @@
+import { escapeXml } from "./util"
+
 export class TokenType {
   static Eof = new TokenType("Eof")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
@@ -112,13 +114,26 @@ export class Token {
     }
     return false
   }
+
+  toXmlString() {
+    let xml = '<token type="' + escapeXml(this.type.name) + '">\n'
+    for (let i = 0; i < this.preskips.length; i++) {
+      xml += this.preskips[i].toXmlString()
+    }
+    xml += '<text>' + escapeXml(this.text) + '</text>\n'
+    for (let i = 0; i < this.postskips.length; i++) {
+      xml += this.postskips[i].toXmlString()
+    }
+    xml += '</token>\n'
+    return xml
+  }
   
   toString() {
     if (this.preskips.length > 0 || this.postskips.length > 0) {
       let out = ""
       for (let i = 0; i < this.preskips.length; i++) {
         out += this.preskips[i].text
-      }  
+      }
       out += this.text
       for (let i = 0; i < this.postskips.length; i++) {
         out += this.postskips[i].text

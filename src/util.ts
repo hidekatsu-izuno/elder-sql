@@ -69,6 +69,18 @@ export function escapeRegExp(text: string) {
   return text.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
 }
 
+export function escapeXml(text: string) {
+  return text.replace(/[&<>"]/g, m => {
+    switch (m) {
+      case '&': return '&amp;'
+      case '<': return '&lt;'
+      case '>': return '&gt;'
+      case '"': return '&quot;'
+    }
+    return m
+  })
+}
+
 export function isJSIdentifier(text: string) {
   const result = parseExpressionAt(text, 0, acornOption)
   return result.end === text.length && result.type === "Identifier"

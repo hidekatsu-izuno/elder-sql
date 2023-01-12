@@ -62,8 +62,8 @@ export class Node {
 
 export declare type TokenCondition = TokenType | TokenType[] | {
   type?: TokenType | TokenType[],
-  text?: string | string[] | ((text: string) => boolean) | RegExp
-}
+  text?: string | string[] | RegExp
+} | ((token: Token) => boolean)
 
 export class TokenReader {
   pos = 0
@@ -118,6 +118,10 @@ export class TokenReader {
       if (!token.is(...condition)) {
         return false
       }
+    } else if (typeof condition === "function") {
+      if (!condition(token)) {
+        return false
+      }
     } else {
       if (condition.type) {
         if (Array.isArray(condition.type)) {
@@ -137,10 +141,6 @@ export class TokenReader {
           }
         } else if (Array.isArray(condition.text)) {
           if (!condition.text.some(value => value === token.text)) {
-            return false
-          }
-        } else if (typeof condition.text === "function") {
-          if (!condition.text(token.text)) {
             return false
           }
         } else if (condition.text instanceof RegExp) {
