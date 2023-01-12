@@ -50,6 +50,14 @@ export class Node {
       return child instanceof Node && child.name === name
     })
   }
+
+  toString() {
+    let text = ""
+    for (const child of this.children) {
+      text += child.toString()
+    }
+    return text
+  }
 }
 
 export declare type TokenCondition = TokenType | TokenType[] | {

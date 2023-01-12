@@ -1,10 +1,7 @@
 import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
 import { Node } from "../../../src/parser"
 
-export const actual = `
-SELECT 1+2-3, -1*2/3 c1, +1-2*3 AS c2
-`.trim()
-export const expected = new Node("Script")
+export default new Node("Script")
   .append(new Node("SelectStatement")
     .append(new Node("SelectClause")
       .append(new Token(Keyword.SELECT, "SELECT", { keyword: Keyword.SELECT, location: new SourceLocation(0, 1, 0) }))

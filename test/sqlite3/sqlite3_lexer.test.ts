@@ -1,3 +1,4 @@
+import path from "node:path"
 import fs from "node:fs"
 import { Sqlite3Lexer } from "../../src/sqlite3/sqlite3_lexer"
 import { toJSString } from "../utils/debug"
@@ -5,16 +6,17 @@ import { toJSString } from "../utils/debug"
 describe("test sqlite3 lexer", () => {
   test.each([
     "create_table",
-    "select",
     "pragma",
-  ])("%s", (target) => {
-    const module = require("./lexer/" + target)
-    const tokens = new Sqlite3Lexer().lex(module.actual)
+    "select",
+  ])("%s", async (target) => {
+    const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
+    const expected = (await import("./lexer/" + target)).default
+    const tokens = new Sqlite3Lexer().lex(script)
 
-    if (target === "create_table") {
+    if (target === "pragma") {
       fs.writeFileSync("temp.txt", toJSString(tokens))
     }
 
-    expect(tokens).toStrictEqual(module.expected)
+    expect(tokens).toStrictEqual(expected)
   })
 })

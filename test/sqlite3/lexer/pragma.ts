@@ -1,9 +1,6 @@
 import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"
 
-export const actual = `
-PRAGMA foreign_keys=off;
-`.trim()
-export const expected = [
+export default [
   new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(0, 1, 0)}),
   new Token(TokenType.Identifier, "foreign_keys", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}),
   new Token(TokenType.Operator, "=", { location: new SourceLocation(19, 1, 19)}),
