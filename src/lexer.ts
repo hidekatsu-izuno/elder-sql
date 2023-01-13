@@ -270,7 +270,11 @@ export abstract class Lexer {
     return tokens
   }
 
-  isReserved(type: TokenType) {
+  isReserved(keyword?: Keyword) {
+    return false
+  }
+
+  isObjectStart(keyword?: Keyword) {
     return false
   }
 

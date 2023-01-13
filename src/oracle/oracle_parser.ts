@@ -11,7 +11,7 @@ import {
   TokenReader,
 } from "../parser"
 import { dequote } from "../util"
-import { OracleLexer, LookAheadSet } from "./oracle_lexer"
+import { OracleLexer } from "./oracle_lexer"
 
 export class OracleParser extends Parser {
   constructor(
@@ -126,7 +126,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (token.keyword && LookAheadSet.has(token.keyword)) {
+          if (token.keyword && this.lexer.isObjectStart(token.keyword)) {
             break
           } else {
             r.consume()
@@ -286,7 +286,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (token.keyword && LookAheadSet.has(token.keyword)) {
+          if (token.keyword && this.lexer.isObjectStart(token.keyword)) {
             break
           } else {
             r.consume()
@@ -431,7 +431,7 @@ export class OracleParser extends Parser {
           && r.peekIf(TokenType.Identifier)
         ) {
           const token = r.peek()
-          if (token.keyword && LookAheadSet.has(token.keyword)) {
+          if (token.keyword && this.lexer.isObjectStart(token.keyword)) {
             break
           } else {
             r.consume()

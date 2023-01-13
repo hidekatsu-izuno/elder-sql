@@ -6,7 +6,7 @@ import {
   LexerOptions,
 } from "../lexer"
 
-export const LookAheadSet = new Set<Keyword>([
+const ObjectStartSet = new Set<Keyword>([
   Keyword.ANALYTIC,
   Keyword.ATTRIBUTE,
   Keyword.AUDIT,
@@ -189,6 +189,8 @@ export declare type OracleLexerOptions = LexerOptions & {
 }
 
 export class OracleLexer extends Lexer {
+  private reserved = new Set<Keyword>()
+  
   constructor(
     options: OracleLexerOptions = {}
   ) {
@@ -217,8 +219,12 @@ export class OracleLexer extends Lexer {
     ], options)
   }
   
-  isReserved(keyword: Keyword) {
-    return ReservedSet.has(keyword)
+  isReserved(keyword?: Keyword) {
+    return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
+  }
+
+  isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
   }
 
   protected processInput(state: Record<string, any>, input: string) {
@@ -246,7 +252,7 @@ export class OracleLexer extends Lexer {
           } else {
             state.pos = 3
           }
-        } else if (state.pos === 1 && LookAheadSet.has(keyword)) {
+        } else if (state.pos === 1 && this.isObjectStart(keyword)) {
           if (
             keyword === Keyword.FUNCTION
             || keyword === Keyword.LIBRARY

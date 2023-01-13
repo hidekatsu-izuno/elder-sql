@@ -338,8 +338,8 @@ export class MysqlLexer extends Lexer {
     }) ]
   }
   
-  isReserved(keyword: Keyword) {
-    return ReservedSet.has(keyword) || this.reserved.has(keyword)
+  isReserved(keyword?: Keyword) {
+    return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
   protected processToken(state: Record<string, any>, token: Token) {

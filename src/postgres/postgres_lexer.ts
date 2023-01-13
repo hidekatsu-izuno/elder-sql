@@ -91,6 +91,8 @@ export declare type PostgresLexerOptions = LexerOptions & {
 }
 
 export class PostgresLexer extends Lexer {
+  private reserved = new Set<Keyword>()
+  
   constructor(
     options: PostgresLexerOptions = {}
   ) {
@@ -123,8 +125,8 @@ export class PostgresLexer extends Lexer {
     ], options)
   }
 
-  isReserved(keyword: Keyword) {
-    return ReservedSet.has(keyword)
+  isReserved(keyword?: Keyword) {
+    return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
   protected processToken(state: Record<string, any>, token: Token) {

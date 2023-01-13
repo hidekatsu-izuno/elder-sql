@@ -7,7 +7,7 @@ import {
   SourceLocation,
 } from "../lexer"
 
-export const LookAheadSet = new Set<Keyword>([
+export const ObjectStartSet = new Set<Keyword>([
   Keyword.TABLE,
   Keyword.VIEW,
   Keyword.TRIGGER,
@@ -147,8 +147,12 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
-  isReserved(keyword: Keyword) {
-    return ReservedSet.has(keyword) || this.reserved.has(keyword)
+  isReserved(keyword?: Keyword) {
+    return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
+  }
+
+  isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
   }
 
   protected processInput(state: Record<string, any>, input: string) {
@@ -173,7 +177,7 @@ export class Sqlite3Lexer extends Lexer {
           } else {
             state.pos = 3
           }
-        } else if (state.pos === 1 && LookAheadSet.has(keyword)) {
+        } else if (state.pos === 1 && this.isObjectStart(keyword)) {
           if (keyword === Keyword.TRIGGER) {
             state.pos = 2
           } else {

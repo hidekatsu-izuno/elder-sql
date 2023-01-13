@@ -21,13 +21,12 @@ export class Sqlite3Formatter extends Formatter {
   }
   
   private indentNode(node: Node, level: number) {
-    if (node.name === "SelectNode") {
-
-    }
-
     for (const child of node.children) {
       if (child instanceof Node) {
         this.indentNode(child, level)
+      } else {
+        for (const skip of child.preskips) {
+        }
       }
     }
   }
