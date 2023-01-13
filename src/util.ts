@@ -81,6 +81,18 @@ export function escapeXml(text: string) {
   })
 }
 
+export function unescapeXml(text: string) {
+  return text.replace(/&(amp|lt|gt|quot);/g, m => {
+    switch (m) {
+      case '&amp;': return '&'
+      case '&lt;': return '<'
+      case '&gt;': return '>'
+      case '&quot;': return '"'
+    }
+    return m
+  })
+}
+
 export function isJSIdentifier(text: string) {
   const result = parseExpressionAt(text, 0, acornOption)
   return result.end === text.length && result.type === "Identifier"

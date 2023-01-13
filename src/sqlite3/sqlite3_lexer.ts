@@ -7,7 +7,7 @@ import {
   SourceLocation,
 } from "../lexer"
 
-export const ObjectStartSet = new Set<Keyword>([
+const ObjectStartSet = new Set<Keyword>([
   Keyword.TABLE,
   Keyword.VIEW,
   Keyword.TRIGGER,
