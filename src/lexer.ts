@@ -186,12 +186,12 @@ export abstract class Lexer {
     return false
   }
 
-  protected sublex(state: Record<string, any>, input: string, start: SourceLocation) {
+  protected sublex(state: Record<string, any>, input: string, start?: SourceLocation) {
     const tokens = new Array<Token>()
-    let pos = start.position ?? 0
-    let lineNumber = start.lineNumber ?? 1
-    let columnNumber = start.columnNumber ?? 0
-    const fileName = start.fileName
+    let pos = 0
+    let lineNumber = start?.lineNumber ?? 1
+    let columnNumber = start?.columnNumber ?? 0
+    const fileName = start?.fileName
 
     let skips = []
     while (pos < input.length) {
@@ -204,7 +204,7 @@ export abstract class Lexer {
         const m = re.exec(input)
         if (m) {
           pattern = pat
-          location = new SourceLocation(pos, lineNumber, columnNumber, fileName)
+          location = new SourceLocation(pos + (start?.position ?? 0), lineNumber, columnNumber, fileName)
           text = m[0]
 
           pos = re.lastIndex
@@ -248,13 +248,13 @@ export abstract class Lexer {
           tokens.push(newToken)
         }
       }
-      if (newTokens && newTokens.length > 0) {
-        const last = newTokens[newTokens.length - 1]
+      if (tokens && tokens.length > 0) {
+        const last = tokens[tokens.length - 1]
         if (last.type === TokenType.EoF) {
           skips.push(...last.preskips)
           skips.push(...last.postskips)
-          newTokens.pop()
-        } else{
+          tokens.pop()
+        } else if (last.postskips.length > 0) {
           skips.push(...last.postskips)
           last.postskips.length = 0
         }
@@ -277,7 +277,7 @@ export abstract class Lexer {
     tokens.push(new Token(TokenType.EoF, "", {
       eos: true,
       preskips: skips,
-      location: new SourceLocation(pos, lineNumber, columnNumber, fileName),
+      location: new SourceLocation(pos + (start?.position ?? 0), lineNumber, columnNumber, fileName),
     }))
 
     return tokens

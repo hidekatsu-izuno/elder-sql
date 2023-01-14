@@ -267,7 +267,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy,
         action: (state, token) => this.processBlockComment(state, token)
       },
-      { type: TokenType.LineComment, re: /(#.*|--([ \t].*)$)/my },
+      { type: TokenType.LineComment, re: /(#.*|--([ \f\t\v].*)$)/my },
       { type: TokenType.Command, re: () => this.reCommand,
         action: (state, token) => this.processCommand(state, token)
       },
@@ -341,16 +341,16 @@ export class MysqlLexer extends Lexer {
   }
 
   private processBlockComment(state: Record<string, any>, token: Token) {
-    if (!this.options.version) {
-      return
-    }
-    const m = /^\/\*!([0-9]*)/.exec(token.text)
-    if (m && semver.gte(this.options.version, this.toSemverString(m[1]))) {
-      return this.sublex(
-        state,
-        " ".repeat(m[1].length) + token.text.substring(m[1].length, token.text.length-2) + "  ",
-        token.location ?? new SourceLocation(),
-      )
+    if (token.text.startsWith('/*!')) {
+      const m = /^\/\*!([0-9]{5})?[ \f\t\v\r\n](.*)[ \f\t\v\r\n]\*\/$/s.exec(token.text)
+      if (m && (!m[1] || !this.options.version || semver.gte(this.options.version, this.toSemverString(m[1])))) {
+        const start = (m[1] ? m[1].length : 0) + 3
+        return this.sublex(
+          state,
+          " ".repeat(start) + token.text.substring(start, token.text.length-2) + "  ",
+          token.location,
+        )
+      }
     }
   }
 
