@@ -1,6 +1,10 @@
 import { escapeXml } from "./util"
 
-export class TokenType {
+export interface TokenTag {
+  name: string
+}
+
+export class TokenType implements TokenTag {
   static Eof = new TokenType("Eof")
   static Reserved = new TokenType("Reserved")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
@@ -287,7 +291,7 @@ export abstract class Lexer {
   }
 }
 
-export class Keyword {
+export class Keyword implements TokenTag {
   static ABBREV = new Keyword("ABBREV")
   static ABORT = new Keyword("ABORT")
   static ABS = new Keyword("ABS")
@@ -2436,7 +2440,7 @@ export class Keyword {
   }
 
   constructor(
-    public name: String
+    public name: string
   ) {
   }
 }
