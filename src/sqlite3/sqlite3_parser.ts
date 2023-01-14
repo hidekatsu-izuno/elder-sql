@@ -29,7 +29,7 @@ export class Sqlite3Parser extends Parser {
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.SemiColon) || r.peekIf(TokenType.Eof)) {
+        if (r.peekIf(TokenType.SemiColon) || r.peekIf(TokenType.EoF)) {
           script.append(r.consume())
         } else if (r.peekIf(TokenType.Command)) {
           script.append(this.command(r))
@@ -94,7 +94,7 @@ export class Sqlite3Parser extends Parser {
     if (args.children.length > 0) {
       stmt.append(args)
     }
-    if (r.peekIf(TokenType.Eof)) {
+    if (r.peekIf(TokenType.EoF)) {
       stmt.append(r.consume())
     }
     return stmt
@@ -218,7 +218,7 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(TokenType.SemiColon)) {
         stmt.append(r.consume())
       }
-      if (r.peekIf(TokenType.Eof)) {
+      if (r.peekIf(TokenType.EoF)) {
         stmt.append(r.consume())
       }
       return stmt
@@ -231,7 +231,7 @@ export class Sqlite3Parser extends Parser {
         while (!r.peek().eos) {
           stmt.append(r.consume())
         }
-        if (r.peekIf(TokenType.Eof)) {
+        if (r.peekIf(TokenType.EoF)) {
           stmt.append(r.consume())
         }
         err.node = stmt

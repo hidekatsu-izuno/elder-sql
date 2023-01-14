@@ -27,7 +27,7 @@ export class OracleParser extends Parser {
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.Eof)) {
+        if (r.peekIf(TokenType.EoF)) {
           root.append(r.consume())
           break
         } else if (r.peekIf(TokenType.Delimiter) || r.peekIf(TokenType.SemiColon)) {
@@ -82,7 +82,7 @@ export class OracleParser extends Parser {
     if (r.peekIf(TokenType.Delimiter)) {
       stmt.append(r.consume())
     }
-    if (r.peekIf(TokenType.Eof)) {
+    if (r.peekIf(TokenType.EoF)) {
       stmt.append(r.consume())
     }
     return stmt
@@ -668,7 +668,7 @@ export class OracleParser extends Parser {
       if (r.peekIf(TokenType.Delimiter)) {
         stmt.append(r.consume())
       }
-      if (r.peekIf(TokenType.Eof)) {
+      if (r.peekIf(TokenType.EoF)) {
         stmt.append(r.consume())
       }
       return stmt
@@ -684,7 +684,7 @@ export class OracleParser extends Parser {
         if (r.peekIf(TokenType.Delimiter)) {
           stmt.append(r.consume())
         }
-        if (r.peekIf(TokenType.Eof)) {
+        if (r.peekIf(TokenType.EoF)) {
           stmt.append(r.consume())
         }
         err.node = stmt

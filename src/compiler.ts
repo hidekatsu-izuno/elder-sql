@@ -65,7 +65,7 @@ export class ElderSqlCompiler {
         }
       }
       segment.push(token)
-      if (token.is(TokenType.Delimiter) || token.is(TokenType.Eof)) {
+      if (token.is(TokenType.Delimiter) || token.is(TokenType.EoF)) {
         text += this.compileSegment(segment)
         segment.length = 0
       }
@@ -249,7 +249,7 @@ export class ElderSqlCompiler {
               let depth = 0
               while (tr.peek()
                 && !tr.peekIf(TokenType.Delimiter)
-                && !tr.peekIf(TokenType.Eof)) {
+                && !tr.peekIf(TokenType.EoF)) {
                 if (tr.peekIf(TokenType.LeftParen)) {
                   tr.consume()
                   depth++

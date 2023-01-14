@@ -5,7 +5,7 @@ export interface TokenTag {
 }
 
 export class TokenType implements TokenTag {
-  static Eof = new TokenType("Eof")
+  static EoF = new TokenType("EoF")
   static Reserved = new TokenType("Reserved")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
   static LineComment = new TokenType("LineComment", { skip: true })
@@ -265,7 +265,7 @@ export abstract class Lexer {
     location.lineNumber = lineNumber
     location.columnNumber = columnNumber
 
-    const eofToken = new Token(TokenType.Eof, "", {
+    const eofToken = new Token(TokenType.EoF, "", {
       eos: true,
       preskips: skips,
       location,
