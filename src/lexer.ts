@@ -77,7 +77,6 @@ export class SourceLocation {
 }
 
 export class Token {
-  type: TokenType
   keyword?: Keyword
   eos: boolean
   preskips: Token[]
@@ -85,7 +84,7 @@ export class Token {
   location?: SourceLocation
 
   constructor(
-    type: TokenType,
+    public type: TokenType,
     public text: string,
     options?: {
       keyword?: Keyword,
@@ -152,6 +151,7 @@ export declare type TokenPattern = {
 
 export declare type LexerOptions = {
   patternFilter?: (patterns: TokenPattern[]) => TokenPattern[]
+  patternMatchFilter?: (type: TokenType, text: string) => string
   [key: string]: any
 }
 
@@ -177,7 +177,6 @@ export abstract class Lexer {
     const segments = this.processInput(state, text)
 
     let skips = []
-    let separated = false
     for (const segment of segments) {
       const isString = typeof segment === "string"
       let slen = isString ? segment.length : 1
@@ -190,7 +189,10 @@ export abstract class Lexer {
               pat.re() : pat.re
     
             re.lastIndex = spos
-            const m = re.exec(segment)
+            const m = re.exec(this.options.textFilter ? 
+              this.options.textFilter(segment) : 
+              segment
+            )
             if (m) {
               const location = new SourceLocation()
               location.fileName = fileName
@@ -238,7 +240,6 @@ export abstract class Lexer {
               tokens[tokens.length - 1].postskips = skips
               skips = []
             }
-            separated = true
           }
   
           if (!token.type.skip) {
@@ -247,7 +248,6 @@ export abstract class Lexer {
               skips = []
             }
             tokens.push(newToken)
-            separated = false
           }
         }
       }
