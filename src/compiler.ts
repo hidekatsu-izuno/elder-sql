@@ -51,15 +51,15 @@ export class ElderSqlCompiler {
     const tokens = this.lexer.lex(input.replace(/^--\*/mg, '   '), fileName)
     const segment = new Array<Token>()
     for (const token of tokens) {
-      for (let i = 0; i < token.skips.length; i++) {
-        const skipToken = token.skips[i]
+      for (let i = 0; i < token.preskips.length; i++) {
+        const skipToken = token.preskips[i]
         const elderSqlType = this.getElderSqlType(skipToken)
         if (elderSqlType) {
           skipToken.type = elderSqlType
           if (i > 0) {
-            skipToken.skips = token.skips.splice(0, i)
+            skipToken.preskips = token.preskips.splice(0, i)
           }
-          token.skips.splice(0, 1)
+          token.preskips.splice(0, 1)
           segment.push(skipToken)
           i = 0
         }
@@ -86,8 +86,8 @@ export class ElderSqlCompiler {
       }
 
       tr.consume()
-      if (tr.peek()?.skips[0]?.is(TokenType.LineBreak)) {
-        tr.peek().skips.shift()
+      if (tr.peek()?.preskips[0]?.is(TokenType.LineBreak)) {
+        tr.peek().preskips.shift()
       }
 
       text += `import ${m[1]};/\n`
@@ -103,8 +103,8 @@ export class ElderSqlCompiler {
       }
 
       tr.consume()
-      if (tr.peek()?.skips[0]?.is(TokenType.LineBreak)) {
-        tr.peek().skips.shift()
+      if (tr.peek()?.preskips[0]?.is(TokenType.LineBreak)) {
+        tr.peek().preskips.shift()
       }
 
       text += `/**\n${m[2]}*/\n`
@@ -127,7 +127,7 @@ export class ElderSqlCompiler {
 
           tr.consume()
           
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -152,7 +152,7 @@ export class ElderSqlCompiler {
 
           tr.consume()
           
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -170,7 +170,7 @@ export class ElderSqlCompiler {
 
           const token = tr.consume()
           
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -199,7 +199,7 @@ export class ElderSqlCompiler {
 
           tr.consume()
           
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -214,7 +214,7 @@ export class ElderSqlCompiler {
         } else if (tr.peekIf(ElderSqlType.End)) {
           const token = tr.consume()
 
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -243,7 +243,7 @@ export class ElderSqlCompiler {
 
           const expr = m[1].trim()
           tr.consume()
-          if (tr.peek()?.skips.length === 0) {
+          if (tr.peek()?.preskips.length === 0) {
             if (tr.peekIf(TokenType.LeftParen)) {
               tr.consume()
               let depth = 0
@@ -276,7 +276,7 @@ export class ElderSqlCompiler {
           }
 
           const depth = blocks.reduce((n, t) => t === ElderSqlType.For ? n + 1 : n, 0)
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length > 0) {
@@ -301,7 +301,7 @@ export class ElderSqlCompiler {
 
           tr.consume()
 
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           if (buffer.length) {
@@ -312,7 +312,7 @@ export class ElderSqlCompiler {
           text += `  ${"  ".repeat(blocks.length)}text += (new Function("ctx", ${JSON.stringify("with (ctx) return (" + repl + ")")}))(ctx${depth});\n`
         } else {
           const token = tr.consume()
-          for (const skip of token.skips) {
+          for (const skip of token.preskips) {
             buffer += skip.text
           }
           buffer += token.text

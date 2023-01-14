@@ -50,5 +50,5 @@ export default [
   new Token(TokenType.String, "'test.pk_test'", { location: new SourceLocation(247, 9, 24) }),
   new Token(TokenType.RightParen, ")", { location: new SourceLocation(261, 9, 38) }),
   new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(263, 9, 40) })], location: new SourceLocation(262, 9, 39) }),
-  new Token(TokenType.Eof, "", { eos: true, location: new SourceLocation(264, 10, 1) })
+  new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(264, 10, 1) })
 ]

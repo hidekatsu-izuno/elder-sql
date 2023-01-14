@@ -91,9 +91,7 @@ export class Sqlite3Parser extends Parser {
         break
       }
     }
-    if (args.children.length > 0) {
-      stmt.append(args)
-    }
+    stmt.append(args)
     if (r.peekIf(TokenType.EoF)) {
       stmt.append(r.consume())
     }

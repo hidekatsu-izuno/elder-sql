@@ -55,9 +55,9 @@ export class TokenType implements TokenTag {
 
 export class SourceLocation {
   constructor(
-    public position?: number,
-    public lineNumber?: number,
-    public columnNumber?: number,
+    public position: number = 0,
+    public lineNumber: number = 1,
+    public columnNumber: number = 0,
     public fileName?: string,
   ) {
   }
@@ -150,12 +150,12 @@ export class Token {
 
 export declare type TokenPattern = {
   type: TokenType,
-  re: RegExp | (() => RegExp),
+  re: RegExp | ((state: Record<string, any>) => RegExp),
+  action?: (state: Record<string, any>, token: Token) => Token[] | void
 }
 
 export declare type LexerOptions = {
   patternFilter?: (patterns: TokenPattern[]) => TokenPattern[]
-  patternMatchFilter?: (type: TokenType, text: string) => string
   [key: string]: any
 }
 
@@ -170,108 +170,12 @@ export abstract class Lexer {
     }
   }
 
-  lex(text: string, fileName?: string) {
-    const state = {}
-
-    const tokens = new Array<Token>()
+  lex(input: string, fileName?: string) {
     let pos = 0
-    let lineNumber = 1
-    let columnNumber = 0
-
-    const segments = this.processInput(state, text)
-
-    let skips = []
-    for (const segment of segments) {
-      const isString = typeof segment === "string"
-      let slen = isString ? segment.length : 1
-      let spos = 0
-      while (spos < slen) {
-        let token
-        if (isString) {
-          for (const pat of this.patterns) {
-            const re = (typeof pat.re  === 'function') ?
-              pat.re() : pat.re
-    
-            re.lastIndex = spos
-            const m = re.exec(this.options.textFilter ? 
-              this.options.textFilter(segment) : 
-              segment
-            )
-            if (m) {
-              const location = new SourceLocation()
-              location.fileName = fileName
-              location.position = pos + spos
-              location.lineNumber = lineNumber
-              location.columnNumber = columnNumber
-    
-              token = new Token(pat.type, m[0], {
-                location,
-              })
-              spos = re.lastIndex
-              break
-            }
-          }  
-        } else {
-          token = segment
-          spos++
-        }
-
-        if (!token) {
-          throw new Error(`Failed to tokenize: ${pos + spos}`)
-        }
-
-        let index = token.text.indexOf('\n')
-        if (index !== -1) {
-          let lastIndex
-          do {
-            lastIndex = index
-            lineNumber++
-            index = token.text.indexOf('\n', lastIndex + 1)
-          } while (index !== -1)
-          columnNumber = token.text.length - lastIndex
-        } else {
-          columnNumber += token.text.length
-        }
-
-        const newTokens = this.processToken(state, token)
-        for (const newToken of newTokens) {
-          if (token.type.skip) {
-            skips.push(newToken)
-          }
-
-          if (token.type.separator) {
-            if (tokens.length > 0 && skips.length > 0) {
-              tokens[tokens.length - 1].postskips = skips
-              skips = []
-            }
-          }
-  
-          if (!token.type.skip) {
-            if (skips.length > 0) {
-              token.preskips = skips
-              skips = []
-            }
-            tokens.push(newToken)
-          }
-        }
-      }
-
-      pos += isString ? spos : segment.text.length
+    if (input.charAt(0) === '\uFEFF') {
+      pos++
     }
-
-    const location = new SourceLocation()
-    location.fileName = fileName
-    location.position = pos
-    location.lineNumber = lineNumber
-    location.columnNumber = columnNumber
-
-    const eofToken = new Token(TokenType.EoF, "", {
-      eos: true,
-      preskips: skips,
-      location,
-    })
-    tokens.push(...this.processToken(state, eofToken))
-    return tokens
+    return this.sublex({}, input, new SourceLocation(pos, 1, 0, fileName))
   }
 
   isReserved(keyword?: Keyword) {
@@ -282,12 +186,101 @@ export abstract class Lexer {
     return false
   }
 
-  protected processInput(state: Record<string, any>, text: string): (string | Token)[] {
-    return [ text ]
-  }
+  protected sublex(state: Record<string, any>, input: string, start: SourceLocation) {
+    const tokens = new Array<Token>()
+    let pos = start.position ?? 0
+    let lineNumber = start.lineNumber ?? 1
+    let columnNumber = start.columnNumber ?? 0
+    const fileName = start.fileName
 
-  protected processToken(state: Record<string, any>, token: Token) {
-    return [ token ]
+    let skips = []
+    while (pos < input.length) {
+      let pattern
+      let location
+      let text
+      for (const pat of this.patterns) {
+        let re = (typeof pat.re  === 'function') ? pat.re(state) : pat.re
+        re.lastIndex = pos
+        const m = re.exec(input)
+        if (m) {
+          pattern = pat
+          location = new SourceLocation(pos, lineNumber, columnNumber, fileName)
+          text = m[0]
+
+          pos = re.lastIndex
+          break
+        }
+      }
+
+      if (pattern == null || location == null || text == null) {
+        throw new Error(`Failed to tokenize: ${pos}`)
+      }
+
+      const token = new Token(pattern.type, text, {
+        location
+      })
+      let newTokens: Token[] | void
+      if (pattern.action) {
+        newTokens = pattern.action(state, token)
+      }
+
+      if (newTokens && newTokens.length > 0) {
+        skips.push(...newTokens[0].preskips)
+        newTokens[0].preskips = []
+      }
+      for (const newToken of (newTokens || [token])) {
+        if (newToken.type.skip) {
+          skips.push(newToken)
+        }
+
+        if (newToken.type.separator) {
+          if (tokens.length > 0 && skips.length > 0) {
+            tokens[tokens.length - 1].postskips = skips
+            skips = []
+          }
+        }
+
+        if (!newToken.type.skip) {
+          if (skips.length > 0) {
+            newToken.preskips = skips
+            skips = []
+          }
+          tokens.push(newToken)
+        }
+      }
+      if (newTokens && newTokens.length > 0) {
+        const last = newTokens[newTokens.length - 1]
+        if (last.type === TokenType.EoF) {
+          skips.push(...last.preskips)
+          skips.push(...last.postskips)
+          newTokens.pop()
+        } else{
+          skips.push(...last.postskips)
+          last.postskips.length = 0
+        }
+      }
+
+      let index = text.indexOf('\n')
+      if (index !== -1) {
+        let lastIndex
+        do {
+          lastIndex = index
+          lineNumber++
+          index = text.indexOf('\n', lastIndex + 1)
+        } while (index !== -1)
+        columnNumber = text.length - lastIndex
+      } else {
+        columnNumber += text.length
+      }
+    }
+
+    tokens.push(new Token(TokenType.EoF, "", {
+      eos: true,
+      preskips: skips,
+      location: new SourceLocation(pos, lineNumber, columnNumber, fileName),
+    }))
+
+    return tokens
   }
 }
 

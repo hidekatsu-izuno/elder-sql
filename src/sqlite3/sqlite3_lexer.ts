@@ -99,12 +99,14 @@ export class Sqlite3Lexer extends Lexer {
     options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.SemiColon, re: /;/y },
+      { type: TokenType.SemiColon, re: /;/y,
+        action: (state, token ) => this.processSemiColon(state, token) },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: /(?<=^|\n)\..+(\r?\n|$)/y },
+      { type: TokenType.Command, re: /(?<=^|\n)\..+(\r?\n|$)/y,
+        action: (state, token) => this.processCommand(state, token) },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -117,7 +119,9 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.BindVariable, re: /\?([1-9][0-9]*)?/y },
       { type: TokenType.BindVariable, re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y },
-      { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
+      { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y, 
+        action: (state, token) => this.processIdentifier(state, token)
+      },
       { type: TokenType.Error, re: /./y },
     ], options)
 
@@ -155,62 +159,54 @@ export class Sqlite3Lexer extends Lexer {
     return keyword != null && ObjectStartSet.has(keyword)
   }
 
-  protected processInput(state: Record<string, any>, input: string) {
-    const result = super.processInput(state, input)
-
-    // 0 CREATE 1 OBJECT 2 ... END 3 ;
-    state.pos = 0
-    return result
-  }
-
-  protected processToken(state: Record<string, any>, token: Token) {
-    if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.for(token.text)
-      if (keyword) {
-        token.keyword = keyword
-        if (this.isReserved(keyword)) {
-          token.type = TokenType.Reserved
-        }
-        if (state.pos === 0) {
-          if (keyword === Keyword.CREATE) {
-            state.pos = 1
-          } else {
-            state.pos = 3
-          }
-        } else if (state.pos === 1 && this.isObjectStart(keyword)) {
-          if (keyword === Keyword.TRIGGER) {
-            state.pos = 2
-          } else {
-            state.pos = 3
-          }
-        } else if (state.pos === 2 && keyword === Keyword.END) {
+  private processIdentifier(state: Record<string, any>, token: Token) {
+    const keyword = Keyword.for(token.text)
+    if (keyword) {
+      token.keyword = keyword
+      if (this.isReserved(keyword)) {
+        token.type = TokenType.Reserved
+      }
+      // 0 CREATE 1 OBJECT 2 ... END 3 ;
+      if (!state.pos) {
+        if (token.keyword === Keyword.CREATE) {
+          state.pos = 1
+        } else {
           state.pos = 3
         }
+      } else if (state.pos === 1 && this.isObjectStart(token.keyword)) {
+        if (token.keyword === Keyword.TRIGGER) {
+          state.pos = 2
+        } else {
+          state.pos = 3
+        }
+      } else if (state.pos === 2 && token.keyword === Keyword.END) {
+        state.pos = 3
       }
-    } else if (state.pos !== 2 && token.type === TokenType.SemiColon) {
-      state.pos = 0
-      token.eos = true
-    } else if (token.type === TokenType.Command) {
-      state.pos = 0
-      return this.parseCommand(token)
     }
-
-    return [ token ]
   }
 
-  private parseCommand(token: Token) {
+  private processSemiColon(state: Record<string, any>, token: Token) {
+    if (state.pos !== 2) {
+      state.pos = 0
+      token.eos = true
+    }
+  }
+
+  private processCommand(state: Record<string, any>, token: Token) {
+    state.pos = 0
+
     const m = /[ \t]/.exec(token.text)
     if (!m) {
-      return [ token ]
+      token.eos = true
+      return
     }
 
-    const command = []
-    const nameToken = new Token(TokenType.Command, token.text.substring(0, m.index), {
+    const tokens = []
+    tokens.push(new Token(TokenType.Command, token.text.substring(0, m.index), {
       preskips: token.preskips, 
       postskips: token.postskips,
       location: token.location,
-    })
-    command.push(nameToken)
+    }))
 
     const args = token.text.substring(m.index)
     const argTokens = []
@@ -222,16 +218,13 @@ export class Sqlite3Lexer extends Lexer {
       if (m) {
         const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
 
-        const location = new SourceLocation()
-        location.fileName = token.location?.fileName
-        location.position = re.lastIndex
-        location.lineNumber = token.location?.lineNumber
-        if (token.location?.columnNumber != null) {
-          location.columnNumber = token.location?.columnNumber + location.position
-        }
-
         argTokens.push(new Token(type, m[0], {
-          location
+          location: new SourceLocation(
+            (token.location?.position ?? 0) + re.lastIndex,
+            (token.location?.lineNumber ?? 1),
+            (token.location?.columnNumber ?? 0) + pos,
+            token.location?.fileName,
+          )
         }))
         pos = re.lastIndex
       }
@@ -244,14 +237,14 @@ export class Sqlite3Lexer extends Lexer {
       } else {
         argToken.preskips = skips
         skips = []
-        command.push(argToken)
+        tokens.push(argToken)
       }
     }
     if (skips.length > 0) {
-      command[command.length - 1].postskips = skips
+      tokens[tokens.length - 1].postskips = skips
     }
-    command[command.length - 1].eos = true
+    tokens[tokens.length - 1].eos = true
 
-    return command
+    return tokens
   }
 }

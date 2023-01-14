@@ -128,5 +128,5 @@ export default [
   new Token(TokenType.Identifier, "INITIALLY", { keyword: Keyword.INITIALLY, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(1043, 33, 19)})], location: new SourceLocation(1044, 33, 20)}),
   new Token(TokenType.Identifier, "DEFERRED", { keyword: Keyword.DEFERRED, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(1053, 33, 29)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(1062, 33, 38)})], location: new SourceLocation(1054, 33, 30)}),
   new Token(TokenType.RightParen, ")", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(1064, 34, 2)})], location: new SourceLocation(1063, 34, 1)}),
-  new Token(TokenType.Eof, "", { eos: true, location: new SourceLocation(1065, 35, 1)})
+  new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(1065, 35, 1)})
 ]

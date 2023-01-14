@@ -202,7 +202,9 @@ export class MssqlLexer extends Lexer {
     options: { [key: string]: any } = {}
   ) {
     super("mssql", [
-      { type: TokenType.Delimiter, re: /^[ \t]*go(?=[ \t-]|$)/imy },
+      { type: TokenType.Delimiter, re: /^[ \t]*go(?=[ \t-]|$)/imy,
+        action: (state, token) => this.processDelimiter(state, token)
+      },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
@@ -220,7 +222,9 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Variable, re: /@[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y },
-      { type: TokenType.Identifier, re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
+      { type: TokenType.Identifier, re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
+        action: (state, token) => this.processIdentifier(state, token)
+      },
       { type: TokenType.Error, re: /./y },
     ], options)
   }
@@ -229,18 +233,17 @@ export class MssqlLexer extends Lexer {
     return ReservedSet.has(keyword)
   }
 
-  protected processToken(state: Record<string, any>, token: Token) {
-    if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.for(token.text)
-      if (keyword) {
-        token.keyword = keyword
-        if (this.isReserved(keyword)) {
-          token.type = TokenType.Reserved
-        }
+  private processIdentifier(state: Record<string, any>, token: Token) {
+    const keyword = Keyword.for(token.text)
+    if (keyword) {
+      token.keyword = keyword
+      if (this.isReserved(keyword)) {
+        token.type = TokenType.Reserved
       }
-    } else if (token.type === TokenType.Delimiter) {
-      token.eos = true
     }
-    return [ token ]
+  }
+
+  private processDelimiter(state: Record<string, any>, token: Token) {
+    token.eos = true
   }
 }

@@ -24,5 +24,5 @@ export default [
   new Token(TokenType.Numeric, "3", { location: new SourceLocation(30, 1, 30)}),
   new Token(TokenType.Reserved, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(31, 1, 31)})], location: new SourceLocation(32, 1, 32)}),
   new Token(TokenType.Identifier, "c2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(34, 1, 34)})], location: new SourceLocation(35, 1, 35)}),
-  new Token(TokenType.Eof, "", { eos: true, location: new SourceLocation(37, 1, 37)})
+  new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(37, 1, 37)})
 ]

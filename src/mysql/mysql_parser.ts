@@ -81,93 +81,22 @@ export class MysqlParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    const stmt = new Node("command")
-    r.consume(TokenType.Command)
-    const token = r.peek(-1)
-
-    const sep = Math.max(token.text.indexOf(" "), token.text.indexOf("\t"))
-    if (sep === -1) {
-      stmt.append(new Node("name", this.getLongCommandName(token.text)).append(token))
-    } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
-        location: token.location
-      })
-      const name = this.getLongCommandName(nameToken.text)
-      stmt.append(new Node("name", name).append(nameToken))
-
-      const argTokens = []
-      const args = token.text.substring(sep)
-
-      if (name === "prompt") {
-        const m = /^[ \t]*/.exec(args)
-        let sep2 = sep
-        if (m) {
-          const loc = new SourceLocation()
-          loc.fileName = token.location?.fileName
-          loc.position = sep2
-          loc.lineNumber = token.location?.lineNumber
-          if (token.location?.columnNumber != null) {
-            loc.columnNumber = token.location?.columnNumber + loc.position
-          }
-
-          argTokens.push(new Token(TokenType.WhiteSpace, m[0], {
-            location: token.location
-          }))
-          sep2 += m[0].length
-        }
-        if (sep2 < args.length) {
-          const location = new SourceLocation()
-          location.fileName = token.location?.fileName
-          location.position = sep2
-          location.lineNumber = token.location?.lineNumber
-          if (token.location?.columnNumber != null) {
-            location.columnNumber = token.location?.columnNumber + location.position
-          }
-
-          argTokens.push(new Token(TokenType.Identifier, args.substring(sep2), {
-            location
-          }))
-        }
-      } else {
-        const re = /([ \t]+)|('(?:''|[^']+)*'|`(?:``|[^`]+)*`)|([^ \t'`]+)/y
-        let pos = 0
-        while (pos < args.length) {
-          re.lastIndex = pos
-          const m = re.exec(args)
-          if (m) {
-            const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-
-            const location = new SourceLocation()
-            location.fileName = token.location?.fileName
-            location.position = re.lastIndex
-            location.lineNumber = token.location?.lineNumber
-            if (token.location?.columnNumber != null) {
-              location.columnNumber = token.location?.columnNumber + location.position
-            }
-
-            argTokens.push(new Token(type, m[0], {
-              location
-            }))
-            pos = re.lastIndex
-          }
-        }
-      }
-
-      const skips = token.postskips
-      for (const argToken of argTokens) {
-        if (argToken.type.skip) {
-          skips.push(argToken)
-        } else {
-          argToken.preskips.push(...skips)
-          skips.length = 0
-          stmt.append(new Node("arg", dequote(argToken.text)).append(argToken))
-        }
+    const stmt = new Node("CommandStatement")
+    const command = r.consume(TokenType.Command)
+    stmt.append(new Node("CommandName", command.text)
+      .append(command)
+    )
+    const args = new Node("CommandArgumentList")
+    while (r.peek()) {
+      const arg = r.consume()
+      args.append(new Node("CommandArgument", dequote(arg.text))
+        .append(arg)
+      )
+      if (!r.peek().eos) {
+        break
       }
     }
-
-    if (r.peekIf(TokenType.Delimiter)) {
-      stmt.append(r.consume())
-    }
+    stmt.append(args)
     if (r.peekIf(TokenType.EoF)) {
       stmt.append(r.consume())
     }

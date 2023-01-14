@@ -195,8 +195,12 @@ export class OracleLexer extends Lexer {
     options: OracleLexerOptions = {}
   ) {
     super("oracle", [
-      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my },
-      { type: TokenType.SemiColon, re: /;/y },
+      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my,
+        action: (state, token) => this.processDelimiter(state, token)
+      },
+      { type: TokenType.SemiColon, re: /;/y,
+        action: (state, token) => this.processSemiColon(state, token)
+      },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
@@ -214,7 +218,9 @@ export class OracleLexer extends Lexer {
       { type: TokenType.QuotedIdentifier, re: /"([^"]|"")*"/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<>|[=<>!^:]=?|[%~&|*/+-]/y },
-      { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
+      { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
+        action: (state, token) => this.processIdentifier(state, token)
+      },
       { type: TokenType.Error, re: /./y },
     ], options)
   }
@@ -227,55 +233,47 @@ export class OracleLexer extends Lexer {
     return keyword != null && ObjectStartSet.has(keyword)
   }
 
-  protected processInput(state: Record<string, any>, input: string) {
-    const result = super.processInput(state, input)
-
-    // 0 CREATE 1 OBJECT 2 ... END 3 ;
-    // 0 DECLARE/BEGIN 2 ... END 3 ;
-    state.pos = 0
-    return result
+  private processIdentifier(state: Record<string, any>, token: Token) {
+    const keyword = Keyword.for(token.text)
+    if (keyword) {
+      token.keyword = keyword
+      if (this.isReserved(keyword)) {
+        token.type = TokenType.Reserved
+      }
+      if (state.pos === 0) {
+        if (keyword === Keyword.CREATE) {
+          state.pos = 1
+        } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+          state.pos = 2
+        } else {
+          state.pos = 3
+        }
+      } else if (state.pos === 1 && this.isObjectStart(keyword)) {
+        if (
+          keyword === Keyword.FUNCTION
+          || keyword === Keyword.LIBRARY
+          || keyword === Keyword.PACKAGE
+          || keyword === Keyword.PROCEDURE
+          || keyword === Keyword.TRIGGER
+          || keyword === Keyword.TYPE
+        ) {
+          state.pos = 2
+        } else {
+          state.pos = 3
+        }
+      }
+    }
   }
 
-  protected processToken(state: Record<string, any>, token: Token) {
-    if (token.type === TokenType.Identifier) {
-      const keyword = Keyword.for(token.text)
-      if (keyword) {
-        token.keyword = keyword
-        if (this.isReserved(keyword)) {
-          token.type = TokenType.Reserved
-        }
-        if (state.pos === 0) {
-          if (keyword === Keyword.CREATE) {
-            state.pos = 1
-          } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
-            state.pos = 2
-          } else {
-            state.pos = 3
-          }
-        } else if (state.pos === 1 && this.isObjectStart(keyword)) {
-          if (
-            keyword === Keyword.FUNCTION
-            || keyword === Keyword.LIBRARY
-            || keyword === Keyword.PACKAGE
-            || keyword === Keyword.PROCEDURE
-            || keyword === Keyword.TRIGGER
-            || keyword === Keyword.TYPE
-          ) {
-            state.pos = 2
-          } else {
-            state.pos = 3
-          }
-        }
-      }
-    } else if (token.type === TokenType.SemiColon) {
-      if (state.pos !== 2) {
-        state.pos = 0
-        token.eos = true
-      }
-    } else if (token.type === TokenType.Delimiter) {
+  private processSemiColon(state: Record<string, any>, token: Token) {
+    if (state.pos !== 2) {
       state.pos = 0
       token.eos = true
     }
-    return [ token ]
+  }
+
+  private processDelimiter(state: Record<string, any>, token: Token) {
+    state.pos = 0
+    token.eos = true
   }
 }

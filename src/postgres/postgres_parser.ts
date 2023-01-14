@@ -77,60 +77,22 @@ export class PostgresParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    const stmt = new Node("command")
-
-    r.consume(TokenType.Command)
-    const token = r.peek(-1)
-    const sep = token.text.indexOf(" ")
-    if (sep === -1) {
-      stmt.append(new Node("name", token.text).append(token))
-    } else {
-      const nameToken = new Token(TokenType.Identifier, token.text.substring(0, sep), {
-        preskips: token.preskips,
-        location: token.location,
-      })
-      stmt.append(new Node("name", nameToken.text).append(nameToken))
-
-      const args = token.text.substring(sep)
-      const argTokens = []
-      const re = /([ \t]+)|("[^"]*"|'[^']*'|`[^`]*`)|([^ \t"']+)/y
-      let pos = 0
-      while (pos < args.length) {
-        re.lastIndex = pos
-        const m = re.exec(args)
-        if (m) {
-          const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-
-          const location = new SourceLocation()
-          location.fileName = token.location?.fileName
-          location.position = re.lastIndex
-          location.lineNumber = token.location?.lineNumber
-          if (token.location?.columnNumber != null) {
-            location.columnNumber = token.location?.columnNumber + location.position
-          }
-
-          argTokens.push(new Token(type, m[0], {
-            location
-          }))
-          pos = re.lastIndex
-        }
-      }
-
-      const skips = token.postskips
-      for (const argToken of argTokens) {
-        if (argToken.type.skip) {
-          skips.push(argToken)
-        } else {
-          argToken.preskips.push(...skips)
-          skips.length = 0
-          stmt.append(new Node("arg", dequote(argToken.text)).append(argToken))
-        }
+    const stmt = new Node("CommandStatement")
+    const command = r.consume(TokenType.Command)
+    stmt.append(new Node("CommandName", command.text)
+      .append(command)
+    )
+    const args = new Node("CommandArgumentList")
+    while (r.peek()) {
+      const arg = r.consume()
+      args.append(new Node("CommandArgument", dequote(arg.text))
+        .append(arg)
+      )
+      if (!r.peek().eos) {
+        break
       }
     }
-
-    if (r.peekIf(TokenType.Delimiter)) {
-      stmt.append(r.consume())
-    }
+    stmt.append(args)
     if (r.peekIf(TokenType.EoF)) {
       stmt.append(r.consume())
     }
