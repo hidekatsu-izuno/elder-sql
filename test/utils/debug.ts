@@ -1,5 +1,18 @@
-import { Keyword, Token } from "../../src/lexer"
+import { Token } from "../../src/lexer"
 import { Node } from "../../src/parser"
+
+export function toJSScript(target: Node | Token | (Node | Token)[]) {
+  let imports = 'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n'
+  if (target instanceof Node) {
+    imports += 'import { Node } from "../../../src/parser"\n'
+  }
+  imports += '\n'
+
+  return (
+    '' + imports + 
+    'export default ' + toJSString(target) + '\n'
+  )
+}
 
 export function toJSString(target: Node | Token | (Node | Token)[], options: {
   space?: number,

@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser"
-import { toJSString } from "../utils/debug"
+import { toJSScript, toJSString } from "../utils/debug"
 
 describe("test sqlite3 parser", () => {
   test.each([
@@ -13,10 +13,10 @@ describe("test sqlite3 parser", () => {
     const expected = (await import("./parser/" + target)).default
     const node = new Sqlite3Parser().parse(script)
 
-    if (target === "") {
-      fs.writeFileSync("temp.txt", toJSString(node))
+    if (target === "select") {
+      fs.writeFileSync("temp.txt", toJSScript(node))
     }
 
-    expect(node).toStrictEqual(expected)
+    expect(toJSString(node)).toStrictEqual(toJSString(expected))
   })
 })

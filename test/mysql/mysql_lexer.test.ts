@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
 import { MysqlLexer } from "../../src/mysql/mysql_lexer"
-import { toJSString } from "../utils/debug"
+import { toJSScript, toJSString } from "../utils/debug"
 
 describe("test mysql lexer", () => {
   test.each([
@@ -13,10 +13,10 @@ describe("test mysql lexer", () => {
       version: "5.7.0"
     }).lex(script)
 
-    if (target === "version_comment") {
-      fs.writeFileSync("temp.txt", toJSString(tokens))
+    if (target === "") {
+      fs.writeFileSync("temp.txt", toJSScript(tokens))
     }
 
-    expect(tokens).toStrictEqual(expected)
+    expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
   })
 })

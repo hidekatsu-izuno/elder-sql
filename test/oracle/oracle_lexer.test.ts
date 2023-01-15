@@ -1,19 +1,21 @@
+import path from "node:path"
 import fs from "node:fs"
 import { OracleLexer } from "../../src/oracle/oracle_lexer"
-import { toJSString } from "../../src/debug"
+import { toJSScript, toJSString } from "../utils/debug"
 
 describe("test oracle lexer", () => {
   test.each([
     "select",
     "create_package",
-  ])("%s", (target) => {
-    const module = require("./lexer/" + target)
-    const tokens = new OracleLexer().lex(module.actual)
+  ])("%s", async (target) => {
+    const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
+    const expected = (await import("./lexer/" + target)).default
+    const tokens = new OracleLexer().lex(script)
 
     if (target === "create_package") {
-      fs.writeFileSync("temp.txt", toJSString(tokens))
+      fs.writeFileSync("temp.txt", toJSScript(tokens))
     }
 
-    expect(tokens).toStrictEqual(module.expected)
+    expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
   })
 })

@@ -196,23 +196,25 @@ export abstract class Lexer {
     let skips = []
     while (pos < input.length) {
       let pattern
-      let location
       let text
+      let location
       for (const pat of this.patterns) {
         let re = (typeof pat.re  === 'function') ? pat.re(state) : pat.re
         re.lastIndex = pos
         const m = re.exec(input)
         if (m) {
           pattern = pat
-          location = new SourceLocation(pos + (start?.position ?? 0), lineNumber, columnNumber, fileName)
           text = m[0]
+          if (start) {
+            location = new SourceLocation(pos + start.position, lineNumber, columnNumber, fileName)
+          }
 
           pos = re.lastIndex
           break
         }
       }
 
-      if (pattern == null || location == null || text == null) {
+      if (pattern == null || text == null) {
         throw new Error(`Failed to tokenize: ${pos}`)
       }
 
@@ -248,36 +250,40 @@ export abstract class Lexer {
           tokens.push(newToken)
         }
       }
-      if (tokens && tokens.length > 0) {
+      if (tokens.length > 0) {
         const last = tokens[tokens.length - 1]
         if (last.type === TokenType.EoF) {
           skips.push(...last.preskips)
           skips.push(...last.postskips)
           tokens.pop()
-        } else if (last.postskips.length > 0) {
-          skips.push(...last.postskips)
-          last.postskips.length = 0
         }
       }
 
-      let index = text.indexOf('\n')
-      if (index !== -1) {
-        let lastIndex
-        do {
-          lastIndex = index
-          lineNumber++
-          index = text.indexOf('\n', lastIndex + 1)
-        } while (index !== -1)
-        columnNumber = text.length - lastIndex
-      } else {
-        columnNumber += text.length
+      if (start) {
+        let index = text.indexOf('\n')
+        if (index !== -1) {
+          let lastIndex
+          do {
+            lastIndex = index
+            lineNumber++
+            index = text.indexOf('\n', lastIndex + 1)
+          } while (index !== -1)
+          columnNumber = text.length - lastIndex
+        } else {
+          columnNumber += text.length
+        }  
       }
     }
 
     tokens.push(new Token(TokenType.EoF, "", {
       eos: true,
       preskips: skips,
-      location: new SourceLocation(pos + (start?.position ?? 0), lineNumber, columnNumber, fileName),
+      location : start ? new SourceLocation(
+        pos + start.position, 
+        lineNumber, 
+        columnNumber,
+        fileName,
+      ) : undefined,
     }))
 
     return tokens
