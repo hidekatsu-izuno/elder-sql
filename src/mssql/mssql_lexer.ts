@@ -197,6 +197,9 @@ const ReservedSet = new Set<Keyword>([
 export declare type MssqlLexerOptions = LexerOptions & {
 }
 
+const BLOCK_COMMENT_START = /\/\*.*?\*\//sy
+const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy
+
 export class MssqlLexer extends Lexer {
   constructor(
     options: { [key: string]: any } = {}
@@ -208,7 +211,9 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
-      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
+      { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
+        action: (state, token) => this.processBlockComment(state, token)
+      },
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -231,6 +236,28 @@ export class MssqlLexer extends Lexer {
   
   isReserved(keyword: Keyword) {
     return ReservedSet.has(keyword)
+  }
+
+  private processBlockComment(state: Record<string, any>, token: Token) {
+    if (state.level > 0) {
+      let pos = 0
+      do {
+        pos = token.text.indexOf('/*', pos)
+        if (pos !== -1) {
+          state.level++
+        }
+      } while (pos !== -1)
+      state.level--
+    } else {
+      state.level = 0
+      let pos = 2
+      do {
+        pos = token.text.indexOf('/*', pos)
+        if (pos !== -1) {
+          state.level++
+        }
+      } while (pos !== -1)
+    }
   }
 
   private processIdentifier(state: Record<string, any>, token: Token) {
