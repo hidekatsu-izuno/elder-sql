@@ -13,7 +13,7 @@ describe("test sqlite3 lexer", () => {
     const expected = (await import("./lexer/" + target)).default
     const tokens = new Sqlite3Lexer().lex(script)
 
-    if (target === "pragma") {
+    if (target === "") {
       fs.writeFileSync("temp.txt", toJSScript(tokens))
     }
 

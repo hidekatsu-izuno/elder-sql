@@ -12,7 +12,7 @@ describe("test oracle lexer", () => {
     const expected = (await import("./lexer/" + target)).default
     const tokens = new OracleLexer().lex(script)
 
-    if (target === "create_package") {
+    if (target === "") {
       fs.writeFileSync("temp.txt", toJSScript(tokens))
     }
 

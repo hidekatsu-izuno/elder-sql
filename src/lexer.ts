@@ -153,6 +153,7 @@ export declare type TokenPattern = {
 }
 
 export declare type LexerOptions = {
+  skipTokenStrategy?: 'ignore' | 'next' | 'adaptive'
   patternFilter?: (patterns: TokenPattern[]) => TokenPattern[]
   [key: string]: any
 }
@@ -163,6 +164,9 @@ export abstract class Lexer {
     public patterns: TokenPattern[], 
     public options: LexerOptions = {},
   ) {
+    if (!options.skipTokenStrategy) {
+      options.skipTokenStrategy = 'adaptive'
+    }
     if (options.patternFilter) {
       this.patterns = options.patternFilter(this.patterns)
     }
@@ -230,13 +234,17 @@ export abstract class Lexer {
       }
       for (const newToken of (newTokens || [token])) {
         if (newToken.type.skip) {
-          skips.push(newToken)
+          if (this.options.skipTokenStrategy !== 'ignore') {
+            skips.push(newToken)
+          }
         }
 
-        if (newToken.type.separator) {
-          if (tokens.length > 0 && skips.length > 0) {
-            tokens[tokens.length - 1].postskips = skips
-            skips = []
+        if (this.options.skipTokenStrategy === 'adaptive') {
+          if (newToken.type.separator) {
+            if (tokens.length > 0 && skips.length > 0) {
+              tokens[tokens.length - 1].postskips = skips
+              skips = []
+            }
           }
         }
 
@@ -251,8 +259,10 @@ export abstract class Lexer {
       if (tokens.length > 0) {
         const last = tokens[tokens.length - 1]
         if (last.type === TokenType.EoF) {
-          skips.push(...last.preskips)
-          skips.push(...last.postskips)
+          if (this.options.skipTokenStrategy !== 'ignore') {
+            skips.push(...last.preskips)
+            skips.push(...last.postskips)
+          }
           tokens.pop()
         }
       }
