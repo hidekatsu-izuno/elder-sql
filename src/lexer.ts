@@ -29,8 +29,6 @@ export class TokenType implements TokenTag {
   static String = new TokenType("String")
   static BindVariable = new TokenType("BindVariable")
   static Variable = new TokenType("Variable")
-  static QuotedValue = new TokenType("QuotedValue")
-  static QuotedIdentifier = new TokenType("QuotedIdentifier")
   static Identifier = new TokenType("Identifier")
   static Error = new TokenType("Error", { separator: true })
 

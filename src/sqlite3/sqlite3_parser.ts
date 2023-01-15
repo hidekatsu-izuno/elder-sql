@@ -1238,7 +1238,7 @@ export class Sqlite3Parser extends Parser {
           .append(r.consume())
         )
       } else if (r.peekIf(
-        [TokenType.String, TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue], 
+        [TokenType.Identifier, TokenType.String], 
         TokenType.Dot, 
         { type: TokenType.Operator, text: "*" }
       )) {
@@ -1253,7 +1253,7 @@ export class Sqlite3Parser extends Parser {
           column.append(r.consume())
           column.append(this.identifier(r, "ColumnAlias"))
         } else if (r.peekIf(
-          [TokenType.String, TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue]
+          [TokenType.Identifier, TokenType.String]
         )) {
           column.append(this.identifier(r, "ColumnAlias"))
         }
@@ -1313,9 +1313,7 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(Keyword.AS)) {
         table.append(r.consume())
         table.append(this.identifier(r, "ObjectAlias"))
-      } else if (r.peekIf(
-        [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-      )) {
+      } else if (r.peekIf(TokenType.Identifier)) {
         table.append(this.identifier(r, "ObjectAlias"))
       }
       while (r.peekIf(
@@ -1381,9 +1379,7 @@ export class Sqlite3Parser extends Parser {
     if (r.peekIf(Keyword.AS)) {
       node.append(r.consume())
       node.append(this.identifier(r, "ObjectAlias"))
-    } else if (r.peekIf(
-      [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue]
-    )) {
+    } else if (r.peekIf(TokenType.Identifier)) {
       node.append(this.identifier(r, "ObjectAlias"))
     }
     
@@ -1664,7 +1660,7 @@ export class Sqlite3Parser extends Parser {
     const node = new Node("TableColumn")
       .append(this.identifier(r, "ColumnName"))
 
-    if (r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
+    if (r.peekIf(TokenType.Identifier)) {
       const columnType = new Node("ColumnType")
       columnType.append(this.typeName(r))
       if (r.peekIf(TokenType.LeftParen)) {
@@ -1987,7 +1983,7 @@ export class Sqlite3Parser extends Parser {
 
   private typeName(r: TokenReader) {
     const node = this.identifier(r, "TypeName")
-    while (r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue, TokenType.String])) {
+    while (r.peekIf([TokenType.Identifier, TokenType.String])) {
       const ident = this.identifier(r, "")
       node.append(...ident.children)
       node.value = " " + ident.value
@@ -2027,9 +2023,9 @@ export class Sqlite3Parser extends Parser {
       node.append(this.numericLiteral(r))
     } else if (r.peekIf(TokenType.Numeric)) {
       node.append(this.numericLiteral(r))
-    } else if (r.peekIf([TokenType.String])) {
+    } else if (r.peekIf(TokenType.String)) {
       node.append(this.stringLiteral(r))
-    } else if (r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
+    } else if (r.peekIf(TokenType.Identifier)) {
       node.append(this.identifier(r, "PragmaLiteral"))
     } else {
       throw r.createParseError()
@@ -2135,7 +2131,7 @@ export class Sqlite3Parser extends Parser {
           exprs.append(r.consume(TokenType.RightParen))
           node.append(exprs)
         } else if (r.peekIf(
-          [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue],
+          TokenType.Identifier,
           TokenType.LeftParen
         )) {
           node = new Node("Function")
@@ -2154,12 +2150,7 @@ export class Sqlite3Parser extends Parser {
           }
           args.append(r.consume(TokenType.RightParen))
           node.append(args)
-        } else if (r.peekIf([
-          TokenType.String,
-          TokenType.Identifier,
-          TokenType.QuotedIdentifier,
-          TokenType.QuotedValue
-        ])) {
+        } else if (r.peekIf([TokenType.Identifier, TokenType.String])) {
           node.append(this.columnReference(r))
         } else {
           throw r.createParseError()
@@ -2393,10 +2384,7 @@ export class Sqlite3Parser extends Parser {
         }
       }
       node.append(r.consume(TokenType.RightParen))
-    } else if (r.peekIf(
-      [TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue],
-      TokenType.LeftParen
-    )) {
+    } else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
       node = new Node("Function")
       node.append(new Node("ObjectName").append(r.consume()))
 
@@ -2445,10 +2433,13 @@ export class Sqlite3Parser extends Parser {
         node.append(over)
       }
       node.append(args)
-    } else if (
-      r.peekIf([TokenType.Identifier, TokenType.QuotedIdentifier, TokenType.QuotedValue])
-      || r.peekIf(TokenType.String, TokenType.Dot)
-    ) {
+    } else if (r.peekIf(TokenType.Numeric)) {
+      node = this.numericLiteral(r)
+    } else if (r.peekIf(TokenType.String) || r.peekIf({ type: TokenType.Identifier, text: /^"/ })) {
+      node = this.stringLiteral(r)
+    } else if (r.peekIf(TokenType.Blob)) {
+      node = this.blobLiteral(r)
+    } else if (r.peekIf(TokenType.Identifier) || r.peekIf(TokenType.String, TokenType.Dot)) {
       node = this.columnReference(r)
     } else if (r.peekIf(TokenType.BindVariable)) {
       const token = r.consume()
@@ -2466,12 +2457,6 @@ export class Sqlite3Parser extends Parser {
         node = new Node("NamedBindVariable", token.text.substring(1))
       }
       node.append(token)
-    } else if (r.peekIf(TokenType.Numeric)) {
-      node = this.numericLiteral(r)
-    } else if (r.peekIf(TokenType.String)) {
-      node = this.stringLiteral(r)
-    } else if (r.peekIf(TokenType.Blob)) {
-      node = this.blobLiteral(r)
     } else {
       throw r.createParseError()
     }
@@ -2528,10 +2513,7 @@ export class Sqlite3Parser extends Parser {
   
   private identifier(r: TokenReader, name: string) {
     const node = new Node(name)
-    if (r.peekIf(TokenType.Identifier)) {
-      node.append(r.consume())
-      node.value = r.peek(-1).text
-    } else if (r.peekIf([TokenType.String, TokenType.QuotedIdentifier, TokenType.QuotedValue])) {
+    if (r.peekIf([TokenType.Identifier, TokenType.String])) {
       node.append(r.consume())
       node.value = dequote(r.peek(-1).text)
     } else {
@@ -2558,9 +2540,15 @@ export class Sqlite3Parser extends Parser {
 
   private stringLiteral(r: TokenReader) {
     const node = new Node("StringLiteral")
-    const token = r.consume(TokenType.String)
-    node.value = dequote(token.text)
-    node.append(token)
+    if (r.peekIf({ type: TokenType.Identifier, text: /^"/ })) {
+      const token = r.consume()
+      node.value = dequote(token.text)
+      node.append(token)
+    } else {
+      const token = r.consume(TokenType.String)
+      node.value = dequote(token.text)
+      node.append(token)
+    }
     return node
   }
 

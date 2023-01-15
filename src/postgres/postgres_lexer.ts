@@ -120,7 +120,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.String, re: /([uU]&|[bBxX])?'([^']|'')*'/y },
       { type: TokenType.String, re: /\$([^$]+)\$.*\$\1\$/my },
       { type: TokenType.String, re: /\$\$.*\$\$/my },
-      { type: TokenType.QuotedIdentifier, re: /([uU]&)?"([^"]|"")*"/y },
+      { type: TokenType.Identifier, re: /([uU]&)?"([^"]|"")*"/y },
       { type: TokenType.BindVariable, re: /\$([1-9][0-9]*)?/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /::|[*/<>=~!@#%^&|`?+-]+/y },
