@@ -239,7 +239,7 @@ export class MssqlLexer extends Lexer {
   }
 
   private processBlockComment(state: Record<string, any>, token: Token) {
-    if (state.level > 0) {
+    if (state.comment) {
       let pos = 0
       do {
         pos = token.text.indexOf('/*', pos)
@@ -248,6 +248,12 @@ export class MssqlLexer extends Lexer {
         }
       } while (pos !== -1)
       state.level--
+
+      state.comment.text += token.text
+      if (state.level === 0) {
+        delete state.comment
+      }
+      return []
     } else {
       state.level = 0
       let pos = 2
@@ -257,6 +263,10 @@ export class MssqlLexer extends Lexer {
           state.level++
         }
       } while (pos !== -1)
+
+      if (state.level > 0) {
+        state.comment = token
+      }
     }
   }
 

@@ -256,9 +256,9 @@ export abstract class Lexer {
           tokens.push(newToken)
         }
       }
-      if (tokens.length > 0) {
+      if (newTokens && newTokens.length > 0) {
         const last = tokens[tokens.length - 1]
-        if (last.type === TokenType.EoF) {
+        if (last && last.type === TokenType.EoF) {
           if (this.options.skipTokenStrategy !== 'ignore') {
             skips.push(...last.preskips)
             skips.push(...last.postskips)
