@@ -206,13 +206,13 @@ export class MssqlLexer extends Lexer {
   ) {
     super("mssql", [
       { type: TokenType.Delimiter, re: /^[ \t]*go(?=[ \t-]|$)/imy,
-        action: (state, token) => this.processDelimiter(state, token)
+        onMatch: (state, token) => this.processDelimiter(state, token)
       },
       { type: TokenType.SemiColon, re: /;/y },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
-        action: (state, token) => this.processBlockComment(state, token)
+        onMatch: (state, token) => this.processBlockComment(state, token)
       },
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -228,7 +228,7 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.Variable, re: /@[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y },
       { type: TokenType.Identifier, re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        action: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.processIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
