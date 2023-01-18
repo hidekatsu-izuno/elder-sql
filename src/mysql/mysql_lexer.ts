@@ -251,14 +251,14 @@ export declare type MysqlLexerOptions = LexerOptions & {
 
 export class MysqlLexer extends Lexer {
   private reserved = new Set<Keyword>()
-  private reCommand = new RegExp(`${CommandPattern}(;|$)`, "imy")
-  private reDelimiter = new RegExp(";", "y")
+  private reCommandPattern = new RegExp(`${CommandPattern}(;|$)`, "imy")
+  private reDelimiterPattern = new RegExp(";", "y")
 
   constructor(
     options: MysqlLexerOptions = {}
   ) {
     super("mysql", [
-      { type: TokenType.Delimiter, re: () => this.reDelimiter,
+      { type: TokenType.Delimiter, re: (state) => this.reDelimiter(state),
         action: (state, token) => this.processDelimiter(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
@@ -268,7 +268,7 @@ export class MysqlLexer extends Lexer {
         action: (state, token) => this.processBlockComment(state, token)
       },
       { type: TokenType.LineComment, re: /(#.*|--([ \f\t\v].*)$)/my },
-      { type: TokenType.Command, re: () => this.reCommand,
+      { type: TokenType.Command, re: (state) => this.reCommand(state),
         action: (state, token) => this.processCommand(state, token)
       },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -339,6 +339,17 @@ export class MysqlLexer extends Lexer {
     return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
+  private reDelimiter(state: Record<string, any>) {
+    return this.reDelimiterPattern
+  }
+
+  private reCommand(state: Record<string, any>) {
+    if (state.pos === 0) {
+      return this.reCommandPattern
+    }
+    return false
+  }
+
   private processBlockComment(state: Record<string, any>, token: Token) {
     if (token.text.startsWith('/*!')) {
       const m = /^\/\*!([0-9]{5})?[ \f\t\v\r\n](.*)[ \f\t\v\r\n]\*\/$/s.exec(token.text)
@@ -373,8 +384,8 @@ export class MysqlLexer extends Lexer {
     const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
     if (m) {
       const sep = escapeRegExp(m[1])
-      this.reCommand = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
-      this.reDelimiter = new RegExp(sep, "y")
+      this.reCommandPattern = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
+      this.reDelimiterPattern = new RegExp(sep, "y")
     }
   }
 

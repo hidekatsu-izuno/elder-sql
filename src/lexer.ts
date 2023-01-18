@@ -122,7 +122,13 @@ export class Token {
     for (let i = 0; i < this.preskips.length; i++) {
       xml += this.preskips[i].toXmlString()
     }
-    xml += '<text>' + escapeXml(this.text) + '</text>\n'
+    xml += '<text'
+    if (this.location) {
+      xml += ' pos="' + this.location.position + '"'
+      xml += ' row="' + this.location.lineNumber + '"'
+      xml += ' col="' + this.location.columnNumber + '"'
+    }
+    xml += '>' + escapeXml(this.text) + '</text>\n'
     for (let i = 0; i < this.postskips.length; i++) {
       xml += this.postskips[i].toXmlString()
     }
@@ -148,7 +154,7 @@ export class Token {
 
 export declare type TokenPattern = {
   type: TokenType,
-  re: RegExp | ((state: Record<string, any>) => RegExp),
+  re: RegExp | ((state: Record<string, any>) => RegExp | false),
   action?: (state: Record<string, any>, token: Token) => Token[] | void
 }
 
@@ -177,7 +183,9 @@ export abstract class Lexer {
     if (input.charAt(0) === '\uFEFF') {
       pos++
     }
-    return this.sublex({}, input, new SourceLocation(pos, 1, 0, fileName))
+    const state = {}
+    this.initState(state)
+    return this.sublex(state, input, new SourceLocation(pos, 1, 0, fileName))
   }
 
   isReserved(keyword?: Keyword) {
@@ -186,6 +194,9 @@ export abstract class Lexer {
 
   isObjectStart(keyword?: Keyword) {
     return false
+  }
+
+  protected initState(state: Record<string, any>) {
   }
 
   protected sublex(state: Record<string, any>, input: string, start?: SourceLocation) {
@@ -202,17 +213,19 @@ export abstract class Lexer {
       let location
       for (const pat of this.patterns) {
         let re = (typeof pat.re  === 'function') ? pat.re(state) : pat.re
-        re.lastIndex = pos
-        const m = re.exec(input)
-        if (m) {
-          pattern = pat
-          text = m[0]
-          if (start) {
-            location = new SourceLocation(pos + start.position, lineNumber, columnNumber, fileName)
+        if (re) {
+          re.lastIndex = pos
+          const m = re.exec(input)
+          if (m) {
+            pattern = pat
+            text = m[0]
+            if (start) {
+              location = new SourceLocation(pos + start.position, lineNumber, columnNumber, fileName)
+            }
+  
+            pos = re.lastIndex
+            break
           }
-
-          pos = re.lastIndex
-          break
         }
       }
 

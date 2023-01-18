@@ -105,7 +105,7 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: /(?<=^|\n)\..+(\r?\n|$)/y,
+      { type: TokenType.Command, re: (state) => this.reCommand(state),
         action: (state, token) => this.processCommand(state, token) },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -158,37 +158,15 @@ export class Sqlite3Lexer extends Lexer {
     return keyword != null && ObjectStartSet.has(keyword)
   }
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
-    const keyword = Keyword.for(token.text)
-    if (keyword) {
-      token.keyword = keyword
-      if (this.isReserved(keyword)) {
-        token.type = TokenType.Reserved
-      }
-      // 0 CREATE 1 OBJECT 2 ... END 3 ;
-      if (!state.pos) {
-        if (token.keyword === Keyword.CREATE) {
-          state.pos = 1
-        } else {
-          state.pos = 3
-        }
-      } else if (state.pos === 1 && this.isObjectStart(token.keyword)) {
-        if (token.keyword === Keyword.TRIGGER) {
-          state.pos = 2
-        } else {
-          state.pos = 3
-        }
-      } else if (state.pos === 2 && token.keyword === Keyword.END) {
-        state.pos = 3
-      }
-    }
+  protected initState(state: Record<string, any>): void {
+    state.pos = 0
   }
 
-  private processSemiColon(state: Record<string, any>, token: Token) {
-    if (state.pos !== 2) {
-      state.pos = 0
-      token.eos = true
+  private reCommand(state: Record<string, any>) {
+    if (state.pos === 0) {
+      return /(?<=^|\n)\..+(\r?\n|$)/y
     }
+    return false
   }
 
   private processCommand(state: Record<string, any>, token: Token) {
@@ -245,5 +223,38 @@ export class Sqlite3Lexer extends Lexer {
     tokens[tokens.length - 1].eos = true
 
     return tokens
+  }
+
+  private processIdentifier(state: Record<string, any>, token: Token) {
+    const keyword = Keyword.for(token.text)
+    if (keyword) {
+      token.keyword = keyword
+      if (this.isReserved(keyword)) {
+        token.type = TokenType.Reserved
+      }
+      // 0 CREATE 1 OBJECT 2 ... END 3 ;
+      if (state.pos === 0) {
+        if (token.keyword === Keyword.CREATE) {
+          state.pos = 1
+        } else {
+          state.pos = 3
+        }
+      } else if (state.pos === 1 && this.isObjectStart(token.keyword)) {
+        if (token.keyword === Keyword.TRIGGER) {
+          state.pos = 2
+        } else {
+          state.pos = 3
+        }
+      } else if (state.pos === 2 && token.keyword === Keyword.END) {
+        state.pos = 3
+      }
+    }
+  }
+
+  private processSemiColon(state: Record<string, any>, token: Token) {
+    if (state.pos !== 2) {
+      state.pos = 0
+      token.eos = true
+    }
   }
 }

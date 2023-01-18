@@ -206,6 +206,9 @@ export class OracleLexer extends Lexer {
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.Command, re: (state) => this.reCommand(state),
+        action: (state, token) => this.processCommand(state, token)
+      },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -231,6 +234,20 @@ export class OracleLexer extends Lexer {
 
   isObjectStart(keyword?: Keyword) {
     return keyword != null && ObjectStartSet.has(keyword)
+  }
+
+  protected initState(state: Record<string, any>): void {
+    state.pos = 0
+  }
+  
+  private reCommand(state: Record<string, any>) {
+    if (state.pos === 0) {
+      return /(@@|\?|(ACC(EPT)?|A(PPEND)?|ARCHIVE|ATTR(IBUTE)?|BRE(AK)?|BTI(TLE)?|C(HANGE)?|CL(EAR)?|COL(UMN)?|COMP(UTE)?|CONN(ECT)?|COPY|DEF(INE)?|DEL|DESC(RIBE)?|DISC(ONNECT)?|ED(IT)?|EXEC(UTE)?|EXIT|QUIT|GET|HELP|HIST(ORY)?|HO(ST)?|I(NPUT)?|L(IST)?|PASSW(ORD)?|PAU(SE)?|PRINT|PRO(MPT)?|RECOVER|REM(ARK)?|REPF(OOTER)?|REPH(EADER)?|R(UN)?|SAVE?|SET|SHOW?|SHUTDOWN|SPO(OL)?|STA(RT)?|STARTUP|STORE|TIMI(NG)?|TTI(TLE)?|UNDEF(INE)?|VAR(IABLE)?|WHENEVER|XQUERY)\b)(-\r?\n|[^\r\n])*(\r?\n|$)/iy
+    }
+    return false
+  }
+
+  private processCommand(state: Record<string, any>, token: Token) {
   }
 
   private processIdentifier(state: Record<string, any>, token: Token) {

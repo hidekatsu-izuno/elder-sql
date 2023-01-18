@@ -5,6 +5,7 @@ import { toJSScript, toJSString } from "../utils/debug"
 
 describe("test sqlite3 lexer", () => {
   test.each([
+    "command",
     "create_table",
     "pragma",
     "select",
