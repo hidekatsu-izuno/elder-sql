@@ -185,6 +185,14 @@ export const ReservedSet = new Set<Keyword>([
   Keyword.WITH,    
 ])
 
+const Mode = {
+  INITIAL: 0,
+  SQL_START: 1,
+  SQL_CREATE: 2,
+  SQL_PROCEDURE: 3,
+  SQL_PART: Number.MAX_SAFE_INTEGER,
+} as const
+
 export declare type OracleLexerOptions = LexerOptions & {
 }
 
@@ -196,18 +204,20 @@ export class OracleLexer extends Lexer {
   ) {
     super("oracle", [
       { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my,
-        action: (state, token) => this.processDelimiter(state, token)
+        onMatch: (state, token) => this.processDelimiter(state, token)
       },
       { type: TokenType.SemiColon, re: /;/y,
-        action: (state, token) => this.processSemiColon(state, token)
+        onMatch: (state, token) => this.processSemiColon(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: (state) => this.reCommand(state),
-        action: (state, token) => this.processCommand(state, token)
+      { type: TokenType.Command, 
+        re: (state) => state.mode === Mode.INITIAL ? /(@@|\?|(ACC(EPT)?|A(PPEND)?|ARCHIVE|ATTR(IBUTE)?|BRE(AK)?|BTI(TLE)?|C(HANGE)?|CL(EAR)?|COL(UMN)?|COMP(UTE)?|CONN(ECT)?|COPY|DEF(INE)?|DEL|DESC(RIBE)?|DISC(ONNECT)?|ED(IT)?|EXEC(UTE)?|EXIT|QUIT|GET|HELP|HIST(ORY)?|HO(ST)?|I(NPUT)?|L(IST)?|PASSW(ORD)?|PAU(SE)?|PRINT|PRO(MPT)?|RECOVER|REM(ARK)?|REPF(OOTER)?|REPH(EADER)?|R(UN)?|SAVE?|SET|SHOW?|SHUTDOWN|SPO(OL)?|STA(RT)?|STARTUP|STORE|TIMI(NG)?|TTI(TLE)?|UNDEF(INE)?|VAR(IABLE)?|WHENEVER|XQUERY)\b)(-\r?\n|[^\r\n])*(\r?\n|$)/iy : false,
+        onMatch: (state, token) => this.processCommand(state, token),
+        onUnmatch: (state) => { state.mode = Mode.SQL_START }
       },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -222,7 +232,7 @@ export class OracleLexer extends Lexer {
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<>|[=<>!^:]=?|[%~&|*/+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        action: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.processIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -237,15 +247,7 @@ export class OracleLexer extends Lexer {
   }
 
   protected initState(state: Record<string, any>) {
-    // 0 [CREATE] 1 [OBJECT/DECLARE/BEGIN] 2 ... [END] MAX [DELIMITER]
-    state.pos = 0
-  }
-  
-  private reCommand(state: Record<string, any>) {
-    if (state.pos === 0) {
-      return /(@@|\?|(ACC(EPT)?|A(PPEND)?|ARCHIVE|ATTR(IBUTE)?|BRE(AK)?|BTI(TLE)?|C(HANGE)?|CL(EAR)?|COL(UMN)?|COMP(UTE)?|CONN(ECT)?|COPY|DEF(INE)?|DEL|DESC(RIBE)?|DISC(ONNECT)?|ED(IT)?|EXEC(UTE)?|EXIT|QUIT|GET|HELP|HIST(ORY)?|HO(ST)?|I(NPUT)?|L(IST)?|PASSW(ORD)?|PAU(SE)?|PRINT|PRO(MPT)?|RECOVER|REM(ARK)?|REPF(OOTER)?|REPH(EADER)?|R(UN)?|SAVE?|SET|SHOW?|SHUTDOWN|SPO(OL)?|STA(RT)?|STARTUP|STORE|TIMI(NG)?|TTI(TLE)?|UNDEF(INE)?|VAR(IABLE)?|WHENEVER|XQUERY)\b)(-\r?\n|[^\r\n])*(\r?\n|$)/iy
-    }
-    return false
+    state.mode = Mode.INITIAL
   }
 
   private processCommand(state: Record<string, any>, token: Token) {
@@ -258,15 +260,16 @@ export class OracleLexer extends Lexer {
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
-      if (state.pos === 0) {
+
+      if (state.mode === Mode.SQL_START) {
         if (keyword === Keyword.CREATE) {
-          state.pos = 1
+          state.mode = Mode.SQL_CREATE
         } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
-          state.pos = 2
+          state.mode = Mode.SQL_PROCEDURE
         } else {
-          state.pos = Number.MAX_SAFE_INTEGER
+          state.mode = Mode.SQL_PART
         }
-      } else if (state.pos === 1 && this.isObjectStart(keyword)) {
+      } else if (state.mode === Mode.SQL_CREATE && this.isObjectStart(keyword)) {
         if (
           keyword === Keyword.FUNCTION
           || keyword === Keyword.LIBRARY
@@ -275,23 +278,23 @@ export class OracleLexer extends Lexer {
           || keyword === Keyword.TRIGGER
           || keyword === Keyword.TYPE
         ) {
-          state.pos = 2
+          state.mode = Mode.SQL_PROCEDURE
         } else {
-          state.pos = Number.MAX_SAFE_INTEGER
+          state.mode = Mode.SQL_PART
         }
       }
     }
   }
 
   private processSemiColon(state: Record<string, any>, token: Token) {
-    if (state.pos !== 2) {
-      state.pos = 0
+    if (state.mode !== Mode.SQL_PROCEDURE) {
+      state.mode = Mode.INITIAL
       token.eos = true
     }
   }
 
   private processDelimiter(state: Record<string, any>, token: Token) {
-    state.pos = 0
+    state.mode = Mode.INITIAL
     token.eos = true
   }
 }

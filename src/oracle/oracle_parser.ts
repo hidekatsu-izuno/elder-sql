@@ -2785,12 +2785,9 @@ export class OracleParser extends Parser {
 
   private identifier(r: TokenReader, name: string) {
     const node = new Node(name)
-    if (r.peekIf(TokenType.QuotedIdentifier)) {
+    if (r.peekIf(TokenType.Identifier)) {
       node.append(r.consume())
       node.value = dequote(r.peek(-1).text)
-    } else if (r.peekIf(TokenType.Identifier)) {
-      node.append(r.consume())
-      node.value = r.peek(-1).text
     } else {
       throw r.createParseError()
     }

@@ -88,6 +88,14 @@ const ReservedSet = new Set<Keyword>([
   Keyword.WINDOW,
 ]);
 
+const Mode = {
+  INITIAL: 0,
+  SQL_START: 1,
+  SQL_CREATE: 2,
+  SQL_PROCEDURE: 3,
+  SQL_PART: Number.MAX_SAFE_INTEGER,
+} as const
+
 export declare type Sqlite3LexerOptions = LexerOptions & {
   compileOptions?: string[]
 }
@@ -100,13 +108,17 @@ export class Sqlite3Lexer extends Lexer {
   ) {
     super("sqlite3", [
       { type: TokenType.SemiColon, re: /;/y,
-        action: (state, token ) => this.processSemiColon(state, token) },
+        onMatch: (state, token) => this.processSemiColon(state, token)
+      },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: (state) => this.reCommand(state),
-        action: (state, token) => this.processCommand(state, token) },
+      { type: TokenType.Command,
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\..+(\r?\n|$)/y : false,
+        onMatch: (state, token) => this.processCommand(state, token),
+        onUnmatch: (state) => { state.mode = Mode.SQL_START }
+      },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -119,7 +131,7 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.BindVariable, re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y, 
-        action: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.processIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -159,20 +171,10 @@ export class Sqlite3Lexer extends Lexer {
   }
 
   protected initState(state: Record<string, any>): void {
-    // 0 [CREATE] 1 [OBJECT] 2 ... [END] MAX [SEMICOLON]
-    state.pos = 0
-  }
-
-  private reCommand(state: Record<string, any>) {
-    if (state.pos === 0) {
-      return /(?<=^|\n)\..+(\r?\n|$)/y
-    }
-    return false
+    state.mode = Mode.INITIAL
   }
 
   private processCommand(state: Record<string, any>, token: Token) {
-    state.pos = 0
-
     const m = /[ \t]/.exec(token.text)
     if (!m) {
       token.eos = true
@@ -233,27 +235,28 @@ export class Sqlite3Lexer extends Lexer {
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
-      if (state.pos === 0) {
+
+      if (state.mode === Mode.SQL_START) {
         if (token.keyword === Keyword.CREATE) {
-          state.pos = 1
+          state.mode = Mode.SQL_CREATE
         } else {
-          state.pos = Number.MAX_SAFE_INTEGER
+          state.mode = Mode.SQL_PART
         }
-      } else if (state.pos === 1 && this.isObjectStart(token.keyword)) {
+      } else if (state.mode === Mode.SQL_CREATE && this.isObjectStart(token.keyword)) {
         if (token.keyword === Keyword.TRIGGER) {
-          state.pos = 2
+          state.mode = Mode.SQL_PROCEDURE
         } else {
-          state.pos = Number.MAX_SAFE_INTEGER
+          state.mode = Mode.SQL_PART
         }
-      } else if (state.pos === 2 && token.keyword === Keyword.END) {
-        state.pos = Number.MAX_SAFE_INTEGER
+      } else if (state.mode === Mode.SQL_PROCEDURE && token.keyword === Keyword.END) {
+        state.mode = Mode.SQL_PART
       }
     }
   }
 
   private processSemiColon(state: Record<string, any>, token: Token) {
-    if (state.pos !== 2) {
-      state.pos = 0
+    if (state.mode !== Mode.SQL_PROCEDURE) {
+      state.mode = Mode.INITIAL
       token.eos = true
     }
   }

@@ -155,7 +155,8 @@ export class Token {
 export declare type TokenPattern = {
   type: TokenType,
   re: RegExp | ((state: Record<string, any>) => RegExp | false),
-  action?: (state: Record<string, any>, token: Token) => Token[] | void
+  onMatch?: (state: Record<string, any>, token: Token) => Token[] | void
+  onUnmatch?: (state: Record<string, any>) => void
 }
 
 export declare type LexerOptions = {
@@ -227,6 +228,9 @@ export abstract class Lexer {
             break
           }
         }
+        if (pat.onUnmatch) {
+          pat.onUnmatch(state)
+        }
       }
 
       if (pattern == null || text == null) {
@@ -237,8 +241,8 @@ export abstract class Lexer {
         location
       })
       let newTokens: Token[] | void
-      if (pattern.action) {
-        newTokens = pattern.action(state, token)
+      if (pattern.onMatch) {
+        newTokens = pattern.onMatch(state, token)
       }
 
       if (newTokens && newTokens.length > 0) {
