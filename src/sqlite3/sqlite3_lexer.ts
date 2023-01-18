@@ -159,6 +159,7 @@ export class Sqlite3Lexer extends Lexer {
   }
 
   protected initState(state: Record<string, any>): void {
+    // 0 [CREATE] 1 [OBJECT] 2 ... [END] MAX [SEMICOLON]
     state.pos = 0
   }
 
@@ -232,21 +233,20 @@ export class Sqlite3Lexer extends Lexer {
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
-      // 0 CREATE 1 OBJECT 2 ... END 3 ;
       if (state.pos === 0) {
         if (token.keyword === Keyword.CREATE) {
           state.pos = 1
         } else {
-          state.pos = 3
+          state.pos = Number.MAX_SAFE_INTEGER
         }
       } else if (state.pos === 1 && this.isObjectStart(token.keyword)) {
         if (token.keyword === Keyword.TRIGGER) {
           state.pos = 2
         } else {
-          state.pos = 3
+          state.pos = Number.MAX_SAFE_INTEGER
         }
       } else if (state.pos === 2 && token.keyword === Keyword.END) {
-        state.pos = 3
+        state.pos = Number.MAX_SAFE_INTEGER
       }
     }
   }

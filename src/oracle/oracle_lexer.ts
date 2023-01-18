@@ -236,7 +236,8 @@ export class OracleLexer extends Lexer {
     return keyword != null && ObjectStartSet.has(keyword)
   }
 
-  protected initState(state: Record<string, any>): void {
+  protected initState(state: Record<string, any>) {
+    // 0 [CREATE] 1 [OBJECT/DECLARE/BEGIN] 2 ... [END] MAX [DELIMITER]
     state.pos = 0
   }
   
@@ -263,7 +264,7 @@ export class OracleLexer extends Lexer {
         } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
           state.pos = 2
         } else {
-          state.pos = 3
+          state.pos = Number.MAX_SAFE_INTEGER
         }
       } else if (state.pos === 1 && this.isObjectStart(keyword)) {
         if (
@@ -276,7 +277,7 @@ export class OracleLexer extends Lexer {
         ) {
           state.pos = 2
         } else {
-          state.pos = 3
+          state.pos = Number.MAX_SAFE_INTEGER
         }
       }
     }

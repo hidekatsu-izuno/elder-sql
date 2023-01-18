@@ -339,6 +339,11 @@ export class MysqlLexer extends Lexer {
     return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
+  protected initState(state: Record<string, any>) {
+    // 0 [STATEMENT] ... MAX [;]
+    state.pos = 0
+  }
+
   private reDelimiter(state: Record<string, any>) {
     return this.reDelimiterPattern
   }
@@ -371,14 +376,19 @@ export class MysqlLexer extends Lexer {
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
+      if (state.pos === 0) {
+        state.pos = Number.MAX_SAFE_INTEGER
+      }
     }
   }
 
   private processDelimiter(state: Record<string, any>, token: Token) {
+    state.pos = 0
     token.eos = true
   }
   
   private processCommand(state: Record<string, any>, token: Token) {
+    state.pos = 0
     token.eos = true
 
     const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)

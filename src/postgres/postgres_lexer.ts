@@ -105,7 +105,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, re: /(?<=^|\n)\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\r?\n|$)/y,
+      { type: TokenType.Command, re: (state) => this.reCommand(state),
         action: (state, token) => this.processCommand(state, token)
       },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -135,6 +135,18 @@ export class PostgresLexer extends Lexer {
     return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
+  protected initState(state: Record<string, any>) {
+    // 0 [STATEMENT] ... MAX [;]
+    state.pos = 0
+  }
+
+  private reCommand(state: Record<string, any>) {
+    if (state.pos === 0) {
+      return /(?<=^|\n)\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\r?\n|$)/y
+    }
+    return false
+  }
+
   private processIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
@@ -142,16 +154,21 @@ export class PostgresLexer extends Lexer {
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
+      if (state.pos === 0) {
+        state.pos = Number.MAX_SAFE_INTEGER
+      }
     }
   }
 
   private processSemiColon(state: Record<string, any>, token: Token) {
+    state.pos = 0
     token.eos = true
   }
 
   private processCommand(state: Record<string, any>, token: Token) {
     const m = /[ \t]/.exec(token.text)
     if (!m) {
+      state.pos = 0
       token.eos = true
       return
     }
@@ -198,6 +215,8 @@ export class PostgresLexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
+
+    state.pos = 0
     tokens[tokens.length - 1].eos = true
 
     return tokens

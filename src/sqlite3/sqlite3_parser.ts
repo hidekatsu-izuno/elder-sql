@@ -2449,7 +2449,7 @@ export class Sqlite3Parser extends Parser {
           r.state.bindPosition = Number.parseInt(value, 10)
         } else {
           const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
-          value = "${pos}"
+          value = `${pos}`
           r.state.bindPosition = pos
         }
         node = new Node("PositionalBindVariable", value)
