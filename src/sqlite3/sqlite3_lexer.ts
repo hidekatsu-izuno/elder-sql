@@ -101,6 +101,10 @@ export declare type Sqlite3LexerOptions = LexerOptions & {
 }
 
 export class Sqlite3Lexer extends Lexer {
+  static isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
   private reserved = new Set<Keyword>()
 
   constructor(
@@ -164,10 +168,6 @@ export class Sqlite3Lexer extends Lexer {
 
   isReserved(keyword?: Keyword) {
     return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
-  }
-
-  isObjectStart(keyword?: Keyword) {
-    return keyword != null && ObjectStartSet.has(keyword)
   }
 
   protected initState(state: Record<string, any>): void {
@@ -250,7 +250,7 @@ export class Sqlite3Lexer extends Lexer {
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(token.keyword)) {
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && Sqlite3Lexer.isObjectStart(token.keyword)) {
         if (token.keyword === Keyword.TRIGGER) {
           state.mode = Mode.SQL_PROC
         } else {

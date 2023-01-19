@@ -117,7 +117,7 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(Keyword.CREATE)) {
         const mark = r.pos
         r.consume()
-        while (!r.peek().eos && !this.lexer.isObjectStart(r.peek().keyword)) {
+        while (!r.peek().eos && !Sqlite3Lexer.isObjectStart(r.peek().keyword)) {
           r.consume()
         }
 

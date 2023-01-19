@@ -197,6 +197,10 @@ export declare type OracleLexerOptions = LexerOptions & {
 }
 
 export class OracleLexer extends Lexer {
+  static isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
   private reserved = new Set<Keyword>()
   
   constructor(
@@ -242,10 +246,6 @@ export class OracleLexer extends Lexer {
     return keyword != null && (ReservedSet.has(keyword) || this.reserved.has(keyword))
   }
 
-  isObjectStart(keyword?: Keyword) {
-    return keyword != null && ObjectStartSet.has(keyword)
-  }
-
   protected initState(state: Record<string, any>) {
     state.mode = Mode.INITIAL
   }
@@ -278,7 +278,7 @@ export class OracleLexer extends Lexer {
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(keyword)) {
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && OracleLexer.isObjectStart(keyword)) {
         if (
           keyword === Keyword.FUNCTION
           || keyword === Keyword.LIBRARY

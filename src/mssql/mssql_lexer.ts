@@ -298,6 +298,14 @@ const BLOCK_COMMENT_START = /\/\*.*?\*\//sy
 const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy
 
 export class MssqlLexer extends Lexer {
+  static isStatementStart(keyword: Keyword) {
+    return keyword != null && StatementStartSet.has(keyword)
+  }
+
+  static isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
   constructor(
     options: { [key: string]: any } = {}
   ) {
@@ -340,14 +348,6 @@ export class MssqlLexer extends Lexer {
   
   isReserved(keyword: Keyword) {
     return keyword != null && ReservedSet.has(keyword)
-  }
-
-  isStatementStart(keyword: Keyword) {
-    return keyword != null && StatementStartSet.has(keyword)
-  }
-
-  isObjectStart(keyword?: Keyword) {
-    return keyword != null && ObjectStartSet.has(keyword)
   }
 
   private onMatchBlockComment(state: Record<string, any>, token: Token) {
@@ -405,15 +405,16 @@ export class MssqlLexer extends Lexer {
       if (state.mode === Mode.SQL_START) {
         if (keyword === Keyword.CREATE || keyword === Keyword.ALTER) {
           state.mode = Mode.SQL_OBJECT_DEF
-        } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+        } else if (keyword === Keyword.IF || keyword === Keyword.WHILE) {
           state.mode = Mode.SQL_PROC
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(keyword)) {
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && MssqlLexer.isObjectStart(keyword)) {
         if (
           keyword === Keyword.FUNCTION
           || keyword === Keyword.PROCEDURE
+          || keyword === Keyword.TRIGGER
         ) {
           state.mode = Mode.SQL_PROC
         } else {

@@ -242,11 +242,30 @@ const ReservedSet = new Set<Keyword>([
   Keyword.ZEROFILL,
 ])
 
+const ObjectStartSet = new Set<Keyword>([
+  Keyword.DATABASE,
+  Keyword.SCHEMA,
+  Keyword.EVENT,
+  Keyword.FUNCTION,
+  Keyword.INDEX,
+  Keyword.INSTANCE,
+  Keyword.LOGFILE,
+  Keyword.PROCEDURE,
+  Keyword.SERVER,
+  Keyword.SPATIAL,
+  Keyword.TABLE,
+  Keyword.TABLESPACE,
+  Keyword.TRIGGER,
+  Keyword.VIEW,
+])
+
 const CommandPattern = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
 
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
+  SQL_OBJECT_DEF: 2,
+  SQL_PROC: 3,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -256,6 +275,10 @@ export declare type MysqlLexerOptions = LexerOptions & {
 }
 
 export class MysqlLexer extends Lexer {
+  static isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
   private reserved = new Set<Keyword>()
   private reCommandPattern = new RegExp(`${CommandPattern}(;|$)`, "imy")
   private reDelimiterPattern = new RegExp(";", "y")
@@ -266,19 +289,19 @@ export class MysqlLexer extends Lexer {
     super("mysql", [
       { type: TokenType.Delimiter, 
         re: (state) => this.reDelimiterPattern,
-        onMatch: (state, token) => this.processDelimiter(state, token)
+        onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy,
-        onMatch: (state, token) => this.processBlockComment(state, token)
+        onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
       { type: TokenType.LineComment, re: /(#.*|--([ \f\t\v].*)$)/my },
       { type: TokenType.Command, 
         re: (state) => state.mode === Mode.INITIAL ? this.reCommandPattern : false,
-        onMatch: (state, token) => this.processCommand(state, token),
-        onUnmatch: (state) => { state.mode = Mode.SQL_START }
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -293,7 +316,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.Variable, re: /@@?([a-zA-Z0-9._$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]+|`([^`]|``)*`|'([^']|'')*'|"([^"]|"")*")/y },
       { type: TokenType.Operator, re: /\|\|&&|<=>|<<|>>|<>|->>?|[=<>!:]=?|[~&|^*/%+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        onMatch: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.onMatchIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -352,7 +375,12 @@ export class MysqlLexer extends Lexer {
     state.mode = Mode.INITIAL
   }
 
-  private processBlockComment(state: Record<string, any>, token: Token) {
+  private onMatchDelimiter(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    token.eos = true
+  }
+
+  private onMatchBlockComment(state: Record<string, any>, token: Token) {
     if (token.text.startsWith('/*!')) {
       const m = /^\/\*!([0-9]{5})?[ \f\t\v\r\n](.*)[ \f\t\v\r\n]\*\/$/s.exec(token.text)
       if (m && (!m[1] || !this.options.version || semver.gte(this.options.version, this.toSemverString(m[1])))) {
@@ -365,8 +393,26 @@ export class MysqlLexer extends Lexer {
       }
     }
   }
+  
+  private onMatchCommand(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    token.eos = true
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
+    const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
+    if (m) {
+      const sep = escapeRegExp(m[1])
+      this.reCommandPattern = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
+      this.reDelimiterPattern = new RegExp(sep, "y")
+    }
+  }
+
+  private onUnmatchCommand(state: Record<string, any>) {
+    if (state.mode === Mode.INITIAL) {
+      state.mode = Mode.SQL_START
+    }
+  }
+
+  private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
       token.keyword = keyword
@@ -376,23 +422,24 @@ export class MysqlLexer extends Lexer {
       if (state.mode === Mode.SQL_START) {
         state.mode = Mode.SQL_PART
       }
-    }
-  }
 
-  private processDelimiter(state: Record<string, any>, token: Token) {
-    state.mode = Mode.INITIAL
-    token.eos = true
-  }
-  
-  private processCommand(state: Record<string, any>, token: Token) {
-    state.mode = Mode.INITIAL
-    token.eos = true
-
-    const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
-    if (m) {
-      const sep = escapeRegExp(m[1])
-      this.reCommandPattern = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
-      this.reDelimiterPattern = new RegExp(sep, "y")
+      if (state.mode === Mode.SQL_START) {
+        if (keyword === Keyword.CREATE) {
+          state.mode = Mode.SQL_OBJECT_DEF
+        } else {
+          state.mode = Mode.SQL_PART
+        }
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && MysqlLexer.isObjectStart(keyword)) {
+        if (
+          keyword === Keyword.FUNCTION
+          || keyword === Keyword.PROCEDURE
+          || keyword === Keyword.TRIGGER
+        ) {
+          state.mode = Mode.SQL_PROC
+        } else {
+          state.mode = Mode.SQL_PART
+        }
+      }
     }
   }
 
