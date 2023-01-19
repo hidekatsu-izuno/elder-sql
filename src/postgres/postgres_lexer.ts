@@ -104,7 +104,7 @@ export class PostgresLexer extends Lexer {
   ) {
     super("postgres", [
       { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.processSemiColon(state, token)
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
@@ -112,9 +112,9 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command,
-        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\\[^ \t]+([ \t]+('([^\\']|\\')*'|"([^\\"]|\\")*"|`([^\\`]|\\`)*`|[^ \t'"`]+))*(\r?\n|$)/y : false,
-        onMatch: (state, token) => this.processCommand(state, token),
-        onUnmatch: (state) => { state.mode = Mode.SQL_START }
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\\.+(\r?\n|$)/y : false,
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -133,7 +133,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.BindVariable, re: /:[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /::|[*/<>=~!@#%^&|`?+-]+/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        onMatch: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.onMatchIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -147,25 +147,9 @@ export class PostgresLexer extends Lexer {
     state.mode = Mode.INITIAL
   }
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
-    const keyword = Keyword.for(token.text)
-    if (keyword) {
-      token.keyword = keyword
-      if (this.isReserved(keyword)) {
-        token.type = TokenType.Reserved
-      }
-      if (state.mode === Mode.SQL_START) {
-        state.mode = Mode.SQL_PART
-      }
-    }
-  }
-
-  private processSemiColon(state: Record<string, any>, token: Token) {
+  private onMatchCommand(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
-    token.eos = true
-  }
 
-  private processCommand(state: Record<string, any>, token: Token) {
     const m = /[ \t]/.exec(token.text)
     if (!m) {
       token.eos = true
@@ -214,9 +198,32 @@ export class PostgresLexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
-
     tokens[tokens.length - 1].eos = true
 
     return tokens
+  }
+
+  private onUnmatchCommand(state: Record<string, any>) {
+    if (state.mode === Mode.INITIAL) {
+      state.mode = Mode.SQL_START
+    }
+  }
+
+  private onMatchIdentifier(state: Record<string, any>, token: Token) {
+    const keyword = Keyword.for(token.text)
+    if (keyword) {
+      token.keyword = keyword
+      if (this.isReserved(keyword)) {
+        token.type = TokenType.Reserved
+      }
+      if (state.mode === Mode.SQL_START) {
+        state.mode = Mode.SQL_PART
+      }
+    }
+  }
+
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    token.eos = true
   }
 }

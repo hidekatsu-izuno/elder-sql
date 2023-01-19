@@ -91,8 +91,8 @@ const ReservedSet = new Set<Keyword>([
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
-  SQL_CREATE: 2,
-  SQL_PROCEDURE: 3,
+  SQL_OBJECT_DEF: 2,
+  SQL_PROC: 3,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -108,7 +108,7 @@ export class Sqlite3Lexer extends Lexer {
   ) {
     super("sqlite3", [
       { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.processSemiColon(state, token)
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
@@ -116,8 +116,8 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command,
         re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\..+(\r?\n|$)/y : false,
-        onMatch: (state, token) => this.processCommand(state, token),
-        onUnmatch: (state) => { state.mode = Mode.SQL_START }
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -131,7 +131,7 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.BindVariable, re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y, 
-        onMatch: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.onMatchIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -174,7 +174,9 @@ export class Sqlite3Lexer extends Lexer {
     state.mode = Mode.INITIAL
   }
 
-  private processCommand(state: Record<string, any>, token: Token) {
+  private onMatchCommand(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+
     const m = /[ \t]/.exec(token.text)
     if (!m) {
       token.eos = true
@@ -228,7 +230,13 @@ export class Sqlite3Lexer extends Lexer {
     return tokens
   }
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
+  private onUnmatchCommand(state: Record<string, any>) {
+    if (state.mode === Mode.INITIAL) {
+      state.mode = Mode.SQL_START
+    }
+  }
+
+  private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
       token.keyword = keyword
@@ -238,24 +246,24 @@ export class Sqlite3Lexer extends Lexer {
 
       if (state.mode === Mode.SQL_START) {
         if (token.keyword === Keyword.CREATE) {
-          state.mode = Mode.SQL_CREATE
+          state.mode = Mode.SQL_OBJECT_DEF
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_CREATE && this.isObjectStart(token.keyword)) {
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(token.keyword)) {
         if (token.keyword === Keyword.TRIGGER) {
-          state.mode = Mode.SQL_PROCEDURE
+          state.mode = Mode.SQL_PROC
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_PROCEDURE && token.keyword === Keyword.END) {
+      } else if (state.mode === Mode.SQL_PROC && token.keyword === Keyword.END) {
         state.mode = Mode.SQL_PART
       }
     }
   }
 
-  private processSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROCEDURE) {
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode !== Mode.SQL_PROC) {
       state.mode = Mode.INITIAL
       token.eos = true
     }

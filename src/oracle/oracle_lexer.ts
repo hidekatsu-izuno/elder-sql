@@ -6,50 +6,6 @@ import {
   LexerOptions,
 } from "../lexer"
 
-const ObjectStartSet = new Set<Keyword>([
-  Keyword.ANALYTIC,
-  Keyword.ATTRIBUTE,
-  Keyword.AUDIT,
-  Keyword.CLUSTER,
-  Keyword.CONTEXT,
-  Keyword.CONTROLFILE,
-  Keyword.DATABASE,
-  Keyword.DIMENSION,
-  Keyword.DIRECTORY,
-  Keyword.DISKGROUP,
-  Keyword.EDITION,
-  Keyword.FLASHBACK,
-  Keyword.FUNCTION,
-  Keyword.HIERARCHY,
-  Keyword.INDEX,
-  Keyword.INDEXTYPE,
-  Keyword.INMEMORY,
-  Keyword.JAVA,
-  Keyword.LIBRARY,
-  Keyword.LOCKDOWN,
-  Keyword.MATERIALIZED,
-  Keyword.OPERATOR,
-  Keyword.OUTLINE,
-  Keyword.PACKAGE,
-  Keyword.PFILE,
-  Keyword.PLUGGABLE,
-  Keyword.PROCEDURE,
-  Keyword.PROFILE,
-  Keyword.RESTORE,
-  Keyword.ROLE,
-  Keyword.ROLLBACK,
-  Keyword.SCHEMA,
-  Keyword.SEQUENCE,
-  Keyword.SPFILE,
-  Keyword.SYNONYM,
-  Keyword.TABLE,
-  Keyword.TABLESPACE,
-  Keyword.TRIGGER,
-  Keyword.TYPE,
-  Keyword.USER,
-  Keyword.VIEW,
-])
-
 export const ReservedSet = new Set<Keyword>([
   Keyword.ACCESS,
   Keyword.ADD,
@@ -185,11 +141,55 @@ export const ReservedSet = new Set<Keyword>([
   Keyword.WITH,    
 ])
 
+const ObjectStartSet = new Set<Keyword>([
+  Keyword.ANALYTIC,
+  Keyword.ATTRIBUTE,
+  Keyword.AUDIT,
+  Keyword.CLUSTER,
+  Keyword.CONTEXT,
+  Keyword.CONTROLFILE,
+  Keyword.DATABASE,
+  Keyword.DIMENSION,
+  Keyword.DIRECTORY,
+  Keyword.DISKGROUP,
+  Keyword.EDITION,
+  Keyword.FLASHBACK,
+  Keyword.FUNCTION,
+  Keyword.HIERARCHY,
+  Keyword.INDEX,
+  Keyword.INDEXTYPE,
+  Keyword.INMEMORY,
+  Keyword.JAVA,
+  Keyword.LIBRARY,
+  Keyword.LOCKDOWN,
+  Keyword.MATERIALIZED,
+  Keyword.OPERATOR,
+  Keyword.OUTLINE,
+  Keyword.PACKAGE,
+  Keyword.PFILE,
+  Keyword.PLUGGABLE,
+  Keyword.PROCEDURE,
+  Keyword.PROFILE,
+  Keyword.RESTORE,
+  Keyword.ROLE,
+  Keyword.ROLLBACK,
+  Keyword.SCHEMA,
+  Keyword.SEQUENCE,
+  Keyword.SPFILE,
+  Keyword.SYNONYM,
+  Keyword.TABLE,
+  Keyword.TABLESPACE,
+  Keyword.TRIGGER,
+  Keyword.TYPE,
+  Keyword.USER,
+  Keyword.VIEW,
+])
+
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
-  SQL_CREATE: 2,
-  SQL_PROCEDURE: 3,
+  SQL_OBJECT_DEF: 2,
+  SQL_PROC: 3,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -204,10 +204,10 @@ export class OracleLexer extends Lexer {
   ) {
     super("oracle", [
       { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my,
-        onMatch: (state, token) => this.processDelimiter(state, token)
+        onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
       { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.processSemiColon(state, token)
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
@@ -216,8 +216,8 @@ export class OracleLexer extends Lexer {
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command, 
         re: (state) => state.mode === Mode.INITIAL ? /(@@|\?|(ACC(EPT)?|A(PPEND)?|ARCHIVE|ATTR(IBUTE)?|BRE(AK)?|BTI(TLE)?|C(HANGE)?|CL(EAR)?|COL(UMN)?|COMP(UTE)?|CONN(ECT)?|COPY|DEF(INE)?|DEL|DESC(RIBE)?|DISC(ONNECT)?|ED(IT)?|EXEC(UTE)?|EXIT|QUIT|GET|HELP|HIST(ORY)?|HO(ST)?|I(NPUT)?|L(IST)?|PASSW(ORD)?|PAU(SE)?|PRINT|PRO(MPT)?|RECOVER|REM(ARK)?|REPF(OOTER)?|REPH(EADER)?|R(UN)?|SAVE?|SET|SHOW?|SHUTDOWN|SPO(OL)?|STA(RT)?|STARTUP|STORE|TIMI(NG)?|TTI(TLE)?|UNDEF(INE)?|VAR(IABLE)?|WHENEVER|XQUERY)\b)(-\r?\n|[^\r\n])*(\r?\n|$)/iy : false,
-        onMatch: (state, token) => this.processCommand(state, token),
-        onUnmatch: (state) => { state.mode = Mode.SQL_START }
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -232,7 +232,7 @@ export class OracleLexer extends Lexer {
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<>|[=<>!^:]=?|[%~&|*/+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        onMatch: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.onMatchIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
@@ -250,10 +250,19 @@ export class OracleLexer extends Lexer {
     state.mode = Mode.INITIAL
   }
 
-  private processCommand(state: Record<string, any>, token: Token) {
+  private onMatchCommand(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    //TODO
+    token.eos = true
   }
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
+  private onUnmatchCommand(state: Record<string, any>) {
+    if (state.mode === Mode.INITIAL) {
+      state.mode = Mode.SQL_START
+    }
+  }
+
+  private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
       token.keyword = keyword
@@ -263,13 +272,13 @@ export class OracleLexer extends Lexer {
 
       if (state.mode === Mode.SQL_START) {
         if (keyword === Keyword.CREATE) {
-          state.mode = Mode.SQL_CREATE
+          state.mode = Mode.SQL_OBJECT_DEF
         } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
-          state.mode = Mode.SQL_PROCEDURE
+          state.mode = Mode.SQL_PROC
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_CREATE && this.isObjectStart(keyword)) {
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(keyword)) {
         if (
           keyword === Keyword.FUNCTION
           || keyword === Keyword.LIBRARY
@@ -278,7 +287,7 @@ export class OracleLexer extends Lexer {
           || keyword === Keyword.TRIGGER
           || keyword === Keyword.TYPE
         ) {
-          state.mode = Mode.SQL_PROCEDURE
+          state.mode = Mode.SQL_PROC
         } else {
           state.mode = Mode.SQL_PART
         }
@@ -286,14 +295,14 @@ export class OracleLexer extends Lexer {
     }
   }
 
-  private processSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROCEDURE) {
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode !== Mode.SQL_PROC) {
       state.mode = Mode.INITIAL
       token.eos = true
     }
   }
 
-  private processDelimiter(state: Record<string, any>, token: Token) {
+  private onMatchDelimiter(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
     token.eos = true
   }

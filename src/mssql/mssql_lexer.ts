@@ -194,8 +194,105 @@ const ReservedSet = new Set<Keyword>([
 	Keyword.WRITETEXT,
 ])
 
+const StatementStartSet = new Set<Keyword>([
+  Keyword.ADD,
+  Keyword.ALTER,
+  Keyword.BACKUP,
+  Keyword.BEGIN,
+  Keyword.BULK,
+  Keyword.CLOSE,
+  Keyword.CREATE,
+  Keyword.DECLARE,
+  Keyword.DELETE,
+  Keyword.DENY,
+  Keyword.DISABLE,
+  Keyword.DROP,
+  Keyword.ENABLE,
+  Keyword.END,
+  Keyword.GRANT,
+  Keyword.GET,
+  Keyword.INSERT,
+  Keyword.UPDATE,
+  Keyword.UPDATETEXT,
+  Keyword.MERGE,
+  Keyword.MOVE,
+  Keyword.OPEN,
+  Keyword.READTEXT,
+  Keyword.RECEIVE,
+  Keyword.REVERT,
+  Keyword.REVOKE,
+  Keyword.RESTORE,
+  Keyword.SEND,
+  Keyword.SET,
+  Keyword.SETUSER,
+  Keyword.TRUNCATE,
+  Keyword.WAITFOR,
+  Keyword.WITH,
+  Keyword.WRITETEXT,
+])
+
+const ObjectStartSet = new Set<Keyword>([
+  Keyword.AGGREGATE,
+  Keyword.APPICATION,
+  Keyword.ASSEMBLY,
+  Keyword.ASYMMETRIC,
+  Keyword.AVAILABILITY,
+  Keyword.BROKER,
+  Keyword.CERTIFICATE,
+  Keyword.COLUMNSTORE,
+  Keyword.COLUMN,
+  Keyword.CONTRACT,
+  Keyword.CREDENTIAL,
+  Keyword.CRYPTOGRAPHIC,
+  Keyword.DATABASE,
+  Keyword.DEFAULT,
+  Keyword.ENDPOINT,
+  Keyword.EVENT,
+  Keyword.EXTERNAL,
+  Keyword.FULLTEXT,
+  Keyword.FUNCTION,
+  Keyword.INDEX,
+  Keyword.LOGIN,
+  Keyword.MASTER,
+  Keyword.MESSAGE,
+  Keyword.PARTITION,
+  Keyword.PROCEDURE,
+  Keyword.QUEUE,
+  Keyword.REMOTE,
+  Keyword.RESOURCE,
+  Keyword.ROLE,
+  Keyword.ROUTE,
+  Keyword.RULE,
+  Keyword.SCHEMA,
+  Keyword.SEARCH,
+  Keyword.SECURITY,
+  Keyword.SELECTIVE,
+  Keyword.SEQUENCE,
+  Keyword.SERVICE,
+  Keyword.SIGNATURE,
+  Keyword.SPATIAL,
+  Keyword.STATISTICS,
+  Keyword.SYMMETRIC,
+  Keyword.SYNONYM,
+  Keyword.TABLE,
+  Keyword.TRIGGER,
+  Keyword.TYPE,
+  Keyword.USER,
+  Keyword.VIEW,
+  Keyword.WORKLOAD,
+  Keyword.XML,
+])
+
 export declare type MssqlLexerOptions = LexerOptions & {
 }
+
+const Mode = {
+  INITIAL: 0,
+  SQL_START: 1,
+  SQL_OBJECT_DEF: 2,
+  SQL_PROC: 3,
+  SQL_PART: Number.MAX_SAFE_INTEGER,
+} as const
 
 const BLOCK_COMMENT_START = /\/\*.*?\*\//sy
 const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy
@@ -206,13 +303,20 @@ export class MssqlLexer extends Lexer {
   ) {
     super("mssql", [
       { type: TokenType.Delimiter, re: /^[ \t]*go(?=[ \t-]|$)/imy,
-        onMatch: (state, token) => this.processDelimiter(state, token)
+        onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
-      { type: TokenType.SemiColon, re: /;/y },
+      { type: TokenType.SemiColon, re: /;/y,
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
+      },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
       { type: TokenType.LineBreak, re: /\r?\n/y },
       { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
-        onMatch: (state, token) => this.processBlockComment(state, token)
+        onMatch: (state, token) => this.onMatchBlockComment(state, token)
+      },
+      { type: TokenType.Command,
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n):.+(\r?\n|$)/y : false,
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.LeftParen, re: /\(/y },
@@ -228,17 +332,25 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.Variable, re: /@[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Operator, re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y },
       { type: TokenType.Identifier, re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        onMatch: (state, token) => this.processIdentifier(state, token)
+        onMatch: (state, token) => this.onMatchIdentifier(state, token)
       },
       { type: TokenType.Error, re: /./y },
     ], options)
   }
   
   isReserved(keyword: Keyword) {
-    return ReservedSet.has(keyword)
+    return keyword != null && ReservedSet.has(keyword)
   }
 
-  private processBlockComment(state: Record<string, any>, token: Token) {
+  isStatementStart(keyword: Keyword) {
+    return keyword != null && StatementStartSet.has(keyword)
+  }
+
+  isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
+  private onMatchBlockComment(state: Record<string, any>, token: Token) {
     if (state.comment) {
       let pos = 0
       do {
@@ -270,17 +382,55 @@ export class MssqlLexer extends Lexer {
     }
   }
 
-  private processIdentifier(state: Record<string, any>, token: Token) {
+  private onMatchCommand(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    //TODO
+    token.eos = true
+  }
+
+  private onUnmatchCommand(state: Record<string, any>) {
+    if (state.mode === Mode.INITIAL) {
+      state.mode = Mode.SQL_START
+    }
+  }
+
+  private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
       token.keyword = keyword
       if (this.isReserved(keyword)) {
         token.type = TokenType.Reserved
       }
+
+      if (state.mode === Mode.SQL_START) {
+        if (keyword === Keyword.CREATE || keyword === Keyword.ALTER) {
+          state.mode = Mode.SQL_OBJECT_DEF
+        } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+          state.mode = Mode.SQL_PROC
+        } else {
+          state.mode = Mode.SQL_PART
+        }
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && this.isObjectStart(keyword)) {
+        if (
+          keyword === Keyword.FUNCTION
+          || keyword === Keyword.PROCEDURE
+        ) {
+          state.mode = Mode.SQL_PROC
+        } else {
+          state.mode = Mode.SQL_PART
+        }
+      }
     }
   }
 
-  private processDelimiter(state: Record<string, any>, token: Token) {
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode !== Mode.SQL_PROC) {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
+  }
+
+  private onMatchDelimiter(state: Record<string, any>, token: Token) {
     token.eos = true
   }
 }
