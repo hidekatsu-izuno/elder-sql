@@ -109,7 +109,7 @@ export class ElderSqlCompiler {
 
       text += `/**\n${m[2]}*/\n`
       text += `export function ${m[1]}(engine, params) {\n`
-      text += `  const text = "";\n`
+      text += `  let text = "";\n`
       text += `  const args = [];\n`
       text += `  const ctx0 = { ...params };\n`
       const blocks = []
@@ -135,7 +135,7 @@ export class ElderSqlCompiler {
             buffer = ""
           }
 
-          text += `  ${"  ".repeat(blocks.length)}if (${expr}) {\n`
+          text += `  ${"  ".repeat(blocks.length)}if (sandbox(${expr})) {\n`
           blocks.push(ElderSqlType.If)
         } else if (tr.peekIf(ElderSqlType.Elif)) {
           const token = tr.peek()

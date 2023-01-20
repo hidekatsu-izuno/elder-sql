@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { ElderSqlCompiler } from "../src/compiler"
+import { ElderSqlCompiler } from "../src/compiler.js"
 
 describe("test compiler", () => {
   test.each([

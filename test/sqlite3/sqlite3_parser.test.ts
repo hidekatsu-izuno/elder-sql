@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
-import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser"
-import { toJSScript, toJSString } from "../utils/debug"
+import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.js"
+import { toJSScript, toJSString } from "../utils/debug.js"
 
 describe("test sqlite3 parser", () => {
   test.each([

@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
-import { OracleLexer } from "../../src/oracle/oracle_lexer"
-import { toJSScript, toJSString } from "../utils/debug"
+import { OracleLexer } from "../../src/oracle/oracle_lexer.js"
+import { toJSScript, toJSString } from "../utils/debug.js"
 
 describe("test oracle lexer", () => {
   test.each([

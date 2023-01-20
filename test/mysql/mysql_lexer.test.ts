@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
-import { MysqlLexer } from "../../src/mysql/mysql_lexer"
-import { toJSScript, toJSString } from "../utils/debug"
+import { MysqlLexer } from "../../src/mysql/mysql_lexer.js"
+import { toJSScript, toJSString } from "../utils/debug.js"
 
 describe("test mysql lexer", () => {
   test.each([

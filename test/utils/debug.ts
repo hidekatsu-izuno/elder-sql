@@ -1,5 +1,5 @@
-import { Token } from "../../src/lexer"
-import { Node } from "../../src/parser"
+import { Token } from "../../src/lexer.js"
+import { Node } from "../../src/parser.js"
 
 export function toJSScript(target: Node | Token | (Node | Token)[]) {
   let imports = 'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n'
