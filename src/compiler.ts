@@ -1,11 +1,11 @@
-import { Token, TokenType, Lexer, Keyword } from "./lexer"
-import { TokenReader } from "./parser"
-import { MysqlLexer } from "./mysql/mysql_lexer"
-import { OracleLexer } from "./oracle/oracle_lexer"
-import { PostgresLexer } from "./postgres/postgres_lexer"
-import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer"
-import { MssqlLexer } from "./mssql/mssql_lexer"
-import { isJSIdentifier, isJSExpression } from './util'
+import { Token, TokenType, Lexer, Keyword } from "./lexer.js"
+import { TokenReader } from "./parser.js"
+import { MysqlLexer } from "./mysql/mysql_lexer.js"
+import { OracleLexer } from "./oracle/oracle_lexer.js"
+import { PostgresLexer } from "./postgres/postgres_lexer.js"
+import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.js"
+import { MssqlLexer } from "./mssql/mssql_lexer.js"
+import { isJSIdentifier, isJSExpression } from './util.js'
 
 export type ElderSqlCompilerOptions = {
   dialect: "sqlite3" | "mysql" | "postgres" | "oracle" | "mssql"

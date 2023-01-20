@@ -1,4 +1,4 @@
-import { ElderSqlCompiler, ElderSqlError } from "./compiler"
+import { ElderSqlCompiler, ElderSqlError } from "./compiler.js"
 
 export default function loader(this: any, source: any) {
   const options = this.getOptions({

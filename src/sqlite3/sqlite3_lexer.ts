@@ -5,7 +5,7 @@ import {
   Keyword,
   LexerOptions,
   SourceLocation,
-} from "../lexer"
+} from "../lexer.js"
 
 const ObjectStartSet = new Set<Keyword>([
   Keyword.TABLE,

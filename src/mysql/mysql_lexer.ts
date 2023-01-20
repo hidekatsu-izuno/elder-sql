@@ -1,14 +1,13 @@
 
-import { escapeRegExp } from "../util"
 import semver from "semver"
+import { escapeRegExp } from "../util.js"
 import {
   TokenType,
   Token,
   Lexer,
   Keyword,
   LexerOptions,
-  SourceLocation,
-} from "../lexer"
+} from "../lexer.js"
 
 const ReservedSet = new Set<Keyword>([
   Keyword.ACCESSIBLE,

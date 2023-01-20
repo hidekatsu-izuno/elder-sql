@@ -1,17 +1,16 @@
 import {
   TokenType,
   Token,
-  SourceLocation,
-} from "../lexer"
+} from "../lexer.js"
 import {
   Node,
   Parser,
   ParseError,
   AggregateParseError,
   TokenReader,
-} from "../parser"
-import { dequote } from "../util"
-import { PostgresLexer } from "./postgres_lexer"
+} from "../parser.js"
+import { dequote } from "../util.js"
+import { PostgresLexer } from "./postgres_lexer.js"
 
 export class PostgresParser extends Parser {
   constructor(

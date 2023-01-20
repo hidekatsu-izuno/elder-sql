@@ -1,4 +1,4 @@
-import { TokenType, Token, Lexer, Keyword } from './lexer'
+import { TokenType, Token, Lexer, Keyword } from './lexer.js'
 
 export class Node {
   private parentNode?: Node

@@ -2,17 +2,16 @@ import semver from "semver"
 import {
   TokenType,
   Token,
-  SourceLocation,
-} from "../lexer"
+} from "../lexer.js"
 import {
   Node,
   Parser,
   ParseError,
   AggregateParseError,
   TokenReader,
-} from "../parser"
-import { dequote, ucase } from "../util"
-import { MysqlLexer } from "./mysql_lexer"
+} from "../parser.js"
+import { dequote, ucase } from "../util.js"
+import { MysqlLexer } from "./mysql_lexer.js"
 
 export class MysqlParser extends Parser {
   private sqlMode = new Set<string>()

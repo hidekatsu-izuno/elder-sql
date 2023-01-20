@@ -1,18 +1,18 @@
-import Decimal from "decimal.js"
+import { Decimal } from "decimal.js"
 import {
   TokenType,
   Token,
   Keyword,
-} from "../lexer"
+} from "../lexer.js"
 import {
   Node,
   Parser,
   ParseError,
   AggregateParseError,
   TokenReader,
-} from "../parser"
-import { dequote } from "../util"
-import { Sqlite3Lexer } from "./sqlite3_lexer"
+} from "../parser.js"
+import { dequote } from "../util.js"
+import { Sqlite3Lexer } from "./sqlite3_lexer.js"
 
 export class Sqlite3Parser extends Parser {
   constructor(

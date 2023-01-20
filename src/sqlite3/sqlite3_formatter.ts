@@ -1,6 +1,6 @@
-import { Node } from "../parser";
-import { Formatter } from "../formatter";
-import { Sqlite3Parser } from "./sqlite3_parser";
+import { Node } from "../parser.js";
+import { Formatter } from "../formatter.js";
+import { Sqlite3Parser } from "./sqlite3_parser.js";
 
 export class Sqlite3Formatter extends Formatter {
   constructor(
