@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  db:
+    # mysql -h 127.0.0.1 -P 3306 -u root --password=mysql
+    image: mysql:8
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-8:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+volumes:
+  mysql-8:

@@ -3,6 +3,11 @@
 */
 .print test
 select 1;
-select test
+select 2
 .print test
 ;
+select 3
+/  
+
+select 4
+GO

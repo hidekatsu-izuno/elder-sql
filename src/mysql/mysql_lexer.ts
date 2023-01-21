@@ -258,7 +258,33 @@ const ObjectStartSet = new Set<Keyword>([
   Keyword.VIEW,
 ])
 
-const CommandPattern = "^(\\?|\\\\[!-~]|clear|connect|delimiter|edit|ego|exit|go|help|nopager|notee|pager|print|prompt|quit|rehash|source|status|system|tee|use|charset|warnings|nowarning)(?:[ \\t]*.*)"
+const CommandPattern = [
+  "\\?",
+  "\\\\[!-~]",
+  "CLEAR",
+  "CONNECT",
+  "DELIMITER",
+  "EDIT",
+  "EGO",
+  "EXIT",
+  "GO",
+  "HELP",
+  "NOPAGER",
+  "NOTEE",
+  "PAGER",
+  "PRINT",
+  "PROMPT",
+  "QUIT",
+  "REHASH",
+  "SOURCE",
+  "STATUS",
+  "SYSTEM",
+  "TEE",
+  "USE",
+  "CHARSET",
+  "WARNINGS",
+  "NOWARNING",
+].join("|")
 
 const Mode = {
   INITIAL: 0,
@@ -279,7 +305,7 @@ export class MysqlLexer extends Lexer {
   }
 
   private reserved = new Set<Keyword>()
-  private reCommandPattern = new RegExp(`${CommandPattern}(;|$)`, "imy")
+  private reCommandPattern = new RegExp(`^(${CommandPattern})\\b.*?(;|$)`, "isy")
   private reDelimiterPattern = new RegExp(";", "y")
 
   constructor(
@@ -287,16 +313,16 @@ export class MysqlLexer extends Lexer {
   ) {
     super("mysql", [
       { type: TokenType.Delimiter, 
-        re: (state) => this.reDelimiterPattern,
+        re: () => this.reDelimiterPattern,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.LineBreak, re: /\r?\n/y },
+      { type: TokenType.WhiteSpace, re: /[ \t\v\f]+/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy,
         onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
-      { type: TokenType.LineComment, re: /(#.*|--([ \f\t\v].*)$)/my },
+      { type: TokenType.LineComment, re: /(#.*|--([ \t\v\f].*)$)/my },
       { type: TokenType.Command, 
         re: (state) => state.mode === Mode.INITIAL ? this.reCommandPattern : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
@@ -400,7 +426,7 @@ export class MysqlLexer extends Lexer {
     const m = /^(?:\\d|[Dd][Ee][Ll][Ii][Mm][Ii][Tt][Ee][Rr])[ \t]+(.+)$/.exec(token.text)
     if (m) {
       const sep = escapeRegExp(m[1])
-      this.reCommandPattern = new RegExp(`${CommandPattern}(${sep}|$)`, "imy")
+      this.reCommandPattern = new RegExp(`(${CommandPattern})\\b.*?(${sep}|$)`, "isy")
       this.reDelimiterPattern = new RegExp(sep, "y")
     }
   }

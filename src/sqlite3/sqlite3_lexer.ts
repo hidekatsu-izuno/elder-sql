@@ -111,17 +111,20 @@ export class Sqlite3Lexer extends Lexer {
     options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.onMatchSemiColon(state, token)
-      },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.LineBreak, re: /\r?\n/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \t\f]+/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.Delimiter, re: /(?<=^|[\r\n])([/]|GO)[ \t\f]*(\n|\r\n?|$)/iy,
+        onMatch: (state, token) => this.onMatchDelimiter(state, token)
+      },
       { type: TokenType.Command,
-        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\..+(\r?\n|$)/y : false,
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n])\..+(\n|\r\n?|$)/y : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
         onUnmatch: (state) => this.onUnmatchCommand(state)
+      },
+      { type: TokenType.SemiColon, re: /;/y,
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -174,52 +177,91 @@ export class Sqlite3Lexer extends Lexer {
     state.mode = Mode.INITIAL
   }
 
+  private onMatchDelimiter(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    token.eos = true
+
+    const m = /^([^ \t\f\r\n]+)([ \t\f]*)(\n|\r\n?)?$/.exec(token.text)
+    if (m) {
+      let location = token.location
+      token.text = m[1]
+      if (location) {
+        location = new SourceLocation(
+          location.position + m[1].length,
+          location.lineNumber,
+          location.columnNumber + m[1].length,
+          location.fileName,
+        )
+      }
+      token.postskips.push(new Token(TokenType.WhiteSpace, m[2], {
+        location
+      }))
+      if (location && m[3]) {
+        location = new SourceLocation(
+          location.position + m[2].length,
+          location.lineNumber,
+          location.columnNumber + m[2].length,
+          location.fileName,
+        )  
+      }
+      if (m[3]) {
+        token.postskips.push(new Token(TokenType.LineBreak, m[3], {
+          location
+        }))
+      }
+    }
+  }
+
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode !== Mode.SQL_PROC) {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
+  }
+
   private onMatchCommand(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
 
-    const m = /[ \t]/.exec(token.text)
-    if (!m) {
-      token.eos = true
-      return
-    }
-
     const tokens = []
-    tokens.push(new Token(TokenType.Command, token.text.substring(0, m.index), {
-      preskips: token.preskips, 
-      postskips: token.postskips,
-      location: token.location,
-    }))
+    let location = token.location
 
-    const args = token.text.substring(m.index)
-    const argTokens = []
-    const re = /([ \t\r\n]+)|("[^"]*"|'[^']*')|([^ \t"']+)/y
+    const re = /([ \t\f]+)|(\n|\r\n?)|("[^"]*"|'[^']*')|([^ \t\f\r\n"']+)/y
     let pos = 0
-    while (pos < args.length) {
-      re.lastIndex = pos
-      const m = re.exec(args)
-      if (m) {
-        const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-
-        argTokens.push(new Token(type, m[0], {
-          location: new SourceLocation(
-            (token.location?.position ?? 0) + re.lastIndex,
-            (token.location?.lineNumber ?? 1),
-            (token.location?.columnNumber ?? 0) + pos,
-            token.location?.fileName,
-          )
-        }))
-        pos = re.lastIndex
-      }
-    }
-
     let skips = []
-    for (const argToken of argTokens) {
-      if (argToken.is(TokenType.WhiteSpace)) {
-        skips.push(argToken)
+    while (pos < token.text.length) {
+      re.lastIndex = pos
+      const m = re.exec(token.text)
+      if (m) {
+        const type = m[1] ? TokenType.WhiteSpace
+          : m[2] ? TokenType.LineBreak
+          : m[3] ? TokenType.String
+          : pos === 0 ? TokenType.Command
+          : TokenType.Identifier
+
+        if (token.location) {
+          location = new SourceLocation(
+            token.location.position + pos,
+            token.location.lineNumber,
+            token.location.columnNumber + pos,
+            token.location.fileName,
+          )
+        }
+        
+        const newToken = new Token(type, m[0], {
+          location
+        })
+
+        if (newToken.type.skip) {
+          skips.push(newToken)
+        } else {
+          newToken.preskips = skips
+          skips = []
+          tokens.push(newToken)
+        }
+
+        pos = re.lastIndex
       } else {
-        argToken.preskips = skips
-        skips = []
-        tokens.push(argToken)
+        throw new Error("Unexpected error caused!")
       }
     }
     if (skips.length > 0) {
@@ -259,13 +301,6 @@ export class Sqlite3Lexer extends Lexer {
       } else if (state.mode === Mode.SQL_PROC && token.keyword === Keyword.END) {
         state.mode = Mode.SQL_PART
       }
-    }
-  }
-
-  private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROC) {
-      state.mode = Mode.INITIAL
-      token.eos = true
     }
   }
 }

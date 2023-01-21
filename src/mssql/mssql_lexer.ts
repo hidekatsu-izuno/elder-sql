@@ -310,19 +310,19 @@ export class MssqlLexer extends Lexer {
     options: { [key: string]: any } = {}
   ) {
     super("mssql", [
-      { type: TokenType.Delimiter, re: /^[ \t]*go(?=[ \t-]|$)/imy,
+      { type: TokenType.Delimiter, re: /(?<=^|[\r\n])[ \t]*GO[ \t]*(\n|\r\n?|$)/iy,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
       { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.LineBreak, re: /\r?\n/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
       { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
         onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
       { type: TokenType.Command,
-        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n):.+(\r?\n|$)/y : false,
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n]):.+(\n|\r\n?|$)/y : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
         onUnmatch: (state) => this.onUnmatchCommand(state)
       },

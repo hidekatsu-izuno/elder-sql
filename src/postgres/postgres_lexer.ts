@@ -103,19 +103,19 @@ export class PostgresLexer extends Lexer {
     options: PostgresLexerOptions = {}
   ) {
     super("postgres", [
-      { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.onMatchSemiColon(state, token)
-      },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.LineBreak, re: /\r?\n/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command,
-        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|\n)\\.+(\r?\n|$)/y : false,
+        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n])\\.+(\n|\r\n?|$)/y : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
         onUnmatch: (state) => this.onUnmatchCommand(state)
       },
+      { type: TokenType.SemiColon, re: /;/y,
+        onMatch: (state, token) => this.onMatchSemiColon(state, token)
+      },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
+      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
+      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },

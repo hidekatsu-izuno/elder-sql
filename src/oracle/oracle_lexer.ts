@@ -4,6 +4,7 @@ import {
   Lexer,
   Keyword,
   LexerOptions,
+  SourceLocation,
 } from "../lexer.js"
 
 export const ReservedSet = new Set<Keyword>([
@@ -185,6 +186,59 @@ const ObjectStartSet = new Set<Keyword>([
   Keyword.VIEW,
 ])
 
+const CommandPattern = new RegExp("(" + [
+  "\\?",
+  "@@?(\"[^\"]*\"|'[^']*'|[^ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+)",
+  "ACC(EPT)?",
+  "A(PPEND)?",
+  "ARCHIVE",
+  "ATTR(IBUTE)?",
+  "BRE(AK)?",
+  "BTI(TLE)?",
+  "C(HANGE)?",
+  "CL(EAR)?",
+  "COL(UMN)?",
+  "COMP(UTE)?",
+  "CONN(ECT)?",
+  "COPY",
+  "DEF(INE)?",
+  "DEL",
+  "DESC(RIBE)?",
+  "DISC(ONNECT)?",
+  "ED(IT)?",
+  "EXEC(UTE)?",
+  "EXIT",
+  "QUIT",
+  "GET",
+  "HELP",
+  "HIST(ORY)?",
+  "HO(ST)?",
+  "I(NPUT)?",
+  "L(IST)?",
+  "PASSW(ORD)?",
+  "PAU(SE)?",
+  "PRINT",
+  "PRO(MPT)?",
+  "RECOVER",
+  "REM(ARK)?",
+  "REPF(OOTER)?",
+  "REPH(EADER)?",
+  "SAVE?",
+  "SET",
+  "SHOW?",
+  "SHUTDOWN",
+  "SPO(OL)?",
+  "STA(RT)?",
+  "STARTUP",
+  "STORE",
+  "TIMI(NG)?",
+  "TTI(TLE)?",
+  "UNDEF(INE)?",
+  "VAR(IABLE)?",
+  "WHENEVER",
+  "XQUERY",
+].join("|") + ")\\b(-(\n|\r\n?)|[^\r\n])*(\n|\r\n?|$)", "iy")
+
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
@@ -207,22 +261,22 @@ export class OracleLexer extends Lexer {
     options: OracleLexerOptions = {}
   ) {
     super("oracle", [
-      { type: TokenType.Delimiter, re: /^[ \t]*[./](?=[ \t]|$)/my,
+      { type: TokenType.Delimiter, re: /(?<=^|[\r\n])[ \t]*([./]|R(UN)?)[ \t]*(\n|\r\n?|$)/iy,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
+      },
+      { type: TokenType.Command, 
+        re: (state) => state.mode === Mode.INITIAL ? CommandPattern : false,
+        onMatch: (state, token) => this.onMatchCommand(state, token),
+        onUnmatch: (state) => this.onUnmatchCommand(state)
       },
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.LineBreak, re: /\r?\n/y },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.Command, 
-        re: (state) => state.mode === Mode.INITIAL ? /(@@|\?|(ACC(EPT)?|A(PPEND)?|ARCHIVE|ATTR(IBUTE)?|BRE(AK)?|BTI(TLE)?|C(HANGE)?|CL(EAR)?|COL(UMN)?|COMP(UTE)?|CONN(ECT)?|COPY|DEF(INE)?|DEL|DESC(RIBE)?|DISC(ONNECT)?|ED(IT)?|EXEC(UTE)?|EXIT|QUIT|GET|HELP|HIST(ORY)?|HO(ST)?|I(NPUT)?|L(IST)?|PASSW(ORD)?|PAU(SE)?|PRINT|PRO(MPT)?|RECOVER|REM(ARK)?|REPF(OOTER)?|REPH(EADER)?|R(UN)?|SAVE?|SET|SHOW?|SHUTDOWN|SPO(OL)?|STA(RT)?|STARTUP|STORE|TIMI(NG)?|TTI(TLE)?|UNDEF(INE)?|VAR(IABLE)?|WHENEVER|XQUERY)\b)(-\r?\n|[^\r\n])*(\r?\n|$)/iy : false,
-        onMatch: (state, token) => this.onMatchCommand(state, token),
-        onUnmatch: (state) => this.onUnmatchCommand(state)
-      },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -248,6 +302,64 @@ export class OracleLexer extends Lexer {
 
   protected initState(state: Record<string, any>) {
     state.mode = Mode.INITIAL
+  }
+  
+  private onMatchDelimiter(state: Record<string, any>, token: Token) {
+    state.mode = Mode.INITIAL
+    token.eos = true
+
+    const m = /^([ \t\f]*)([^ \t\f\r\n]+)([ \t\f]*)(\r?\n)?$/.exec(token.text)
+    if (m) {
+      let location = token.location
+      if (m[1]) {
+        token.preskips.push(new Token(TokenType.WhiteSpace, m[1], {
+          location
+        }))
+        if (location) {
+          location = new SourceLocation(
+            location.position + m[1].length,
+            location.lineNumber,
+            location.columnNumber + m[1].length,
+            location.fileName,
+          )
+        }
+      }
+      token.text = m[2]
+      token.location = location
+      if (location && (m[3] || m[4])) {
+        location = new SourceLocation(
+          location.position + m[2].length,
+          location.lineNumber,
+          location.columnNumber + m[2].length,
+          location.fileName,
+        )  
+      }
+      if (m[3]) {
+        token.postskips.push(new Token(TokenType.WhiteSpace, m[3], {
+          location
+        }))
+        if (location && m[4]) {
+          location = new SourceLocation(
+            location.position + m[3].length,
+            location.lineNumber,
+            location.columnNumber + m[3].length,
+            location.fileName,
+          )  
+        }
+      }
+      if (m[4]) {
+        token.postskips.push(new Token(TokenType.LineBreak, m[4], {
+          location
+        }))
+      }
+    }
+  }
+  
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode !== Mode.SQL_PROC) {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
   }
 
   private onMatchCommand(state: Record<string, any>, token: Token) {
@@ -293,17 +405,5 @@ export class OracleLexer extends Lexer {
         }
       }
     }
-  }
-
-  private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROC) {
-      state.mode = Mode.INITIAL
-      token.eos = true
-    }
-  }
-
-  private onMatchDelimiter(state: Record<string, any>, token: Token) {
-    state.mode = Mode.INITIAL
-    token.eos = true
   }
 }
