@@ -1,3 +1,4 @@
+import { test, describe, expect } from 'vitest'
 import path from "node:path"
 import fs from "node:fs"
 import { MysqlLexer } from "../../src/mysql/mysql_lexer.js"
@@ -8,7 +9,7 @@ describe("test mysql lexer", () => {
     "version_comment",
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
-    const expected = (await import("./lexer/" + target)).default
+    const expected = (await import("./lexer/" + target + ".js")).default
     const tokens = new MysqlLexer({
       version: "5.7.0"
     }).lex(script)

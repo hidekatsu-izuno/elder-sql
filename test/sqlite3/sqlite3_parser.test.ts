@@ -1,3 +1,4 @@
+import { test, describe, expect } from 'vitest'
 import path from "node:path"
 import fs from "node:fs"
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.js"
@@ -10,7 +11,7 @@ describe("test sqlite3 parser", () => {
     "select",
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
-    const expected = (await import("./parser/" + target)).default
+    const expected = (await import("./parser/" + target + ".js")).default
     const node = new Sqlite3Parser().parse(script)
 
     if (target === "") {
