@@ -261,6 +261,11 @@ export class OracleLexer extends Lexer {
     options: OracleLexerOptions = {}
   ) {
     super("oracle", [
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
+      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
+      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Delimiter, re: /(?<=^|[\r\n])[ \t]*([./]|R(UN)?)[ \t]*(\n|\r\n?|$)/iy,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
@@ -272,11 +277,6 @@ export class OracleLexer extends Lexer {
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y },
-      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Operator, re: /\(\+\)|\.\./y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
@@ -364,8 +364,56 @@ export class OracleLexer extends Lexer {
 
   private onMatchCommand(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
-    //TODO
-    token.eos = true
+
+    const tokens = []
+    let location = token.location
+
+    const re = /(\n|\r\n?)|([ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+)|("[^"]*"|'[^']*')|([^ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\r\n"']+)/y
+    let pos = 0
+    let skips = []
+    while (pos < token.text.length) {
+      re.lastIndex = pos
+      const m = re.exec(token.text)
+      if (m) {
+        const type = m[1] ? TokenType.LineBreak
+          : m[2] ? TokenType.WhiteSpace
+          : m[3] ? TokenType.String
+          : pos === 0 ? TokenType.Command
+          : TokenType.Identifier
+
+        if (token.location) {
+          location = new SourceLocation(
+            token.location.position + pos,
+            token.location.lineNumber,
+            token.location.columnNumber + pos,
+            token.location.fileName,
+          )
+        }
+        
+        const newToken = new Token(type, m[0], {
+          location
+        })
+
+        if (newToken.type.skip) {
+          skips.push(newToken)
+        } else {
+          newToken.preskips = skips
+          skips = []
+          tokens.push(newToken)
+        }
+
+        pos = re.lastIndex
+      } else {
+        throw new Error("Unexpected error caused!")
+      }
+    }
+
+    if (skips.length > 0) {
+      tokens[tokens.length - 1].postskips = skips
+    }
+    tokens[tokens.length - 1].eos = true
+
+    return tokens
   }
 
   private onUnmatchCommand(state: Record<string, any>) {

@@ -312,17 +312,17 @@ export class MysqlLexer extends Lexer {
     options: MysqlLexerOptions = {}
   ) {
     super("mysql", [
-      { type: TokenType.Delimiter, 
-        re: () => this.reDelimiterPattern,
-        onMatch: (state, token) => this.onMatchDelimiter(state, token)
-      },
-      { type: TokenType.WhiteSpace, re: /[ \t\v\f]+/y },
       { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \t\v\f]+/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy,
         onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
       { type: TokenType.LineComment, re: /(#.*|--([ \t\v\f].*)$)/my },
+      { type: TokenType.Delimiter, 
+        re: () => this.reDelimiterPattern,
+        onMatch: (state, token) => this.onMatchDelimiter(state, token)
+      },
       { type: TokenType.Command, 
         re: (state) => state.mode === Mode.INITIAL ? this.reCommandPattern : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),

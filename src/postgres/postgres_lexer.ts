@@ -103,6 +103,11 @@ export class PostgresLexer extends Lexer {
     options: PostgresLexerOptions = {}
   ) {
     super("postgres", [
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
+      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
+      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
+      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Command,
         re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n])\\.+(\n|\r\n?|$)/y : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
@@ -111,11 +116,6 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
-      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
-      { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-      { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
-      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
@@ -150,51 +150,49 @@ export class PostgresLexer extends Lexer {
   private onMatchCommand(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
 
-    const m = /[ \t]/.exec(token.text)
-    if (!m) {
-      token.eos = true
-      return
-    }
-
     const tokens = []
-    tokens.push(new Token(TokenType.Command, token.text.substring(0, m.index), {
-      preskips: token.preskips, 
-      postskips: token.postskips,
-      location: token.location,
-    }))
+    let location = token.location
 
-    const args = token.text.substring(m.index)
-    const argTokens = []
-    const re = /([ \t]+)|("[^"]*"|'[^']*'|`[^`]*`)|([^ \t"']+)/y
+    const re = /(\n|\r\n?)|([ \t]+)|("[^"]*"|'[^']*'|`[^`]*`)|([^ \t\r\n"'`]+)/y
     let pos = 0
-    while (pos < args.length) {
-      re.lastIndex = pos
-      const m = re.exec(args)
-      if (m) {
-        const type = m[1] ? TokenType.WhiteSpace : m[2] ? TokenType.String : TokenType.Identifier
-
-        argTokens.push(new Token(type, m[0], {
-          location: new SourceLocation(
-            (token.location?.position ?? 0) + re.lastIndex,
-            (token.location?.lineNumber ?? 1),
-            (token.location?.columnNumber ?? 0) + pos,
-            token.location?.fileName,
-          )
-        }))
-        pos = re.lastIndex
-      }
-    }
-
     let skips = []
-    for (const argToken of argTokens) {
-      if (argToken.is(TokenType.WhiteSpace)) {
-        skips.push(argToken)
+    while (pos < token.text.length) {
+      re.lastIndex = pos
+      const m = re.exec(token.text)
+      if (m) {
+        const type = m[1] ? TokenType.LineBreak
+          : m[2] ? TokenType.WhiteSpace
+          : m[3] ? TokenType.String
+          : pos === 0 ? TokenType.Command
+          : TokenType.Identifier
+
+        if (token.location) {
+          location = new SourceLocation(
+            token.location.position + pos,
+            token.location.lineNumber,
+            token.location.columnNumber + pos,
+            token.location.fileName,
+          )
+        }
+        
+        const newToken = new Token(type, m[0], {
+          location
+        })
+
+        if (newToken.type.skip) {
+          skips.push(newToken)
+        } else {
+          newToken.preskips = skips
+          skips = []
+          tokens.push(newToken)
+        }
+
+        pos = re.lastIndex
       } else {
-        argToken.preskips = skips
-        skips = []
-        tokens.push(argToken)
+        throw new Error("Unexpected error caused!")
       }
     }
+
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }

@@ -225,15 +225,15 @@ export class Sqlite3Lexer extends Lexer {
     const tokens = []
     let location = token.location
 
-    const re = /([ \t\f]+)|(\n|\r\n?)|("[^"]*"|'[^']*')|([^ \t\f\r\n"']+)/y
+    const re = /(\n|\r\n?)|([ \t\f]+)|("[^"]*"|'[^']*')|([^ \t\f\r\n"']+)/y
     let pos = 0
     let skips = []
     while (pos < token.text.length) {
       re.lastIndex = pos
       const m = re.exec(token.text)
       if (m) {
-        const type = m[1] ? TokenType.WhiteSpace
-          : m[2] ? TokenType.LineBreak
+        const type = m[1] ? TokenType.LineBreak
+          : m[2] ? TokenType.WhiteSpace
           : m[3] ? TokenType.String
           : pos === 0 ? TokenType.Command
           : TokenType.Identifier
@@ -264,6 +264,7 @@ export class Sqlite3Lexer extends Lexer {
         throw new Error("Unexpected error caused!")
       }
     }
+
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
