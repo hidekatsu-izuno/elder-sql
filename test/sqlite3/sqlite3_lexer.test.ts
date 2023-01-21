@@ -16,7 +16,7 @@ describe("test sqlite3 lexer", () => {
     const tokens = new Sqlite3Lexer().lex(script)
 
     if (target === "command") {
-      fs.writeFileSync("temp.txt", toJSScript(tokens))
+      fs.writeFileSync("", toJSScript(tokens))
     }
 
     expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
