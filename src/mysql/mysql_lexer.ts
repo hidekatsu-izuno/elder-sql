@@ -318,7 +318,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy,
         onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
-      { type: TokenType.LineComment, re: /(#.*|--([ \t\v\f].*)$)/my },
+      { type: TokenType.LineComment, re: /(#|--[ \t\v\f]).*/y },
       { type: TokenType.Delimiter, 
         re: () => this.reDelimiterPattern,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
@@ -328,6 +328,8 @@ export class MysqlLexer extends Lexer {
         onMatch: (state, token) => this.onMatchCommand(state, token),
         onUnmatch: (state) => this.onUnmatchCommand(state)
       },
+      { type: TokenType.LeftBrace, re: /\{/y },
+      { type: TokenType.RightBrace, re: /\}/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },

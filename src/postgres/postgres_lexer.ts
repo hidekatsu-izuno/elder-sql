@@ -116,6 +116,8 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
+      { type: TokenType.LeftBrace, re: /\{/y },
+      { type: TokenType.RightBrace, re: /\}/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },

@@ -19,6 +19,8 @@ export class TokenType implements TokenTag {
   static RightParen = new TokenType("RightParen", { separator: true })
   static LeftBracket = new TokenType("LeftBracket", { separator: true })
   static RightBracket = new TokenType("RightBracket", { separator: true })
+  static LeftBrace = new TokenType("LeftBrace", { separator: true })
+  static RightBrace = new TokenType("RightBrace", { separator: true })
   static Comma = new TokenType("Comma", { separator: true })
   static Dot = new TokenType("Dot", { separator: true })
   static Label = new TokenType("Label")
@@ -161,7 +163,6 @@ export declare type TokenPattern = {
 
 export declare type LexerOptions = {
   skipTokenStrategy?: 'ignore' | 'next' | 'adaptive'
-  patternFilter?: (patterns: TokenPattern[]) => TokenPattern[]
   [key: string]: any
 }
 

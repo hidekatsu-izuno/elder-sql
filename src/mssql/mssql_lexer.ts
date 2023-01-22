@@ -315,6 +315,7 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
         onMatch: (state, token) => this.onMatchBlockComment(state, token)
       },
+      { type: TokenType.LineComment, re: /--.*/y },
       { type: TokenType.Delimiter, re: /(?<=^|[\r\n])[ \t]*GO[ \t]*(\n|\r\n?|$)/iy,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
@@ -326,7 +327,8 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.SemiColon, re: /;/y,
         onMatch: (state, token) => this.onMatchSemiColon(state, token)
       },
-      { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.LeftBrace, re: /\{/y },
+      { type: TokenType.RightBrace, re: /\}/y },
       { type: TokenType.LeftParen, re: /\(/y },
       { type: TokenType.RightParen, re: /\)/y },
       { type: TokenType.Comma, re: /,/y },
