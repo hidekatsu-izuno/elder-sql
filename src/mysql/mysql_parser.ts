@@ -10,7 +10,7 @@ import {
   AggregateParseError,
   TokenReader,
 } from "../parser.js"
-import { dequote, ucase } from "../util.js"
+import { dequote, ucase } from "../utils.js"
 import { MysqlLexer } from "./mysql_lexer.js"
 
 export class MysqlParser extends Parser {

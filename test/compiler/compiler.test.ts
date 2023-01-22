@@ -8,7 +8,7 @@ describe("test compiler", () => {
     "select"
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
-    const expected = fs.readFileSync(path.join(__dirname, "expected", target + ".ts"), "utf8")
+    const expected = fs.readFileSync(path.join(__dirname, "expected", target + ".ts.txt"), "utf8")
     const result = new ElderSqlCompiler({
       dialect: 'sqlite3'
     }).compile(script)

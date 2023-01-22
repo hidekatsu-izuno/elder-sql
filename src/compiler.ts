@@ -5,7 +5,7 @@ import { OracleLexer } from "./oracle/oracle_lexer.js"
 import { PostgresLexer } from "./postgres/postgres_lexer.js"
 import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.js"
 import { MssqlLexer } from "./mssql/mssql_lexer.js"
-import { isJSIdentifier, isJSExpression } from './util.js'
+import { isJSIdentifier, isJSExpression } from './utils.js'
 
 export type ElderSqlCompilerOptions = {
   dialect: "sqlite3" | "mysql" | "postgres" | "oracle" | "mssql"

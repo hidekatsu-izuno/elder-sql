@@ -10,7 +10,7 @@ import {
   AggregateParseError,
   TokenReader,
 } from "../parser.js"
-import { dequote } from "../util.js"
+import { dequote } from "../utils.js"
 import { OracleLexer } from "./oracle_lexer.js"
 
 export class OracleParser extends Parser {

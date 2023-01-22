@@ -1,4 +1,4 @@
-import { escapeXml } from "./util.js"
+import { escapeXml } from "./utils.js"
 
 export interface TokenTag {
   name: string

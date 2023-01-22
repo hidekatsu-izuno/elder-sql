@@ -1,0 +1,46 @@
+import { ElderSqlConnection, utils } from "elder-sql";
+
+const CODE_listEmployees = `
+$out.append("\nselect * from employee where");
+if (employeeId != null) {
+  $out.append("\n  employee_id = ?");
+  $out.append(employeeId);
+  if (employeeName != null) {
+    $out.append("\n    and\n    employee_name = ?").bind(employeeName);
+  } else {
+    $out.append("\n    and\n    employee_name is null");
+  }
+}
+$out.append("\n\n  ");
+if (employeeTypes.length > 0) {
+  $out.append("\n    and (");
+  for (let $index = 0; $index < employeeTypes.length; $index++) {
+    const employeeType = employeeTypes[$index];
+    const index = $index;
+    $out.append("      or employee_type = ?").bind(employeeType);
+  }
+  $out.append("\n    )\n  ");
+}
+`;
+
+/** 
+ * 
+ * List employees
+ */
+export function listEmployees(
+  con: ElderSqlConnection,
+  params: {
+    employeeId?: string,
+    employeeName?: string,
+    employeeTypes?: string[],
+  }
+): {
+  employeeId: string,
+  employeeName: string,
+  employeeType: string,
+}[] {
+  const out = new ElderSqlBuilder();
+  utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
+  const sql = out.toSQL();
+  return _con.list(sql.text, sql.args) as any;
+}

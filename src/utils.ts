@@ -93,6 +93,29 @@ export function unescapeXml(text: string) {
   })
 }
 
+const sandboxProxies = new WeakMap()
+
+export function sandbox(src: string) {
+  const code = new Function('sandbox', 'with (sandbox) {' + src + '}')
+
+  return function (context: Record<string, any>) {
+    if (!sandboxProxies.has(context)) {
+      const sandboxProxy = new Proxy(context, {
+        has(_target: Record<string | symbol, any>, _p: string | symbol) {
+          return true
+        },
+        get(target: Record<string | symbol, any>, p: string | symbol) {
+          if (p !== Symbol.unscopables) {
+            return target[p]
+          }
+        },
+      })
+      sandboxProxies.set(sandbox, sandboxProxy)
+    }
+    return code(sandboxProxies.get(context))
+  }
+}
+
 export function isJSIdentifier(text: string) {
   const result = parseExpressionAt(text, 0, acornOption)
   return result.end === text.length && result.type === "Identifier"

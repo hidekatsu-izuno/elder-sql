@@ -9,7 +9,7 @@ import {
   AggregateParseError,
   TokenReader,
 } from "../parser.js"
-import { dequote } from "../util.js"
+import { dequote } from "../utils.js"
 import { PostgresLexer } from "./postgres_lexer.js"
 
 export class PostgresParser extends Parser {

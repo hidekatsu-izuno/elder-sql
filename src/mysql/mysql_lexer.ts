@@ -1,6 +1,6 @@
 
 import semver from "semver"
-import { escapeRegExp } from "../util.js"
+import { escapeRegExp } from "../utils.js"
 import {
   TokenType,
   Token,
@@ -338,6 +338,7 @@ export class MysqlLexer extends Lexer {
       { type: TokenType.String, re: /([bBnN]|_[a-zA-Z]+)?('([^']|'')*'|"([^"]|"")*")/y },
       { type: TokenType.Identifier, re: /"([^"]|"")*"|`([^`]|``)*`/y },
       { type: TokenType.BindVariable, re: /\?/y },
+      { type: TokenType.BindVariable, re: /:[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
       { type: TokenType.Variable, re: /@@?([a-zA-Z0-9._$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]+|`([^`]|``)*`|'([^']|'')*'|"([^"]|"")*")/y },
       { type: TokenType.Operator, re: /\|\|&&|<=>|<<|>>|<>|->>?|[=<>!:]=?|[~&|^*/%+-]/y },
       { type: TokenType.Identifier, re: /[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,

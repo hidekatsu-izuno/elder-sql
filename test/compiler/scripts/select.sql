@@ -4,26 +4,24 @@
  */
 select * from employee where
 /*#if employeeId != null */
-  employee_id = /*#{employeeId}*/99
-  and employee_id = /*#{employeeId}*/99
+  employee_id = :employeeId
+  and employee_id = :employeeId
   /*#if employeeName != null */
-    and employee_name in /*#{employeeName}*/('hoge')
-    or employee_name in /*#{employeeName}*/('hoge')
+    and employee_name in :employeeId
+    or employee_name LIKE :employeeName
   /*#elsif employeeName === "test"*/
     and
-    employee_name = /*\${subquery}*/
+    employee_name = :employeeId
     or
-    employee_name = /*\${subquery}*/
+    employee_name = {#= "'" + employeeName + "'" }
   /*#else*/
     and
     employee_name is null
   /*#end*/
 
-  /*#if employeeTypes.length > 0*/
-    and (
-    /*#for employeeType : employeeTypes */
-      or employee_type = /*#{employeeType}*/
-    /*#end*/
-    )
+  and (
+  /*#for employeeType : employeeTypes */
+    or employee_type = :employeeType
   /*#end*/
+  )
 /*#end*/

@@ -11,7 +11,7 @@ import {
   AggregateParseError,
   TokenReader,
 } from "../parser.js"
-import { dequote } from "../util.js"
+import { dequote } from "../utils.js"
 import { Sqlite3Lexer } from "./sqlite3_lexer.js"
 
 export class Sqlite3Parser extends Parser {
