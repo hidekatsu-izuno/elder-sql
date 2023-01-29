@@ -23,24 +23,39 @@ if (employeeTypes.length > 0) {
 }
 `;
 
+export declare type SelectEmployees_Params {
+  employeeId?: string,
+  employeeName?: string,
+  employeeTypes?: string[],
+}
+
+export declare type SelectEmployees_Record {
+  employeeId?: string,
+  employeeName?: string,
+  employeeTypes?: string[],
+}
+
 /** 
  * 
  * List employees
  */
-export function listEmployees(
-  con: ElderSqlConnection,
-  params: {
-    employeeId?: string,
-    employeeName?: string,
-    employeeTypes?: string[],
+export const SelectEmployees {
+  get(con: ElderSqlConnection, params: SelectEmployees_Params) {
+    const out = new ElderSqlBuilder();
+    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
+    const sql = out.toSQL();
+    return _con.get(sql.text, sql.args) as any;
   }
-): {
-  employeeId: string,
-  employeeName: string,
-  employeeType: string,
-}[] {
-  const out = new ElderSqlBuilder();
-  utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
-  const sql = out.toSQL();
-  return _con.list(sql.text, sql.args) as any;
+  list(con: ElderSqlConnection, params: SelectEmployees_Params) {
+    const out = new ElderSqlBuilder();
+    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
+    const sql = out.toSQL();
+    return _con.list(sql.text, sql.args) as any;
+  }
+  iterate(con: ElderSqlConnection, params: SelectEmployees_Params) {
+    const out = new ElderSqlBuilder();
+    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
+    const sql = out.toSQL();
+    return _con.iterate(sql.text, sql.args) as any;
+  }
 }
