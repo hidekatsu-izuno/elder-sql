@@ -12,7 +12,6 @@ const ObjectStartSet = new Set<Keyword>([
   Keyword.VIEW,
   Keyword.TRIGGER,
   Keyword.INDEX,
-  Keyword.UNIQUE,
 ])
 
 const ReservedSet = new Set<Keyword>([

@@ -7,6 +7,47 @@ import {
   SourceLocation,
 } from "../lexer.js"
 
+const ObjectStartSet = new Set<Keyword>([
+  Keyword.ACCESS,
+  Keyword.AGGREGATE,
+  Keyword.CAST,
+  Keyword.COLLATION,
+  Keyword.CONVERSION,
+  Keyword.DATABASE,
+  Keyword.DEFAULT,
+  Keyword.DOMAIN,
+  Keyword.EVENT,
+  Keyword.EXTENSION,
+  Keyword.FOREIGN,
+  Keyword.FUNCTION,
+  Keyword.GROUP,
+  Keyword.INDEX,
+  Keyword.LANGUAGE,
+  Keyword.LARGE,
+  Keyword.MATERIALIZED,
+  Keyword.OPERATOR,
+  Keyword.POLICY,
+  Keyword.PROCEDURE,
+  Keyword.PUBLICATION,
+  Keyword.ROLE,
+  Keyword.ROUTINE,
+  Keyword.RULE,
+  Keyword.SCHEMA,
+  Keyword.SEQUENCE,
+  Keyword.SERVER,
+  Keyword.STATISTICS,
+  Keyword.SUBSCRIPTION,
+  Keyword.SYSTEM,
+  Keyword.TABLE,
+  Keyword.TABLESPACE,
+  Keyword.TEXT,
+  Keyword.TRANSFORM,
+  Keyword.TRIGGER,
+  Keyword.TYPE,
+  Keyword.USER,
+  Keyword.VIEW,
+])
+
 const ReservedSet = new Set<Keyword>([
   Keyword.ALL,
   Keyword.ANALYSE,
@@ -97,6 +138,10 @@ export declare type PostgresLexerOptions = LexerOptions & {
 }
 
 export class PostgresLexer extends Lexer {
+  static isObjectStart(keyword?: Keyword) {
+    return keyword != null && ObjectStartSet.has(keyword)
+  }
+
   private reserved = new Set<Keyword>()
   
   constructor(

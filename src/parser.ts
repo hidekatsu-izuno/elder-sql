@@ -60,7 +60,8 @@ export class Node {
   }
 }
 
-export declare type TokenCondition = Keyword | TokenType | 
+export declare type TokenCondition = Keyword | 
+  TokenType | 
   (Keyword | TokenType)[] | 
   {
     type?: TokenType | TokenType[],
