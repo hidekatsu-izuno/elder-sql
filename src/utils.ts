@@ -13,7 +13,7 @@ export function ucase(text: string) {
 }
 
 export function lcamel(text: string) {
-  return text.replace(/(^|[_ \t-]+)([a-zA-Z])|(.)/g, (m, g1, g2, g3) => {
+  return text.replace(/(^|[_ \t-]+)([A-Za-z])|(.)/g, (m, g1, g2, g3) => {
     if (g2) {
       if (g1) {
         return g2.toUpperCase()
@@ -27,7 +27,7 @@ export function lcamel(text: string) {
 }
 
 export function ucamel(text: string) {
-  return text.replace(/(^|[_ \t-]+)([a-zA-Z])|(.)/g, (m, g1, g2, g3) => {
+  return text.replace(/(^|[_ \t-]+)([A-Za-z])|(.)/g, (m, g1, g2, g3) => {
     if (g2) {
       return g2.toUpperCase()
     } else {
@@ -59,13 +59,13 @@ export function dequote(text: string) {
       return text.substring(1, text.length - 1).replace(/``/g, "`")
     } else if (text.startsWith("[") && text.endsWith("]")) {
       return text.substring(1, text.length - 1)
-    } else if (m = /^[Nn]'(''|[^']*)'$/s.exec(text)) {
+    } else if (m = /^[Nn]'((?:''|[^'])*)'$/.exec(text)) {
       return m[1].replace(/''/g, "'")
-    } else if (m = /^[Nn]"(""|[^"]*)"$/s.exec(text)) {
+    } else if (m = /^[Nn]"((?:""|[^"])*)"$/.exec(text)) {
       return m[1].replace(/""/g, '"')
     } else if (m = /^\$([^$]*)\$(.*?)\$\1\$$/s.exec(text)) {
       return m[2]
-    } else if (m = /^[nN]?[qQ]'(?:\[(.*?)\]|\{(.*?)\}|\((.*?)\)|([^ \t\r\n])(.*?)\4)'$/s.exec(text)) {
+    } else if (m = /^[Nn]?[Qq]'(?:\[(.*?)\]|\{(.*?)\}|\((.*?)\)|([^ \t\r\n])(.*?)\4)'$/s.exec(text)) {
       return m[1] || m[2] || m[3] || m[5]
     }
   }
