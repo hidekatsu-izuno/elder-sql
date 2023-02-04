@@ -91,7 +91,8 @@ const Mode = {
   INITIAL: 0,
   SQL_START: 1,
   SQL_OBJECT_DEF: 2,
-  SQL_PROC: 3,
+  SQL_PROC_DEF: 3,
+  SQL_PROC_BODY: 4,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -110,10 +111,10 @@ export class Sqlite3Lexer extends Lexer {
     options: Sqlite3LexerOptions = {}
   ) {
     super("sqlite3", [
-      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
-      { type: TokenType.WhiteSpace, re: /[ \t\f]+/y },
       { type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \t\f]+/y },
       { type: TokenType.Delimiter, re: /(?<=^|[\r\n])([/]|GO)[ \t\f]*(\n|\r\n?|$)/iy,
         onMatch: (state, token) => this.onMatchDelimiter(state, token)
       },
@@ -213,13 +214,6 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
-  private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROC) {
-      state.mode = Mode.INITIAL
-      token.eos = true
-    }
-  }
-
   private onMatchCommand(state: Record<string, any>, token: Token) {
     state.mode = Mode.INITIAL
 
@@ -280,6 +274,15 @@ export class Sqlite3Lexer extends Lexer {
     }
   }
 
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode === Mode.SQL_PROC_BODY) {
+      state.stack[state.stack.length - 1].isSentenceStart = true
+    } else {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
+  }
+
   private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
@@ -289,19 +292,33 @@ export class Sqlite3Lexer extends Lexer {
       }
 
       if (state.mode === Mode.SQL_START) {
-        if (token.keyword === Keyword.CREATE) {
+        if (keyword === Keyword.CREATE) {
           state.mode = Mode.SQL_OBJECT_DEF
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_OBJECT_DEF && Sqlite3Lexer.isObjectStart(token.keyword)) {
-        if (token.keyword === Keyword.TRIGGER) {
-          state.mode = Mode.SQL_PROC
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && Sqlite3Lexer.isObjectStart(keyword)) {
+        if (keyword === Keyword.TRIGGER) {
+          state.mode = Mode.SQL_PROC_DEF
         } else {
           state.mode = Mode.SQL_PART
         }
-      } else if (state.mode === Mode.SQL_PROC && token.keyword === Keyword.END) {
-        state.mode = Mode.SQL_PART
+      } else if (state.mode === Mode.SQL_PROC_DEF) {
+        if (keyword === Keyword.BEGIN) {
+          state.mode = Mode.SQL_PROC_BODY
+          state.stack = [{ isSentenceStart: true, type: keyword }]
+        }
+      } else if (state.mode === Mode.SQL_PROC_BODY) {
+        const ctx = state.stack[state.stack.length - 1]
+        if (ctx.isSentenceStart) {
+          if (keyword === Keyword.END) {
+            state.stack.pop()
+            if (state.stack.length === 0) {
+              state.mode = Mode.SQL_PART
+              delete state.stack
+            }
+          }
+        }
       }
     }
   }

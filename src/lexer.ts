@@ -406,6 +406,7 @@ export class Keyword implements TokenTag {
   static ATAN2D = new Keyword("ATAN2D")
   static ATAND = new Keyword("ATAND")
   static ATANH = new Keyword("ATANH")
+  static ATOMIC = new Keyword("ATOMIC")
   static ATTACH = new Keyword("ATTACH")
   static ATTRIBUTE = new Keyword("ATTRIBUTE")
   static ATTRIBUTES = new Keyword("ATTRIBUTES")

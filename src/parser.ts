@@ -10,13 +10,19 @@ export class Node {
   ) {
   }
 
-  append(...child: (Node | Token)[]) {
-    for (const elem of child) {
-      if (elem instanceof Node) {
-        elem.parentNode = this
+  append(...children: (Node | Token | (() => Node | Token))[]) {
+    for (const child of children) {
+      let target
+      if (typeof child === 'function') {
+        target = child()
+      } else {
+        target = child
       }
-      this.children.push(elem)
-    }
+      if (target instanceof Node) {
+        target.parentNode = this
+      }
+      this.children.push(target)
+    }  
     return this
   }
 

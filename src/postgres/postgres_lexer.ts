@@ -131,7 +131,9 @@ const ReservedSet = new Set<Keyword>([
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
-  SQL_PROC: 3,
+  SQL_OBJECT_DEF: 2,
+  SQL_PROC_DEF: 3,
+  SQL_PROC_BODY: 4,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -149,11 +151,11 @@ export class PostgresLexer extends Lexer {
     options: PostgresLexerOptions = {}
   ) {
     super("postgres", [
-      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
-      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
       { type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
       { type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
       { type: TokenType.LineComment, re: /--.*/y },
+      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
+      { type: TokenType.WhiteSpace, re: /[ \t]+/y },
       { type: TokenType.Command,
         re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n])\\.+(\n|\r\n?|$)/y : false,
         onMatch: (state, token) => this.onMatchCommand(state, token),
@@ -255,6 +257,15 @@ export class PostgresLexer extends Lexer {
     }
   }
 
+  private onMatchSemiColon(state: Record<string, any>, token: Token) {
+    if (state.mode === Mode.SQL_PROC_BODY) {
+      state.stack[state.stack.length - 1].isSentenceStart = true
+    } else {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
+  }
+
   private onMatchIdentifier(state: Record<string, any>, token: Token) {
     const keyword = Keyword.for(token.text)
     if (keyword) {
@@ -263,19 +274,56 @@ export class PostgresLexer extends Lexer {
         token.type = TokenType.Reserved
       }
       if (state.mode === Mode.SQL_START) {
-        if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
-          state.mode = Mode.SQL_PROC
+        if (keyword === Keyword.CREATE) {
+          state.mode = Mode.SQL_OBJECT_DEF
+        } else if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+          state.mode = Mode.SQL_PROC_BODY
+          state.stack = [{ isSentenceStart: true, type: keyword }]
         } else {
           state.mode = Mode.SQL_PART
         }
+      } else if (state.mode === Mode.SQL_OBJECT_DEF && PostgresLexer.isObjectStart(keyword)) {
+        if (keyword === Keyword.FUNCTION || keyword === Keyword.PROCEDURE) {
+          state.mode = Mode.SQL_PROC_DEF
+        } else {
+          state.mode = Mode.SQL_PART
+        }
+      } else if (state.mode === Mode.SQL_PROC_DEF) {
+        if (state.last === Keyword.BEGIN && keyword === Keyword.ATOMIC) {
+          state.mode = Mode.SQL_PROC_BODY
+          state.stack = [{ isSentenceStart: true, type: state.last }]
+          delete state.last
+        } else {
+          state.last = keyword
+        }
+      } else if (state.mode === Mode.SQL_PROC_BODY) {
+        const ctx = state.stack[state.stack.length - 1]
+        if (ctx.isSentenceStart) {
+          if (keyword === Keyword.END) {
+            state.stack.pop()
+            if (state.stack.length === 0) {
+              state.mode = Mode.SQL_PART
+              delete state.stack
+            }
+          } else if (keyword === Keyword.IF || keyword === Keyword.CASE || keyword === Keyword.WHILE || keyword === Keyword.FOR) {
+            ctx.isSentenceStart = false
+            state.stack.push({ isSentenceStart: false, type: keyword })
+          } else if (keyword === Keyword.LOOP) {
+            ctx.isSentenceStart = false
+            state.stack.push({ isSentenceStart: true, type: keyword })
+          } else {
+            ctx.isSentenceStart = false
+          }
+        } else if (keyword === Keyword.THEN || keyword === Keyword.ELSE) {
+          if (ctx.type === Keyword.IF || ctx.type === Keyword.CASE) {
+            ctx.isSentenceStart = true
+          }
+        } else if (keyword === Keyword.LOOP) {
+          if (ctx.type === Keyword.WHILE || ctx.type === Keyword.FOR) {
+            ctx.isSentenceStart = true
+          }
+        }
       }
-    }
-  }
-
-  private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROC) {
-      state.mode = Mode.INITIAL
-      token.eos = true
     }
   }
 }
