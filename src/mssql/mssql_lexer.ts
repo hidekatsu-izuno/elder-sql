@@ -336,7 +336,7 @@ export class MssqlLexer extends Lexer {
       { type: TokenType.Blob, re: /0[xX][0-9a-fA-F]*/y },
       { type: TokenType.Numeric, re: /([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
       { type: TokenType.Dot, re: /\./y },
-      { type: TokenType.String, re: /'([^']|'')*'/y },
+      { type: TokenType.String, re: /[Nn]?'([^']|'')*'/y },
       { type: TokenType.Identifier, re: /("([^"]|"")*"|\[[^\]]*\])/y },
       { type: TokenType.BindVariable, re: /\?/y },
       { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },

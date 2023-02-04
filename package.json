@@ -7,7 +7,7 @@
   "module": "./module/index.js",
   "types": "./module/index.d.ts",
   "scripts": {
-    "build": "tsc --build --clean &&tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vite.config.ts",
     "lint": "eslint",
     "version.major": "npm run build && standard-version --release-as major",
@@ -54,6 +54,61 @@
         "default": "./lib/index.js"
       },
       "default": "./lib/index.js"
+    },
+    "./mssql": {
+      "import": {
+        "types": "./module/mssql/index.d.ts",
+        "default": "./module/mssql/index.js"
+      },
+      "require": {
+        "types": "./lib/mssql/index.d.ts",
+        "default": "./lib/mssql/index.js"
+      },
+      "default": "./lib/mssql/index.js"
+    },
+    "./mysql": {
+      "import": {
+        "types": "./module/mysql/index.d.ts",
+        "default": "./module/mysql/index.js"
+      },
+      "require": {
+        "types": "./lib/mysql/index.d.ts",
+        "default": "./lib/mysql/index.js"
+      },
+      "default": "./lib/mysql/index.js"
+    },
+    "./oracle": {
+      "import": {
+        "types": "./module/oracle/index.d.ts",
+        "default": "./module/oracle/index.js"
+      },
+      "require": {
+        "types": "./lib/oracle/index.d.ts",
+        "default": "./lib/oracle/index.js"
+      },
+      "default": "./lib/oracle/index.js"
+    },
+    "./postgres": {
+      "import": {
+        "types": "./module/postgres/index.d.ts",
+        "default": "./module/postgres/index.js"
+      },
+      "require": {
+        "types": "./lib/postgres/index.d.ts",
+        "default": "./lib/postgres/index.js"
+      },
+      "default": "./lib/postgres/index.js"
+    },
+    "./sqlite3": {
+      "import": {
+        "types": "./module/sqlite3/index.d.ts",
+        "default": "./module/sqlite3/index.js"
+      },
+      "require": {
+        "types": "./lib/sqlite3/index.d.ts",
+        "default": "./lib/sqlite3/index.js"
+      },
+      "default": "./lib/sqlite3/index.js"
     },
     "./package.json": "./package.json"
   },

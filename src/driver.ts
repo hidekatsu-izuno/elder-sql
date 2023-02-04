@@ -7,7 +7,7 @@ export type ElderSqlDriverOptions = {
   [key: string]: any
 }
 
-export interface ElderSqlSelecter<P = Record<string, any>, R = Record<string, any>> {
+export interface ElderSqlSelecter<P, R> {
   get(params: P): R
 
   list(params: P): R[]
@@ -15,15 +15,15 @@ export interface ElderSqlSelecter<P = Record<string, any>, R = Record<string, an
   iterate(params: P): AsyncIterable<R>
 }
 
-export interface ElderSqlExecuter<P = Record<string, any>, R = any> {
+export interface ElderSqlExecuter<P, R> {
   execute(params: P): R
 }
 
 export abstract class ElderSqlConnection {
-  abstract select(text: string): ElderSqlSelecter
+  abstract select(text: string): ElderSqlSelecter<Record<string, any>, Record<string, any>>
   abstract select<P, R>(builder: (con: ElderSqlConnection) => ElderSqlSelecter<P, R>): ElderSqlSelecter<P, R>
 
-  abstract execute(text: string): ElderSqlExecuter
+  abstract execute(text: string): ElderSqlExecuter<Record<string, any>, any>
   abstract execute<P, R>(builder: (con: ElderSqlConnection) => ElderSqlExecuter<P, R>): ElderSqlExecuter<P, R>
 }
 

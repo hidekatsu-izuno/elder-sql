@@ -37,7 +37,7 @@ export function ucamel(text: string) {
 }
 
 export function squote(text: string) {
-  return "'" + text.replace(/"/g, "''") + "'"
+  return "'" + text.replace(/'/g, "''") + "'"
 }
 
 export function dquote(text: string) {
@@ -49,17 +49,24 @@ export function bquote(text: string) {
 }
 
 export function dequote(text: string) {
+  let m
   if (text.length >= 2) {
-    const sc = text.charAt(0)
-    const ec = text.charAt(text.length-1)
-    if (sc === "[" && ec === "]") {
+    if (text.startsWith("'") && text.endsWith("'")) {
+      return text.substring(1, text.length - 1).replace(/''/g, "'")
+    } else if (text.startsWith('"') && text.endsWith('"')) {
+      return text.substring(1, text.length - 1).replace(/""/g, '"')
+    } else if (text.startsWith("`") && text.endsWith("`")) {
+      return text.substring(1, text.length - 1).replace(/``/g, "`")
+    } else if (text.startsWith("[") && text.endsWith("]")) {
       return text.substring(1, text.length - 1)
-    } else if (sc === "`" && sc === ec) {
-      return text.substring(1, text.length - 1).replace(/``/g, sc)
-    } else if (sc === '"' && sc === ec) {
-      return text.substring(1, text.length - 1).replace(/""/g, sc)
-    } else if (sc === "'" && sc === ec) {
-      return text.substring(1, text.length - 1).replace(/''/g, sc)
+    } else if (m = /^[Nn]'(''|[^']*)'$/s.exec(text)) {
+      return m[1].replace(/''/g, "'")
+    } else if (m = /^[Nn]"(""|[^"]*)"$/s.exec(text)) {
+      return m[1].replace(/""/g, '"')
+    } else if (m = /^\$([^$]*)\$(.*?)\$\1\$$/s.exec(text)) {
+      return m[2]
+    } else if (m = /^[nN]?[qQ]'(?:\[(.*?)\]|\{(.*?)\}|\((.*?)\)|([^ \t\r\n])(.*?)\4)'$/s.exec(text)) {
+      return m[1] || m[2] || m[3] || m[5]
     }
   }
   return text

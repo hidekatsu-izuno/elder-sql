@@ -131,6 +131,7 @@ const ReservedSet = new Set<Keyword>([
 const Mode = {
   INITIAL: 0,
   SQL_START: 1,
+  SQL_PROC: 3,
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
@@ -173,8 +174,7 @@ export class PostgresLexer extends Lexer {
       { type: TokenType.Label, re: /<<[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*>>/y },
       { type: TokenType.Blob, re: /'\\x([^']|'')*'/y },
       { type: TokenType.String, re: /([uU]&|[bBxX])?'([^']|'')*'/y },
-      { type: TokenType.String, re: /\$([^$]+)\$.*\$\1\$/my },
-      { type: TokenType.String, re: /\$\$.*\$\$/my },
+      { type: TokenType.String, re: /\$([^$]*)\$.*?\$\1\$/sy },
       { type: TokenType.Identifier, re: /([uU]&)?"([^"]|"")*"/y },
       { type: TokenType.BindVariable, re: /\?/y },
       { type: TokenType.BindVariable, re: /\$([1-9][0-9]*)?/y },
@@ -263,13 +263,19 @@ export class PostgresLexer extends Lexer {
         token.type = TokenType.Reserved
       }
       if (state.mode === Mode.SQL_START) {
-        state.mode = Mode.SQL_PART
+        if (keyword === Keyword.DECLARE || keyword === Keyword.BEGIN) {
+          state.mode = Mode.SQL_PROC
+        } else {
+          state.mode = Mode.SQL_PART
+        }
       }
     }
   }
 
   private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    state.mode = Mode.INITIAL
-    token.eos = true
+    if (state.mode !== Mode.SQL_PROC) {
+      state.mode = Mode.INITIAL
+      token.eos = true
+    }
   }
 }
