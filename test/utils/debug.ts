@@ -6,10 +6,9 @@ export function toJSScript(target: Node | Token | (Node | Token)[]) {
   if (target instanceof Node) {
     imports += 'import { Node } from "../../../src/parser"\n'
   }
-  imports += '\n'
 
   return (
-    '' + imports + 
+    '' + imports + '\n' +
     'export default ' + toJSString(target) + '\n'
   )
 }
@@ -33,22 +32,18 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
     text += "\n" + " ".repeat(space * 2) + "]"
   } else if (target instanceof Node) {
     text += " ".repeat(space * 2) + "new Node(" + JSON.stringify(target.name)
-    if (target.value !== undefined) {
-      text += ", " + JSON.stringify(target.value)
-    }
-    text += ")"
-    for (const child of target.children) {
-      const ctext = toJSString(child, { space: space + 1 }).trimStart()
-      text += "\n" + " ".repeat((space + 1) * 2) + ".append(" + ctext
-      if (ctext.includes("\n")) {
-        if (child instanceof Node) {
-          text += "\n" + " ".repeat((space + 1) * 2) + ")"
-        } else {
-          text += ")"
-        }
-      } else {
-        text += ")"
+    if (Object.keys(target.data).length > 0 || target.children.length > 0) {
+      text += ", node => {\n"
+      if (Object.keys(target.data).length > 0) {
+        text += " ".repeat((space + 1) * 2) + "node.data = " + JSON.stringify(target.data) + "\n"
       }
+      for (const child of target.children) {
+        const ctext = toJSString(child, { space: space + 1 }).trimStart()
+        text += " ".repeat((space + 1) * 2) + "node.append(" + ctext + ")\n"
+      }
+      text += " ".repeat(space * 2) + ")"
+    } else {
+      text += ")"
     }
   } else if (target instanceof Token) {
     text += " ".repeat(space * 2) + "new Token("

@@ -3,26 +3,21 @@ import { TokenType, Token, Lexer, Keyword } from './lexer.js'
 export class Node {
   private parentNode?: Node
   children: (Node | Token)[] = []
+  data: Record<string, any> = {}
 
-  constructor(
-    public name: string,
-    public value?: string,
-  ) {
+  constructor(public name: string, fn?: (value: Node) => void) {
+    if (fn) {
+      fn(this)
+    }
   }
 
-  append(...children: (Node | Token | (() => Node | Token))[]) {
+  append(...children: (Node | Token)[]) {
     for (const child of children) {
-      let target
-      if (typeof child === 'function') {
-        target = child()
-      } else {
-        target = child
+      if (child instanceof Node) {
+        child.parentNode = this
       }
-      if (target instanceof Node) {
-        target.parentNode = this
-      }
-      this.children.push(target)
-    }  
+      this.children.push(child)
+    }
     return this
   }
 
@@ -38,11 +33,16 @@ export class Node {
     }
   }
 
-  parent() {
-    if (!this.parentNode) {
-      throw new Error("parent is missing")
+  parent(node?: Node) {
+    if (node) {
+      this.parentNode = node
+      return this
+    } else {
+      if (!this.parentNode) {
+        throw new Error("parent is missing")
+      }
+      return this.parentNode  
     }
-    return this.parentNode
   }
 
   has(name: string) {

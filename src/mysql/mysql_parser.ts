@@ -81,16 +81,18 @@ export class MysqlParser extends Parser {
 
   private command(r: TokenReader) {
     const stmt = new Node("CommandStatement")
-    const command = r.consume(TokenType.Command)
-    stmt.append(new Node("CommandName", command.text)
-      .append(command)
-    )
+    stmt.append(new Node("CommandName", node => {
+      const command = r.consume(TokenType.Command)
+      node.append(command)
+      node.data.value = command.text
+    }))
     const args = new Node("CommandArgumentList")
     while (r.peek()) {
-      const arg = r.consume()
-      args.append(new Node("CommandArgument", dequote(arg.text))
-        .append(arg)
-      )
+      args.append(new Node("CommandArgument", node => {
+        const arg = r.consume()
+        node.append(arg)
+        node.data.value = dequote(arg.text)
+      }))
       if (!r.peek().eos) {
         break
       }

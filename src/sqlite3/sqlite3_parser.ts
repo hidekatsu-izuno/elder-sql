@@ -78,15 +78,17 @@ export class Sqlite3Parser extends Parser {
   private command(r: TokenReader) {
     const stmt = new Node("CommandStatement")
     const command = r.consume(TokenType.Command)
-    stmt.append(new Node("CommandName", command.text)
-      .append(command)
-    )
+    stmt.append(new Node("CommandName", node => {
+      node.append(command)
+      node.data.value = command.text
+    }))
     const args = new Node("CommandArgumentList")
     while (!r.peek().eos) {
-      const arg = r.consume()
-      args.append(new Node("CommandArgument", dequote(arg.text))
-        .append(arg)
-      )
+      args.append(new Node("CommandArgument", node => {
+        const arg = r.consume()
+        node.append(arg)
+        node.data.value = dequote(arg.text)
+      }))
     }
     stmt.append(args)
     if (r.peekIf(TokenType.EoF)) {
@@ -1975,7 +1977,7 @@ export class Sqlite3Parser extends Parser {
     while (r.peekIf([TokenType.Identifier, TokenType.String])) {
       const ident = this.identifier(r, "")
       node.append(...ident.children)
-      node.value = node.value ? node.value + " " + ident.value : ident.value
+      node.data.value = node.data.value ? node.data.value + " " + ident.data.value : ident.data.value
     }
     return node
   }
@@ -2280,7 +2282,10 @@ export class Sqlite3Parser extends Parser {
     } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
       node =  new Node("Function")
       const token = r.consume()
-      node.append(new Node("ObjectName", token.text.toUpperCase()).append(token))
+      node.append(new Node("ObjectName", node => {
+        node.data.value = token.text.toUpperCase()
+        node.append(token)
+      }))
     } else if (r.peekIf(Keyword.CASE)) {
       node = new Node("CaseBlock")
       node.append(r.consume())
@@ -2313,9 +2318,10 @@ export class Sqlite3Parser extends Parser {
     } else if (r.peekIf(Keyword.CAST)) {
       node = new Node("Function")
       const token = r.consume()
-      node.append(new Node("ObjectName", token.text.toUpperCase())
-        .append(token)
-      )
+      node.append(new Node("ObjectName", node => {
+        node.data.value = token.text.toUpperCase()
+        node.append(token)
+      }))
       const args = new Node("ArgumentList")
       args.append(r.consume(TokenType.LeftParen))
 
@@ -2332,7 +2338,10 @@ export class Sqlite3Parser extends Parser {
     } else if (r.peekIf(Keyword.RAISE)) {
       node = new Node("Function")
       const token = r.consume()
-      node.append(new Node("ObjectName", token.text.toUpperCase()).append(token))
+      node.append(new Node("ObjectName", node => {
+        node.data.value = token.text.toUpperCase()
+        node.append(token)
+      }))
       const args = new Node("ArgumentList")
       args.append(r.consume(TokenType.LeftParen))
       args.append(new Node("Argument")
@@ -2441,9 +2450,13 @@ export class Sqlite3Parser extends Parser {
           value = `${pos}`
           r.state.bindPosition = pos
         }
-        node = new Node("PositionalBindVariable", value)
+        node = new Node("PositionalBindVariable", node => {
+          node.data.value = value
+        })
       } else {
-        node = new Node("NamedBindVariable", token.text.substring(1))
+        node = new Node("NamedBindVariable", node => {
+          node.data.value = token.text.substring(1)
+        })
       }
       node.append(token)
     } else {
@@ -2508,7 +2521,7 @@ export class Sqlite3Parser extends Parser {
     const node = new Node(name)
     if (r.peekIf([TokenType.Identifier, TokenType.String])) {
       node.append(r.consume())
-      node.value = dequote(r.peek(-1).text)
+      node.data.value = dequote(r.peek(-1).text)
     } else {
       throw r.createParseError()
     }
@@ -2521,12 +2534,12 @@ export class Sqlite3Parser extends Parser {
       const token1 = r.consume()
       node.append(token1)
       const token2 = r.consume(TokenType.Numeric)
-      node.value = new Decimal(token1.text + token2.text).toString()
       node.append(token2)
+      node.data.value = new Decimal(token1.text + token2.text).toString()
     } else {
       const token = r.consume(TokenType.Numeric)
-      node.value = token.text.toLowerCase()
       node.append(token)
+      node.data.value = token.text.toLowerCase()
     }
     return node
   }
@@ -2535,12 +2548,12 @@ export class Sqlite3Parser extends Parser {
     const node = new Node("StringLiteral")
     if (r.peekIf({ type: TokenType.Identifier, text: /^"/ })) {
       const token = r.consume()
-      node.value = dequote(token.text)
       node.append(token)
+      node.data.value = dequote(token.text)
     } else {
       const token = r.consume(TokenType.String)
-      node.value = dequote(token.text)
       node.append(token)
+      node.data.value = dequote(token.text)
     }
     return node
   }
@@ -2548,8 +2561,8 @@ export class Sqlite3Parser extends Parser {
   private blobLiteral(r: TokenReader) {
     const node = new Node("BlobLiteral")
     const token = r.consume(TokenType.Blob)
-    node.value = token.text.substring(2, token.text.length-1).toUpperCase()
     node.append(token)
+    node.data.value = token.text.substring(2, token.text.length-1).toUpperCase()
     return node
   }
 
@@ -2557,8 +2570,8 @@ export class Sqlite3Parser extends Parser {
     const node = new Node("BooleanLiteral")
     if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       const token = r.consume()
-      node.value = token.text.toUpperCase()
       node.append(token)
+      node.data.value = token.text.toUpperCase()
     } else {
       throw r.createParseError()
     }

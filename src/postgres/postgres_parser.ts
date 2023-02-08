@@ -80,15 +80,17 @@ export class PostgresParser extends Parser {
   private command(r: TokenReader) {
     const stmt = new Node("CommandStatement")
     const command = r.consume(TokenType.Command)
-    stmt.append(new Node("CommandName", command.text)
-      .append(command)
-    )
+    stmt.append(new Node("CommandName", node => {
+      node.data.value = command.text
+      node.append(command)
+    }))
     const args = new Node("CommandArgumentList")
     while (r.peek()) {
-      const arg = r.consume()
-      args.append(new Node("CommandArgument", dequote(arg.text))
-        .append(arg)
-      )
+      args.append(new Node("CommandArgument", node => {
+        const arg = r.consume()
+        node.append(arg)
+        node.data.value = dequote(arg.text)
+      }))
       if (!r.peek().eos) {
         break
       }
@@ -1110,7 +1112,7 @@ export class PostgresParser extends Parser {
     while (r.peekIf([TokenType.Identifier, TokenType.String])) {
       const ident = this.identifier(r, "")
       node.append(...ident.children)
-      node.value = node.value ? node.value + " " + ident.value : ident.value
+      node.data.value = node.data.value ? node.data.value + " " + ident.data.value : ident.data.value
     }
     return node
   }
@@ -1168,7 +1170,7 @@ export class PostgresParser extends Parser {
         .append(r.consume())
       const ope = r.consume(TokenType.Operator)
       using.append(ope)
-      using.value = ope.text
+      using.data.value = ope.text
       node.append(using)
     }
     if (r.peekIf(Keyword.NULLS, Keyword.FIRST)) {
@@ -2128,8 +2130,11 @@ export class PostgresParser extends Parser {
       node = this.booleanLiteral(r)
     } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
       node =  new Node("Function")
-      const token = r.consume()
-      node.append(new Node("ObjectName", token.text.toUpperCase()).append(token))
+      node.append(new Node("ObjectName", node => {
+        const token = r.consume()
+        node.append(token)
+        node.data.value = token.text.toUpperCase()
+      }))
     } else if (r.peekIf(Keyword.CASE)) {
       node = new Node("CaseBlock")
       node.append(r.consume())
@@ -2161,10 +2166,11 @@ export class PostgresParser extends Parser {
       node.append(r.consume(Keyword.END))
     } else if (r.peekIf(Keyword.CAST)) {
       node = new Node("Function")
-      const token = r.consume()
-      node.append(new Node("ObjectName", token.text.toUpperCase())
-        .append(token)
-      )
+      node.append(new Node("ObjectName", node => {
+        const token = r.consume()
+        node.append(token)
+        node.data.value = token.text.toUpperCase()
+      }))
       const args = new Node("ArgumentList")
       args.append(r.consume(TokenType.LeftParen))
 
@@ -2282,9 +2288,13 @@ export class PostgresParser extends Parser {
           value = `${pos}`
           r.state.bindPosition = pos
         }
-        node = new Node("PositionalBindVariable", value)
+        node = new Node("PositionalBindVariable", node => {
+          node.data.value = value
+        })
       } else {
-        node = new Node("NamedBindVariable", token.text.substring(1))
+        node = new Node("NamedBindVariable", node => {
+          node.data.value = token.text.substring(1)
+        })
       }
       node.append(token)
     } else {
@@ -2297,7 +2307,7 @@ export class PostgresParser extends Parser {
     const node = new Node(name)
     if (r.peekIf(TokenType.Identifier)) {
       node.append(r.consume())
-      node.value = dequote(r.peek(-1).text)
+      node.data.value = dequote(r.peek(-1).text)
     } else {
       throw r.createParseError()
     }
@@ -2310,12 +2320,12 @@ export class PostgresParser extends Parser {
       const token1 = r.consume()
       node.append(token1)
       const token2 = r.consume(TokenType.Numeric)
-      node.value = new Decimal(token1.text + token2.text).toString()
       node.append(token2)
+      node.data.value = new Decimal(token1.text + token2.text).toString()
     } else {
       const token = r.consume(TokenType.Numeric)
-      node.value = token.text.toLowerCase()
       node.append(token)
+      node.data.value = token.text.toLowerCase()
     }
     return node
   }
@@ -2323,16 +2333,16 @@ export class PostgresParser extends Parser {
   private stringLiteral(r: TokenReader) {
     const node = new Node("StringLiteral")
     const token = r.consume(TokenType.String)
-    node.value = dequote(token.text)
     node.append(token)
+    node.data.value = dequote(token.text)
     return node
   }
 
   private blobLiteral(r: TokenReader) {
     const node = new Node("BlobLiteral")
     const token = r.consume(TokenType.Blob)
-    node.value = token.text.substring(3, token.text.length-1).replace(/''/g, "'").toUpperCase()
     node.append(token)
+    node.data.value = token.text.substring(3, token.text.length-1).replace(/''/g, "'").toUpperCase()
     return node
   }
 
@@ -2340,8 +2350,8 @@ export class PostgresParser extends Parser {
     const node = new Node("BooleanLiteral")
     if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       const token = r.consume()
-      node.value = token.text.toUpperCase()
       node.append(token)
+      node.data.value = token.text.toUpperCase()
     } else {
       throw r.createParseError()
     }

@@ -104,7 +104,7 @@ export class OracleParser extends Parser {
           childNode.append(r.consume(Keyword.STATEMENT_ID))
           childNode.append(r.consume({ type: TokenType.Operator, text: "=" }))
           childNode.append(r.consume(TokenType.String))
-          childNode.value = dequote(r.peek(-1).text)
+          childNode.data.value = dequote(r.peek(-1).text)
           explainPlan.append(childNode)
         }
 
@@ -2787,7 +2787,7 @@ export class OracleParser extends Parser {
     const node = new Node(name)
     if (r.peekIf(TokenType.Identifier)) {
       node.append(r.consume())
-      node.value = dequote(r.peek(-1).text)
+      node.data.value = dequote(r.peek(-1).text)
     } else {
       throw r.createParseError()
     }
