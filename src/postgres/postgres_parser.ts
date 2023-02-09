@@ -78,21 +78,21 @@ export class PostgresParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    return new Node("CommandStatement", node => {
-      node.append(new Node("CommandName", node => {
+    return new Node("CommandStatement").apply(node => {
+      node.append(new Node("CommandName")).apply(node => {
         const command = r.consume(TokenType.Command)
         node.append(command)
         node.data.value = command.text
-      }))
-      node.append(new Node("CommandArgumentList", node => {
+      })
+      node.append(new Node("CommandArgumentList")).apply(node => {
         while (!r.peek().eos) {
-          node.append(new Node("CommandArgument", node => {
+          node.append(new Node("CommandArgument")).apply(node => {
             const arg = r.consume()
             node.append(arg)
             node.data.value = dequote(arg.text)
-          }))
+          })
         }
-      }))
+      })
       if (r.peekIf(TokenType.EoF)) {
         node.append(r.consume())
       }
@@ -206,77 +206,77 @@ export class PostgresParser extends Parser {
   }
 
   private explainStatement(r: TokenReader) {
-    return new Node("ExplainStatement", node => {
+    return new Node("ExplainStatement").apply(node => {
       node.append(r.consume())
       if (r.peekIf(TokenType.LeftParen)) {
-        node.append(new Node("ExplainOptionList", node => {
+        node.append(new Node("ExplainOptionList")).apply(node => {
           node.append(r.consume())
           do {
             if (r.peekIf(Keyword.ANALYZE)) {
-              node.append(new Node("AnalyzeOption", node => {
+              node.append(new Node("AnalyzeOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.VERBOSE)) {
-              node.append(new Node("VerboseOption", node => {
+              node.append(new Node("VerboseOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.COSTS)) {
-              node.append(new Node("CostsOption", node => {
+              node.append(new Node("CostsOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.SETTINGS)) {
-              node.append(new Node("SettingsOption", node => {
+              node.append(new Node("SettingsOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.BUFFERS)) {
-              node.append(new Node("BuffersOption", node => {
+              node.append(new Node("BuffersOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.WAL)) {
-              node.append(new Node("WalOption", node => {
+              node.append(new Node("WalOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.TIMING)) {
-              node.append(new Node("TimingOption", node => {
+              node.append(new Node("TimingOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.SUMMARY)) {
-              node.append(new Node("SummaryOption", node => {
+              node.append(new Node("SummaryOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
                   node.append(this.booleanLiteral(r))
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.FORMAT)) {
-              node.append(new Node("FormatOption", node => {
+              node.append(new Node("FormatOption")).apply(node => {
                 node.append(r.consume())
                 if (r.peekIf([Keyword.TEXT, Keyword.XML, Keyword.JSON, Keyword.YAML])) {
                   node.append(this.identifier(r, "FormatType"))
                 } else {
                   throw r.createParseError()
                 }
-              }))
+              })
             } else {
               throw r.createParseError()
             }
@@ -285,30 +285,30 @@ export class PostgresParser extends Parser {
             }
           } while (!r.peek().eos)
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
       } else {
         if (r.peekIf(Keyword.ANALYZE)) {
-          node.append(new Node("AnalyzeOption", node => {
+          node.append(new Node("AnalyzeOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         }
         if (r.peekIf(Keyword.VERBOSE)) {
-          node.append(new Node("VerboseOption", node => {
+          node.append(new Node("VerboseOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         }  
       }
     })
   }
 
   private createFunctionStatement(r: TokenReader) {
-    return new Node("CreateFunctionStatement", node => {
+    return new Node("CreateFunctionStatement").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       if (r.peekIf(Keyword.OR)) {
-        node.append(new Node("OrReplaceOption", node => {
+        node.append(new Node("OrReplaceOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.REPLACE))
-        }))
+        })
       }
       node.append(r.consume(Keyword.FUNCTION))
 
@@ -327,13 +327,13 @@ export class PostgresParser extends Parser {
   }
 
   private createProcedureStatement(r: TokenReader) {
-    return new Node("CreateProcedureStatement", node => {
+    return new Node("CreateProcedureStatement").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       if (r.peekIf(Keyword.OR)) {
-        node.append(new Node("OrReplaceOption", node => {
+        node.append(new Node("OrReplaceOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.REPLACE))
-        }))
+        })
       }
       node.append(r.consume(Keyword.PROCEDURE))
 
@@ -352,65 +352,65 @@ export class PostgresParser extends Parser {
   }
 
   private createTableStatement(r: TokenReader) {
-    return new Node("CreateTableStatement", node => {
+    return new Node("CreateTableStatement").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       //TODO
     })
   }
 
   private alterTableStatement(r: TokenReader) {
-    return new Node("AlterTableStatement", node => {
+    return new Node("AlterTableStatement").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       //TODO
     })
   }
 
   private dropTableStatement(r: TokenReader) {
-    return new Node("DropTableStatement", node => {
+    return new Node("DropTableStatement").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       //TODO
     })
   }
 
   private setStatement(r: TokenReader) {
-    return new Node("SetStatement", node => {
+    return new Node("SetStatement").apply(node => {
       node.append(r.consume(Keyword.SET))
       if (r.peekIf(Keyword.SESSION)) {
-        node.append(new Node("SessionOption", node => {
+        node.append(new Node("SessionOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.LOCAL)) {
-        node.append(new Node("LocalOption", node => {
+        node.append(new Node("LocalOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       if (r.peekIf(Keyword.TIME)) {
-        node.append(new Node("ParameterName", node => {
+        node.append(new Node("ParameterName")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.ZONE))
-        }))
+        })
         if (r.peekIf(Keyword.LOCAL)) {
-          node.append(new Node("LocalOption", node => {
+          node.append(new Node("LocalOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         } else if (r.peekIf(Keyword.DEFAULT)) {
-          node.append(new Node("DefaultOption", node => {
+          node.append(new Node("DefaultOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         } else if (r.peekIf(TokenType.Identifier)) {
           node.append(this.identifier(r, "ParameterValue"))
         }
       } else {
-        node.append(new Node("ParameterName", node => {
+        node.append(new Node("ParameterName")).apply(node => {
           node.append(r.consume(TokenType.Identifier))
-        }))
+        })
         if (r.peekIf(Keyword.TO) || r.peekIf({ type: TokenType.Operator, text: "=" })) {
           node.append(r.consume())
         }
         if (r.peekIf(Keyword.DEFAULT)) {
-          node.append(new Node("DefaultOption", node => {
+          node.append(new Node("DefaultOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         } else if (r.peekIf(TokenType.Identifier)) {
           node.append(this.identifier(r, "ParameterValue"))
         }
@@ -419,16 +419,18 @@ export class PostgresParser extends Parser {
   }
 
   private insertStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("InsertStatement", node => {
+    return new Node("InsertStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       node.append(this.insertClause(r))
     })
   }
 
   private insertClause(r: TokenReader) {
-    return new Node("InsertClause", node => {
+    return new Node("InsertClause").apply(node => {
       node.append(r.consume(Keyword.INSERT))
       node.append(r.consume(Keyword.INTO))
 
@@ -445,7 +447,7 @@ export class PostgresParser extends Parser {
       }
 
       if (r.peekIf(TokenType.LeftParen)) {
-        node.append(new Node("ColumnList", node => {
+        node.append(new Node("ColumnList")).apply(node => {
           node.append(r.consume())
           do {
             node.append(this.identifier(r, "ColumnName"))
@@ -456,11 +458,11 @@ export class PostgresParser extends Parser {
             }
           } while (!r.peek().eos)
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
       }
 
       if (r.peekIf(Keyword.OVERRIDING)) {
-        node.append(new Node("", node => {
+        node.append(new Node("")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.SYSTEM)) {
             node.name = "OverridingSystemValueOption"
@@ -473,14 +475,14 @@ export class PostgresParser extends Parser {
           } else {
             throw r.createParseError()
           }  
-        }))
+        })
       }
 
       if (r.peekIf(Keyword.DEFAULT)) {
-        node.append(new Node("DefaultValuesOption", node => {
+        node.append(new Node("DefaultValuesOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.VALUES))
-        }))
+        })
       } else if (r.peekIf(Keyword.VALUES)) {
         node.append(this.valuesClause(r))
       } else {
@@ -502,22 +504,24 @@ export class PostgresParser extends Parser {
   }
 
   private updateStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("UpdateStatement", node => {
+    return new Node("UpdateStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       node.append(this.updateClause(r))
     })
   }
 
   private updateClause(r: TokenReader) {
-    return new Node("UpdateClause", node => {
+    return new Node("UpdateClause").apply(node => {
       node.append(r.consume(Keyword.UPDATE))
 
       if (r.peekIf(Keyword.ONLY)) {
-        node.append(new Node("OnlyOption", node => {
+        node.append(new Node("OnlyOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       const ident = this.identifier(r, "ObjectName")
       node.append(ident)
@@ -527,9 +531,9 @@ export class PostgresParser extends Parser {
         node.append(this.identifier(r, "ObjectName"))
       }
       if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
-        node.append(new Node("AllDescendantsOption", node => {
+        node.append(new Node("AllDescendantsOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       if (r.peekIf(Keyword.AS)) {
         node.append(r.consume())
@@ -541,14 +545,14 @@ export class PostgresParser extends Parser {
         node.append(this.fromClause(r))
       }
       if (r.peekIf(Keyword.WHERE, Keyword.CURRENT)) {
-        node.append(new Node("WhereClause", node => {
+        node.append(new Node("WhereClause")).apply(node => {
           node.append(r.consume())
-          node.append(new Node("CurrentOfOption", node => {
+          node.append(new Node("CurrentOfOption")).apply(node => {
             node.append(r.consume())
             node.append(r.consume(Keyword.OF))
             node.append(this.identifier(r, "CursorName"))
-          }))
-        }))
+          })
+        })
       } else if (r.peekIf(Keyword.WHERE)) {
         node.append(this.whereClause(r))
       }
@@ -565,23 +569,25 @@ export class PostgresParser extends Parser {
   }
 
   private deleteStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("DeleteStatement", node => {
+    return new Node("DeleteStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       node.append(this.deleteClause(r))
     })
   }
   
   private deleteClause(r: TokenReader) {
-    return new Node("DeleteClause", node => {
+    return new Node("DeleteClause").apply(node => {
       node.append(r.consume(Keyword.DELETE))
       node.append(r.consume(Keyword.FROM))
 
       if (r.peekIf(Keyword.ONLY)) {
-        node.append(new Node("OnlyOption", node => {
+        node.append(new Node("OnlyOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       const ident = this.identifier(r, "ObjectName")
       node.append(ident)
@@ -591,9 +597,9 @@ export class PostgresParser extends Parser {
         node.append(this.identifier(r, "ObjectName"))
       }
       if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
-        node.append(new Node("AllDescendantsOption", node => {
+        node.append(new Node("AllDescendantsOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       if (r.peekIf(Keyword.AS)) {
         node.append(r.consume())
@@ -603,14 +609,14 @@ export class PostgresParser extends Parser {
         node.append(this.fromClause(r))
       }
       if (r.peekIf(Keyword.WHERE, Keyword.CURRENT)) {
-        node.append(new Node("WhereClause", node => {
+        node.append(new Node("WhereClause")).apply(node => {
           node.append(r.consume())
-          node.append(new Node("CurrentOfOption", node => {
+          node.append(new Node("CurrentOfOption")).apply(node => {
             node.append(r.consume())
             node.append(r.consume(Keyword.OF))
             node.append(this.identifier(r, "CursorName"))
-          }))
-        }))
+          })
+        })
       } else if (r.peekIf(Keyword.WHERE)) {
         node.append(this.whereClause(r))
       }
@@ -621,16 +627,18 @@ export class PostgresParser extends Parser {
   }
 
   private mergeStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("MergeStatement", node => {
+    return new Node("MergeStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       node.append(this.mergeClause(r))
     })
   }
 
   private mergeClause(r: TokenReader) {
-    return new Node("MergeClause", node => {
+    return new Node("MergeClause").apply(node => {
       node.append(r.consume(Keyword.MERGE))
       node.append(r.consume(Keyword.INTO))
 
@@ -646,9 +654,9 @@ export class PostgresParser extends Parser {
         node.append(this.identifier(r, "ObjectAlias"))
       }
       if (r.peekIf(Keyword.USING)) {
-        node.append(new Node("UsingClause", node => {
+        node.append(new Node("UsingClause")).apply(node => {
           node.append(r.consume())
-          node.append(new Node("ObjectReference", node => {
+          node.append(new Node("ObjectReference")).apply(node => {
             if (r.peekIf(TokenType.LeftParen)) {
               node.append(r.consume())
               node.name = "Subquery"
@@ -669,56 +677,56 @@ export class PostgresParser extends Parser {
             } else if (r.peekIf(TokenType.Identifier)) {
               node.append(this.identifier(r, "ObjectAlias"))
             }
-          }))
+          })
 
-          node.append(new Node("OnClause", node => {
+          node.append(new Node("OnClause")).apply(node => {
             node.append(r.consume(Keyword.ON))
             node.append(this.expression(r))
-          }))
+          })
 
           do {
             if (r.peekIf(Keyword.WHEN, Keyword.MATCHED)) {
-              node.append(new Node("WhenMatchedClause", node => {
+              node.append(new Node("WhenMatchedClause")).apply(node => {
                 node.append(r.consume())
                 node.append(r.consume())
                 if (r.peekIf(Keyword.AND)) {
                   node.append(r.consume())
-                  node.append(new Node("WhenClause", node => {
+                  node.append(new Node("WhenClause")).apply(node => {
                     node.append(this.expression(r))
-                  }))
+                  })
                 }
                 node.append(r.consume(Keyword.THEN))
                 if (r.peekIf(Keyword.UPDATE)) {
-                  node.append(new Node("UpdateClause", node => {
+                  node.append(new Node("UpdateClause")).apply(node => {
                     node.append(this.setClause(r))
-                  }))
+                  })
                 } else if (r.peekIf(Keyword.DELETE)) {
-                  node.append(new Node("DeleteClause", node => {
+                  node.append(new Node("DeleteClause")).apply(node => {
                     node.append(r.consume())
-                  }))
+                  })
                 } else {
-                  node.append(new Node("DoNothingOption", node => {
+                  node.append(new Node("DoNothingOption")).apply(node => {
                     node.append(r.consume(Keyword.DO))
                     node.append(r.consume(Keyword.NOTHING))
-                  }))
+                  })
                 }
-              }))
+              })
             } else if (r.peekIf(Keyword.WHEN, Keyword.NOT)) {
-              node.append(new Node("WhenNotMatchedClause", node => {
+              node.append(new Node("WhenNotMatchedClause")).apply(node => {
                 node.append(r.consume())
                 node.append(r.consume())
                 node.append(r.consume(Keyword.MATCHED))
                 if (r.peekIf(Keyword.AND)) {
                   node.append(r.consume())
-                  node.append(new Node("WhenClause", node => {
+                  node.append(new Node("WhenClause")).apply(node => {
                     node.append(this.expression(r))
-                  }))
+                  })
                 }
                 node.append(r.consume(Keyword.THEN))
-                node.append(new Node("InsertClause", node => {
+                node.append(new Node("InsertClause")).apply(node => {
                   node.append(this.setClause(r))
                   if (r.peekIf(TokenType.LeftParen)) {
-                    node.append(new Node("ColumnList", node => {
+                    node.append(new Node("ColumnList")).apply(node => {
                       node.append(r.consume())
                       do {
                         node.append(this.identifier(r, "ColumnName"))
@@ -729,11 +737,11 @@ export class PostgresParser extends Parser {
                         }
                       } while (!r.peek().eos)
                       node.append(r.consume(TokenType.RightParen))
-                    }))
+                    })
                   }
 
                   if (r.peekIf(Keyword.OVERRIDING)) {
-                    node.append(new Node("", node => {
+                    node.append(new Node("")).apply(node => {
                       node.append(r.consume())
                       if (r.peekIf(Keyword.SYSTEM)) {
                         node.name = "OverridingSystemValueOption"
@@ -746,76 +754,78 @@ export class PostgresParser extends Parser {
                       } else {
                         throw r.createParseError()
                       }
-                    }))
+                    })
                   }
 
                   if (r.peekIf(Keyword.DEFAULT)) {
-                    node.append(new Node("DefaultValuesOption", node => {
+                    node.append(new Node("DefaultValuesOption")).apply(node => {
                       node.append(r.consume())
                       node.append(r.consume(Keyword.VALUES))
-                    }))
+                    })
                   } else {
                     node.append(this.valuesClause(r))
                   }
-                }))
-              }))
+                })
+              })
             } else {
               throw r.createParseError()
             }
           } while (!r.peek().eos)
-        }))
+        })
       }
     })
   }
 
   private selectStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("SelectStatement", node => {
+    return new Node("SelectStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       let current: Node
       do {
         current = this.selectClause(r)
         if (r.peekIf(Keyword.UNION)) {
-          current = new Node("UnionOperation", node => {
+          current = new Node("UnionOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
             if (r.peekIf(Keyword.ALL)) {
-              node.append(new Node("AllOption", node => {
+              node.append(new Node("AllOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             } else if (r.peekIf(Keyword.DISTINCT)) {
-              node.append(new Node("DistinctOption", node => {
+              node.append(new Node("DistinctOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             }
           })
         } else if (r.peekIf(Keyword.INTERSECT)) {
-          current = new Node("IntersectOperation", node => {
+          current = new Node("IntersectOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
             if (r.peekIf(Keyword.ALL)) {
-              node.append(new Node("AllOption", node => {
+              node.append(new Node("AllOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             } else if (r.peekIf(Keyword.DISTINCT)) {
-              node.append(new Node("DistinctOption", node => {
+              node.append(new Node("DistinctOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             }
           })
         } else if (r.peekIf(Keyword.EXCEPT)) {
-          current = new Node("ExceptOperation", node => {
+          current = new Node("ExceptOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
             if (r.peekIf(Keyword.ALL)) {
-              node.append(new Node("AllOption", node => {
+              node.append(new Node("AllOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             } else if (r.peekIf(Keyword.DISTINCT)) {
-              node.append(new Node("DistinctOption", node => {
+              node.append(new Node("DistinctOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             }
           })
         } else {
@@ -843,19 +853,19 @@ export class PostgresParser extends Parser {
   }
 
   private selectClause(r: TokenReader) {
-    return new Node("SelectClause", node => {
+    return new Node("SelectClause").apply(node => {
       node.append(r.consume(Keyword.SELECT))
       if (r.peekIf(Keyword.ALL)) {
-        node.append(new Node("AllOption", node => {
+        node.append(new Node("AllOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.DISTINCT)) {
-        node.append(new Node("DistinctOption", node => {
+        node.append(new Node("DistinctOption")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.ON)) {
-            node.append(new Node("OnClause", node => {
+            node.append(new Node("OnClause")).apply(node => {
               node.append(r.consume())
-              node.append(new Node("ExpressionList", node => {
+              node.append(new Node("ExpressionList")).apply(node => {
                 node.append(r.consume(TokenType.LeftParen))
                 do {
                   node.append(this.expression(r))
@@ -866,10 +876,10 @@ export class PostgresParser extends Parser {
                   }
                 } while (!r.peek().eos)
                 node.append(r.consume(TokenType.RightParen))
-              }))
-            }))
+              })
+            })
           }
-        }))
+        })
       }
       node.append(this.selectColumns(r))
 
@@ -892,9 +902,11 @@ export class PostgresParser extends Parser {
   }
 
   private valuesStatement(r: TokenReader, prefix?: (Token | Node)[]) {
-    return new Node("ValuesStatement", node => {
+    return new Node("ValuesStatement").apply(node => {
       if (prefix) {
-        node.append(...prefix)
+        for (const item of prefix) {
+          node.append(item)
+        }
       }
       node.append(this.valuesClause(r))
       if (r.peekIf(Keyword.ORDER)) {
@@ -913,9 +925,9 @@ export class PostgresParser extends Parser {
   }
 
   private valuesClause(r: TokenReader) {
-    return new Node("ValuesClause", node => {
+    return new Node("ValuesClause").apply(node => {
       node.append(r.consume(Keyword.VALUES))
-      node.append(new Node("ExpressionList", node => {
+      node.append(new Node("ExpressionList")).apply(node => {
         node.append(r.consume(TokenType.LeftParen))
         do {
           node.append(this.expression(r))
@@ -926,16 +938,16 @@ export class PostgresParser extends Parser {
           }
         } while (!r.peek().eos)
         node.append(r.consume(TokenType.RightParen))
-      }))
+      })
     })
   }
 
   private onConflictClause(r: TokenReader) {
-    return new Node("OnConflictClause", node => {
+    return new Node("OnConflictClause").apply(node => {
       node.append(r.consume(Keyword.ON))
       node.append(r.consume(Keyword.CONFLICT))
       if (r.peekIf(TokenType.LeftParen)) {
-        node.append(new Node("SortingColumnList", node => {
+        node.append(new Node("SortingColumnList")).apply(node => {
           node.append(r.consume())
           do  {
             //TODO
@@ -955,21 +967,21 @@ export class PostgresParser extends Parser {
           node.append(r.consume(Keyword.ON))
           node.append(r.consume(Keyword.CONSTRAINT))
           node.append(this.identifier(r, "ConstraintName"))
-        }))
+        })
       }
       node.append(r.consume(Keyword.DO))
       if (r.peekIf(Keyword.NOTHING)) {
-        node.append(new Node("DoNothingOption", node => {
+        node.append(new Node("DoNothingOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.UPDATE)) {
-        node.append(new Node("DoUpdateOption", node => {
+        node.append(new Node("DoUpdateOption")).apply(node => {
           node.append(r.consume())
           node.append(this.setClause(r))
           if (r.peekIf(Keyword.WHERE)) {
             node.append(this.whereClause(r))
           }
-        }))
+        })
       } else {
         throw r.createParseError()
       }
@@ -977,19 +989,19 @@ export class PostgresParser extends Parser {
   }
 
   private returningClause(r: TokenReader) {
-    return new Node("ReturningClause", node => {
+    return new Node("ReturningClause").apply(node => {
       node.append(r.consume(Keyword.RETURNING))
       node.append(this.selectColumns(r))
     })
   }
 
   private setClause(r: TokenReader) {
-    return new Node("SetClause", node => {
+    return new Node("SetClause").apply(node => {
       node.append(r.consume(Keyword.SET))
       do {
-        node.append(new Node("ColumnAssignment", node => {
+        node.append(new Node("ColumnAssignment")).apply(node => {
           if (r.peekIf(TokenType.LeftParen)) {
-            node.append(new Node("ColumnList", node => {
+            node.append(new Node("ColumnList")).apply(node => {
               node.append(r.consume())
               do {
                 node.append(this.identifier(r, "ColumnName"))
@@ -1000,9 +1012,9 @@ export class PostgresParser extends Parser {
                 }
               } while (!r.peek().eos)
               node.append(r.consume(TokenType.RightParen))
-            }))
+            })
             node.append(r.consume({ type: TokenType.Operator, text: "=" }))
-            node.append(new Node("ColumnValueList", node => {
+            node.append(new Node("ColumnValueList")).apply(node => {
               let hasRow = false
               if (r.peekIf(Keyword.ROW)) {
                 node.append(r.consume())
@@ -1013,15 +1025,15 @@ export class PostgresParser extends Parser {
                 node.append(this.selectStatement(r))
               } else {
                 do {
-                  node.append(new Node("ColumnValue", node => {
+                  node.append(new Node("ColumnValue")).apply(node => {
                     if (r.peekIf(Keyword.DEFAULT)) {
-                      node.append(new Node("DefaultOption", node => {
+                      node.append(new Node("DefaultOption")).apply(node => {
                         node.append(r.consume())
-                      }))
+                      })
                     } else {
                       node.append(this.expression(r))
                     }
-                  }))
+                  })
                   if (r.peekIf(TokenType.Comma)) {
                     node.append(r.consume())
                   } else {
@@ -1030,21 +1042,21 @@ export class PostgresParser extends Parser {
                 } while (!r.peek().eos)
               }
               node.append(r.consume(TokenType.LeftParen))
-            }))
+            })
           } else {
             node.append(this.identifier(r, "ColumnName"))
             node.append(r.consume({ type: TokenType.Operator, text: "=" }))
-            node.append(new Node("ColumnValue", node => {
+            node.append(new Node("ColumnValue")).apply(node => {
               if (r.peekIf(Keyword.DEFAULT)) {
-                node.append(new Node("DefaultOption", node => {
+                node.append(new Node("DefaultOption")).apply(node => {
                   node.append(r.consume())
-                }))
+                })
               } else {
                 node.append(this.expression(r))
               }
-            }))
+            })
           }  
-        }))
+        })
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
         } else {
@@ -1055,31 +1067,31 @@ export class PostgresParser extends Parser {
   }
 
   private procedureArgumentList(r: TokenReader) {
-    return new Node("ProcedureArgumentList", node => {
+    return new Node("ProcedureArgumentList").apply(node => {
       node.append(node)
       node.append(r.consume(TokenType.LeftParen))
       while (!r.peek().eos) {
-        node.append(new Node("ProcedureArgument", node => {
+        node.append(new Node("ProcedureArgument")).apply(node => {
           node.append(this.identifier(r, "ArgumentName"))
           if (r.peekIf(Keyword.IN)) {
-            node.append(new Node("InOption", node => {
+            node.append(new Node("InOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.OUT)) {
-            node.append(new Node("OutOption", node => {
+            node.append(new Node("OutOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.INOUT)) {
-            node.append(new Node("InoutOption", node => {
+            node.append(new Node("InoutOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.VARIADIC)) {
-            node.append(new Node("VariadicOption", node => {
+            node.append(new Node("VariadicOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           }
 
-          node.append(new Node("ParameterType", node => {
+          node.append(new Node("ParameterType")).apply(node => {
             if (r.peekIf(
               TokenType.Identifier, TokenType.Dot, 
               TokenType.Identifier, TokenType.Dot, 
@@ -1104,13 +1116,13 @@ export class PostgresParser extends Parser {
               }
               node.append(this.typeName(r))  
             }
-          }))
+          })
 
           if (r.peekIf(Keyword.DEFAULT) || r.peekIf({ type: TokenType.Operator, text: "=" })) {
             node.append(r.consume())
             node.append(this.expression(r))
           }
-        }))
+        })
 
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
@@ -1125,14 +1137,16 @@ export class PostgresParser extends Parser {
     const node = this.identifier(r, "TypeName")
     while (r.peekIf([TokenType.Identifier, TokenType.String])) {
       const ident = this.identifier(r, "")
-      node.append(...ident.children)
+      for (const child of ident.children) {
+        node.append(child)
+      }
       node.data.value = node.data.value ? node.data.value + " " + ident.data.value : ident.data.value
     }
     return node
   }
 
   private columnReference(r: TokenReader) {
-    return new Node("ColumnReference", node => {
+    return new Node("ColumnReference").apply(node => {
       const ident1 = this.identifier(r, "ColumnName")
       if (r.peekIf(TokenType.Dot)) {
         const dot1 = r.consume()
@@ -1158,7 +1172,7 @@ export class PostgresParser extends Parser {
   }
 
   private sortingColumn(r: TokenReader, options?: { using: boolean }) {
-    return new Node("SortingColumn", node => {
+    return new Node("SortingColumn").apply(node => {
       const mark = r.pos
       const expr = this.expression(r)
       if (expr.children.length === 1) {
@@ -1172,50 +1186,50 @@ export class PostgresParser extends Parser {
         node.append(this.identifier(r, "CollationName"))
       }
       if (r.peekIf(Keyword.ASC)) {
-        node.append(new Node("AscOption", node => {
+        node.append(new Node("AscOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.DESC)) {
-        node.append(new Node("DescOption", node => {
+        node.append(new Node("DescOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (options?.using && r.peekIf(Keyword.USING)) {
-        node.append(new Node("UsingOption", node => {
+        node.append(new Node("UsingOption")).apply(node => {
           node.append(r.consume())
           const ope = r.consume(TokenType.Operator)
           node.append(ope)
           node.data.value = ope.text
-        }))
+        })
       }
       if (r.peekIf(Keyword.NULLS, Keyword.FIRST)) {
-        node.append(new Node("NullsFirstOption", node => {
+        node.append(new Node("NullsFirstOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.NULLS, Keyword.LAST)) {
-        node.append(new Node("NullsLastOption", node => {
+        node.append(new Node("NullsLastOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume())
-        }))
+        })
       }
     })
   }
 
   private withClause(r: TokenReader) {
-    return new Node("WithClause", node => {
+    return new Node("WithClause").apply(node => {
       node.append(r.consume(Keyword.WITH))
 
       if (r.peekIf(Keyword.RECURSIVE)) {
-        node.append(new Node("RecursiveOption", node => {
+        node.append(new Node("RecursiveOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
   
       do {
-        node.append(new Node("CommonTable", node => {
+        node.append(new Node("CommonTable")).apply(node => {
           node.append(this.identifier(r, "ObjectName"))
           if (r.peekIf(TokenType.LeftParen)) {
-            node.append(new Node("ColumnList", node => {
+            node.append(new Node("ColumnList")).apply(node => {
               node.append(r.consume())
               do {
                 node.append(this.identifier(r, "ColumnName"))
@@ -1226,18 +1240,18 @@ export class PostgresParser extends Parser {
                 }
               } while (!r.peek().eos)
               node.append(r.consume(TokenType.RightParen))
-            }))
+            })
           }
           node.append(r.consume(Keyword.AS))
 
           if (r.peekIf(Keyword.MATERIALIZED) || r.peekIf(Keyword.NOT, Keyword.MATERIALIZED)) {
-            node.append(new Node("MaterializedOption", node => {
+            node.append(new Node("MaterializedOption")).apply(node => {
               if (r.peekIf(Keyword.NOT)) {
                 node.name = "NotMaterializedOption"
                 node.append(r.consume())
               }
               node.append(r.consume())
-            }))
+            })
           }
     
           node.append(r.consume(TokenType.LeftParen))
@@ -1257,7 +1271,7 @@ export class PostgresParser extends Parser {
             throw r.createParseError()
           }
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
   
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
@@ -1267,23 +1281,23 @@ export class PostgresParser extends Parser {
       } while (!r.peek().eos)
   
       if (r.peekIf(Keyword.SEARCH)) {
-        node.append(new Node("SearchClause", node => {
+        node.append(new Node("SearchClause")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.BREADTH)) {
-            node.append(new Node("BreadthOption", node => {
+            node.append(new Node("BreadthOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.WIDTH)) {
-            node.append(new Node("WidthOption", node => {
+            node.append(new Node("WidthOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else {
             throw r.createParseError()
           }
-        }))
+        })
         node.append(r.consume(Keyword.FIRST))
         node.append(r.consume(Keyword.BY))
-        node.append(new Node("ColumnList", node => {
+        node.append(new Node("ColumnList")).apply(node => {
           do {
             node.append(this.identifier(r, "ColumnName"))
             if (r.peekIf(TokenType.Comma)) {
@@ -1292,14 +1306,14 @@ export class PostgresParser extends Parser {
               break
             }
           } while (!r.peek().eos)
-        }))
+        })
         node.append(this.identifier(r, "SequenceColumnName"))
       }
       if (r.peekIf(Keyword.CYCLE)) {
-        node.append(new Node("CycleClause", node => {
+        node.append(new Node("CycleClause")).apply(node => {
           node.append(r.consume())
 
-          node.append(new Node("ColumnList", node => {
+          node.append(new Node("ColumnList")).apply(node => {
             do {
               node.append(this.identifier(r, "ColumnName"))
               if (r.peekIf(TokenType.Comma)) {
@@ -1308,52 +1322,52 @@ export class PostgresParser extends Parser {
                 break
               }
             } while (!r.peek().eos)
-          }))
+          })
     
-          node.append(new Node("CycleDetectionClause", node => {
+          node.append(new Node("CycleDetectionClause")).apply(node => {
             node.append(r.consume(Keyword.SET))
             node.append(this.identifier(r, "CycleMarkColumnName"))
             if (r.peekIf(Keyword.TO)) {
               node.append(r.consume())
-              node.append(new Node("CycleMarkValue", node => {
+              node.append(new Node("CycleMarkValue")).apply(node => {
                 node.append(this.expression(r))
-              }))
+              })
               node.append(r.consume(Keyword.DEFAULT))
-              node.append(new Node("CycleMarkDefaultValue", node => {
+              node.append(new Node("CycleMarkDefaultValue")).apply(node => {
                 node.append(this.expression(r))
-              }))
+              })
             }
-          }))
+          })
     
           if (r.peekIf(Keyword.USING)) {
-            node.append(new Node("UsingOption", node => {
+            node.append(new Node("UsingOption")).apply(node => {
               node.append(r.consume(Keyword.USING))
               node.append(this.identifier(r, "ColumnName"))
-            }))
+            })
           }
-        }))
+        })
       }  
     })
   }
 
   private selectColumns(r: TokenReader) {
-    return new Node("SelectColumnList", node => {
+    return new Node("SelectColumnList").apply(node => {
       do {
-        node.append(new Node("SelectColumn", node => {
+        node.append(new Node("SelectColumn")).apply(node => {
           if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
-            node.append(new Node("AllColumnsOption", node => {
+            node.append(new Node("AllColumnsOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(
             TokenType.Identifier, 
             TokenType.Dot, 
             { type: TokenType.Operator, text: "*" }
           )) {
             node.append(this.identifier(r, "SchemaName"))
-            node.append(new Node("AllColumnsOption", node => {
+            node.append(new Node("AllColumnsOption")).apply(node => {
               node.append(r.consume())
               node.append(r.consume())
-            }))
+            })
           } else {
             node.append(this.expression(r))
             if (r.peekIf(Keyword.AS)) {
@@ -1363,7 +1377,7 @@ export class PostgresParser extends Parser {
               node.append(this.identifier(r, "ColumnAlias"))
             }
           }
-        }))
+        })
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
         } else {
@@ -1374,7 +1388,7 @@ export class PostgresParser extends Parser {
   }
 
   private fromClause(r: TokenReader) {
-    return new Node("FromClause", node => {
+    return new Node("FromClause").apply(node => {
       if (r.peekIf(Keyword.USING)) {
         node.append(r.consume())
         node.name = "UsingClause"
@@ -1383,15 +1397,15 @@ export class PostgresParser extends Parser {
       }
       let hasJoinClause = false
       do {
-        node.append(new Node("ObjectReference", node => {
+        node.append(new Node("ObjectReference")).apply(node => {
           if (r.peekIf(Keyword.ONLY)) {
-            node.append(new Node("OnlyOption", node => {
+            node.append(new Node("OnlyOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.LATERAL)) {
-            node.append(new Node("LiteralOption", node => {
+            node.append(new Node("LiteralOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           }
 
           if (r.peekIf(TokenType.LeftParen)) {
@@ -1410,24 +1424,24 @@ export class PostgresParser extends Parser {
               node.append(this.identifier(r, "ObjectName"))
             }
             if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
-              node.append(new Node("AllDescendantsOption", node => {
+              node.append(new Node("AllDescendantsOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             } else if (r.peekIf(TokenType.LeftParen)) {
               node.append(r.consume())
               node.name = "Function"
-              node.append(new Node("ArgumentList", node => {
+              node.append(new Node("ArgumentList")).apply(node => {
                 while (!r.peekIf(TokenType.RightParen)) {
-                  node.append(new Node("Argument", node => {
+                  node.append(new Node("Argument")).apply(node => {
                     node.append(this.expression(r))
-                  }))
+                  })
                   if (r.peekIf(TokenType.Comma)) {
                     node.append(r.consume())
                   } else {
                     break
                   }
                 }
-              }))
+              })
               node.append(r.consume(TokenType.RightParen))
             }
           }
@@ -1443,7 +1457,7 @@ export class PostgresParser extends Parser {
             hasJoinClause = true
             node.append(this.joinClause(r))
           }
-        }))
+        })
         if (!hasJoinClause && r.consume(TokenType.Comma)) {
           node.append(r.consume())
         } else {
@@ -1454,7 +1468,7 @@ export class PostgresParser extends Parser {
   }
 
   private joinClause(r: TokenReader) {
-    return new Node("InnerJoinClause", node => {
+    return new Node("InnerJoinClause").apply(node => {
       let hasCondition = true
       if (r.peekIf(Keyword.CROSS)) {
         node.name = "CrossJoinClause"
@@ -1462,9 +1476,9 @@ export class PostgresParser extends Parser {
         hasCondition = false
       } else {
         if (r.peekIf(Keyword.NATURAL)) {
-          node.append(new Node("NatualOption", node => {
+          node.append(new Node("NatualOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
           hasCondition = false
         }
         if (r.peekIf(Keyword.LEFT)) {
@@ -1507,57 +1521,57 @@ export class PostgresParser extends Parser {
       }
       
       if (hasCondition && r.peekIf(Keyword.ON)) {
-        node.append(new Node("JoinOnClause", node => {
+        node.append(new Node("JoinOnClause")).apply(node => {
           node.append(r.consume())
           node.append(this.expression(r))
-        }))
+        })
       } else if (hasCondition && r.peekIf(Keyword.USING)) {
-        node.append(new Node("UsingClause", node => {
+        node.append(new Node("UsingClause")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(TokenType.LeftParen))
           //TODO
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
       }
     })
   }
 
   private whereClause(r: TokenReader) {
-    return new Node("WhereClause", node => {
+    return new Node("WhereClause").apply(node => {
       node.append(r.consume(Keyword.WHERE))
       node.append(this.expression(r))  
     })
   }
 
   private gropuByClause(r: TokenReader) {
-    return new Node("GroupByClause", node => {
+    return new Node("GroupByClause").apply(node => {
       node.append(r.consume(Keyword.GROUP))
       node.append(r.consume(Keyword.BY))
       if (r.peekIf(Keyword.ALL)) {
-        node.append(new Node("AllOption", node => {
+        node.append(new Node("AllOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.DISTINCT)) {
-        node.append(new Node("DistinctOption", node => {
+        node.append(new Node("DistinctOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       }
       do {
         if (r.peekIf(Keyword.ROLLUP)) {
-          node.append(new Node("RollupClause", node => {
+          node.append(new Node("RollupClause")).apply(node => {
             node.append(r.consume())
             //TODO
-          }))
+          })
         } else if (r.peekIf(Keyword.CUBE)) {
-          node.append(new Node("CubeClause", node => {
+          node.append(new Node("CubeClause")).apply(node => {
             node.append(r.consume())
             //TODO
-          }))
+          })
         } else if (r.peekIf(Keyword.GROUPING, Keyword.SET)) {
-          node.append(new Node("GroupingSetClause", node => {
+          node.append(new Node("GroupingSetClause")).apply(node => {
             node.append(r.consume())
             //TODO
-          }))
+          })
         } else {
           node.append(this.expression(r))
         }
@@ -1571,14 +1585,14 @@ export class PostgresParser extends Parser {
   }
 
   private havingClause(r: TokenReader) {
-    return new Node("HavingClause", node => {
+    return new Node("HavingClause").apply(node => {
       node.append(r.consume(Keyword.HAVING))
       node.append(this.expression(r))
     })
   }
 
   private windowClause(r: TokenReader) {
-    return new Node("WindowClause", node => {
+    return new Node("WindowClause").apply(node => {
       node.append(r.consume(Keyword.WINDOW))
       do {
         node.append(this.identifier(r, "WindowName"))
@@ -1594,7 +1608,7 @@ export class PostgresParser extends Parser {
   }
 
   private window(r: TokenReader) {
-    return new Node("Window", node => {
+    return new Node("Window").apply(node => {
       if (!r.peekIf(Keyword.PARTITION)) {
         node.append(this.identifier(r, "BaseWindowName"))
       }
@@ -1604,135 +1618,135 @@ export class PostgresParser extends Parser {
       if (r.peekIf(Keyword.ORDER)) {
         node.append(this.orderByClause(r))
       }
-      node.append(new Node("FrameClause", node => {
+      node.append(new Node("FrameClause")).apply(node => {
         if (r.peekIf(Keyword.RANGE)) {
-          node.append(new Node("RangeOption", node => {
+          node.append(new Node("RangeOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         } else if (r.peekIf(Keyword.ROWS)) {
-          node.append(new Node("RowsOption", node => {
+          node.append(new Node("RowsOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         } else if (r.peekIf(Keyword.GROUPS)) {
-          node.append(new Node("GroupsOption", node => {
+          node.append(new Node("GroupsOption")).apply(node => {
             node.append(r.consume())
-          }))
+          })
         }
         if (r.peekIf(Keyword.CURRENT)) {
-          node.append(new Node("FrameStartClause", node => {
-            node.append(new Node("CurrentRowOption", node => {
+          node.append(new Node("FrameStartClause")).apply(node => {
+            node.append(new Node("CurrentRowOption")).apply(node => {
               node.append(r.consume())
               node.append(r.consume(Keyword.ROW))
-            }))
-          }))
+            })
+          })
         } else if (r.peekIf(Keyword.UNBOUNDED)) {
-          node.append(new Node("FrameStartClause", node => {
-            node.append(new Node("UnboundedPrecedingOption", node => {
+          node.append(new Node("FrameStartClause")).apply(node => {
+            node.append(new Node("UnboundedPrecedingOption")).apply(node => {
               node.append(r.consume())
               node.append(r.consume(Keyword.PRECEDING))
-            }))
-          }))
+            })
+          })
         } else if (r.peekIf(Keyword.BETWEEN)) {
           node.append(r.consume())
-          node.append(new Node("FrameStartClause", node => {
+          node.append(new Node("FrameStartClause")).apply(node => {
             node.append(r.consume())
             if (r.peekIf(Keyword.CURRENT)) {
-              node.append(new Node("CurrentRowOption", node => {
+              node.append(new Node("CurrentRowOption")).apply(node => {
                 node.append(r.consume())
                 node.append(r.consume(Keyword.ROW))
-              }))
+              })
             } else if (r.peekIf(Keyword.UNBOUNDED)) {
-              node.append(new Node("UnboundedPrecedingOption", node => {
+              node.append(new Node("UnboundedPrecedingOption")).apply(node => {
                 node.append(r.consume(),)
                 node.append(r.consume(Keyword.PRECEDING))
-              }))
+              })
             } else {
               const expr = this.expression(r)
               if (r.peekIf(Keyword.PRECEDING)) {
-                node.append(new Node("PrecedingOption", node => {
+                node.append(new Node("PrecedingOption")).apply(node => {
                   node.append(expr)
                   node.append(r.consume())
-                }))
+                })
               } else if (r.peekIf(Keyword.FOLLOWING)) {
-                node.append(new Node("FollowingOption", node => {
+                node.append(new Node("FollowingOption")).apply(node => {
                   node.append(expr)
                   node.append(r.consume())
-                }))
+                })
               } else {
                 throw r.createParseError()
               }
             }
-          }))
+          })
           node.append(r.consume(Keyword.AND))
-          node.append(new Node("FrameEndClause", node => {
+          node.append(new Node("FrameEndClause")).apply(node => {
             node.append(r.consume())
             if (r.peekIf(Keyword.CURRENT)) {
-              node.append(new Node("CurrentRowOption", node => {
+              node.append(new Node("CurrentRowOption")).apply(node => {
                 node.append(r.consume())
                 node.append(r.consume(Keyword.ROW))
-              }))
+              })
             } else if (r.peekIf(Keyword.UNBOUNDED)) {
-              node.append(new Node("UnboundedFollowingOption", node => {
+              node.append(new Node("UnboundedFollowingOption")).apply(node => {
                 node.append(r.consume())
                 node.append(r.consume(Keyword.FOLLOWING))
-              }))
+              })
             } else {
               const expr = this.expression(r)
               if (r.peekIf(Keyword.PRECEDING)) {
-                node.append(new Node("PrecedingOption", node => {
+                node.append(new Node("PrecedingOption")).apply(node => {
                   node.append(expr)
                   node.append(r.consume())
-                }))
+                })
               } else if (r.peekIf(Keyword.FOLLOWING)) {
-                node.append(new Node("FollowingOption", node => {
+                node.append(new Node("FollowingOption")).apply(node => {
                   node.append(expr)
                   node.append(r.consume())
-                }))
+                })
               } else {
                 throw r.createParseError()
               }
             }
-          }))
+          })
         } else {
-          node.append(new Node("FrameStartClause", node => {
-            node.append(new Node("PrecedingOption", node => {
+          node.append(new Node("FrameStartClause")).apply(node => {
+            node.append(new Node("PrecedingOption")).apply(node => {
               node.append(this.expression(r))
               node.append(r.consume(Keyword.PRECEDING))
-            }))
-          }))
+            })
+          })
         }
-      }))
+      })
       if (r.peekIf(Keyword.EXCLUDE)) {
-        node.append(new Node("ExcludeClause", node => {
+        node.append(new Node("ExcludeClause")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.NO)) {
-            node.append(new Node("NoOthersOption", node => {
+            node.append(new Node("NoOthersOption")).apply(node => {
               node.append(r.consume())
               node.append(r.consume(Keyword.OTHERS))
-            }))
+            })
           } else if (r.peekIf(Keyword.CURRENT)) {
-            node.append(new Node("CurrentRowOption", node => {
+            node.append(new Node("CurrentRowOption")).apply(node => {
               node.append(r.consume())
               node.append(r.consume(Keyword.ROW))
-            }))
+            })
           } else if (r.peekIf(Keyword.GROUP)) {
-            node.append(new Node("GroupOption", node => {
+            node.append(new Node("GroupOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else if (r.peekIf(Keyword.TIES)) {
-            node.append(new Node("TiesOption", node => {
+            node.append(new Node("TiesOption")).apply(node => {
               node.append(r.consume())
-            }))
+            })
           } else {
             throw r.createParseError()
           }
-        }))
+        })
       }
     })
   }
 
   private partitionByClause(r: TokenReader) {
-    return new Node("PartitionByClause", node => {
+    return new Node("PartitionByClause").apply(node => {
       node.append(r.consume(Keyword.PARTITION))
       node.append(r.consume(Keyword.BY))
       do {
@@ -1747,7 +1761,7 @@ export class PostgresParser extends Parser {
   }
 
   private orderByClause(r: TokenReader) {
-    return new Node("OrderByClause", node => {
+    return new Node("OrderByClause").apply(node => {
       node.append(r.consume(Keyword.ORDER))
       node.append(r.consume(Keyword.BY))
       do {
@@ -1764,12 +1778,12 @@ export class PostgresParser extends Parser {
   }
 
   private limitClause(r: TokenReader) {
-    return new Node("LimitClause", node => {
+    return new Node("LimitClause").apply(node => {
       node.append(r.consume(Keyword.LIMIT))
       if (r.peekIf(Keyword.ALL)) {
-        node.append(new Node("AllOption", node => {
+        node.append(new Node("AllOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else {
         node.append(this.expression(r))
       }
@@ -1777,7 +1791,7 @@ export class PostgresParser extends Parser {
   }
 
   private offsetClause(r: TokenReader) {
-    return new Node("OffsetClause", node => {
+    return new Node("OffsetClause").apply(node => {
       node.append(r.consume(Keyword.OFFSET))
       node.append(this.expression(r))
       if (r.peekIf(Keyword.ROW) || r.peekIf(Keyword.ROWS)) {
@@ -1787,16 +1801,16 @@ export class PostgresParser extends Parser {
   }
 
   private fetchClause(r: TokenReader) {
-    return new Node("FetchClause", node => {
+    return new Node("FetchClause").apply(node => {
       node.append(r.consume(Keyword.FETCH))
       if (r.peekIf(Keyword.FIRST)) {
-        node.append(new Node("FirstOption", node => {
+        node.append(new Node("FirstOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.NEXT)) {
-        node.append(new Node("NextOption", node => {
+        node.append(new Node("NextOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else {
         throw r.createParseError()
       }
@@ -1809,44 +1823,44 @@ export class PostgresParser extends Parser {
         }
       }
       if (r.peekIf(Keyword.ONLY)) {
-        node.append(new Node("OnlyOption", node => {
+        node.append(new Node("OnlyOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.WITH)) {
-        node.append(new Node("WithTiesOption", node => {
+        node.append(new Node("WithTiesOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.TIES))
-        }))
+        })
       }
     })
   }
 
   private forUpdateClause(r: TokenReader) {
-    return new Node("ForUpdateClause", node => {
+    return new Node("ForUpdateClause").apply(node => {
       node.append(r.consume(Keyword.FOR))
       if (r.peekIf(Keyword.UPDATE)) {
         node.append(r.consume())
       } else if (r.peekIf(Keyword.NO, Keyword.KEY, Keyword.UPDATE)) {
-        node.append(new Node("NoKeyOption", node => {
+        node.append(new Node("NoKeyOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume())
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.SHARE)) {
         node.name = "ForShareClause"
         node.append(r.consume())
       } else if (r.peekIf(Keyword.KEY, Keyword.SHARE)) {
         node.name = "ForShareClause"
-        node.append(new Node("KeyOption", node => {
+        node.append(new Node("KeyOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume())
-        }))
+        })
       }
       if (r.peekIf(Keyword.OF)) {
-        node.append(new Node("ObjectReferenceList", node => {
+        node.append(new Node("ObjectReferenceList")).apply(node => {
           node.append(r.consume())
           do {
-            node.append(new Node("ObjectReference", node => {
+            node.append(new Node("ObjectReference")).apply(node => {
               const ident = this.identifier(r, "ObjectName")
               node.append(ident)
               if (r.peekIf(TokenType.Dot)) {
@@ -1854,23 +1868,23 @@ export class PostgresParser extends Parser {
                 node.append(r.consume())
                 node.append(this.identifier(r, "ObjectName"))
               }
-            }))
+            })
             if (r.peekIf(TokenType.Comma)) {
               node.append(r.consume())
               break
             }
           } while (!r.peek().eos)
-        }))
+        })
       }
       if (r.peekIf(Keyword.NOWAIT)) {
-        node.append(new Node("NowaitOption", node => {
+        node.append(new Node("NowaitOption")).apply(node => {
           node.append(r.consume())
-        }))
+        })
       } else if (r.peekIf(Keyword.SKIP)) {
-        node.append(new Node("SkipLockedOption", node => {
+        node.append(new Node("SkipLockedOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.LOCKED))
-        }))
+        })
       }
     })
   }
@@ -1878,22 +1892,22 @@ export class PostgresParser extends Parser {
   private expression(r: TokenReader, priority = 0) {
     let current: Node
     if (priority < 9 && r.peekIf(Keyword.NOT)) {
-      current = new Node("NotOperation", node => {
+      current = new Node("NotOperation").apply(node => {
         node.append(r.consume())
         node.append(this.expression(r, 9))
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
-      current = new Node("BitwiseNotOperation", node => {
+      current = new Node("BitwiseNotOperation").apply(node => {
         node.append(r.consume())
         node.append(this.expression(r))
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
-      current = new Node("UnaryPlusOperation", node => {
+      current = new Node("UnaryPlusOperation").apply(node => {
         node.append(r.consume())
         node.append(this.expression(r))
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
-      current = new Node("UnaryMinusOperation", node => {
+      current = new Node("UnaryMinusOperation").apply(node => {
         node.append(r.consume())
       })
     } else {
@@ -1902,22 +1916,22 @@ export class PostgresParser extends Parser {
 
     while (!r.peek().eos) {
       if (priority < 11 && r.peekIf(Keyword.OR)) {
-        current = new Node("OrOperation", node => {
+        current = new Node("OrOperation").apply(node => {
           node.append(r.consume())
           node.append(this.expression(r, 11))
         })
       } else if (priority < 10 && r.peekIf(Keyword.AND)) {
-        current = new Node("AndOperation", node => {
+        current = new Node("AndOperation").apply(node => {
           node.append(r.consume())
           node.append(this.expression(r, 10))
         })
       } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "=", "==" ] })) {
-        current = new Node("EqualOperation", node => {
+        current = new Node("EqualOperation").apply(node => {
           node.append(r.consume())
           node.append(this.expression(r, 8))
         })
       } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "<>", "!=" ] })) {
-        current = new Node("NotEqualOperation", node => {
+        current = new Node("NotEqualOperation").apply(node => {
           node.append(r.consume())
           node.append(this.expression(r, 8))
         })
@@ -1926,36 +1940,44 @@ export class PostgresParser extends Parser {
         if (r.peekIf(Keyword.NOT)) {
           prefix.push(r.consume())
           if (r.peekIf(Keyword.DISTINCT)) {
-            current = new Node("IsNotDistinctFromOperation", node => {
-              node.append(...prefix)
+            current = new Node("IsNotDistinctFromOperation").apply(node => {
+              for (const item of prefix) {
+                node.append(item)
+              }
               node.append(r.consume())
               node.append(r.consume(Keyword.FROM))
             })
           } else {
-            current = new Node("IsNotOperation", node => {
-              node.append(...prefix)
+            current = new Node("IsNotOperation").apply(node => {
+              for (const item of prefix) {
+                node.append(item)
+              }
               node.append(r.consume())
             })
           }
         } else if (r.peekIf(Keyword.DISTINCT)) {
-          current = new Node("IsDistinctFromOperation", node => {
-            node.append(...prefix)
+          current = new Node("IsDistinctFromOperation").apply(node => {
+            for (const item of prefix) {
+              node.append(item)
+            }
             node.append(r.consume())
             node.append(r.consume(Keyword.FROM))
           })
         } else {
-          current = new Node("IsOperation", node => {
-            node.append(...prefix)
+          current = new Node("IsOperation").apply(node => {
+            for (const item of prefix) {
+              node.append(item)
+            }
           })
         }
         current.append(this.expression(r, 8))
       } else if (priority < 8 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotBetweenOperation", node => {
+          current = new Node("NotBetweenOperation").apply(node => {
             node.append(r.consume())
           })
         } else {
-          current = new Node("BetweenOperation", node => {
+          current = new Node("BetweenOperation").apply(node => {
             node.append(current)
           })
         }
@@ -1965,18 +1987,18 @@ export class PostgresParser extends Parser {
         current.append(this.expression(r, 8))
       } else if (priority < 8 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotInOperation", node => {
+          current = new Node("NotInOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
           })
         } else {
-          current = new Node("InOperation", node => {
+          current = new Node("InOperation").apply(node => {
             node.append(current)
           })
         }
         current.append(r.consume())
         if (r.peekIf(TokenType.LeftParen, [Keyword.WITH, Keyword.VALUES, Keyword.SELECT])) {
-          current.append(new Node("Subquery", node => {
+          current.append(new Node("Subquery")).apply(node => {
             node.append(r.consume())
             const prefix = []
             if (r.peekIf(Keyword.WITH)) {
@@ -1988,9 +2010,9 @@ export class PostgresParser extends Parser {
               node.append(this.selectStatement(r, prefix))
             }
             node.append(r.consume(TokenType.RightParen))
-          }))
+          })
         } else if (r.peekIf(TokenType.LeftParen)) {
-          current.append(new Node("ExpressionList", node => {
+          current.append(new Node("ExpressionList")).apply(node => {
             node.append(r.consume())
             while (!r.peek().eos) {
               node.append(this.expression(r))
@@ -2001,20 +2023,20 @@ export class PostgresParser extends Parser {
               }
             }
             node.append(r.consume(TokenType.RightParen))  
-          }))
+          })
         } else if (r.peekIf(
           TokenType.Identifier,
           TokenType.LeftParen
         )) {
-          current = new Node("Function", node => {
-            node.append(new Node("ObjectName", node => {
+          current = new Node("Function").apply(node => {
+            node.append(new Node("ObjectName")).apply(node => {
               node.append(r.consume())
-              current.append(new Node("ArgumentList", node => {
+              current.append(new Node("ArgumentList")).apply(node => {
                 node.append(r.consume(TokenType.LeftParen))
                 while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
-                  node.append(new Node("Argument", node => {
+                  node.append(new Node("Argument")).apply(node => {
                     node.append(this.expression(r))
-                  }))
+                  })
                   if (r.peekIf(TokenType.Comma)) {
                     node.append(r.consume())
                   } else {
@@ -2022,8 +2044,8 @@ export class PostgresParser extends Parser {
                   }
                 }
                 node.append(r.consume(TokenType.RightParen))
-              }))
-            }))
+              })
+            })
           })
         } else if (r.peekIf([TokenType.Identifier, TokenType.String])) {
           current.append(this.columnReference(r))
@@ -2032,12 +2054,12 @@ export class PostgresParser extends Parser {
         }
       } else if (priority < 8 && (r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH))) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotMatchOperation", node => {
+          current = new Node("NotMatchOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
           })
         } else {
-          current = new Node("MatchOperation", node => {
+          current = new Node("MatchOperation").apply(node => {
             node.append(current)
           })
         }
@@ -2045,30 +2067,30 @@ export class PostgresParser extends Parser {
         current.append(this.expression(r, 8))
       } else if (priority < 8 && (r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotLikeOperation", node => {
+          current = new Node("NotLikeOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
           })
         } else {
-          current = new Node("LikeOperation", node => {
+          current = new Node("LikeOperation").apply(node => {
             node.append(current)
           })
         }
         current.append(r.consume())
         current.append(this.expression(r, 8))
         if (r.peekIf(Keyword.ESCAPE)) {
-          current.append(new Node("EscapeOption", node => {
+          current.append(new Node("EscapeOption")).apply(node => {
             node.append(this.expression(r, 6))
-          }))
+          })
         }
       } else if (priority < 8 && (r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP))) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotRegexpOperation", node => {
+          current = new Node("NotRegexpOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
           })
         } else {
-          current = new Node("RegexpOperation", node => {
+          current = new Node("RegexpOperation").apply(node => {
             node.append(current)
           })
         }
@@ -2076,131 +2098,131 @@ export class PostgresParser extends Parser {
         current.append(this.expression(r, 8))
       } else if (priority < 8 && (r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB))) {
         if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotGlobOperation", node => {
+          current = new Node("NotGlobOperation").apply(node => {
             node.append(current)
             node.append(r.consume())
           })
         } else {
-          current = new Node("GlobOperation", node => {
+          current = new Node("GlobOperation").apply(node => {
             node.append(current)
           })
         }
         current.append(r.consume())
         current.append(this.expression(r, 8))
       } else if (priority < 8 && r.peekIf(Keyword.ISNULL)) {
-        current = new Node("IsNullOperation", node => {
+        current = new Node("IsNullOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
         })
       } else if (priority < 8 && r.peekIf(Keyword.NOTNULL)) {
-        current = new Node("IsNotNullOperation", node => {
+        current = new Node("IsNotNullOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
         })
       } else if (priority < 8 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
-        current = new Node("IsNotNullOperation", node => {
+        current = new Node("IsNotNullOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(r.consume())
         })
       } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<"})) {
-        current = new Node("LessThanOperation", node => {
+        current = new Node("LessThanOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 7))
         })
       } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">"})) {
-        current = new Node("GreaterThanOperation", node => {
+        current = new Node("GreaterThanOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 7))
         })
       } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<="})) {
-        current = new Node("LessThanOrEqualOperation", node => {
+        current = new Node("LessThanOrEqualOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 7))
         })
       } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">="})) {
-        current = new Node("GreaterThanOrEqualOperation", node => {
+        current = new Node("GreaterThanOrEqualOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 7))
         })
       } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "&"})) {
-        current = new Node("BitwiseAndOperation", node => {
+        current = new Node("BitwiseAndOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 5))
         })
       } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "|"})) {
-        current = new Node("BitwiseOrOperation", node => {
+        current = new Node("BitwiseOrOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 5))
         })
       } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "<<"})) {
-        current = new Node("BitwiseLeftShiftOperation", node => {
+        current = new Node("BitwiseLeftShiftOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 5))
         })
       } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: ">>"})) {
-        current = new Node("BitwiseRightShiftOperation", node => {
+        current = new Node("BitwiseRightShiftOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 5))
         })
       } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
-        current = new Node("AddOperation", node => {
+        current = new Node("AddOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 4))
         })
       } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
-        current = new Node("SubtractOperation", node => {
+        current = new Node("SubtractOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 4))
         })
       } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
-        current = new Node("MultiplyOperation", node => {
+        current = new Node("MultiplyOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 3))
         })
       } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
-        current = new Node("DivideOperation", node => {
+        current = new Node("DivideOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 3))
         })
       } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
-        current = new Node("ModuloOperation", node => {
+        current = new Node("ModuloOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 3))
         })
       } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
-        current = new Node("ConcatenateOperation", node => {
+        current = new Node("ConcatenateOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 2))
         })
       } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
-        current = new Node("JsonExtractOperation", node => {
+        current = new Node("JsonExtractOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 2))
         })
       } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
-        current = new Node("JsonExtractAndUnquoteOperation", node => {
+        current = new Node("JsonExtractAndUnquoteOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 2))
         })
       } else if (priority < 1 && r.peekIf(Keyword.COLLATE)) {
-        current = new Node("CollateOperation", node => {
+        current = new Node("CollateOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.identifier(r, "CollationName"))
@@ -2215,68 +2237,68 @@ export class PostgresParser extends Parser {
   private expressionValue(r: TokenReader) {
     let node: Node
     if (r.peekIf(Keyword.NULL)) {
-      node = new Node("NullLiteral", node => {
+      node = new Node("NullLiteral").apply(node => {
         node.append(r.consume())
       })
     } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
       node = this.booleanLiteral(r)
     } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
-      node =  new Node("Function", node => {
-        node.append(new Node("ObjectName", node => {
+      node =  new Node("Function").apply(node => {
+        node.append(new Node("ObjectName")).apply(node => {
           const token = r.consume()
           node.append(token)
           node.data.value = token.text.toUpperCase()
-        }))
+        })
       })
     } else if (r.peekIf(Keyword.CASE)) {
-      node = new Node("CaseBlock", node => {
+      node = new Node("CaseBlock").apply(node => {
         node.append(r.consume())
         if (!r.peekIf(Keyword.WHEN)) {
-          node.append(new Node("CaseClause", node => {
+          node.append(new Node("CaseClause")).apply(node => {
             node.append(this.expression(r))
-          }))
+          })
         }
-        node.append(new Node("CaseConditionList", node => {
+        node.append(new Node("CaseConditionList")).apply(node => {
           do {
-            node.append(new Node("CaseCondition", node => {
+            node.append(new Node("CaseCondition")).apply(node => {
               node.append(r.consume(Keyword.WHEN))
-              node.append(new Node("WhenClause", node => {
+              node.append(new Node("WhenClause")).apply(node => {
                 node.append(this.expression(r))
-              }))
+              })
               node.append(r.consume(Keyword.THEN))
-              node.append(new Node("ThenClause", node => {
+              node.append(new Node("ThenClause")).apply(node => {
                 node.append(this.expression(r))
-              }))
-            }))
+              })
+            })
           } while (!r.peek().eos)
-        }))
+        })
         if (r.peekIf(Keyword.ELSE)) {
-          node.append(new Node("ElseClause", node => {
+          node.append(new Node("ElseClause")).apply(node => {
             node.append(r.consume())
             node.append(this.expression(r))
-          }))
+          })
         }
         node.append(r.consume(Keyword.END))
       })
     } else if (r.peekIf(Keyword.CAST)) {
-      node = new Node("Function", node => {
-        node.append(new Node("ObjectName", node => {
+      node = new Node("Function").apply(node => {
+        node.append(new Node("ObjectName")).apply(node => {
           const token = r.consume()
           node.append(token)
           node.data.value = token.text.toUpperCase()
-        }))
-        node.append(new Node("ArgumentList", node => {
+        })
+        node.append(new Node("ArgumentList")).apply(node => {
           node.append(r.consume(TokenType.LeftParen))
-          node.append(new Node("Argument", node => {
+          node.append(new Node("Argument")).apply(node => {
             node.append(this.expression(r))
-          }))
+          })
           node.append(r.consume(Keyword.AS))
           node.append(this.typeName(r))
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
       })
     } else if (r.peekIf(Keyword.EXISTS)) {
-      node = new Node("ExistsOperation", node => {
+      node = new Node("ExistsOperation").apply(node => {
         node.append(r.consume())
         node.append(r.consume(TokenType.LeftParen))
         if (r.peekIf(Keyword.VALUES)) {
@@ -2287,7 +2309,7 @@ export class PostgresParser extends Parser {
         node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(TokenType.LeftParen)) {
-      node = new Node("", node => {
+      node = new Node("").apply(node => {
         node.append(r.consume())
         if (r.peekIf(Keyword.VALUES)) {
           node.name = "Subquery"
@@ -2314,29 +2336,29 @@ export class PostgresParser extends Parser {
         node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
-      node = new Node("Function", node => {
-        node.append(new Node("ObjectName", node => {
+      node = new Node("Function").apply(node => {
+        node.append(new Node("ObjectName")).apply(node => {
           node.append(r.consume())
-        }))
+        })
 
-        node.append(new Node("ArgumentList", node => {
+        node.append(new Node("ArgumentList")).apply(node => {
           node.append(r.consume(TokenType.LeftParen))
           if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
-            node.append(new Node("Argument", node => {
-              node.append(new Node("AllColumnsOption", node => {
+            node.append(new Node("Argument")).apply(node => {
+              node.append(new Node("AllColumnsOption")).apply(node => {
                 node.append(r.consume())
-              }))
-            }))
+              })
+            })
           } else {
             if (r.peekIf(Keyword.DISTINCT)) {
-              node.append(new Node("DistinctOption", node => {
+              node.append(new Node("DistinctOption")).apply(node => {
                 node.append(r.consume())
-              }))
+              })
             }
             while (!r.peek().eos) {
-              node.append(new Node("Argument", node => {
+              node.append(new Node("Argument")).apply(node => {
                 node.append(this.expression(r))
-              }))
+              })
               if (r.peekIf(TokenType.Comma)) {
                 node.append(r.consume())
               } else {
@@ -2345,17 +2367,17 @@ export class PostgresParser extends Parser {
             }
           }
           node.append(r.consume(TokenType.RightParen))
-        }))
+        })
         if (r.peekIf(Keyword.FILTER)) {
-          node.append(new Node("FilterClause", node => {
+          node.append(new Node("FilterClause")).apply(node => {
             node.append(r.consume())
             node.append(r.consume(TokenType.LeftParen))
             node.append(this.whereClause(r))
             node.append(r.consume(TokenType.RightParen))
-          }))
+          })
         }
         if (r.peekIf(Keyword.OVER)) {
-          node.append(new Node("OverClause", node => {
+          node.append(new Node("OverClause")).apply(node => {
             node.append(r.consume())
             if (r.peekIf(TokenType.LeftParen)) {
               node.append(r.consume())
@@ -2364,7 +2386,7 @@ export class PostgresParser extends Parser {
             } else {
               node.append(this.identifier(r, "WindowName"))
             }
-          }))
+          })
         }
       })
     } else if (r.peekIf(TokenType.Numeric)) {
@@ -2386,11 +2408,11 @@ export class PostgresParser extends Parser {
           value = `${pos}`
           r.state.bindPosition = pos
         }
-        node = new Node("PositionalBindVariable", node => {
+        node = new Node("PositionalBindVariable").apply(node => {
           node.data.value = value
         })
       } else {
-        node = new Node("NamedBindVariable", node => {
+        node = new Node("NamedBindVariable").apply(node => {
           node.data.value = token.text.substring(1)
         })
       }
@@ -2413,7 +2435,7 @@ export class PostgresParser extends Parser {
   }
 
   private numericLiteral(r: TokenReader) {
-    return new Node("NumericLiteral", node => {
+    return new Node("NumericLiteral").apply(node => {
       if (r.peekIf({ type: TokenType.Operator, text: "+" }) || r.peekIf({ type: TokenType.Operator, text: "-" })) {
         const token1 = r.consume()
         node.append(token1)
@@ -2429,7 +2451,7 @@ export class PostgresParser extends Parser {
   }
 
   private stringLiteral(r: TokenReader) {
-    return new Node("StringLiteral", node => {
+    return new Node("StringLiteral").apply(node => {
       const token = r.consume(TokenType.String)
       node.append(token)
       node.data.value = dequote(token.text)
@@ -2437,7 +2459,7 @@ export class PostgresParser extends Parser {
   }
 
   private blobLiteral(r: TokenReader) {
-    return new Node("BlobLiteral", node => {
+    return new Node("BlobLiteral").apply(node => {
       const token = r.consume(TokenType.Blob)
       node.append(token)
       node.data.value = token.text.substring(3, token.text.length-1).replace(/''/g, "'").toUpperCase()
@@ -2445,7 +2467,7 @@ export class PostgresParser extends Parser {
   }
 
   private booleanLiteral(r: TokenReader) {
-    return new Node("BooleanLiteral", node => {
+    return new Node("BooleanLiteral").apply(node => {
       if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
         const token = r.consume()
         node.append(token)

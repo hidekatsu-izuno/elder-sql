@@ -77,21 +77,21 @@ export class OracleParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    return new Node("CommandStatement", node => {
-      node.append(new Node("CommandName", node => {
+    return new Node("CommandStatement").apply(node => {
+      node.append(new Node("CommandName")).apply(node => {
         const command = r.consume(TokenType.Command)
         node.append(command)
         node.data.value = command.text
-      }))
-      node.append(new Node("CommandArgumentList", node => {
+      })
+      node.append(new Node("CommandArgumentList")).apply(node => {
         while (!r.peek().eos) {
-          node.append(new Node("CommandArgument", node => {
+          node.append(new Node("CommandArgument")).apply(node => {
             const arg = r.consume()
             node.append(arg)
             node.data.value = dequote(arg.text)
-          }))
+          })
         }
-      }))
+      })
       if (r.peekIf(TokenType.EoF)) {
         node.append(r.consume())
       }
@@ -104,18 +104,18 @@ export class OracleParser extends Parser {
 
     try {
       if (r.peekIf(Keyword.EXPLAIN)) {
-        explainPlan = new Node("ExplainPlan", node => {
+        explainPlan = new Node("ExplainPlan").apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.PLAN))
 
           if (r.peekIf(Keyword.SET)) {
-            node.append(new Node("statement_id", node => {
+            node.append(new Node("statement_id")).apply(node => {
               node.append(r.consume())
               node.append(r.consume(Keyword.STATEMENT_ID))
               node.append(r.consume({ type: TokenType.Operator, text: "=" }))
               node.append(r.consume(TokenType.String))
               node.data.value = dequote(r.peek(-1).text)
-            }))
+            })
           }
 
           if (r.peekIf(Keyword.INTO)) {
@@ -703,7 +703,7 @@ export class OracleParser extends Parser {
   }
 
   private createAnalyticViewStatement(r: TokenReader) {
-    return new Node("CreateAnalyticView", node => {
+    return new Node("CreateAnalyticView").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.ANALYTIC))
       node.append(r.consume(Keyword.VIEW))
@@ -715,7 +715,7 @@ export class OracleParser extends Parser {
   }
 
   private createAttributeDimensionStatement(r: TokenReader) {
-    return new Node("CreateAttributeDimension", node => {
+    return new Node("CreateAttributeDimension").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.ATTRIBUTE))
       node.append(r.consume(Keyword.DIMENSION))
@@ -727,7 +727,7 @@ export class OracleParser extends Parser {
   }
 
   private createAuditPolicyStatement(r: TokenReader) {
-    return new Node("CreateAuditPolicy", node => {
+    return new Node("CreateAuditPolicy").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.AUDIT))
       node.append(r.consume(Keyword.POLICY))
@@ -739,7 +739,7 @@ export class OracleParser extends Parser {
   }
 
   private createClusterStatement(r: TokenReader) {
-    return new Node("CreateCluster", node => {
+    return new Node("CreateCluster").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.CLUSTER))
 
@@ -750,7 +750,7 @@ export class OracleParser extends Parser {
   }
 
   private createContextStatement(r: TokenReader) {
-    return new Node("CreateContext", node => {
+    return new Node("CreateContext").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.CONTEXT))
 
@@ -761,7 +761,7 @@ export class OracleParser extends Parser {
   }
 
   private createControlfileStatement(r: TokenReader) {
-    return new Node("CreateControlfile", node => {
+    return new Node("CreateControlfile").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.CONTROLFILE))
 
@@ -772,7 +772,7 @@ export class OracleParser extends Parser {
   }
 
   private createDatabaseLinkStatement(r: TokenReader) {
-    return new Node("CreateDatabaseLink", node => {
+    return new Node("CreateDatabaseLink").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.DATABASE))
       node.append(r.consume(Keyword.LINK))
@@ -784,7 +784,7 @@ export class OracleParser extends Parser {
   }
 
   private createDatabaseStatement(r: TokenReader) {
-    return new Node("CreateDatabase", node => {
+    return new Node("CreateDatabase").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.DATABASE))
 
@@ -795,7 +795,7 @@ export class OracleParser extends Parser {
   }
 
   private createDimensionStatement(r: TokenReader) {
-    return new Node("CreateDimension", node => {
+    return new Node("CreateDimension").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.DIMENSION))
 
@@ -806,7 +806,7 @@ export class OracleParser extends Parser {
   }
 
   private createDirectoryStatement(r: TokenReader) {
-    return new Node("CreateDirectory", node => {
+    return new Node("CreateDirectory").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.DIRECTORY))
 
@@ -817,7 +817,7 @@ export class OracleParser extends Parser {
   }
 
   private createDiskgroupStatement(r: TokenReader) {
-    return new Node("CreateDiskgroup", node => {
+    return new Node("CreateDiskgroup").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.DISKGROUP))
 
@@ -828,7 +828,7 @@ export class OracleParser extends Parser {
   }
 
   private createEditionStatement(r: TokenReader) {
-    return new Node("CreateEdition", node => {
+    return new Node("CreateEdition").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.EDITION))
 
@@ -839,7 +839,7 @@ export class OracleParser extends Parser {
   }
 
   private createFunctionStatement(r: TokenReader) {
-    return new Node("CreateFunction", node => {
+    return new Node("CreateFunction").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.FUNCTION))
 
@@ -850,7 +850,7 @@ export class OracleParser extends Parser {
   }
 
   private createHierarchyStatement(r: TokenReader) {
-    return new Node("CreateHierarchy", node => {
+    return new Node("CreateHierarchy").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.HIERARCHY))
 
@@ -861,7 +861,7 @@ export class OracleParser extends Parser {
   }
 
   private createIndexStatement(r: TokenReader) {
-    return new Node("CreateIndex", node => {
+    return new Node("CreateIndex").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.INDEX))
 
@@ -872,7 +872,7 @@ export class OracleParser extends Parser {
   }
 
   private createIndextypeStatement(r: TokenReader) {
-    return new Node("CreateIndextype", node => {
+    return new Node("CreateIndextype").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.INDEXTYPE))
 
@@ -883,7 +883,7 @@ export class OracleParser extends Parser {
   }
 
   private createInmemoryJoinGroupStatement(r: TokenReader) {
-    return new Node("CreateInmemoryJoinGroup", node => {
+    return new Node("CreateInmemoryJoinGroup").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.INMEMORY))
       node.append(r.consume(Keyword.JOIN))
@@ -896,7 +896,7 @@ export class OracleParser extends Parser {
   }
 
   private createJavaStatement(r: TokenReader) {
-    return new Node("CreateJava", node => {
+    return new Node("CreateJava").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.JAVA))
 
@@ -907,7 +907,7 @@ export class OracleParser extends Parser {
   }
 
   private createLibraryStatement(r: TokenReader) {
-    return new Node("CreateLibrary", node => {
+    return new Node("CreateLibrary").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.LIBRARY))
 
@@ -918,7 +918,7 @@ export class OracleParser extends Parser {
   }
 
   private createLockdownProfileStatement(r: TokenReader) {
-    return new Node("CreateLockdownProfile", node => {
+    return new Node("CreateLockdownProfile").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.LOCKDOWN))
       node.append(r.consume(Keyword.PROFILE))
@@ -930,7 +930,7 @@ export class OracleParser extends Parser {
   }
 
   private createMaterializedViewLogStatement(r: TokenReader) {
-    return new Node("CreateMaterializedViewLog", node => {
+    return new Node("CreateMaterializedViewLog").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -943,7 +943,7 @@ export class OracleParser extends Parser {
   }
 
   private createMaterializedViewStatement(r: TokenReader) {
-    return new Node("CreateMaterializedView", node => {
+    return new Node("CreateMaterializedView").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -955,7 +955,7 @@ export class OracleParser extends Parser {
   }
 
   private createOperatorStatement(r: TokenReader) {
-    return new Node("CreateOperator", node => {
+    return new Node("CreateOperator").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.OPERATOR))
 
@@ -966,7 +966,7 @@ export class OracleParser extends Parser {
   }
 
   private createOutlineStatement(r: TokenReader) {
-    return new Node("CreateOutline", node => {
+    return new Node("CreateOutline").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.OUTLINE))
 
@@ -977,7 +977,7 @@ export class OracleParser extends Parser {
   }
 
   private createPackageBodyStatement(r: TokenReader) {
-    return new Node("CreatePackageBody", node => {
+    return new Node("CreatePackageBody").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PACKAGE))
       node.append(r.consume(Keyword.BODY))
@@ -989,7 +989,7 @@ export class OracleParser extends Parser {
   }
 
   private createPackageStatement(r: TokenReader) {
-    return new Node("CreatePackage", node => {
+    return new Node("CreatePackage").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PACKAGE))
 
@@ -1000,7 +1000,7 @@ export class OracleParser extends Parser {
   }
 
   private createPfileStatement(r: TokenReader) {
-    return new Node("CreatePfile", node => {
+    return new Node("CreatePfile").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PFILE))
 
@@ -1011,7 +1011,7 @@ export class OracleParser extends Parser {
   }
 
   private createPluggableDatabaseStatement(r: TokenReader) {
-    return new Node("CreatePluggableDatabase", node => {
+    return new Node("CreatePluggableDatabase").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PLUGGABLE))
       node.append(r.consume(Keyword.DATABASE))
@@ -1023,7 +1023,7 @@ export class OracleParser extends Parser {
   }
 
   private createProcedureStatement(r: TokenReader) {
-    return new Node("CreateProcedure", node => {
+    return new Node("CreateProcedure").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PROCEDURE))
 
@@ -1034,7 +1034,7 @@ export class OracleParser extends Parser {
   }
 
   private createProfileStatement(r: TokenReader) {
-    return new Node("CreateProfile", node => {
+    return new Node("CreateProfile").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.PROFILE))
 
@@ -1045,7 +1045,7 @@ export class OracleParser extends Parser {
   }
 
   private createRestorePointStatement(r: TokenReader) {
-    return new Node("CreateRestorePoint", node => {
+    return new Node("CreateRestorePoint").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.RESTORE))
       node.append(r.consume(Keyword.POINT))
@@ -1057,7 +1057,7 @@ export class OracleParser extends Parser {
   }
 
   private createRoleStatement(r: TokenReader) {
-    return new Node("CreateRole", node => {
+    return new Node("CreateRole").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.ROLE))
 
@@ -1068,7 +1068,7 @@ export class OracleParser extends Parser {
   }
 
   private createRollbackSegmentStatement(r: TokenReader) {
-    return new Node("CreateRollbackSegment", node => {
+    return new Node("CreateRollbackSegment").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.ROLLBACK))
       node.append(r.consume(Keyword.SEGMENT))
@@ -1080,7 +1080,7 @@ export class OracleParser extends Parser {
   }
 
   private createSchemaStatement(r: TokenReader) {
-    return new Node("CreateSchema", node => {
+    return new Node("CreateSchema").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.SCHEMA))
 
@@ -1091,7 +1091,7 @@ export class OracleParser extends Parser {
   }
 
   private createSequenceStatement(r: TokenReader) {
-    return new Node("CreateSequence", node => {
+    return new Node("CreateSequence").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.SEQUENCE))
 
@@ -1102,7 +1102,7 @@ export class OracleParser extends Parser {
   }
 
   private createSpfileStatement(r: TokenReader) {
-    return new Node("CreateSpfile", node => {
+    return new Node("CreateSpfile").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.SPFILE))
 
@@ -1113,7 +1113,7 @@ export class OracleParser extends Parser {
   }
 
   private createSynonymStatement(r: TokenReader) {
-    return new Node("CreateSynonym", node => {
+    return new Node("CreateSynonym").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.SYNONYM))
 
@@ -1124,7 +1124,7 @@ export class OracleParser extends Parser {
   }
 
   private createTableStatement(r: TokenReader) {
-    return new Node("CreateTable", node => {
+    return new Node("CreateTable").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TABLE))
 
@@ -1135,7 +1135,7 @@ export class OracleParser extends Parser {
   }
 
   private createTablespaceSetStatement(r: TokenReader) {
-    return new Node("CreateTablespaceSet", node => {
+    return new Node("CreateTablespaceSet").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TABLESPACE))
       node.append(r.consume(Keyword.SET))
@@ -1147,7 +1147,7 @@ export class OracleParser extends Parser {
   }
 
   private createTablespaceStatement(r: TokenReader) {
-    return new Node("CreateTablespace", node => {
+    return new Node("CreateTablespace").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TABLESPACE))
 
@@ -1158,7 +1158,7 @@ export class OracleParser extends Parser {
   }
 
   private createTriggerStatement(r: TokenReader) {
-    return new Node("CreateTrigger", node => {
+    return new Node("CreateTrigger").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TRIGGER))
 
@@ -1169,7 +1169,7 @@ export class OracleParser extends Parser {
   }
 
   private createTypeBodyStatement(r: TokenReader) {
-    return new Node("CreateTypeBody", node => {
+    return new Node("CreateTypeBody").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TYPE))
       node.append(r.consume(Keyword.BODY))
@@ -1181,7 +1181,7 @@ export class OracleParser extends Parser {
   }
 
   private createTypeStatement(r: TokenReader) {
-    return new Node("CreateType", node => {
+    return new Node("CreateType").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.TYPE))
 
@@ -1192,7 +1192,7 @@ export class OracleParser extends Parser {
   }
 
   private createUserStatement(r: TokenReader) {
-    return new Node("CreateUser", node => {
+    return new Node("CreateUser").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.USER))
 
@@ -1203,7 +1203,7 @@ export class OracleParser extends Parser {
   }
 
   private createViewStatement(r: TokenReader) {
-    return new Node("CreateView", node => {
+    return new Node("CreateView").apply(node => {
       node.append(r.consume(Keyword.CREATE))
       node.append(r.consume(Keyword.VIEW))
 
@@ -1214,7 +1214,7 @@ export class OracleParser extends Parser {
   }
 
   private alterAnalyticViewStatement(r: TokenReader) {
-    return new Node("AlterAnalyticView", node => {
+    return new Node("AlterAnalyticView").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.ANALYTIC))
       node.append(r.consume(Keyword.VIEW))
@@ -1226,7 +1226,7 @@ export class OracleParser extends Parser {
   }
 
   private alterAttributeDimensionStatement(r: TokenReader) {
-    return new Node("AlterAttributeDimension", node => {
+    return new Node("AlterAttributeDimension").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.ATTRIBUTE))
       node.append(r.consume(Keyword.DIMENSION))
@@ -1238,7 +1238,7 @@ export class OracleParser extends Parser {
   }
 
   private alterAuditPolicyStatement(r: TokenReader) {
-    return new Node("AlterAuditPolicy", node => {
+    return new Node("AlterAuditPolicy").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.AUDIT))
       node.append(r.consume(Keyword.POLICY))
@@ -1250,7 +1250,7 @@ export class OracleParser extends Parser {
   }
 
   private alterClusterStatement(r: TokenReader) {
-    return new Node("AlterCluster", node => {
+    return new Node("AlterCluster").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.CLUSTER))
 
@@ -1261,7 +1261,7 @@ export class OracleParser extends Parser {
   }
 
   private alterDatabaseDictionaryStatement(r: TokenReader) {
-    return new Node("AlterDatabaseDictionary", node => {
+    return new Node("AlterDatabaseDictionary").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.DATABASE))
       node.append(r.consume(Keyword.DICTIONARY))
@@ -1273,7 +1273,7 @@ export class OracleParser extends Parser {
   }
 
   private alterDatabaseLinkStatement(r: TokenReader) {
-    return new Node("alter database link", node => {
+    return new Node("alter database link").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.DATABASE))
       node.append(r.consume(Keyword.LINK))
@@ -1286,7 +1286,7 @@ export class OracleParser extends Parser {
   }
 
   private alterDatabaseStatement(r: TokenReader) {
-    return new Node("alter database", node => {
+    return new Node("alter database").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.DATABASE))
 
@@ -1298,7 +1298,7 @@ export class OracleParser extends Parser {
   }
 
   private alterDimensionStatement(r: TokenReader) {
-    return new Node("alter dimension", node => {
+    return new Node("alter dimension").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.DIMENSION))
 
@@ -1310,7 +1310,7 @@ export class OracleParser extends Parser {
   }
 
   private alterDiskgroupStatement(r: TokenReader) {
-    return new Node("alter diskgroup", node => {
+    return new Node("alter diskgroup").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.DISKGROUP))
 
@@ -1322,7 +1322,7 @@ export class OracleParser extends Parser {
   }
 
   private alterEditionStatement(r: TokenReader) {
-    return new Node("alter edition", node => {
+    return new Node("alter edition").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.EDITION))
 
@@ -1334,7 +1334,7 @@ export class OracleParser extends Parser {
   }
 
   private alterFunctionStatement(r: TokenReader) {
-    return new Node("alter function", node => {
+    return new Node("alter function").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.FUNCTION))
 
@@ -1346,7 +1346,7 @@ export class OracleParser extends Parser {
   }
 
   private alterHierarchyStatement(r: TokenReader) {
-    return new Node("alter hierarchy", node => {
+    return new Node("alter hierarchy").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.HIERARCHY))
 
@@ -1358,7 +1358,7 @@ export class OracleParser extends Parser {
   }
 
   private alterIndexStatement(r: TokenReader) {
-    return new Node("alter index", node => {
+    return new Node("alter index").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.INDEX))
 
@@ -1370,7 +1370,7 @@ export class OracleParser extends Parser {
   }
 
   private alterIndextypeStatement(r: TokenReader) {
-    return new Node("alter indextype", node => {
+    return new Node("alter indextype").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.INDEXTYPE))
 
@@ -1382,7 +1382,7 @@ export class OracleParser extends Parser {
   }
 
   private alterInmemoryJoinGroupStatement(r: TokenReader) {
-    return new Node("alter inmemory join group", node => {
+    return new Node("alter inmemory join group").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.INMEMORY))
       node.append(r.consume(Keyword.JOIN))
@@ -1396,7 +1396,7 @@ export class OracleParser extends Parser {
   }
 
   private alterJavaStatement(r: TokenReader) {
-    return new Node("alter java", node => {
+    return new Node("alter java").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.JAVA))
 
@@ -1408,7 +1408,7 @@ export class OracleParser extends Parser {
   }
 
   private alterLibraryStatement(r: TokenReader) {
-    return new Node("alter library", node => {
+    return new Node("alter library").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.LIBRARY))
 
@@ -1420,7 +1420,7 @@ export class OracleParser extends Parser {
   }
 
   private alterLockdownProfileStatement(r: TokenReader) {
-    return new Node("alter lockdown profile", node => {
+    return new Node("alter lockdown profile").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.LOCKDOWN))
       node.append(r.consume(Keyword.PROFILE))
@@ -1433,7 +1433,7 @@ export class OracleParser extends Parser {
   }
 
   private alterMaterializedViewLogStatement(r: TokenReader) {
-    return new Node("alter materialized view log", node => {
+    return new Node("alter materialized view log").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -1447,7 +1447,7 @@ export class OracleParser extends Parser {
   }
 
   private alterMaterializedViewStatement(r: TokenReader) {
-    return new Node("alter materialized view", node => {
+    return new Node("alter materialized view").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -1460,7 +1460,7 @@ export class OracleParser extends Parser {
   }
 
   private alterOperatorStatement(r: TokenReader) {
-    return new Node("alter operator", node => {
+    return new Node("alter operator").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.OPERATOR))
 
@@ -1472,7 +1472,7 @@ export class OracleParser extends Parser {
   }
 
   private alterOutlineStatement(r: TokenReader) {
-    return new Node("alter outline", node => {
+    return new Node("alter outline").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.OUTLINE))
 
@@ -1484,7 +1484,7 @@ export class OracleParser extends Parser {
   }
 
   private alterPackageStatement(r: TokenReader) {
-    return new Node("alter package", node => {
+    return new Node("alter package").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.PACKAGE))
 
@@ -1496,7 +1496,7 @@ export class OracleParser extends Parser {
   }
 
   private alterPluggableDatabaseStatement(r: TokenReader) {
-    return new Node("alter pluggable database", node => {
+    return new Node("alter pluggable database").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.PLUGGABLE))
       node.append(r.consume(Keyword.DATABASE))
@@ -1509,7 +1509,7 @@ export class OracleParser extends Parser {
   }
 
   private alterProcedureStatement(r: TokenReader) {
-    return new Node("alter procedure", node => {
+    return new Node("alter procedure").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.PROCEDURE))
 
@@ -1521,7 +1521,7 @@ export class OracleParser extends Parser {
   }
 
   private alterProfileStatement(r: TokenReader) {
-    return new Node("alter profile", node => {
+    return new Node("alter profile").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.PROFILE))
 
@@ -1533,7 +1533,7 @@ export class OracleParser extends Parser {
   }
 
   private alterResourceCostStatement(r: TokenReader) {
-    return new Node("alter resource cost", node => {
+    return new Node("alter resource cost").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.RESOURCE))
       node.append(r.consume(Keyword.COST))
@@ -1546,7 +1546,7 @@ export class OracleParser extends Parser {
   }
 
   private alterRoleStatement(r: TokenReader) {
-    return new Node("alter role", node => {
+    return new Node("alter role").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.ROLE))
 
@@ -1558,7 +1558,7 @@ export class OracleParser extends Parser {
   }
 
   private alterRollbackSegmentStatement(r: TokenReader) {
-    return new Node("alter rollback segment", node => {
+    return new Node("alter rollback segment").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.ROLLBACK))
       node.append(r.consume(Keyword.SEGMENT))
@@ -1571,7 +1571,7 @@ export class OracleParser extends Parser {
   }
 
   private alterSequenceStatement(r: TokenReader) {
-    return new Node("alter sequence", node => {
+    return new Node("alter sequence").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.SEQUENCE))
 
@@ -1583,7 +1583,7 @@ export class OracleParser extends Parser {
   }
 
   private alterSessionStatement(r: TokenReader) {
-    return new Node("alter session", node => {
+    return new Node("alter session").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.SESSION))
 
@@ -1595,7 +1595,7 @@ export class OracleParser extends Parser {
   }
 
   private alterSynonymStatement(r: TokenReader) {
-    return new Node("alter synonym", node => {
+    return new Node("alter synonym").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.SYNONYM))
 
@@ -1607,7 +1607,7 @@ export class OracleParser extends Parser {
   }
 
   private alterSystemStatement(r: TokenReader) {
-    return new Node("alter system", node => {
+    return new Node("alter system").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.SYSTEM))
 
@@ -1619,7 +1619,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTableStatement(r: TokenReader) {
-    return new Node("alter table", node => {
+    return new Node("alter table").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TABLE))
 
@@ -1631,7 +1631,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTablespaceSetStatement(r: TokenReader) {
-    return new Node("alter tablespace set", node => {
+    return new Node("alter tablespace set").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TABLESPACE))
       node.append(r.consume(Keyword.SET))
@@ -1644,7 +1644,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTablespaceStatement(r: TokenReader) {
-    return new Node("alter tablespace", node => {
+    return new Node("alter tablespace").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TABLESPACE))
 
@@ -1656,7 +1656,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTriggerStatement(r: TokenReader) {
-    return new Node("alter trigger", node => {
+    return new Node("alter trigger").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TRIGGER))
 
@@ -1668,7 +1668,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTypeBodyStatement(r: TokenReader) {
-    return new Node("alter type body", node => {
+    return new Node("alter type body").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TYPE))
       node.append(r.consume(Keyword.BODY))
@@ -1681,7 +1681,7 @@ export class OracleParser extends Parser {
   }
 
   private alterTypeStatement(r: TokenReader) {
-    return new Node("alter type", node => {
+    return new Node("alter type").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.TYPE))
 
@@ -1693,7 +1693,7 @@ export class OracleParser extends Parser {
   }
 
   private alterUserStatement(r: TokenReader) {
-    return new Node("alter user", node => {
+    return new Node("alter user").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.USER))
 
@@ -1705,7 +1705,7 @@ export class OracleParser extends Parser {
   }
 
   private alterViewStatement(r: TokenReader) {
-    return new Node("alter view", node => {
+    return new Node("alter view").apply(node => {
       node.append(r.consume(Keyword.ALTER))
       node.append(r.consume(Keyword.VIEW))
 
@@ -1717,7 +1717,7 @@ export class OracleParser extends Parser {
   }
 
   private dropAnalyticViewStatement(r: TokenReader) {
-    return new Node("drop analytic view", node => {
+    return new Node("drop analytic view").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.ANALYTIC))
       node.append(r.consume(Keyword.VIEW))
@@ -1730,7 +1730,7 @@ export class OracleParser extends Parser {
   }
 
   private dropAttributeDimensionStatement(r: TokenReader) {
-    return new Node("drop attribute dimension", node => {
+    return new Node("drop attribute dimension").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.ATTRIBUTE))
       node.append(r.consume(Keyword.DIMENSION))
@@ -1743,7 +1743,7 @@ export class OracleParser extends Parser {
   }
 
   private dropAuditPolicyStatement(r: TokenReader) {
-    return new Node("drop audit policy", node => {
+    return new Node("drop audit policy").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.AUDIT))
       node.append(r.consume(Keyword.POLICY))
@@ -1756,7 +1756,7 @@ export class OracleParser extends Parser {
   }
 
   private dropClusterStatement(r: TokenReader) {
-    return new Node("drop cluster", node => {
+    return new Node("drop cluster").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.CLUSTER))
 
@@ -1768,7 +1768,7 @@ export class OracleParser extends Parser {
   }
 
   private dropContextStatement(r: TokenReader) {
-    return new Node("drop context", node => {
+    return new Node("drop context").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.CONTEXT))
 
@@ -1780,7 +1780,7 @@ export class OracleParser extends Parser {
   }
 
   private dropDatabaseLinkStatement(r: TokenReader) {
-    return new Node("drop database link", node => {
+    return new Node("drop database link").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.DATABASE))
       node.append(r.consume(Keyword.LINK))
@@ -1793,7 +1793,7 @@ export class OracleParser extends Parser {
   }
 
   private dropDatabaseStatement(r: TokenReader) {
-    return new Node("drop database", node => {
+    return new Node("drop database").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.DATABASE))
 
@@ -1805,7 +1805,7 @@ export class OracleParser extends Parser {
   }
 
   private dropDimensionStatement(r: TokenReader) {
-    return new Node("drop dimension", node => {
+    return new Node("drop dimension").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.DIMENSION))
 
@@ -1817,7 +1817,7 @@ export class OracleParser extends Parser {
   }
 
   private dropDirectoryStatement(r: TokenReader) {
-    return new Node("drop directory", node => {
+    return new Node("drop directory").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.DIRECTORY))
 
@@ -1829,7 +1829,7 @@ export class OracleParser extends Parser {
   }
 
   private dropDiskgroupStatement(r: TokenReader) {
-    return new Node("drop diskgroup", node => {
+    return new Node("drop diskgroup").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.DISKGROUP))
 
@@ -1841,7 +1841,7 @@ export class OracleParser extends Parser {
   }
 
   private dropEditionStatement(r: TokenReader) {
-    return new Node("drop edition", node => {
+    return new Node("drop edition").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.EDITION))
 
@@ -1853,7 +1853,7 @@ export class OracleParser extends Parser {
   }
 
   private dropFunctionStatement(r: TokenReader) {
-    return new Node("drop function", node => {
+    return new Node("drop function").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.FUNCTION))
 
@@ -1865,7 +1865,7 @@ export class OracleParser extends Parser {
   }
 
   private dropHierarchyStatement(r: TokenReader) {
-    return new Node("drop hierarchy", node => {
+    return new Node("drop hierarchy").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.HIERARCHY))
 
@@ -1877,7 +1877,7 @@ export class OracleParser extends Parser {
   }
 
   private dropIndexStatement(r: TokenReader) {
-    return new Node("drop index", node => {
+    return new Node("drop index").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.INDEX))
 
@@ -1889,7 +1889,7 @@ export class OracleParser extends Parser {
   }
 
   private dropIndextypeStatement(r: TokenReader) {
-    return new Node("drop indextype", node => {
+    return new Node("drop indextype").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.INDEXTYPE))
 
@@ -1901,7 +1901,7 @@ export class OracleParser extends Parser {
   }
 
   private dropInmemoryJoinGroupStatement(r: TokenReader) {
-    return new Node("drop inmemory join group", node => {
+    return new Node("drop inmemory join group").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.INMEMORY))
       node.append(r.consume(Keyword.JOIN))
@@ -1915,7 +1915,7 @@ export class OracleParser extends Parser {
   }
 
   private dropJavaStatement(r: TokenReader) {
-    return new Node("drop java", node => {
+    return new Node("drop java").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.JAVA))
 
@@ -1927,7 +1927,7 @@ export class OracleParser extends Parser {
   }
 
   private dropLibraryStatement(r: TokenReader) {
-    return new Node("drop library", node => {
+    return new Node("drop library").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.LIBRARY))
 
@@ -1939,7 +1939,7 @@ export class OracleParser extends Parser {
   }
 
   private dropLockdownProfileStatement(r: TokenReader) {
-    return new Node("drop lockdown profile", node => {
+    return new Node("drop lockdown profile").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.LOCKDOWN))
       node.append(r.consume(Keyword.PROFILE))
@@ -1952,7 +1952,7 @@ export class OracleParser extends Parser {
   }
 
   private dropMaterializedViewLogStatement(r: TokenReader) {
-    return new Node("drop materialized view log", node => {
+    return new Node("drop materialized view log").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -1966,7 +1966,7 @@ export class OracleParser extends Parser {
   }
 
   private dropMaterializedViewStatement(r: TokenReader) {
-    return new Node("drop materialized view", node => {
+    return new Node("drop materialized view").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.MATERIALIZED))
       node.append(r.consume(Keyword.VIEW))
@@ -1979,7 +1979,7 @@ export class OracleParser extends Parser {
   }
 
   private dropOperatorStatement(r: TokenReader) {
-    return new Node("drop operator", node => {
+    return new Node("drop operator").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.OPERATOR))
 
@@ -1991,7 +1991,7 @@ export class OracleParser extends Parser {
   }
 
   private dropOutlineStatement(r: TokenReader) {
-    return new Node("drop outline", node => {
+    return new Node("drop outline").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.OUTLINE))
 
@@ -2003,7 +2003,7 @@ export class OracleParser extends Parser {
   }
 
   private dropPackageStatement(r: TokenReader) {
-    return new Node("drop package", node => {
+    return new Node("drop package").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.PACKAGE))
 
@@ -2015,7 +2015,7 @@ export class OracleParser extends Parser {
   }
 
   private dropPluggableDatabaseStatement(r: TokenReader) {
-    return new Node("drop pluggable database", node => {
+    return new Node("drop pluggable database").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.PLUGGABLE))
       node.append(r.consume(Keyword.DATABASE))
@@ -2028,7 +2028,7 @@ export class OracleParser extends Parser {
   }
 
   private dropProcedureStatement(r: TokenReader) {
-    return new Node("drop procedure", node => {
+    return new Node("drop procedure").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.PROCEDURE))
 
@@ -2040,7 +2040,7 @@ export class OracleParser extends Parser {
   }
 
   private dropProfileStatement(r: TokenReader) {
-    return new Node("drop profile", node => {
+    return new Node("drop profile").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.PROFILE))
 
@@ -2052,7 +2052,7 @@ export class OracleParser extends Parser {
   }
 
   private dropRestorePointStatement(r: TokenReader) {
-    return new Node("drop restore point", node => {
+    return new Node("drop restore point").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.RESTORE))
       node.append(r.consume(Keyword.POINT))
@@ -2065,7 +2065,7 @@ export class OracleParser extends Parser {
   }
 
   private dropRoleStatement(r: TokenReader) {
-    return new Node("drop role", node => {
+    return new Node("drop role").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.ROLE))
 
@@ -2077,7 +2077,7 @@ export class OracleParser extends Parser {
   }
 
   private dropRollbackSegmentStatement(r: TokenReader) {
-    return new Node("drop rollback segment", node => {
+    return new Node("drop rollback segment").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.ROLLBACK))
       node.append(r.consume(Keyword.SEGMENT))
@@ -2090,7 +2090,7 @@ export class OracleParser extends Parser {
   }
 
   private dropSchemaStatement(r: TokenReader) {
-    return new Node("drop schema", node => {
+    return new Node("drop schema").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.SCHEMA))
 
@@ -2102,7 +2102,7 @@ export class OracleParser extends Parser {
   }
 
   private dropSequenceStatement(r: TokenReader) {
-    return new Node("drop sequence", node => {
+    return new Node("drop sequence").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.SEQUENCE))
 
@@ -2114,7 +2114,7 @@ export class OracleParser extends Parser {
   }
 
   private dropSynonymStatement(r: TokenReader) {
-    return new Node("drop synonym", node => {
+    return new Node("drop synonym").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.SYNONYM))
 
@@ -2126,7 +2126,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTableStatement(r: TokenReader) {
-    return new Node("drop table", node => {
+    return new Node("drop table").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TABLE))
 
@@ -2138,7 +2138,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTablespaceSetStatement(r: TokenReader) {
-    return new Node("drop tablespace set", node => {
+    return new Node("drop tablespace set").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TABLESPACE))
       node.append(r.consume(Keyword.SET))
@@ -2151,7 +2151,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTablespaceStatement(r: TokenReader) {
-    return new Node("drop tablespace", node => {
+    return new Node("drop tablespace").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TABLESPACE))
 
@@ -2163,7 +2163,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTriggerStatement(r: TokenReader) {
-    return new Node("drop trigger", node => {
+    return new Node("drop trigger").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TRIGGER))
 
@@ -2175,7 +2175,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTypeBodyStatement(r: TokenReader) {
-    return new Node("drop type body", node => {
+    return new Node("drop type body").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TYPE))
       node.append(r.consume(Keyword.BODY))
@@ -2188,7 +2188,7 @@ export class OracleParser extends Parser {
   }
 
   private dropTypeStatement(r: TokenReader) {
-    return new Node("drop type", node => {
+    return new Node("drop type").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.TYPE))
 
@@ -2200,7 +2200,7 @@ export class OracleParser extends Parser {
   }
 
   private dropUserStatement(r: TokenReader) {
-    return new Node("drop user", node => {
+    return new Node("drop user").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.USER))
 
@@ -2212,7 +2212,7 @@ export class OracleParser extends Parser {
   }
 
   private dropViewStatement(r: TokenReader) {
-    return new Node("drop view", node => {
+    return new Node("drop view").apply(node => {
       node.append(r.consume(Keyword.DROP))
       node.append(r.consume(Keyword.VIEW))
 
@@ -2224,7 +2224,7 @@ export class OracleParser extends Parser {
   }
 
   private truncateClusterStatement(r: TokenReader) {
-    return new Node("truncate cluster", node => {
+    return new Node("truncate cluster").apply(node => {
       node.append(r.consume(Keyword.TRUNCATE))
       node.append(r.consume(Keyword.CLUSTER))
 
@@ -2236,7 +2236,7 @@ export class OracleParser extends Parser {
   }
 
   private truncateTableStatement(r: TokenReader) {
-    return new Node("truncate table", node => {
+    return new Node("truncate table").apply(node => {
       node.append(r.consume(Keyword.TRUNCATE))
       node.append(r.consume(Keyword.TABLE))
 
@@ -2248,7 +2248,7 @@ export class OracleParser extends Parser {
   }
 
   private setConstraintStatement(r: TokenReader) {
-    return new Node("set constraint", node => {
+    return new Node("set constraint").apply(node => {
       node.append(r.consume(Keyword.SET))
 
       if (r.peekIf(Keyword.CONSTRAINTS)) {
@@ -2264,7 +2264,7 @@ export class OracleParser extends Parser {
   }
 
   private setRoleStatement(r: TokenReader) {
-    return new Node("set role", node => {
+    return new Node("set role").apply(node => {
       node.append(r.consume(Keyword.SET))
       node.append(r.consume(Keyword.ROLE))
 
@@ -2276,7 +2276,7 @@ export class OracleParser extends Parser {
   }
 
   private setTransactionStatement(r: TokenReader) {
-    return new Node("set transaction", node => {
+    return new Node("set transaction").apply(node => {
       node.append(r.consume(Keyword.SET))
       node.append(r.consume(Keyword.TRANSACTION))
 
@@ -2288,7 +2288,7 @@ export class OracleParser extends Parser {
   }
 
   private administerKeyManagementStatement(r: TokenReader) {
-    return new Node("administer key management", node => {
+    return new Node("administer key management").apply(node => {
       node.append(r.consume(Keyword.ADMINISTER))
       node.append(r.consume(Keyword.KEY))
       node.append(r.consume(Keyword.MANAGEMENT))
@@ -2301,7 +2301,7 @@ export class OracleParser extends Parser {
   }
 
   private analyzeStatement(r: TokenReader) {
-    return new Node("analyze", node => {
+    return new Node("analyze").apply(node => {
       node.append(r.consume(Keyword.ANALYZE))
 
       while (!r.peek().eos) {
@@ -2312,7 +2312,7 @@ export class OracleParser extends Parser {
   }
 
   private associateStatisticsStatement(r: TokenReader) {
-    return new Node("associate statistics", node => {
+    return new Node("associate statistics").apply(node => {
       node.append(r.consume(Keyword.ASSOCIATE))
       node.append(r.consume(Keyword.STATISTICS))
 
@@ -2324,7 +2324,7 @@ export class OracleParser extends Parser {
   }
 
   private auditStatement(r: TokenReader) {
-    return new Node("audit", node => {
+    return new Node("audit").apply(node => {
       node.append(r.consume(Keyword.AUDIT))
 
       while (!r.peek().eos) {
@@ -2335,7 +2335,7 @@ export class OracleParser extends Parser {
   }
 
   private callStatement(r: TokenReader) {
-    return new Node("call", node => {
+    return new Node("call").apply(node => {
       node.append(r.consume(Keyword.CALL))
 
       while (!r.peek().eos) {
@@ -2346,7 +2346,7 @@ export class OracleParser extends Parser {
   }
 
   private commentStatement(r: TokenReader) {
-    return new Node("comment", node => {
+    return new Node("comment").apply(node => {
       node.append(r.consume(Keyword.COMMENT))
 
       while (!r.peek().eos) {
@@ -2357,7 +2357,7 @@ export class OracleParser extends Parser {
   }
 
   private commitStatement(r: TokenReader) {
-    return new Node("commit", node => {
+    return new Node("commit").apply(node => {
       node.append(r.consume(Keyword.COMMIT))
 
       while (!r.peek().eos) {
@@ -2368,7 +2368,7 @@ export class OracleParser extends Parser {
   }
 
   private disassociateStatisticsStatement(r: TokenReader) {
-    return new Node("disassociate statistics", node => {
+    return new Node("disassociate statistics").apply(node => {
       node.append(r.consume(Keyword.DISASSOCIATE))
       node.append(r.consume(Keyword.STATISTICS))
 
@@ -2380,7 +2380,7 @@ export class OracleParser extends Parser {
   }
 
   private flashbackDatabaseStatement(r: TokenReader) {
-    return new Node("flashback database", node => {
+    return new Node("flashback database").apply(node => {
       node.append(r.consume(Keyword.FLASHBACK))
       node.append(r.consume(Keyword.DATABASE))
 
@@ -2392,7 +2392,7 @@ export class OracleParser extends Parser {
   }
 
   private flashbackTableStatement(r: TokenReader) {
-    return new Node("flashback table", node => {
+    return new Node("flashback table").apply(node => {
       node.append(r.consume(Keyword.FLASHBACK))
       node.append(r.consume(Keyword.TABLE))
 
@@ -2404,7 +2404,7 @@ export class OracleParser extends Parser {
   }
 
   private grantStatement(r: TokenReader) {
-    return new Node("grant", node => {
+    return new Node("grant").apply(node => {
       node.append(r.consume(Keyword.GRANT))
 
       while (!r.peek().eos) {
@@ -2415,7 +2415,7 @@ export class OracleParser extends Parser {
   }
 
   private lockTableStatement(r: TokenReader) {
-    return new Node("lock table", node => {
+    return new Node("lock table").apply(node => {
       node.append(r.consume(Keyword.LOCK))
       node.append(r.consume(Keyword.TABLE))
 
@@ -2427,7 +2427,7 @@ export class OracleParser extends Parser {
   }
 
   private noauditStatement(r: TokenReader) {
-    return new Node("noaudit", node => {
+    return new Node("noaudit").apply(node => {
       node.append(r.consume(Keyword.NOAUDIT))
 
       while (!r.peek().eos) {
@@ -2438,7 +2438,7 @@ export class OracleParser extends Parser {
   }
 
   private purgeStatement(r: TokenReader) {
-    return new Node("purge", node => {
+    return new Node("purge").apply(node => {
       node.append(r.consume(Keyword.PURGE))
 
       while (!r.peek().eos) {
@@ -2449,7 +2449,7 @@ export class OracleParser extends Parser {
   }
 
   private renameStatement(r: TokenReader) {
-    return new Node("rename", node => {
+    return new Node("rename").apply(node => {
       node.append(r.consume(Keyword.RENAME))
 
       while (!r.peek().eos) {
@@ -2460,7 +2460,7 @@ export class OracleParser extends Parser {
   }
 
   private revokeStatement(r: TokenReader) {
-    return new Node("revoke", node => {
+    return new Node("revoke").apply(node => {
       node.append(r.consume(Keyword.REVOKE))
 
       while (!r.peek().eos) {
@@ -2471,7 +2471,7 @@ export class OracleParser extends Parser {
   }
 
   private rollbackStatement(r: TokenReader) {
-    return new Node("rollback", node => {
+    return new Node("rollback").apply(node => {
       node.append(r.consume(Keyword.ROLLBACK))
 
       while (!r.peek().eos) {
@@ -2482,7 +2482,7 @@ export class OracleParser extends Parser {
   }
 
   private savepointStatement(r: TokenReader) {
-    return new Node("savepoint", node => {
+    return new Node("savepoint").apply(node => {
       node.append(r.consume(Keyword.SAVEPOINT))
 
       while (!r.peek().eos) {
@@ -2493,7 +2493,7 @@ export class OracleParser extends Parser {
   }
 
   private declareBlock(r: TokenReader) {
-    return new Node("block", node => {
+    return new Node("block").apply(node => {
 
       const declareNode = new Node("declare")
       declareNode.append(r.consume(Keyword.DECLARE))
@@ -2520,7 +2520,7 @@ export class OracleParser extends Parser {
   }
 
   private beginBlock(r: TokenReader) {
-    return new Node("begin", node => {
+    return new Node("begin").apply(node => {
       node.append(r.consume(Keyword.BEGIN))
 
       while (r.peek()
@@ -2545,7 +2545,7 @@ export class OracleParser extends Parser {
   }
 
   private procedureBlock(r: TokenReader) {
-    return new Node("nested_procedure", node => {
+    return new Node("nested_procedure").apply(node => {
 
       while (r.peek()
         && !r.peekIf(TokenType.Delimiter)
@@ -2562,7 +2562,7 @@ export class OracleParser extends Parser {
   }
 
   private functionBlock(r: TokenReader) {
-    return new Node("nested_function", node => {
+    return new Node("nested_function").apply(node => {
 
       while (r.peek()
         && !r.peekIf(TokenType.Delimiter)
@@ -2579,7 +2579,7 @@ export class OracleParser extends Parser {
   }
 
   private exceptionBlock(r: TokenReader) {
-    return new Node("exception", node => {
+    return new Node("exception").apply(node => {
 
       while (r.peek()
         && !r.peekIf(TokenType.Delimiter)
@@ -2596,7 +2596,7 @@ export class OracleParser extends Parser {
   }
 
   private insertClause(r: TokenReader, withNode?: Node) {
-    return new Node("insert", node => {
+    return new Node("insert").apply(node => {
       if (withNode) {
         node.append(withNode)
       }
@@ -2613,7 +2613,7 @@ export class OracleParser extends Parser {
   }
 
   private updateClause(r: TokenReader, withNode?: Node) {
-    return new Node("update", node => {
+    return new Node("update").apply(node => {
       if (withNode) {
         node.append(withNode)
       }
@@ -2629,7 +2629,7 @@ export class OracleParser extends Parser {
   }
 
   private deleteClause(r: TokenReader, withNode?: Node) {
-    return new Node("delete", node => {
+    return new Node("delete").apply(node => {
       if (withNode) {
         node.append(withNode)
       }
@@ -2646,7 +2646,7 @@ export class OracleParser extends Parser {
   }
 
   private mergeClause(r: TokenReader, withNode?: Node) {
-    return new Node("merge", node => {
+    return new Node("merge").apply(node => {
       if (withNode) {
         node.append(withNode)
       }
@@ -2662,7 +2662,7 @@ export class OracleParser extends Parser {
   }
 
   private selectClause(r: TokenReader, withNode?: Node) {
-    return new Node("select", node => {
+    return new Node("select").apply(node => {
       if (withNode) {
         node.append(withNode)
       }
@@ -2689,7 +2689,7 @@ export class OracleParser extends Parser {
   }
 
   private withClause(r: TokenReader) {
-    return new Node("with", node => {
+    return new Node("with").apply(node => {
       node.append(r.consume(Keyword.WITH))
 
       while (r.peek()) {
@@ -2737,7 +2737,7 @@ export class OracleParser extends Parser {
   }
 
   private identifier(r: TokenReader, name: string) {
-    return new Node(name, node => {
+    return new Node(name).apply(node => {
       if (r.peekIf(TokenType.Identifier)) {
         node.append(r.consume())
         node.data.value = dequote(r.peek(-1).text)

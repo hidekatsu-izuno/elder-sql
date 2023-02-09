@@ -5,10 +5,7 @@ export class Node {
   children: (Node | Token)[] = []
   data: Record<string, any> = {}
 
-  constructor(public name: string, fn?: (value: Node) => void) {
-    if (fn) {
-      fn(this)
-    }
+  constructor(public name: string) {
   }
 
   apply(fn: (node: Node) => void) {
@@ -19,13 +16,12 @@ export class Node {
     return this
   }
 
-  append(...children: (Node | Token)[]) {
-    for (const child of children) {
-      if (child instanceof Node) {
-        child.parentNode = this
-      }
-      this.children.push(child)
+  append<T extends (Node | Token)>(child: T): T {
+    if (child instanceof Node) {
+      child.parentNode = this
     }
+    this.children.push(child)
+    return child
   }
 
   remove() {
