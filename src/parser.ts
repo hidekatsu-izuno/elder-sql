@@ -11,6 +11,14 @@ export class Node {
     }
   }
 
+  apply(fn: (node: Node) => void) {
+    const ret = fn(this)
+    if (ret !== undefined) {
+      return ret
+    }
+    return this
+  }
+
   append(...children: (Node | Token)[]) {
     for (const child of children) {
       if (child instanceof Node) {
@@ -18,7 +26,6 @@ export class Node {
       }
       this.children.push(child)
     }
-    return this
   }
 
   remove() {

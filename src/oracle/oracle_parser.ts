@@ -77,44 +77,55 @@ export class OracleParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    const stmt = new Node("command")
-
-    if (r.peekIf(TokenType.Delimiter)) {
-      stmt.append(r.consume())
-    }
-    if (r.peekIf(TokenType.EoF)) {
-      stmt.append(r.consume())
-    }
-    return stmt
+    return new Node("CommandStatement", node => {
+      node.append(new Node("CommandName", node => {
+        const command = r.consume(TokenType.Command)
+        node.append(command)
+        node.data.value = command.text
+      }))
+      node.append(new Node("CommandArgumentList", node => {
+        while (!r.peek().eos) {
+          node.append(new Node("CommandArgument", node => {
+            const arg = r.consume()
+            node.append(arg)
+            node.data.value = dequote(arg.text)
+          }))
+        }
+      }))
+      if (r.peekIf(TokenType.EoF)) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private statement(r: TokenReader) {
     let explainPlan
-    let stmt
+    let stmt: Node | undefined
 
     try {
       if (r.peekIf(Keyword.EXPLAIN)) {
-        explainPlan = new Node("explain plan")
-        explainPlan.append(r.consume())
-        explainPlan.append(r.consume(Keyword.PLAN))
+        explainPlan = new Node("ExplainPlan", node => {
+          node.append(r.consume())
+          node.append(r.consume(Keyword.PLAN))
 
-        if (r.peekIf(Keyword.SET)) {
-          const childNode = new Node("statement_id")
-          childNode.append(r.consume())
-          childNode.append(r.consume(Keyword.STATEMENT_ID))
-          childNode.append(r.consume({ type: TokenType.Operator, text: "=" }))
-          childNode.append(r.consume(TokenType.String))
-          childNode.data.value = dequote(r.peek(-1).text)
-          explainPlan.append(childNode)
-        }
+          if (r.peekIf(Keyword.SET)) {
+            node.append(new Node("statement_id", node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.STATEMENT_ID))
+              node.append(r.consume({ type: TokenType.Operator, text: "=" }))
+              node.append(r.consume(TokenType.String))
+              node.data.value = dequote(r.peek(-1).text)
+            }))
+          }
 
-        if (r.peekIf(Keyword.INTO)) {
-          explainPlan.append(r.consume())
-        }
+          if (r.peekIf(Keyword.INTO)) {
+            node.append(r.consume())
+          }
 
-        this.parseName(r, explainPlan)
+          this.parseName(r, node)
 
-        explainPlan.append(r.consume(Keyword.FOR))
+          node.append(r.consume(Keyword.FOR))
+        })
       }
 
       if (r.peekIf(Keyword.CREATE)) {
@@ -310,10 +321,10 @@ export class OracleParser extends Parser {
           stmt = this.alterDatabaseDictionaryStatement(r)
         } else if (r.peekIf(Keyword.DATABASE, Keyword.LINK)) {
           r.pos = mark
-          stmt = this.alterDatabaseLinkStatement(r)  
+          stmt = this.alterDatabaseLinkStatement(r)
         } else if (r.peekIf(Keyword.DATABASE)) {
           r.pos = mark
-          stmt = this.alterDatabaseStatement(r)  
+          stmt = this.alterDatabaseStatement(r)
         } else if (r.peekIf(Keyword.DIMENSION)) {
           r.pos = mark
           stmt = this.alterDimensionStatement(r)
@@ -403,7 +414,7 @@ export class OracleParser extends Parser {
           stmt = this.alterTablespaceSetStatement(r)
         } else if (r.peekIf(Keyword.TABLESPACE)) {
           r.pos = mark
-          stmt = this.alterTablespaceStatement(r)  
+          stmt = this.alterTablespaceStatement(r)
         } else if (r.peekIf(Keyword.TRIGGER)) {
           r.pos = mark
           stmt = this.alterTriggerStatement(r)
@@ -426,10 +437,7 @@ export class OracleParser extends Parser {
         const mark = r.pos
         r.consume()
 
-        while (r.peek()
-          && !r.peekIf(TokenType.Delimiter)
-          && r.peekIf(TokenType.Identifier)
-        ) {
+        while (!r.peek().eos && r.peekIf(TokenType.Identifier)) {
           const token = r.peek()
           if (token.keyword && OracleLexer.isObjectStart(token.keyword)) {
             break
@@ -455,10 +463,10 @@ export class OracleParser extends Parser {
           stmt = this.dropContextStatement(r)
         } else if (r.peekIf(Keyword.DATABASE, Keyword.LINK)) {
           r.pos = mark
-          stmt = this.dropDatabaseLinkStatement(r)  
+          stmt = this.dropDatabaseLinkStatement(r)
         } else if (r.peekIf(Keyword.DATABASE)) {
           r.pos = mark
-          stmt = this.dropDatabaseStatement(r)  
+          stmt = this.dropDatabaseStatement(r)
         } else if (r.peekIf(Keyword.DIMENSION)) {
           r.pos = mark
           stmt = this.dropDimensionStatement(r)
@@ -551,7 +559,7 @@ export class OracleParser extends Parser {
           stmt = this.dropTablespaceSetStatement(r)
         } else if (r.peekIf(Keyword.TABLESPACE, Keyword.SET)) {
           r.pos = mark
-          stmt = this.dropTablespaceStatement(r)  
+          stmt = this.dropTablespaceStatement(r)
         } else if (r.peekIf(Keyword.TRIGGER)) {
           r.pos = mark
           stmt = this.dropTriggerStatement(r)
@@ -662,7 +670,8 @@ export class OracleParser extends Parser {
       }
 
       if (explainPlan) {
-        stmt = explainPlan.append(stmt)
+        explainPlan.append(stmt)
+        stmt = explainPlan
       }
 
       if (r.peekIf(TokenType.Delimiter)) {
@@ -676,9 +685,9 @@ export class OracleParser extends Parser {
       if (err instanceof ParseError) {
         // skip tokens
         if (!stmt) {
-          stmt = new Node("unknown")
+          stmt = new Node("Unknown")
         }
-        while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
+        while (!r.peek().eos) {
           stmt.append(r.consume())
         }
         if (r.peekIf(TokenType.Delimiter)) {
@@ -688,2085 +697,2029 @@ export class OracleParser extends Parser {
           stmt.append(r.consume())
         }
         err.node = stmt
-      }      
+      }
       throw err
     }
   }
 
   private createAnalyticViewStatement(r: TokenReader) {
-    const node = new Node("create analytic view")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.ANALYTIC))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("CreateAnalyticView", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.ANALYTIC))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createAttributeDimensionStatement(r: TokenReader) {
-    const node = new Node("create attribute dimension")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.ATTRIBUTE))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("CreateAttributeDimension", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.ATTRIBUTE))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createAuditPolicyStatement(r: TokenReader) {
-    const node = new Node("create audit policy")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.AUDIT))
-    node.append(r.consume(Keyword.POLICY))
+    return new Node("CreateAuditPolicy", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.AUDIT))
+      node.append(r.consume(Keyword.POLICY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createClusterStatement(r: TokenReader) {
-    const node = new Node("create cluster")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.CLUSTER))
+    return new Node("CreateCluster", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.CLUSTER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createContextStatement(r: TokenReader) {
-    const node = new Node("create context")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.CONTEXT))
+    return new Node("CreateContext", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.CONTEXT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createControlfileStatement(r: TokenReader) {
-    const node = new Node("create controlfile")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.CONTROLFILE))
+    return new Node("CreateControlfile", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.CONTROLFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createDatabaseLinkStatement(r: TokenReader) {
-    const node = new Node("create database link")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.DATABASE))
-    node.append(r.consume(Keyword.LINK))
+    return new Node("CreateDatabaseLink", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.DATABASE))
+      node.append(r.consume(Keyword.LINK))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createDatabaseStatement(r: TokenReader) {
-    const node = new Node("create database")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("CreateDatabase", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createDimensionStatement(r: TokenReader) {
-    const node = new Node("create dimension")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("CreateDimension", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createDirectoryStatement(r: TokenReader) {
-    const node = new Node("create directory")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.DIRECTORY))
+    return new Node("CreateDirectory", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.DIRECTORY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createDiskgroupStatement(r: TokenReader) {
-    const node = new Node("create diskgroup")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.DISKGROUP))
+    return new Node("CreateDiskgroup", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.DISKGROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createEditionStatement(r: TokenReader) {
-    const node = new Node("create edition")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.EDITION))
+    return new Node("CreateEdition", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.EDITION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createFunctionStatement(r: TokenReader) {
-    const node = new Node("create function")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.FUNCTION))
+    return new Node("CreateFunction", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.FUNCTION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createHierarchyStatement(r: TokenReader) {
-    const node = new Node("create hierarchy")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.HIERARCHY))
+    return new Node("CreateHierarchy", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.HIERARCHY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createIndexStatement(r: TokenReader) {
-    const node = new Node("create index")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.INDEX))
+    return new Node("CreateIndex", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.INDEX))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createIndextypeStatement(r: TokenReader) {
-    const node = new Node("create indextype")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.INDEXTYPE))
+    return new Node("CreateIndextype", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.INDEXTYPE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createInmemoryJoinGroupStatement(r: TokenReader) {
-    const node = new Node("create inmemory join group")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.INMEMORY))
-    node.append(r.consume(Keyword.JOIN))
-    node.append(r.consume(Keyword.GROUP))
+    return new Node("CreateInmemoryJoinGroup", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.INMEMORY))
+      node.append(r.consume(Keyword.JOIN))
+      node.append(r.consume(Keyword.GROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createJavaStatement(r: TokenReader) {
-    const node = new Node("create java")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.JAVA))
+    return new Node("CreateJava", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.JAVA))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createLibraryStatement(r: TokenReader) {
-    const node = new Node("create library")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.LIBRARY))
+    return new Node("CreateLibrary", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.LIBRARY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createLockdownProfileStatement(r: TokenReader) {
-    const node = new Node("create lockdown profile")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.LOCKDOWN))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("CreateLockdownProfile", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.LOCKDOWN))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createMaterializedViewLogStatement(r: TokenReader) {
-    const node = new Node("create materialized view log")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
-    node.append(r.consume(Keyword.LOG))
+    return new Node("CreateMaterializedViewLog", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
+      node.append(r.consume(Keyword.LOG))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createMaterializedViewStatement(r: TokenReader) {
-    const node = new Node("create materialized view")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("CreateMaterializedView", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createOperatorStatement(r: TokenReader) {
-    const node = new Node("create operator")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.OPERATOR))
+    return new Node("CreateOperator", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.OPERATOR))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createOutlineStatement(r: TokenReader) {
-    const node = new Node("create outline")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.OUTLINE))
+    return new Node("CreateOutline", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.OUTLINE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createPackageBodyStatement(r: TokenReader) {
-    const node = new Node("create package body")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PACKAGE))
-    node.append(r.consume(Keyword.BODY))
+    return new Node("CreatePackageBody", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PACKAGE))
+      node.append(r.consume(Keyword.BODY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createPackageStatement(r: TokenReader) {
-    const node = new Node("create package")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PACKAGE))
+    return new Node("CreatePackage", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PACKAGE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createPfileStatement(r: TokenReader) {
-    const node = new Node("create pfile")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PFILE))
+    return new Node("CreatePfile", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createPluggableDatabaseStatement(r: TokenReader) {
-    const node = new Node("create pluggable database")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PLUGGABLE))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("CreatePluggableDatabase", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PLUGGABLE))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createProcedureStatement(r: TokenReader) {
-    const node = new Node("create procedure")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PROCEDURE))
+    return new Node("CreateProcedure", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PROCEDURE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createProfileStatement(r: TokenReader) {
-    const node = new Node("create profile")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("CreateProfile", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createRestorePointStatement(r: TokenReader) {
-    const node = new Node("create restore point")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.RESTORE))
-    node.append(r.consume(Keyword.POINT))
+    return new Node("CreateRestorePoint", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.RESTORE))
+      node.append(r.consume(Keyword.POINT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createRoleStatement(r: TokenReader) {
-    const node = new Node("create role")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.ROLE))
+    return new Node("CreateRole", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.ROLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
-  
+
   private createRollbackSegmentStatement(r: TokenReader) {
-    const node = new Node("create rollback segment")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.ROLLBACK))
-    node.append(r.consume(Keyword.SEGMENT))
+    return new Node("CreateRollbackSegment", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.ROLLBACK))
+      node.append(r.consume(Keyword.SEGMENT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createSchemaStatement(r: TokenReader) {
-    const node = new Node("create schema")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.SCHEMA))
+    return new Node("CreateSchema", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.SCHEMA))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createSequenceStatement(r: TokenReader) {
-    const node = new Node("create sequence")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.SEQUENCE))
+    return new Node("CreateSequence", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.SEQUENCE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createSpfileStatement(r: TokenReader) {
-    const node = new Node("create spfile")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.SPFILE))
+    return new Node("CreateSpfile", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.SPFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createSynonymStatement(r: TokenReader) {
-    const node = new Node("create synonym")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.SYNONYM))
+    return new Node("CreateSynonym", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.SYNONYM))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTableStatement(r: TokenReader) {
-    const node = new Node("create table")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("CreateTable", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTablespaceSetStatement(r: TokenReader) {
-    const node = new Node("create tablespace set")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TABLESPACE))
-    node.append(r.consume(Keyword.SET))
+    return new Node("CreateTablespaceSet", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TABLESPACE))
+      node.append(r.consume(Keyword.SET))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTablespaceStatement(r: TokenReader) {
-    const node = new Node("create tablespace")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TABLESPACE))
+    return new Node("CreateTablespace", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TABLESPACE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTriggerStatement(r: TokenReader) {
-    const node = new Node("create trigger")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TRIGGER))
+    return new Node("CreateTrigger", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TRIGGER))
 
-    while (r.peek()
-      && !r.peekIf(TokenType.Delimiter)
-    ) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTypeBodyStatement(r: TokenReader) {
-    const node = new Node("create type body")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TYPE))
-    node.append(r.consume(Keyword.BODY))
+    return new Node("CreateTypeBody", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TYPE))
+      node.append(r.consume(Keyword.BODY))
 
-    while (r.peek()
-      && !r.peekIf(TokenType.Delimiter)
-    ) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createTypeStatement(r: TokenReader) {
-    const node = new Node("create type")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.TYPE))
+    return new Node("CreateType", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.TYPE))
 
-    while (r.peek()
-      && !r.peekIf(TokenType.Delimiter)
-    ) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createUserStatement(r: TokenReader) {
-    const node = new Node("create user")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.USER))
+    return new Node("CreateUser", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.USER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private createViewStatement(r: TokenReader) {
-    const node = new Node("create view")
-    node.append(r.consume(Keyword.CREATE))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("CreateView", node => {
+      node.append(r.consume(Keyword.CREATE))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterAnalyticViewStatement(r: TokenReader) {
-    const node = new Node("alter analytic view")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.ANALYTIC))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("AlterAnalyticView", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.ANALYTIC))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterAttributeDimensionStatement(r: TokenReader) {
-    const node = new Node("alter attribute dimension")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.ATTRIBUTE))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("AlterAttributeDimension", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.ATTRIBUTE))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterAuditPolicyStatement(r: TokenReader) {
-    const node = new Node("alter audit policy")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.AUDIT))
-    node.append(r.consume(Keyword.POLICY))
+    return new Node("AlterAuditPolicy", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.AUDIT))
+      node.append(r.consume(Keyword.POLICY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterClusterStatement(r: TokenReader) {
-    const node = new Node("alter cluster")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.CLUSTER))
+    return new Node("AlterCluster", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.CLUSTER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterDatabaseDictionaryStatement(r: TokenReader) {
-    const node = new Node("alter database dictionary")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.DATABASE))
-    node.append(r.consume(Keyword.DICTIONARY))
+    return new Node("AlterDatabaseDictionary", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.DATABASE))
+      node.append(r.consume(Keyword.DICTIONARY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private alterDatabaseLinkStatement(r: TokenReader) {
-    const node = new Node("alter database link")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.DATABASE))
-    node.append(r.consume(Keyword.LINK))
+    return new Node("alter database link", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.DATABASE))
+      node.append(r.consume(Keyword.LINK))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterDatabaseStatement(r: TokenReader) {
-    const node = new Node("alter database")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("alter database", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterDimensionStatement(r: TokenReader) {
-    const node = new Node("alter dimension")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("alter dimension", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterDiskgroupStatement(r: TokenReader) {
-    const node = new Node("alter diskgroup")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.DISKGROUP))
+    return new Node("alter diskgroup", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.DISKGROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterEditionStatement(r: TokenReader) {
-    const node = new Node("alter edition")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.EDITION))
+    return new Node("alter edition", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.EDITION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterFunctionStatement(r: TokenReader) {
-    const node = new Node("alter function")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.FUNCTION))
+    return new Node("alter function", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.FUNCTION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterHierarchyStatement(r: TokenReader) {
-    const node = new Node("alter hierarchy")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.HIERARCHY))
+    return new Node("alter hierarchy", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.HIERARCHY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterIndexStatement(r: TokenReader) {
-    const node = new Node("alter index")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.INDEX))
+    return new Node("alter index", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.INDEX))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterIndextypeStatement(r: TokenReader) {
-    const node = new Node("alter indextype")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.INDEXTYPE))
+    return new Node("alter indextype", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.INDEXTYPE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterInmemoryJoinGroupStatement(r: TokenReader) {
-    const node = new Node("alter inmemory join group")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.INMEMORY))
-    node.append(r.consume(Keyword.JOIN))
-    node.append(r.consume(Keyword.GROUP))
+    return new Node("alter inmemory join group", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.INMEMORY))
+      node.append(r.consume(Keyword.JOIN))
+      node.append(r.consume(Keyword.GROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterJavaStatement(r: TokenReader) {
-    const node = new Node("alter java")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.JAVA))
+    return new Node("alter java", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.JAVA))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterLibraryStatement(r: TokenReader) {
-    const node = new Node("alter library")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.LIBRARY))
+    return new Node("alter library", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.LIBRARY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterLockdownProfileStatement(r: TokenReader) {
-    const node = new Node("alter lockdown profile")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.LOCKDOWN))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("alter lockdown profile", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.LOCKDOWN))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterMaterializedViewLogStatement(r: TokenReader) {
-    const node = new Node("alter materialized view log")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
-    node.append(r.consume(Keyword.LOG))
+    return new Node("alter materialized view log", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
+      node.append(r.consume(Keyword.LOG))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterMaterializedViewStatement(r: TokenReader) {
-    const node = new Node("alter materialized view")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("alter materialized view", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterOperatorStatement(r: TokenReader) {
-    const node = new Node("alter operator")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.OPERATOR))
+    return new Node("alter operator", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.OPERATOR))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterOutlineStatement(r: TokenReader) {
-    const node = new Node("alter outline")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.OUTLINE))
+    return new Node("alter outline", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.OUTLINE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterPackageStatement(r: TokenReader) {
-    const node = new Node("alter package")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.PACKAGE))
+    return new Node("alter package", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.PACKAGE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterPluggableDatabaseStatement(r: TokenReader) {
-    const node = new Node("alter pluggable database")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.PLUGGABLE))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("alter pluggable database", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.PLUGGABLE))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterProcedureStatement(r: TokenReader) {
-    const node = new Node("alter procedure")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.PROCEDURE))
+    return new Node("alter procedure", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.PROCEDURE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterProfileStatement(r: TokenReader) {
-    const node = new Node("alter profile")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("alter profile", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterResourceCostStatement(r: TokenReader) {
-    const node = new Node("alter resource cost")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.RESOURCE))
-    node.append(r.consume(Keyword.COST))
+    return new Node("alter resource cost", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.RESOURCE))
+      node.append(r.consume(Keyword.COST))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterRoleStatement(r: TokenReader) {
-    const node = new Node("alter role")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.ROLE))
+    return new Node("alter role", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.ROLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
-  
+
   private alterRollbackSegmentStatement(r: TokenReader) {
-    const node = new Node("alter rollback segment")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.ROLLBACK))
-    node.append(r.consume(Keyword.SEGMENT))
+    return new Node("alter rollback segment", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.ROLLBACK))
+      node.append(r.consume(Keyword.SEGMENT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterSequenceStatement(r: TokenReader) {
-    const node = new Node("alter sequence")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.SEQUENCE))
+    return new Node("alter sequence", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.SEQUENCE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterSessionStatement(r: TokenReader) {
-    const node = new Node("alter session")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.SESSION))
+    return new Node("alter session", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.SESSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterSynonymStatement(r: TokenReader) {
-    const node = new Node("alter synonym")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.SYNONYM))
+    return new Node("alter synonym", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.SYNONYM))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterSystemStatement(r: TokenReader) {
-    const node = new Node("alter system")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.SYSTEM))
+    return new Node("alter system", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.SYSTEM))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTableStatement(r: TokenReader) {
-    const node = new Node("alter table")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("alter table", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTablespaceSetStatement(r: TokenReader) {
-    const node = new Node("alter tablespace set")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TABLESPACE))
-    node.append(r.consume(Keyword.SET))
+    return new Node("alter tablespace set", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TABLESPACE))
+      node.append(r.consume(Keyword.SET))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTablespaceStatement(r: TokenReader) {
-    const node = new Node("alter tablespace")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TABLESPACE))
+    return new Node("alter tablespace", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TABLESPACE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTriggerStatement(r: TokenReader) {
-    const node = new Node("alter trigger")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TRIGGER))
+    return new Node("alter trigger", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TRIGGER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTypeBodyStatement(r: TokenReader) {
-    const node = new Node("alter type body")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TYPE))
-    node.append(r.consume(Keyword.BODY))
+    return new Node("alter type body", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TYPE))
+      node.append(r.consume(Keyword.BODY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterTypeStatement(r: TokenReader) {
-    const node = new Node("alter type")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.TYPE))
+    return new Node("alter type", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.TYPE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterUserStatement(r: TokenReader) {
-    const node = new Node("alter user")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.USER))
+    return new Node("alter user", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.USER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private alterViewStatement(r: TokenReader) {
-    const node = new Node("alter view")
-    node.append(r.consume(Keyword.ALTER))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("alter view", node => {
+      node.append(r.consume(Keyword.ALTER))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropAnalyticViewStatement(r: TokenReader) {
-    const node = new Node("drop analytic view")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.ANALYTIC))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("drop analytic view", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.ANALYTIC))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropAttributeDimensionStatement(r: TokenReader) {
-    const node = new Node("drop attribute dimension")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.ATTRIBUTE))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("drop attribute dimension", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.ATTRIBUTE))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropAuditPolicyStatement(r: TokenReader) {
-    const node = new Node("drop audit policy")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.AUDIT))
-    node.append(r.consume(Keyword.POLICY))
+    return new Node("drop audit policy", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.AUDIT))
+      node.append(r.consume(Keyword.POLICY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropClusterStatement(r: TokenReader) {
-    const node = new Node("drop cluster")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.CLUSTER))
+    return new Node("drop cluster", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.CLUSTER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropContextStatement(r: TokenReader) {
-    const node = new Node("drop context")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.CONTEXT))
+    return new Node("drop context", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.CONTEXT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropDatabaseLinkStatement(r: TokenReader) {
-    const node = new Node("drop database link")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.DATABASE))
-    node.append(r.consume(Keyword.LINK))
+    return new Node("drop database link", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.DATABASE))
+      node.append(r.consume(Keyword.LINK))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropDatabaseStatement(r: TokenReader) {
-    const node = new Node("drop database")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("drop database", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropDimensionStatement(r: TokenReader) {
-    const node = new Node("drop dimension")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.DIMENSION))
+    return new Node("drop dimension", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.DIMENSION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropDirectoryStatement(r: TokenReader) {
-    const node = new Node("drop directory")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.DIRECTORY))
+    return new Node("drop directory", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.DIRECTORY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropDiskgroupStatement(r: TokenReader) {
-    const node = new Node("drop diskgroup")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.DISKGROUP))
+    return new Node("drop diskgroup", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.DISKGROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropEditionStatement(r: TokenReader) {
-    const node = new Node("drop edition")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.EDITION))
+    return new Node("drop edition", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.EDITION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropFunctionStatement(r: TokenReader) {
-    const node = new Node("drop function")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.FUNCTION))
+    return new Node("drop function", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.FUNCTION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropHierarchyStatement(r: TokenReader) {
-    const node = new Node("drop hierarchy")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.HIERARCHY))
+    return new Node("drop hierarchy", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.HIERARCHY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropIndexStatement(r: TokenReader) {
-    const node = new Node("drop index")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.INDEX))
+    return new Node("drop index", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.INDEX))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropIndextypeStatement(r: TokenReader) {
-    const node = new Node("drop indextype")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.INDEXTYPE))
+    return new Node("drop indextype", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.INDEXTYPE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropInmemoryJoinGroupStatement(r: TokenReader) {
-    const node = new Node("drop inmemory join group")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.INMEMORY))
-    node.append(r.consume(Keyword.JOIN))
-    node.append(r.consume(Keyword.GROUP))
+    return new Node("drop inmemory join group", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.INMEMORY))
+      node.append(r.consume(Keyword.JOIN))
+      node.append(r.consume(Keyword.GROUP))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropJavaStatement(r: TokenReader) {
-    const node = new Node("drop java")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.JAVA))
+    return new Node("drop java", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.JAVA))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropLibraryStatement(r: TokenReader) {
-    const node = new Node("drop library")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.LIBRARY))
+    return new Node("drop library", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.LIBRARY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropLockdownProfileStatement(r: TokenReader) {
-    const node = new Node("drop lockdown profile")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.LOCKDOWN))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("drop lockdown profile", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.LOCKDOWN))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropMaterializedViewLogStatement(r: TokenReader) {
-    const node = new Node("drop materialized view log")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
-    node.append(r.consume(Keyword.LOG))
+    return new Node("drop materialized view log", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
+      node.append(r.consume(Keyword.LOG))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropMaterializedViewStatement(r: TokenReader) {
-    const node = new Node("drop materialized view")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.MATERIALIZED))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("drop materialized view", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.MATERIALIZED))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropOperatorStatement(r: TokenReader) {
-    const node = new Node("drop operator")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.OPERATOR))
+    return new Node("drop operator", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.OPERATOR))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropOutlineStatement(r: TokenReader) {
-    const node = new Node("drop outline")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.OUTLINE))
+    return new Node("drop outline", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.OUTLINE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropPackageStatement(r: TokenReader) {
-    const node = new Node("drop package")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.PACKAGE))
+    return new Node("drop package", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.PACKAGE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropPluggableDatabaseStatement(r: TokenReader) {
-    const node = new Node("drop pluggable database")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.PLUGGABLE))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("drop pluggable database", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.PLUGGABLE))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropProcedureStatement(r: TokenReader) {
-    const node = new Node("drop procedure")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.PROCEDURE))
+    return new Node("drop procedure", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.PROCEDURE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropProfileStatement(r: TokenReader) {
-    const node = new Node("drop profile")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.PROFILE))
+    return new Node("drop profile", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.PROFILE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropRestorePointStatement(r: TokenReader) {
-    const node = new Node("drop restore point")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.RESTORE))
-    node.append(r.consume(Keyword.POINT))
+    return new Node("drop restore point", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.RESTORE))
+      node.append(r.consume(Keyword.POINT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropRoleStatement(r: TokenReader) {
-    const node = new Node("drop role")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.ROLE))
+    return new Node("drop role", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.ROLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
-  
+
   private dropRollbackSegmentStatement(r: TokenReader) {
-    const node = new Node("drop rollback segment")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.ROLLBACK))
-    node.append(r.consume(Keyword.SEGMENT))
+    return new Node("drop rollback segment", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.ROLLBACK))
+      node.append(r.consume(Keyword.SEGMENT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropSchemaStatement(r: TokenReader) {
-    const node = new Node("drop schema")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.SCHEMA))
+    return new Node("drop schema", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.SCHEMA))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropSequenceStatement(r: TokenReader) {
-    const node = new Node("drop sequence")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.SEQUENCE))
+    return new Node("drop sequence", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.SEQUENCE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropSynonymStatement(r: TokenReader) {
-    const node = new Node("drop synonym")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.SYNONYM))
+    return new Node("drop synonym", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.SYNONYM))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTableStatement(r: TokenReader) {
-    const node = new Node("drop table")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("drop table", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTablespaceSetStatement(r: TokenReader) {
-    const node = new Node("drop tablespace set")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TABLESPACE))
-    node.append(r.consume(Keyword.SET))
+    return new Node("drop tablespace set", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TABLESPACE))
+      node.append(r.consume(Keyword.SET))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTablespaceStatement(r: TokenReader) {
-    const node = new Node("drop tablespace")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TABLESPACE))
+    return new Node("drop tablespace", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TABLESPACE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTriggerStatement(r: TokenReader) {
-    const node = new Node("drop trigger")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TRIGGER))
+    return new Node("drop trigger", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TRIGGER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTypeBodyStatement(r: TokenReader) {
-    const node = new Node("drop type body")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TYPE))
-    node.append(r.consume(Keyword.BODY))
+    return new Node("drop type body", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TYPE))
+      node.append(r.consume(Keyword.BODY))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropTypeStatement(r: TokenReader) {
-    const node = new Node("drop type")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.TYPE))
+    return new Node("drop type", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.TYPE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropUserStatement(r: TokenReader) {
-    const node = new Node("drop user")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.USER))
+    return new Node("drop user", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.USER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private dropViewStatement(r: TokenReader) {
-    const node = new Node("drop view")
-    node.append(r.consume(Keyword.DROP))
-    node.append(r.consume(Keyword.VIEW))
+    return new Node("drop view", node => {
+      node.append(r.consume(Keyword.DROP))
+      node.append(r.consume(Keyword.VIEW))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private truncateClusterStatement(r: TokenReader) {
-    const node = new Node("truncate cluster")
-    node.append(r.consume(Keyword.TRUNCATE))
-    node.append(r.consume(Keyword.CLUSTER))
+    return new Node("truncate cluster", node => {
+      node.append(r.consume(Keyword.TRUNCATE))
+      node.append(r.consume(Keyword.CLUSTER))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private truncateTableStatement(r: TokenReader) {
-    const node = new Node("truncate table")
-    node.append(r.consume(Keyword.TRUNCATE))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("truncate table", node => {
+      node.append(r.consume(Keyword.TRUNCATE))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private setConstraintStatement(r: TokenReader) {
-    const node = new Node("set constraint")
-    node.append(r.consume(Keyword.SET))
+    return new Node("set constraint", node => {
+      node.append(r.consume(Keyword.SET))
 
-    if (r.peekIf(Keyword.CONSTRAINTS)) {
-      node.append(r.consume())
-    } else {
-      node.append(r.consume(Keyword.CONSTRAINT))
-    }
+      if (r.peekIf(Keyword.CONSTRAINTS)) {
+        node.append(r.consume())
+      } else {
+        node.append(r.consume(Keyword.CONSTRAINT))
+      }
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+    })
   }
 
   private setRoleStatement(r: TokenReader) {
-    const node = new Node("set role")
-    node.append(r.consume(Keyword.SET))
-    node.append(r.consume(Keyword.ROLE))
+    return new Node("set role", node => {
+      node.append(r.consume(Keyword.SET))
+      node.append(r.consume(Keyword.ROLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private setTransactionStatement(r: TokenReader) {
-    const node = new Node("set transaction")
-    node.append(r.consume(Keyword.SET))
-    node.append(r.consume(Keyword.TRANSACTION))
+    return new Node("set transaction", node => {
+      node.append(r.consume(Keyword.SET))
+      node.append(r.consume(Keyword.TRANSACTION))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private administerKeyManagementStatement(r: TokenReader) {
-    const node = new Node("administer key management")
-    node.append(r.consume(Keyword.ADMINISTER))
-    node.append(r.consume(Keyword.KEY))
-    node.append(r.consume(Keyword.MANAGEMENT))
+    return new Node("administer key management", node => {
+      node.append(r.consume(Keyword.ADMINISTER))
+      node.append(r.consume(Keyword.KEY))
+      node.append(r.consume(Keyword.MANAGEMENT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private analyzeStatement(r: TokenReader) {
-    const node = new Node("analyze")
-    node.append(r.consume(Keyword.ANALYZE))
+    return new Node("analyze", node => {
+      node.append(r.consume(Keyword.ANALYZE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private associateStatisticsStatement(r: TokenReader) {
-    const node = new Node("associate statistics")
-    node.append(r.consume(Keyword.ASSOCIATE))
-    node.append(r.consume(Keyword.STATISTICS))
+    return new Node("associate statistics", node => {
+      node.append(r.consume(Keyword.ASSOCIATE))
+      node.append(r.consume(Keyword.STATISTICS))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private auditStatement(r: TokenReader) {
-    const node = new Node("audit")
-    node.append(r.consume(Keyword.AUDIT))
+    return new Node("audit", node => {
+      node.append(r.consume(Keyword.AUDIT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private callStatement(r: TokenReader) {
-    const node = new Node("call")
-    node.append(r.consume(Keyword.CALL))
+    return new Node("call", node => {
+      node.append(r.consume(Keyword.CALL))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private commentStatement(r: TokenReader) {
-    const node = new Node("comment")
-    node.append(r.consume(Keyword.COMMENT))
+    return new Node("comment", node => {
+      node.append(r.consume(Keyword.COMMENT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private commitStatement(r: TokenReader) {
-    const node = new Node("commit")
-    node.append(r.consume(Keyword.COMMIT))
+    return new Node("commit", node => {
+      node.append(r.consume(Keyword.COMMIT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private disassociateStatisticsStatement(r: TokenReader) {
-    const node = new Node("disassociate statistics")
-    node.append(r.consume(Keyword.DISASSOCIATE))
-    node.append(r.consume(Keyword.STATISTICS))
+    return new Node("disassociate statistics", node => {
+      node.append(r.consume(Keyword.DISASSOCIATE))
+      node.append(r.consume(Keyword.STATISTICS))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private flashbackDatabaseStatement(r: TokenReader) {
-    const node = new Node("flashback database")
-    node.append(r.consume(Keyword.FLASHBACK))
-    node.append(r.consume(Keyword.DATABASE))
+    return new Node("flashback database", node => {
+      node.append(r.consume(Keyword.FLASHBACK))
+      node.append(r.consume(Keyword.DATABASE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private flashbackTableStatement(r: TokenReader) {
-    const node = new Node("flashback table")
-    node.append(r.consume(Keyword.FLASHBACK))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("flashback table", node => {
+      node.append(r.consume(Keyword.FLASHBACK))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private grantStatement(r: TokenReader) {
-    const node = new Node("grant")
-    node.append(r.consume(Keyword.GRANT))
+    return new Node("grant", node => {
+      node.append(r.consume(Keyword.GRANT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private lockTableStatement(r: TokenReader) {
-    const node = new Node("lock table")
-    node.append(r.consume(Keyword.LOCK))
-    node.append(r.consume(Keyword.TABLE))
+    return new Node("lock table", node => {
+      node.append(r.consume(Keyword.LOCK))
+      node.append(r.consume(Keyword.TABLE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private noauditStatement(r: TokenReader) {
-    const node = new Node("noaudit")
-    node.append(r.consume(Keyword.NOAUDIT))
+    return new Node("noaudit", node => {
+      node.append(r.consume(Keyword.NOAUDIT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private purgeStatement(r: TokenReader) {
-    const node = new Node("purge")
-    node.append(r.consume(Keyword.PURGE))
+    return new Node("purge", node => {
+      node.append(r.consume(Keyword.PURGE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private renameStatement(r: TokenReader) {
-    const node = new Node("rename")
-    node.append(r.consume(Keyword.RENAME))
+    return new Node("rename", node => {
+      node.append(r.consume(Keyword.RENAME))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private revokeStatement(r: TokenReader) {
-    const node = new Node("revoke")
-    node.append(r.consume(Keyword.REVOKE))
+    return new Node("revoke", node => {
+      node.append(r.consume(Keyword.REVOKE))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private rollbackStatement(r: TokenReader) {
-    const node = new Node("rollback")
-    node.append(r.consume(Keyword.ROLLBACK))
+    return new Node("rollback", node => {
+      node.append(r.consume(Keyword.ROLLBACK))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private savepointStatement(r: TokenReader) {
-    const node = new Node("savepoint")
-    node.append(r.consume(Keyword.SAVEPOINT))
+    return new Node("savepoint", node => {
+      node.append(r.consume(Keyword.SAVEPOINT))
 
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
 
-    return node
+    })
   }
 
   private declareBlock(r: TokenReader) {
-    const node = new Node("block")
+    return new Node("block", node => {
 
-    const declareNode = new Node("declare")
-    declareNode.append(r.consume(Keyword.DECLARE))
+      const declareNode = new Node("declare")
+      declareNode.append(r.consume(Keyword.DECLARE))
 
-    while (r.peek()
-      && !r.peekIf(TokenType.Delimiter)
-    ) {
-      if (r.peekIf(Keyword.BEGIN)) {
-        node.append(this.beginBlock(r))
-        if (r.peekIf(Keyword.EXCEPTION)) {
-          node.append(this.exceptionBlock(r))
+      while (r.peek()
+        && !r.peekIf(TokenType.Delimiter)
+      ) {
+        if (r.peekIf(Keyword.BEGIN)) {
+          node.append(this.beginBlock(r))
+          if (r.peekIf(Keyword.EXCEPTION)) {
+            node.append(this.exceptionBlock(r))
+          }
+          break
+        } else if (r.peekIf(Keyword.PROCEDURE)) {
+          declareNode.append(this.procedureBlock(r))
+        } else if (r.peekIf(Keyword.FUNCTION)) {
+          declareNode.append(this.functionBlock(r))
+        } else {
+          declareNode.append(r.peek(-1))
         }
-        break
-      } else if (r.peekIf(Keyword.PROCEDURE)) {
-        declareNode.append(this.procedureBlock(r))
-      } else if (r.peekIf(Keyword.FUNCTION)) {
-        declareNode.append(this.functionBlock(r))
-      } else {
-        declareNode.append(r.peek(-1))
       }
-    }
 
-    return node
+    })
   }
 
   private beginBlock(r: TokenReader) {
-    const node = new Node("begin")
-    node.append(r.consume(Keyword.BEGIN))
+    return new Node("begin", node => {
+      node.append(r.consume(Keyword.BEGIN))
 
-    while (r.peek()
-    && !r.peekIf(TokenType.Delimiter)
-    ) {
-      if (r.peekIf(Keyword.END)) {
-        node.append(r.consume())
-        node.append(r.consume(TokenType.SemiColon))
-        break
-      } else if (r.peekIf(Keyword.DECLARE)) {
-        node.append(this.declareBlock(r))
-      } else if (r.peekIf(Keyword.BEGIN)) {
-        node.append(this.beginBlock(r))
-      } else if (r.peekIf(Keyword.EXCEPTION)) {
-        break
-      } else {
-        node.append(r.consume())
+      while (r.peek()
+        && !r.peekIf(TokenType.Delimiter)
+      ) {
+        if (r.peekIf(Keyword.END)) {
+          node.append(r.consume())
+          node.append(r.consume(TokenType.SemiColon))
+          break
+        } else if (r.peekIf(Keyword.DECLARE)) {
+          node.append(this.declareBlock(r))
+        } else if (r.peekIf(Keyword.BEGIN)) {
+          node.append(this.beginBlock(r))
+        } else if (r.peekIf(Keyword.EXCEPTION)) {
+          break
+        } else {
+          node.append(r.consume())
+        }
       }
-    }
 
-    return node
+    })
   }
 
   private procedureBlock(r: TokenReader) {
-    const node = new Node("nested_procedure")
+    return new Node("nested_procedure", node => {
 
-    while (r.peek()
-    && !r.peekIf(TokenType.Delimiter)
-    ) {
-      if (r.peekIf(Keyword.END)) {
-        node.append(r.consume())
-        node.append(r.consume(TokenType.SemiColon))
-        break
-      } else {
-        node.append(r.consume())
+      while (r.peek()
+        && !r.peekIf(TokenType.Delimiter)
+      ) {
+        if (r.peekIf(Keyword.END)) {
+          node.append(r.consume())
+          node.append(r.consume(TokenType.SemiColon))
+          break
+        } else {
+          node.append(r.consume())
+        }
       }
-    }
-    return node
+    })
   }
 
   private functionBlock(r: TokenReader) {
-    const node = new Node("nested_function")
+    return new Node("nested_function", node => {
 
-    while (r.peek()
-    && !r.peekIf(TokenType.Delimiter)
-    ) {
-      if (r.peekIf(Keyword.END)) {
-        node.append(r.consume())
-        node.append(r.consume(TokenType.SemiColon))
-        break
-      } else {
-        node.append(r.consume())
+      while (r.peek()
+        && !r.peekIf(TokenType.Delimiter)
+      ) {
+        if (r.peekIf(Keyword.END)) {
+          node.append(r.consume())
+          node.append(r.consume(TokenType.SemiColon))
+          break
+        } else {
+          node.append(r.consume())
+        }
       }
-    }
-    return node
+    })
   }
 
   private exceptionBlock(r: TokenReader) {
-    const node = new Node("exception")
+    return new Node("exception", node => {
 
-    while (r.peek()
-    && !r.peekIf(TokenType.Delimiter)
-    ) {
-      if (r.peekIf(Keyword.END)) {
-        node.append(r.consume())
-        node.append(r.consume(TokenType.SemiColon))
-        break
-      } else {
-        node.append(r.consume())
+      while (r.peek()
+        && !r.peekIf(TokenType.Delimiter)
+      ) {
+        if (r.peekIf(Keyword.END)) {
+          node.append(r.consume())
+          node.append(r.consume(TokenType.SemiColon))
+          break
+        } else {
+          node.append(r.consume())
+        }
       }
-    }
-    return node
+    })
   }
 
   private insertClause(r: TokenReader, withNode?: Node) {
-    const node = new Node("insert")
-    if (withNode) {
-      node.append(withNode)
-    }
-    node.append(r.consume(Keyword.INSERT))
-    node.append(r.consume(Keyword.INTO))
+    return new Node("insert", node => {
+      if (withNode) {
+        node.append(withNode)
+      }
+      node.append(r.consume(Keyword.INSERT))
+      node.append(r.consume(Keyword.INTO))
 
-    this.parseName(r, node)
-    
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      this.parseName(r, node)
 
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+
+    })
   }
 
   private updateClause(r: TokenReader, withNode?: Node) {
-    const node = new Node("update")
-    if (withNode) {
-      node.append(withNode)
-    }
-    node.append(r.consume(Keyword.UPDATE))
+    return new Node("update", node => {
+      if (withNode) {
+        node.append(withNode)
+      }
+      node.append(r.consume(Keyword.UPDATE))
 
-    this.parseName(r, node)
-    
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      this.parseName(r, node)
 
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+
+    })
   }
 
   private deleteClause(r: TokenReader, withNode?: Node) {
-    const node = new Node("delete")
-    if (withNode) {
-      node.append(withNode)
-    }
-    node.append(r.consume(Keyword.DELETE))
-    node.append(r.consume(Keyword.FROM))
+    return new Node("delete", node => {
+      if (withNode) {
+        node.append(withNode)
+      }
+      node.append(r.consume(Keyword.DELETE))
+      node.append(r.consume(Keyword.FROM))
 
-    this.parseName(r, node)
-    
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+      this.parseName(r, node)
 
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+
+    })
   }
 
   private mergeClause(r: TokenReader, withNode?: Node) {
-    const node = new Node("merge")
-    if (withNode) {
-      node.append(withNode)
-    }
-    node.append(r.consume(Keyword.MERGE))
-    node.append(r.consume(Keyword.INTO))
-    this.parseName(r, node)
-    
-    while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-      node.append(r.consume())
-    }
+    return new Node("merge", node => {
+      if (withNode) {
+        node.append(withNode)
+      }
+      node.append(r.consume(Keyword.MERGE))
+      node.append(r.consume(Keyword.INTO))
+      this.parseName(r, node)
 
-    return node
+      while (!r.peek().eos) {
+        node.append(r.consume())
+      }
+
+    })
   }
 
   private selectClause(r: TokenReader, withNode?: Node) {
-    const node = new Node("select")
-    if (withNode) {
-      node.append(withNode)
-    }
-    node.append(r.consume(Keyword.SELECT))
-
-    let depth = 0
-    while (r.peek()
-      && !r.peekIf(TokenType.SemiColon)
-      && !r.peekIf(TokenType.Delimiter)
-      && (depth == 0 && !r.peekIf(TokenType.RightParen))
-    ) {
-      if (r.peekIf(TokenType.LeftParen)) {
-        node.append(r.consume())
-        depth++
-      } else if (r.peekIf(TokenType.RightParen)) {
-        node.append(r.consume())
-        depth--
-      } else {
-        node.append(r.consume())
+    return new Node("select", node => {
+      if (withNode) {
+        node.append(withNode)
       }
-    }
+      node.append(r.consume(Keyword.SELECT))
 
-    return node
+      let depth = 0
+      while (r.peek()
+        && !r.peekIf(TokenType.SemiColon)
+        && !r.peekIf(TokenType.Delimiter)
+        && (depth == 0 && !r.peekIf(TokenType.RightParen))
+      ) {
+        if (r.peekIf(TokenType.LeftParen)) {
+          node.append(r.consume())
+          depth++
+        } else if (r.peekIf(TokenType.RightParen)) {
+          node.append(r.consume())
+          depth--
+        } else {
+          node.append(r.consume())
+        }
+      }
+
+    })
   }
 
   private withClause(r: TokenReader) {
-    const node = new Node("with")
-    node.append(r.consume(Keyword.WITH))
+    return new Node("with", node => {
+      node.append(r.consume(Keyword.WITH))
 
-    while (r.peek()) {
-      node.append(this.identifier(r, "name"))
-      if (r.peekIf(TokenType.LeftParen)) {
-        node.append(r.consume())
-        while (r.peek()) {
-          node.append(this.identifier(r, "column"))
+      while (r.peek()) {
+        node.append(this.identifier(r, "name"))
+        if (r.peekIf(TokenType.LeftParen)) {
+          node.append(r.consume())
+          while (r.peek()) {
+            node.append(this.identifier(r, "column"))
 
-          if (r.peekIf(TokenType.Comma)) {
-            node.append(r.consume())
-          } else {
-            break
+            if (r.peekIf(TokenType.Comma)) {
+              node.append(r.consume())
+            } else {
+              break
+            }
           }
+          node.append(r.consume(TokenType.RightParen))
         }
+
+        node.append(r.consume(Keyword.AS))
+        node.append(r.consume(TokenType.LeftParen))
+        node.append(this.selectClause(r))
         node.append(r.consume(TokenType.RightParen))
-      }
 
-      node.append(r.consume(Keyword.AS))
-      node.append(r.consume(TokenType.LeftParen))
-      node.append(this.selectClause(r))
-      node.append(r.consume(TokenType.RightParen))
-
-      if (r.peekIf(TokenType.Comma)) {
-        node.append(r.consume())
-      } else {
-        break
+        if (r.peekIf(TokenType.Comma)) {
+          node.append(r.consume())
+        } else {
+          break
+        }
       }
-    }
-    return node
+    })
   }
 
   private parseName(r: TokenReader, stmt: Node) {
@@ -2784,13 +2737,13 @@ export class OracleParser extends Parser {
   }
 
   private identifier(r: TokenReader, name: string) {
-    const node = new Node(name)
-    if (r.peekIf(TokenType.Identifier)) {
-      node.append(r.consume())
-      node.data.value = dequote(r.peek(-1).text)
-    } else {
-      throw r.createParseError()
-    }
-    return node
+    return new Node(name, node => {
+      if (r.peekIf(TokenType.Identifier)) {
+        node.append(r.consume())
+        node.data.value = dequote(r.peek(-1).text)
+      } else {
+        throw r.createParseError()
+      }
+    })
   }
 }

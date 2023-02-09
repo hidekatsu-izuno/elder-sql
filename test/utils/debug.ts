@@ -41,7 +41,7 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
         const ctext = toJSString(child, { space: space + 1 }).trimStart()
         text += " ".repeat((space + 1) * 2) + "node.append(" + ctext + ")\n"
       }
-      text += " ".repeat(space * 2) + ")"
+      text += " ".repeat(space * 2) + "})"
     } else {
       text += ")"
     }

@@ -80,28 +80,25 @@ export class MysqlParser extends Parser {
   }
 
   private command(r: TokenReader) {
-    const stmt = new Node("CommandStatement")
-    stmt.append(new Node("CommandName", node => {
-      const command = r.consume(TokenType.Command)
-      node.append(command)
-      node.data.value = command.text
-    }))
-    const args = new Node("CommandArgumentList")
-    while (r.peek()) {
-      args.append(new Node("CommandArgument", node => {
-        const arg = r.consume()
-        node.append(arg)
-        node.data.value = dequote(arg.text)
+    return new Node("CommandStatement", node => {
+      node.append(new Node("CommandName", node => {
+        const command = r.consume(TokenType.Command)
+        node.append(command)
+        node.data.value = command.text
       }))
-      if (!r.peek().eos) {
-        break
+      node.append(new Node("CommandArgumentList", node => {
+        while (!r.peek().eos) {
+          node.append(new Node("CommandArgument", node => {
+            const arg = r.consume()
+            node.append(arg)
+            node.data.value = dequote(arg.text)
+          }))
+        }
+      }))
+      if (r.peekIf(TokenType.EoF)) {
+        node.append(r.consume())
       }
-    }
-    stmt.append(args)
-    if (r.peekIf(TokenType.EoF)) {
-      stmt.append(r.consume())
-    }
-    return stmt
+    })
   }
 
   private statement(r: TokenReader) {
@@ -217,58 +214,6 @@ export class MysqlParser extends Parser {
       } else if (semver.gte(this.options.version, "5.6.6")) {
         this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
       }
-    }
-  }
-
-  private getLongCommandName(name: string) {
-    if (name === "?" || name === "\\?" || name === "\\h" || /^help$/i.test(name)) {
-      return "help"
-    } else if (name === "\\c" || /^clear$/i.test(name)) {
-      return "clear"
-    } else if (name === "\\r" || /^connect$/i.test(name)) {
-      return "connect"
-    } else if (name === "\\d" || /^delimiter$/i.test(name)) {
-      return "delimiter"
-    } else if (name === "\\e" || /^edit$/i.test(name)) {
-      return "edit"
-    } else if (name === "\\G" || /^ego$/i.test(name)) {
-      return "ego"
-    } else if (name === "\\q" || /^exit$/i.test(name)) {
-      return "exit"
-    } else if (name === "\\g" || /^go$/i.test(name)) {
-      return "go"
-    } else if (name === "\\n" || /^nopager$/i.test(name)) {
-      return "nopager"
-    } else if (name === "\\t" || /^notee$/i.test(name)) {
-      return "notee"
-    } else if (name === "\\P" || /^pager$/i.test(name)) {
-      return "pager"
-    } else if (name === "\\p" || /^print$/i.test(name)) {
-      return "print"
-    } else if (name === "\\R" || /^prompt$/i.test(name)) {
-      return "prompt"
-    } else if (name === "\\q" || /^quit$/i.test(name)) {
-      return "quit"
-    } else if (name === "\\#" || /^rehash$/i.test(name)) {
-      return "rehash"
-    } else if (name === "\\." || /^source$/i.test(name)) {
-      return "source"
-    } else if (name === "\\s" || /^status$/i.test(name)) {
-      return "status"
-    } else if (name === "\\!" || /^system$/i.test(name)) {
-      return "system"
-    } else if (name === "\\T" || /^tee$/i.test(name)) {
-      return "tee"
-    } else if (name === "\\u" || /^use$/i.test(name)) {
-      return "use"
-    } else if (name === "\\C" || /^charset$/i.test(name)) {
-      return "charset"
-    } else if (name === "\\W" || /^warnings$/i.test(name)) {
-      return "warnings"
-    } else if (name === "\\w" || /^nowarning$/i.test(name)) {
-      return "nowarning"
-    } else {
-      return name
     }
   }
 }
