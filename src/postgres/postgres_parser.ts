@@ -28,7 +28,7 @@ export class PostgresParser extends Parser {
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.EoF)) {
+        if (r.peekIf(TokenType.SectionBreak)) {
           root.append(r.consume())
           break
         } else if (r.peekIf(TokenType.SemiColon)) {
@@ -93,7 +93,7 @@ export class PostgresParser extends Parser {
           })
         }
       })
-      if (r.peekIf(TokenType.EoF)) {
+      if (r.peekIf(TokenType.SectionBreak)) {
         node.append(r.consume())
       }
     })
@@ -180,7 +180,7 @@ export class PostgresParser extends Parser {
       if (r.peekIf(TokenType.SemiColon)) {
         stmt.append(r.consume())
       }
-      if (r.peekIf(TokenType.EoF)) {
+      if (r.peekIf(TokenType.SectionBreak)) {
         stmt.append(r.consume())
       }
     } catch (err) {
@@ -195,7 +195,7 @@ export class PostgresParser extends Parser {
         if (r.peekIf(TokenType.SemiColon)) {
           stmt.append(r.consume())
         }
-        if (r.peekIf(TokenType.EoF)) {
+        if (r.peekIf(TokenType.SectionBreak)) {
           stmt.append(r.consume())
         }
         err.node = stmt
@@ -865,18 +865,7 @@ export class PostgresParser extends Parser {
           if (r.peekIf(Keyword.ON)) {
             node.append(new Node("OnClause")).apply(node => {
               node.append(r.consume())
-              node.append(new Node("ExpressionList")).apply(node => {
-                node.append(r.consume(TokenType.LeftParen))
-                do {
-                  node.append(this.expression(r))
-                  if (r.peekIf(TokenType.Comma)) {
-                    node.append(r.consume())
-                  } else {
-                    break
-                  }
-                } while (!r.peek().eos)
-                node.append(r.consume(TokenType.RightParen))
-              })
+              node.append(this.expressionList(r))
             })
           }
         })
@@ -927,18 +916,7 @@ export class PostgresParser extends Parser {
   private valuesClause(r: TokenReader) {
     return new Node("ValuesClause").apply(node => {
       node.append(r.consume(Keyword.VALUES))
-      node.append(new Node("ExpressionList")).apply(node => {
-        node.append(r.consume(TokenType.LeftParen))
-        do {
-          node.append(this.expression(r))
-          if (r.peekIf(TokenType.Comma)) {
-            node.append(r.consume())
-          } else {
-            break
-          }
-        } while (!r.peek().eos)
-        node.append(r.consume(TokenType.RightParen))
-      })
+      node.append(this.expressionList(r))
     })
   }
 
@@ -947,11 +925,23 @@ export class PostgresParser extends Parser {
       node.append(r.consume(Keyword.ON))
       node.append(r.consume(Keyword.CONFLICT))
       if (r.peekIf(TokenType.LeftParen)) {
-        node.append(new Node("SortingColumnList")).apply(node => {
+        node.append(new Node("ConflictColumnList")).apply(node => {
           node.append(r.consume())
-          do  {
-            //TODO
-            node.append(this.sortingColumn(r))
+          do {
+            if (r.peekIf(TokenType.LeftParen)) {
+              node.append(r.consume())
+              node.append(this.expression(r))
+              node.append(r.consume(TokenType.RightParen))
+            } else {
+              node.append(this.identifier(r, "ColumnName"))
+            }
+            if (r.peekIf(Keyword.COLLATE)) {
+              node.append(r.consume())
+              node.append(this.identifier(r, "CollationName"))
+            }
+            if (r.peekIf(TokenType.Identifier)) {
+              node.append(this.identifier(r, "OperatorClassName"))
+            }
             if (r.peekIf(TokenType.Comma)) {
               node.append(r.consume())
             } else {
@@ -1398,24 +1388,60 @@ export class PostgresParser extends Parser {
       let hasJoinClause = false
       do {
         node.append(new Node("ObjectReference")).apply(node => {
+          let hasOnly = false
+          let hasLiteral = false
           if (r.peekIf(Keyword.ONLY)) {
             node.append(new Node("OnlyOption")).apply(node => {
               node.append(r.consume())
             })
+            hasOnly = true
           } else if (r.peekIf(Keyword.LATERAL)) {
             node.append(new Node("LiteralOption")).apply(node => {
               node.append(r.consume())
             })
+            hasLiteral = true
           }
 
-          if (r.peekIf(TokenType.LeftParen)) {
+          if (!hasOnly && r.peekIf(TokenType.LeftParen)) {
             node.append(r.consume())
             node.name = "Subquery"
             node.append(this.selectStatement(r))
             node.append(r.consume(TokenType.RightParen))
-          } else if (r.peekIf(Keyword.ROWS)) {
+          } else if (!hasOnly && r.peekIf(Keyword.XMLTABLE, TokenType.LeftParen)) {
+            node.name = "Function"
+            node.append(this.identifier(r, "ObjectName"))
+            node.append(r.consume())
+            // TODO
+            node.append(r.consume(TokenType.RightParen))
+          } else if (!hasOnly && (
+            r.peekIf(TokenType.Identifier, TokenType.LeftParen) || 
+            r.peekIf(TokenType.Identifier, TokenType.Dot, TokenType.Identifier, TokenType.LeftParen)
+          )) {
+            node.name = "Function"
+            const ident = this.identifier(r, "ObjectName")
+            node.append(ident)
+            if (r.peekIf(TokenType.Dot)) {
+              node.append(r.consume())
+              ident.name = "SchemaName"
+              node.append(this.identifier(r, "ObjectName"))
+            }
+            node.append(r.consume())
+            node.append(new Node("ArgumentList")).apply(node => {
+              while (!r.peekIf(TokenType.RightParen)) {
+                node.append(new Node("Argument")).apply(node => {
+                  node.append(this.expression(r))
+                })
+                if (r.peekIf(TokenType.Comma)) {
+                  node.append(r.consume())
+                } else {
+                  break
+                }
+              }
+            })
+            node.append(r.consume(TokenType.RightParen))
+          } else if (!hasOnly && r.peekIf(Keyword.ROWS, Keyword.FROM, TokenType.LeftParen)) {
             //TODO
-          } else {
+          } else if (!hasLiteral) {
             const ident = this.identifier(r, "ObjectName")
             node.append(ident)
             if (r.peekIf(TokenType.Dot)) {
@@ -1427,29 +1453,19 @@ export class PostgresParser extends Parser {
               node.append(new Node("AllDescendantsOption")).apply(node => {
                 node.append(r.consume())
               })
-            } else if (r.peekIf(TokenType.LeftParen)) {
-              node.append(r.consume())
-              node.name = "Function"
-              node.append(new Node("ArgumentList")).apply(node => {
-                while (!r.peekIf(TokenType.RightParen)) {
-                  node.append(new Node("Argument")).apply(node => {
-                    node.append(this.expression(r))
-                  })
-                  if (r.peekIf(TokenType.Comma)) {
-                    node.append(r.consume())
-                  } else {
-                    break
-                  }
-                }
-              })
-              node.append(r.consume(TokenType.RightParen))
             }
           }
+          let hasAlias = false
           if (r.peekIf(Keyword.AS)) {
             node.append(r.consume())
             node.append(this.identifier(r, "ObjectAlias"))
+            hasAlias = true
           } else if (r.peekIf(TokenType.Identifier)) {
             node.append(this.identifier(r, "ObjectAlias"))
+            hasAlias = true
+          }
+          if (hasAlias) {
+            //TODO
           }
           while (r.peekIf(
             [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL]
@@ -1458,7 +1474,7 @@ export class PostgresParser extends Parser {
             node.append(this.joinClause(r))
           }
         })
-        if (!hasJoinClause && r.consume(TokenType.Comma)) {
+        if (!hasJoinClause && r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
         } else {
           break
@@ -1529,7 +1545,7 @@ export class PostgresParser extends Parser {
         node.append(new Node("UsingClause")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(TokenType.LeftParen))
-          //TODO
+          node.append(this.expression(r))
           node.append(r.consume(TokenType.RightParen))
         })
       }
@@ -1557,24 +1573,7 @@ export class PostgresParser extends Parser {
         })
       }
       do {
-        if (r.peekIf(Keyword.ROLLUP)) {
-          node.append(new Node("RollupClause")).apply(node => {
-            node.append(r.consume())
-            //TODO
-          })
-        } else if (r.peekIf(Keyword.CUBE)) {
-          node.append(new Node("CubeClause")).apply(node => {
-            node.append(r.consume())
-            //TODO
-          })
-        } else if (r.peekIf(Keyword.GROUPING, Keyword.SET)) {
-          node.append(new Node("GroupingSetClause")).apply(node => {
-            node.append(r.consume())
-            //TODO
-          })
-        } else {
-          node.append(this.expression(r))
-        }
+        node.append(this.groupingElement(r))
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
         } else {
@@ -1582,6 +1581,38 @@ export class PostgresParser extends Parser {
         }
       } while(!r.peek().eos)
     })
+  }
+
+  private groupingElement(r: TokenReader) {
+    if (r.peekIf(Keyword.ROLLUP)) {
+      return new Node("RollupClause").apply(node => {
+        node.append(r.consume())
+        node.append(this.expressionGroupList(r))
+      })
+    } else if (r.peekIf(Keyword.CUBE)) {
+      return new Node("CubeClause").apply(node => {
+        node.append(r.consume())
+        node.append(this.expressionGroupList(r))
+      })
+    } else if (r.peekIf(Keyword.GROUPING, Keyword.SET)) {
+      return new Node("GroupingSetClause").apply(node => {
+        node.append(r.consume())
+        node.append(r.consume(TokenType.LeftParen))
+        while (!r.peek().eos) {
+          node.append(this.groupingElement(r))
+          if (r.peekIf(TokenType.Comma)) {
+            node.append(r.consume())
+          } else {
+            break
+          }
+        }
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(TokenType.LeftParen)) {
+      return this.expressionList(r)
+    } else {
+      return this.expression(r)
+    }
   }
 
   private havingClause(r: TokenReader) {
@@ -1889,343 +1920,448 @@ export class PostgresParser extends Parser {
     })
   }
 
+  private expressionGroupList(r: TokenReader) {
+    return new Node("ExpressionGroupList").apply(node => {
+      node.append(r.consume(TokenType.LeftParen))
+      while (!r.peek().eos) {
+        if (r.peekIf(TokenType.LeftParen)) {
+          node.append(this.expressionList(r))
+        } else {
+          node.append(this.expression(r))
+        }
+        if (r.peekIf(TokenType.Comma)) {
+          node.append(r.consume())
+        } else {
+          break
+        }
+      }
+      node.append(r.consume(TokenType.RightParen))
+    })
+  }
+
+  private expressionList(r: TokenReader) {
+    return new Node("ExpressionList").apply(node => {
+      node.append(r.consume(TokenType.LeftParen))
+      while (!r.peek().eos) {
+        node.append(this.expression(r))
+        if (r.peekIf(TokenType.Comma)) {
+          node.append(r.consume())
+        } else {
+          break
+        }
+      }
+      node.append(r.consume(TokenType.RightParen))
+    })
+  }
+
   private expression(r: TokenReader, priority = 0) {
     let current: Node
-    if (priority < 9 && r.peekIf(Keyword.NOT)) {
+    if (priority < 11 && r.peekIf(Keyword.NOT)) {
       current = new Node("NotOperation").apply(node => {
         node.append(r.consume())
-        node.append(this.expression(r, 9))
+        node.append(this.expression(r, 11))
       })
-    } else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
+    } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "~" })) {
       current = new Node("BitwiseNotOperation").apply(node => {
         node.append(r.consume())
-        node.append(this.expression(r))
+        node.append(this.expression(r, 7))
       })
-    } else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
+    } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "@" })) {
+      current = new Node("AbsoluteValueOperation").apply(node => {
+        node.append(r.consume())
+        node.append(this.expression(r, 7))
+      })
+    } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "^" })) {
+      current = new Node("ExponentialOperation").apply(node => {
+        node.append(r.consume())
+        node.append(this.expression(r, 4))
+      })
+    } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
       current = new Node("UnaryPlusOperation").apply(node => {
         node.append(r.consume())
-        node.append(this.expression(r))
+        node.append(this.expression(r, 3))
       })
-    } else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
+    } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
       current = new Node("UnaryMinusOperation").apply(node => {
         node.append(r.consume())
+        node.append(this.expression(r, 3))
       })
     } else {
       current = this.expressionValue(r)
     }
 
     while (!r.peek().eos) {
-      if (priority < 11 && r.peekIf(Keyword.OR)) {
+      if (priority < 13 && r.peekIf(Keyword.OR)) {
         current = new Node("OrOperation").apply(node => {
+          node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 11))
+          node.append(this.expression(r, 13))
         })
-      } else if (priority < 10 && r.peekIf(Keyword.AND)) {
+      } else if (priority < 12 && r.peekIf(Keyword.AND)) {
         current = new Node("AndOperation").apply(node => {
+          node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 10))
+          node.append(this.expression(r, 12))
         })
-      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "=", "==" ] })) {
-        current = new Node("EqualOperation").apply(node => {
+      } else if (priority < 10 && r.peekIf(Keyword.IS)) {
+        current = new Node("Is").apply(node => {
+          node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 8))
-        })
-      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: [ "<>", "!=" ] })) {
-        current = new Node("NotEqualOperation").apply(node => {
-          node.append(r.consume())
-          node.append(this.expression(r, 8))
-        })
-      } else if (priority < 8 && r.peekIf(Keyword.IS)) {
-        const prefix = [ r.consume() ]
-        if (r.peekIf(Keyword.NOT)) {
-          prefix.push(r.consume())
-          if (r.peekIf(Keyword.DISTINCT)) {
-            current = new Node("IsNotDistinctFromOperation").apply(node => {
-              for (const item of prefix) {
-                node.append(item)
-              }
-              node.append(r.consume())
-              node.append(r.consume(Keyword.FROM))
-            })
-          } else {
-            current = new Node("IsNotOperation").apply(node => {
-              for (const item of prefix) {
-                node.append(item)
-              }
-              node.append(r.consume())
-            })
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name += "Not"
           }
-        } else if (r.peekIf(Keyword.DISTINCT)) {
-          current = new Node("IsDistinctFromOperation").apply(node => {
-            for (const item of prefix) {
-              node.append(item)
+          if (r.peekIf(Keyword.NORMALIZED)) {
+            node.append(r.consume())
+            node.name += "NormalizedOperation"
+          } else if (r.peekIf([Keyword.NFC, Keyword.NFD, Keyword.NFKC, Keyword.NFKD], Keyword.NORMALIZED)) {
+            if (r.peekIf(Keyword.NFC)) {
+              node.append(new Node("NfcOption").apply(node => {
+                node.append(r.consume())
+              }))
+            } else if (r.peekIf(Keyword.NFD)) {
+              node.append(new Node("NfdOption").apply(node => {
+                node.append(r.consume())
+              }))
+            } else if (r.peekIf(Keyword.NFKC)) {
+              node.append(new Node("NfkcOption").apply(node => {
+                node.append(r.consume())
+              }))
+            } else if (r.peekIf(Keyword.NFKD)) {
+              node.append(new Node("NfkdOption").apply(node => {
+                node.append(r.consume())
+              }))
+            } else {
+              throw r.createParseError()
             }
+            node.append(r.consume())
+            node.name += "NormalizedOperation"
+          } else if (r.peekIf(Keyword.DOCUMENT)) {
+            node.append(r.consume())
+            node.name += "DocumentOperation"
+          } else if (r.peekIf(Keyword.DISTINCT)) {
             node.append(r.consume())
             node.append(r.consume(Keyword.FROM))
-          })
-        } else {
-          current = new Node("IsOperation").apply(node => {
-            for (const item of prefix) {
-              node.append(item)
-            }
-          })
-        }
-        current.append(this.expression(r, 8))
-      } else if (priority < 8 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotBetweenOperation").apply(node => {
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("BetweenOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        current.append(this.expression(r, 8))
-        current.append(r.consume(Keyword.AND))
-        current.append(this.expression(r, 8))
-      } else if (priority < 8 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotInOperation").apply(node => {
-            node.append(current)
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("InOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        if (r.peekIf(TokenType.LeftParen, [Keyword.WITH, Keyword.VALUES, Keyword.SELECT])) {
-          current.append(new Node("Subquery")).apply(node => {
-            node.append(r.consume())
-            const prefix = []
-            if (r.peekIf(Keyword.WITH)) {
-              prefix.push(this.withClause(r))
-            }
-            if (r.peekIf(Keyword.VALUES)) {
-              node.append(this.valuesStatement(r, prefix))
-            } else {
-              node.append(this.selectStatement(r, prefix))
-            }
-            node.append(r.consume(TokenType.RightParen))
-          })
-        } else if (r.peekIf(TokenType.LeftParen)) {
-          current.append(new Node("ExpressionList")).apply(node => {
-            node.append(r.consume())
-            while (!r.peek().eos) {
-              node.append(this.expression(r))
-              if (r.peekIf(TokenType.Comma)) {
-                node.append(r.consume())
-              } else {
-                break
-              }
-            }
-            node.append(r.consume(TokenType.RightParen))  
-          })
-        } else if (r.peekIf(
-          TokenType.Identifier,
-          TokenType.LeftParen
-        )) {
-          current = new Node("Function").apply(node => {
-            node.append(new Node("ObjectName")).apply(node => {
-              node.append(r.consume())
-              current.append(new Node("ArgumentList")).apply(node => {
-                node.append(r.consume(TokenType.LeftParen))
-                while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
-                  node.append(new Node("Argument")).apply(node => {
-                    node.append(this.expression(r))
-                  })
-                  if (r.peekIf(TokenType.Comma)) {
-                    node.append(r.consume())
-                  } else {
-                    break
-                  }
-                }
-                node.append(r.consume(TokenType.RightParen))
-              })
-            })
-          })
-        } else if (r.peekIf([TokenType.Identifier, TokenType.String])) {
-          current.append(this.columnReference(r))
-        } else {
-          throw r.createParseError()
-        }
-      } else if (priority < 8 && (r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH))) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotMatchOperation").apply(node => {
-            node.append(current)
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("MatchOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        current.append(this.expression(r, 8))
-      } else if (priority < 8 && (r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotLikeOperation").apply(node => {
-            node.append(current)
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("LikeOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        current.append(this.expression(r, 8))
-        if (r.peekIf(Keyword.ESCAPE)) {
-          current.append(new Node("EscapeOption")).apply(node => {
-            node.append(this.expression(r, 6))
-          })
-        }
-      } else if (priority < 8 && (r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP))) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotRegexpOperation").apply(node => {
-            node.append(current)
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("RegexpOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        current.append(this.expression(r, 8))
-      } else if (priority < 8 && (r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB))) {
-        if (r.peekIf(Keyword.NOT)) {
-          current = new Node("NotGlobOperation").apply(node => {
-            node.append(current)
-            node.append(r.consume())
-          })
-        } else {
-          current = new Node("GlobOperation").apply(node => {
-            node.append(current)
-          })
-        }
-        current.append(r.consume())
-        current.append(this.expression(r, 8))
-      } else if (priority < 8 && r.peekIf(Keyword.ISNULL)) {
+            node.name += "DistinctFromOperation"
+            node.append(this.expression(r, 10))
+          } else {
+            node.name += "Operation"
+            node.append(this.expression(r, 10))
+          }
+        })
+      } else if (priority < 10 && r.peekIf(Keyword.ISNULL)) {
         current = new Node("IsNullOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
         })
-      } else if (priority < 8 && r.peekIf(Keyword.NOTNULL)) {
+      } else if (priority < 10 && r.peekIf(Keyword.NOTNULL)) {
         current = new Node("IsNotNullOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
         })
-      } else if (priority < 8 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
-        current = new Node("IsNotNullOperation").apply(node => {
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: "=" })) {
+        current = new Node("EqualOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(r.consume())
+          node.append(this.expression(r, 9))
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<"})) {
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: ["<>", "!="] })) {
+        current = new Node("NotEqualOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 9))
+        })
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: "<"})) {
         current = new Node("LessThanOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 7))
+          node.append(this.expression(r, 9))
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">"})) {
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: ">"})) {
         current = new Node("GreaterThanOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 7))
+          node.append(this.expression(r, 9))
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<="})) {
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: "<="})) {
         current = new Node("LessThanOrEqualOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 7))
+          node.append(this.expression(r, 9))
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">="})) {
+      } else if (priority < 9 && r.peekIf({ type: TokenType.Operator, text: ">="})) {
         current = new Node("GreaterThanOrEqualOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 7))
+          node.append(this.expression(r, 9))
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "&"})) {
-        current = new Node("BitwiseAndOperation").apply(node => {
+      } else if (priority < 8 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
+        current = new Node("BetweenOperation").apply(node => {
           node.append(current)
-          node.append(r.consume())
-          node.append(this.expression(r, 5))
-        })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "|"})) {
-        current = new Node("BitwiseOrOperation").apply(node => {
           node.append(current)
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name = "Not" + node.name
+          }
           node.append(r.consume())
-          node.append(this.expression(r, 5))
+          node.append(this.expression(r, 8))
+          node.append(r.consume(Keyword.AND))
+          node.append(this.expression(r, 8))
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "<<"})) {
-        current = new Node("BitwiseLeftShiftOperation").apply(node => {
+      } else if (priority < 8 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
+        current = new Node("InOperation").apply(node => {
           node.append(current)
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name = "Not" + node.name
+          }
           node.append(r.consume())
-          node.append(this.expression(r, 5))
+          if (r.peekIf(TokenType.LeftParen, [Keyword.WITH, Keyword.VALUES, Keyword.SELECT])) {
+            node.append(new Node("Subquery")).apply(node => {
+              node.append(r.consume())
+              const prefix = []
+              if (r.peekIf(Keyword.WITH)) {
+                prefix.push(this.withClause(r))
+              }
+              if (r.peekIf(Keyword.VALUES)) {
+                node.append(this.valuesStatement(r, prefix))
+              } else {
+                node.append(this.selectStatement(r, prefix))
+              }
+              node.append(r.consume(TokenType.RightParen))
+            })
+          } else if (r.peekIf(TokenType.LeftParen)) {
+            node.append(this.expressionList(r))
+          } else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
+            node.append(new Node("Function")).apply(node => {
+              node.append(new Node("ObjectName")).apply(node => {
+                node.append(r.consume())
+                node.append(new Node("ArgumentList")).apply(node => {
+                  node.append(r.consume(TokenType.LeftParen))
+                  while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
+                    node.append(new Node("Argument")).apply(node => {
+                      node.append(this.expression(r))
+                    })
+                    if (r.peekIf(TokenType.Comma)) {
+                      node.append(r.consume())
+                    } else {
+                      break
+                    }
+                  }
+                  node.append(r.consume(TokenType.RightParen))
+                })
+              })
+            })
+          } else if (r.peekIf([TokenType.Identifier, TokenType.String])) {
+            node.append(this.columnReference(r))
+          } else {
+            throw r.createParseError()
+          }
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: ">>"})) {
-        current = new Node("BitwiseRightShiftOperation").apply(node => {
+      } else if (priority < 8 && (r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))) {
+        current = new Node("LikeOperation").apply(node => {
           node.append(current)
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name = "Not" + node.name
+          }
           node.append(r.consume())
-          node.append(this.expression(r, 5))
+          node.append(this.expression(r, 8))
+          if (r.peekIf(Keyword.ESCAPE)) {
+            node.append(new Node("EscapeOption")).apply(node => {
+              node.append(this.expression(r, 6))
+            })
+          }
         })
-      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
-        current = new Node("AddOperation").apply(node => {
+      } else if (priority < 8 && (r.peekIf(Keyword.ILIKE) || r.peekIf(Keyword.NOT, Keyword.ILIKE))) {
+        current = new Node("IlikeOperation").apply(node => {
           node.append(current)
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name = "Not" + node.name
+          }
           node.append(r.consume())
-          node.append(this.expression(r, 4))
+          node.append(this.expression(r, 8))
+          if (r.peekIf(Keyword.ESCAPE)) {
+            node.append(new Node("EscapeOption")).apply(node => {
+              node.append(this.stringLiteral(r))
+            })
+          }
         })
-      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
-        current = new Node("SubtractOperation").apply(node => {
+      } else if (priority < 8 && (r.peekIf(Keyword.SIMILAR) || r.peekIf(Keyword.NOT, Keyword.SIMILAR))) {
+        current = new Node("SimilarToOperation").apply(node => {
           node.append(current)
+          if (r.peekIf(Keyword.NOT)) {
+            node.append(r.consume())
+            node.name = "Not" + node.name
+          }
           node.append(r.consume())
-          node.append(this.expression(r, 4))
+          node.append(r.consume(Keyword.TO))
+          node.append(this.expression(r, 8))
         })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
-        current = new Node("MultiplyOperation").apply(node => {
-          node.append(current)
-          node.append(r.consume())
-          node.append(this.expression(r, 3))
-        })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
-        current = new Node("DivideOperation").apply(node => {
-          node.append(current)
-          node.append(r.consume())
-          node.append(this.expression(r, 3))
-        })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
-        current = new Node("ModuloOperation").apply(node => {
-          node.append(current)
-          node.append(r.consume())
-          node.append(this.expression(r, 3))
-        })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
         current = new Node("ConcatenateOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 2))
+          node.append(this.expression(r, 7))
         })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "^@" })) {
+        current = new Node("StartsWithOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "&"})) {
+        current = new Node("BitwiseAndOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "|"})) {
+        current = new Node("BitwiseOrOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "#"})) {
+        current = new Node("BitwiseXorOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<<"})) {
+        current = new Node("BitwiseLeftShiftOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">>"})) {
+        current = new Node("BitwiseRightShiftOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "~"})) {
+        current = new Node("MatchOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "~*"})) {
+        current = new Node("ImatchOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "!~"})) {
+        current = new Node("NotMatchOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "!~*"})) {
+        current = new Node("NotImatchOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
         current = new Node("JsonExtractOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.expression(r, 2))
+          node.append(this.expression(r, 7))
         })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
-        current = new Node("JsonExtractAndUnquoteOperation").apply(node => {
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "#>" })) {
+        current = new Node("JsonExtractPathOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
+        current = new Node("JsonExtractValueOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "#>>" })) {
+        current = new Node("JsonExtractPathValueOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 7 && r.peekIf(Keyword.OPERATOR, TokenType.LeftParen)) {
+        current = new Node("OperatorOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(r.consume())
+          node.append(this.identifier(r, "SchemaName"))
+          const token = r.consume()
+          node.data.value = token.text
+          node.append(token)
+          node.append(r.consume(TokenType.RightParen))
+        })
+      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: /^(::|\|\|?\/|[^*/%+-])$/ })) {
+        current = new Node("OperatorOperation").apply(node => {
+          node.append(current)
+          const token = r.consume()
+          node.data.value = token.text
+          node.append(token)
+          node.append(this.expression(r, 7))
+        })
+      } else if (priority < 6 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
+        current = new Node("AddOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 6))
+        })
+      } else if (priority < 6 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
+        current = new Node("SubtractOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 6))
+        })
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
+        current = new Node("MultiplyOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 5))
+        })
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
+        current = new Node("DivideOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 5))
+        })
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "||/" })) {
+        current = new Node("CubeRootOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 5))
+        })
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "|/" })) {
+        current = new Node("SquareRootOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 5))
+        })
+      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
+        current = new Node("ModuloOperation").apply(node => {
+          node.append(current)
+          node.append(r.consume())
+          node.append(this.expression(r, 5))
+        })
+      } else if (priority < 2 && r.peekIf(TokenType.LeftBracket)) {
+        current = new Node("ArrayElementSelectOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
           node.append(this.expression(r, 2))
+          node.append(r.consume(TokenType.RightBracket))
         })
-      } else if (priority < 1 && r.peekIf(Keyword.COLLATE)) {
-        current = new Node("CollateOperation").apply(node => {
+      } else if (priority < 1 && r.peekIf({ type: TokenType.Operator, text: "::" })) {
+        current = new Node("CastOperation").apply(node => {
           node.append(current)
           node.append(r.consume())
-          node.append(this.identifier(r, "CollationName"))
+          node.append(this.typeName(r))
         })
       } else {
         break
@@ -2235,15 +2371,18 @@ export class PostgresParser extends Parser {
   }
 
   private expressionValue(r: TokenReader) {
-    let node: Node
-    if (r.peekIf(Keyword.NULL)) {
-      node = new Node("NullLiteral").apply(node => {
+    if (r.peekIf(Keyword.UNKNOWN)) {
+      return new Node("UnknownLiteral").apply(node => {
+        node.append(r.consume())
+      })
+    } else if (r.peekIf(Keyword.NULL)) {
+      return new Node("NullLiteral").apply(node => {
         node.append(r.consume())
       })
     } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
-      node = this.booleanLiteral(r)
+      return this.booleanLiteral(r)
     } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
-      node =  new Node("Function").apply(node => {
+      return  new Node("Function").apply(node => {
         node.append(new Node("ObjectName")).apply(node => {
           const token = r.consume()
           node.append(token)
@@ -2251,22 +2390,20 @@ export class PostgresParser extends Parser {
         })
       })
     } else if (r.peekIf(Keyword.CASE)) {
-      node = new Node("CaseBlock").apply(node => {
+      return new Node("CaseClause").apply(node => {
         node.append(r.consume())
         if (!r.peekIf(Keyword.WHEN)) {
-          node.append(new Node("CaseClause")).apply(node => {
-            node.append(this.expression(r))
-          })
+          node.append(this.expression(r))
         }
         node.append(new Node("CaseConditionList")).apply(node => {
           do {
             node.append(new Node("CaseCondition")).apply(node => {
-              node.append(r.consume(Keyword.WHEN))
               node.append(new Node("WhenClause")).apply(node => {
+                node.append(r.consume(Keyword.WHEN))
                 node.append(this.expression(r))
               })
-              node.append(r.consume(Keyword.THEN))
               node.append(new Node("ThenClause")).apply(node => {
+                node.append(r.consume(Keyword.THEN))
                 node.append(this.expression(r))
               })
             })
@@ -2281,7 +2418,7 @@ export class PostgresParser extends Parser {
         node.append(r.consume(Keyword.END))
       })
     } else if (r.peekIf(Keyword.CAST)) {
-      node = new Node("Function").apply(node => {
+      return new Node("Function").apply(node => {
         node.append(new Node("ObjectName")).apply(node => {
           const token = r.consume()
           node.append(token)
@@ -2297,8 +2434,28 @@ export class PostgresParser extends Parser {
           node.append(r.consume(TokenType.RightParen))
         })
       })
+    } else if (r.peekIf(Keyword.XMLELEMENT)) {
+      return new Node("Function").apply(node => {
+        //TODO
+      })
+    } else if (r.peekIf(Keyword.XMLFOREST)) {
+      return new Node("Function").apply(node => {
+        //TODO
+      })
+    } else if (r.peekIf(Keyword.XMLPI)) {
+      return new Node("Function").apply(node => {
+        //TODO
+      })
+    } else if (r.peekIf(Keyword.XMLROOT)) {
+      return new Node("Function").apply(node => {
+        //TODO
+      })
+    } else if (r.peekIf(Keyword.XMLAGG)) {
+      return new Node("Function").apply(node => {
+        //TODO
+      })
     } else if (r.peekIf(Keyword.EXISTS)) {
-      node = new Node("ExistsOperation").apply(node => {
+      return new Node("ExistsOperation").apply(node => {
         node.append(r.consume())
         node.append(r.consume(TokenType.LeftParen))
         if (r.peekIf(Keyword.VALUES)) {
@@ -2308,35 +2465,65 @@ export class PostgresParser extends Parser {
         }
         node.append(r.consume(TokenType.RightParen))
       })
-    } else if (r.peekIf(TokenType.LeftParen)) {
-      node = new Node("").apply(node => {
+    } else if (r.peekIf(Keyword.ANY)) {
+      return new Node("AnyOperation").apply(node => {
         node.append(r.consume())
-        if (r.peekIf(Keyword.VALUES)) {
-          node.name = "Subquery"
-          node.append(this.valuesStatement(r))
-        } else if (r.peekIf(Keyword.SELECT)) {
-          node.name = "Subquery"
-          node.append(this.selectStatement(r))
-        } else {
-          node.name = "Expression"
-          node.append(this.expression(r))
-          if (r.peekIf(TokenType.Comma)) {
-            node.name = "ExpressionList"
-            node.append(r.consume())
-            do {
-              node.append(this.expression(r))
-              if (r.peekIf(TokenType.Comma)) {
-                node.append(r.consume())
-              } else {
-                break
-              }
-            } while (!r.peek().eos)
-          }
+        node.append(r.consume(TokenType.LeftParen))
+        node.append(this.selectStatement(r))
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(Keyword.SOME)) {
+      return new Node("SomeOperation").apply(node => {
+        node.append(r.consume())
+        node.append(r.consume(TokenType.LeftParen))
+        node.append(this.selectStatement(r))
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(Keyword.ALL)) {
+      return new Node("AllOperation").apply(node => {
+        node.append(r.consume())
+        node.append(r.consume(TokenType.LeftParen))
+        node.append(this.selectStatement(r))
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(Keyword.XMLEXISTS)) {
+      return new Node("XmlexistsOperation").apply(node => {
+        node.append(r.consume())
+        node.append(r.consume(TokenType.LeftParen))
+        //TODO
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(TokenType.LeftParen, Keyword.VALUES)) {
+      return new Node("Subquery").apply(node => {
+        node.append(r.consume())
+        node.append(this.valuesStatement(r))
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(TokenType.LeftParen, Keyword.SELECT)) {
+      return new Node("Subquery").apply(node => {
+        node.append(r.consume())
+        node.append(this.selectStatement(r))
+        node.append(r.consume(TokenType.RightParen))
+      })
+    } else if (r.peekIf(TokenType.LeftParen)) {
+      return new Node("Expression").apply(node => {
+        node.append(this.expression(r))
+        if (r.peekIf(TokenType.Comma)) {
+          node.name = "ExpressionList"
+          node.append(r.consume())
+          do {
+            node.append(this.expression(r))
+            if (r.peekIf(TokenType.Comma)) {
+              node.append(r.consume())
+            } else {
+              break
+            }
+          } while (!r.peek().eos)
         }
         node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
-      node = new Node("Function").apply(node => {
+      return new Node("Function").apply(node => {
         node.append(new Node("ObjectName")).apply(node => {
           node.append(r.consume())
         })
@@ -2390,37 +2577,38 @@ export class PostgresParser extends Parser {
         }
       })
     } else if (r.peekIf(TokenType.Numeric)) {
-      node = this.numericLiteral(r)
+      return this.numericLiteral(r)
     } else if (r.peekIf(TokenType.String)) {
-      node = this.stringLiteral(r)
+      return this.stringLiteral(r)
     } else if (r.peekIf(TokenType.Blob)) {
-      node = this.blobLiteral(r)
+      return this.blobLiteral(r)
     } else if (r.peekIf(TokenType.Identifier) || r.peekIf(TokenType.String, TokenType.Dot)) {
-      node = this.columnReference(r)
+      return this.columnReference(r)
     } else if (r.peekIf(TokenType.BindVariable)) {
       const token = r.consume()
       if (token.text.startsWith("?")) {
-        let value = token.text.substring(1)
-        if (value) {
-          r.state.bindPosition = Number.parseInt(value, 10)
-        } else {
-          const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
-          value = `${pos}`
-          r.state.bindPosition = pos
-        }
-        node = new Node("PositionalBindVariable").apply(node => {
+        return new Node("PositionalBindVariable").apply(node => {
+          node.append(token)
+
+          let value = token.text.substring(1)
+          if (value) {
+            r.state.bindPosition = Number.parseInt(value, 10)
+          } else {
+            const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
+            value = `${pos}`
+            r.state.bindPosition = pos
+          }
           node.data.value = value
         })
       } else {
-        node = new Node("NamedBindVariable").apply(node => {
+        return new Node("NamedBindVariable").apply(node => {
+          node.append(token)
           node.data.value = token.text.substring(1)
         })
       }
-      node.append(token)
     } else {
       throw r.createParseError()
     }
-    return node
   }
 
   private identifier(r: TokenReader, name: string) {

@@ -33,7 +33,7 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
   } else if (target instanceof Node) {
     text += " ".repeat(space * 2) + "new Node(" + JSON.stringify(target.name)
     if (Object.keys(target.data).length > 0 || target.children.length > 0) {
-      text += ", node => {\n"
+      text += ").apply(node => {\n"
       if (Object.keys(target.data).length > 0) {
         text += " ".repeat((space + 1) * 2) + "node.data = " + JSON.stringify(target.data) + "\n"
       }

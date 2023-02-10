@@ -168,11 +168,12 @@ export class TokenReader {
     return true
   }
 
-  createParseError(message?: string) {
+  createParseError(options: { message?: string } = {}) {
     const token = this.peek()
     const fileName = token?.location?.fileName
     let lineNumber = token?.location?.lineNumber
     let columnNumber = token?.location?.columnNumber
+    let message = options.message
 
     if (message == null) {
       const end = Math.min(this.pos, this.tokens.length - 1)

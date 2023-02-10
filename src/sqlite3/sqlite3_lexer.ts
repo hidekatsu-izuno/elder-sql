@@ -195,9 +195,11 @@ export class Sqlite3Lexer extends Lexer {
           location.fileName,
         )
       }
-      token.postskips.push(new Token(TokenType.WhiteSpace, m[2], {
-        location
-      }))
+      if (m[2]) {
+        token.postskips.push(new Token(TokenType.WhiteSpace, m[2], {
+          location
+        }))
+      }
       if (location && m[3]) {
         location = new SourceLocation(
           location.position + m[2].length,
@@ -263,7 +265,10 @@ export class Sqlite3Lexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
-    tokens[tokens.length - 1].eos = true
+    tokens.push(new Token(TokenType.SectionBreak, "", {
+      eos: true,
+      location: tokens[tokens.length - 1].location?.clone()
+    }))
 
     return tokens
   }

@@ -6,7 +6,9 @@ import { toJSScript, toJSString } from "../utils/debug.js"
 
 describe("test sqlite3 parser", () => {
   test.each([
+    "command",
     "create_table",
+    "explain",
     "pragma",
     "select",
   ])("%s", async (target) => {
@@ -14,8 +16,8 @@ describe("test sqlite3 parser", () => {
     const expected = (await import("./parser/" + target + ".js")).default
     const node = new Sqlite3Parser().parse(script)
 
-    if (target === "") {
-      fs.writeFileSync("temp.txt", toJSScript(node))
+    if (target === "command") {
+      fs.writeFileSync("sample.txt", toJSScript(node))
     }
 
     expect(toJSString(node)).toStrictEqual(toJSString(expected))

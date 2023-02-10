@@ -246,7 +246,7 @@ export class PostgresLexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
-    tokens[tokens.length - 1].eos = true
+    tokens.push(new Token(TokenType.SectionBreak, "", { eos: true }))
 
     return tokens
   }

@@ -8,6 +8,7 @@ describe("test sqlite3 lexer", () => {
   test.each([
     "command",
     "create_table",
+    "explain",
     "pragma",
     "select",
   ])("%s", async (target) => {
@@ -15,8 +16,8 @@ describe("test sqlite3 lexer", () => {
     const expected = (await import("./lexer/" + target + ".js")).default
     const tokens = new Sqlite3Lexer().lex(script)
 
-    if (target === "") {
-      fs.writeFileSync("", toJSScript(tokens))
+    if (target === "command") {
+      fs.writeFileSync("sample.txt", toJSScript(tokens))
     }
 
     expect(toJSString(tokens)).toStrictEqual(toJSString(expected))

@@ -5,7 +5,7 @@ export interface TokenTag {
 }
 
 export class TokenType implements TokenTag {
-  static EoF = new TokenType("EoF")
+  static SectionBreak = new TokenType("SectionBreak", { separator: true })
   static Reserved = new TokenType("Reserved")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
   static LineComment = new TokenType("LineComment", { skip: true })
@@ -60,6 +60,15 @@ export class SourceLocation {
     public columnNumber: number = 0,
     public fileName?: string,
   ) {
+  }
+
+  clone() {
+    return new SourceLocation(
+      this.position,
+      this.lineNumber,
+      this.columnNumber,
+      this.fileName,
+    )
   }
 
   toString() {
@@ -255,8 +264,9 @@ export abstract class Lexer {
 
         if (this.options.skipTokenStrategy === 'adaptive') {
           if (newToken.type.separator) {
-            if (tokens.length > 0 && skips.length > 0) {
-              tokens[tokens.length - 1].postskips = skips
+            const last = tokens[tokens.length - 1]
+            if (last && last.postskips.length === 0 &&  skips.length > 0) {
+              last.postskips = skips
               skips = []
             }
           }
@@ -272,7 +282,7 @@ export abstract class Lexer {
       }
       if (newTokens && newTokens.length > 0) {
         const last = tokens[tokens.length - 1]
-        if (last && last.type === TokenType.EoF) {
+        if (last && last.type === TokenType.SectionBreak) {
           if (this.options.skipTokenStrategy !== 'ignore') {
             skips.push(...last.preskips)
             skips.push(...last.postskips)
@@ -293,20 +303,22 @@ export abstract class Lexer {
           columnNumber = text.length - lastIndex
         } else {
           columnNumber += text.length
-        }  
+        }
       }
     }
 
-    tokens.push(new Token(TokenType.EoF, "", {
-      eos: true,
-      preskips: skips,
-      location : start ? new SourceLocation(
-        pos + start.position, 
-        lineNumber, 
-        columnNumber,
-        fileName,
-      ) : undefined,
-    }))
+    if (skips.length > 0 || !tokens[tokens.length - 1]?.eos) {
+      tokens.push(new Token(TokenType.SectionBreak, "", {
+        eos: true,
+        preskips: skips,
+        location : start ? new SourceLocation(
+          pos + start.position, 
+          lineNumber, 
+          columnNumber,
+          fileName,
+        ) : undefined,
+      }))
+    }
 
     return tokens
   }
@@ -1505,6 +1517,8 @@ export class Keyword implements TokenTag {
   static NUMNODE = new Keyword("NUMNODE")
   static NUMTODSINTERVAL = new Keyword("NUMTODSINTERVAL")
   static NUMTOYMINTERVAL = new Keyword("NUMTOYMINTERVAL")
+  static NUM_NONNULLS = new Keyword("NUM_NONNULLS")
+  static NUM_NULLS = new Keyword("NUM_NULLS")
   static NVARCHAR = new Keyword("NVARCHAR")
   static NVARCHAR2 = new Keyword("NVARCHAR2")
   static NVL = new Keyword("NVL")
