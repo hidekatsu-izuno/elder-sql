@@ -284,10 +284,12 @@ export default new Node("Script").apply(node => {
           }))
           node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(794, 26, 42)}))
         }))
-        node.append(new Node("RollbackOption").apply(node => {
+        node.append(new Node("OnConflictClause").apply(node => {
           node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(795, 26, 43)})], location: new SourceLocation(796, 26, 44)}))
           node.append(new Token(TokenType.Identifier, "CONFLICT", { keyword: Keyword.CONFLICT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(798, 26, 46)})], location: new SourceLocation(799, 26, 47)}))
-          node.append(new Token(TokenType.Identifier, "ROLLBACK", { keyword: Keyword.ROLLBACK, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(807, 26, 55)})], location: new SourceLocation(808, 26, 56)}))
+          node.append(new Node("RollbackOption").apply(node => {
+            node.append(new Token(TokenType.Identifier, "ROLLBACK", { keyword: Keyword.ROLLBACK, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(807, 26, 55)})], location: new SourceLocation(808, 26, 56)}))
+          }))
         }))
       }))
     }))

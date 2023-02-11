@@ -812,9 +812,10 @@ export class Sqlite3Parser extends Parser {
       } else {
         node.append(r.consume(Keyword.INSERT))
         if (r.peekIf(Keyword.OR)) {
-          node.append(this.conflictAction(r, [
-            r.consume()
-          ]))
+          node.append(new Node("OrConflictClause")).apply(node => {
+            node.append(r.consume())
+            node.append(this.conflictAction(r))
+          })
         }
       }
       node.append(r.consume(Keyword.INTO))
@@ -1639,10 +1640,11 @@ export class Sqlite3Parser extends Parser {
             })
           }
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
           if (r.peekIf(Keyword.AUTOINCREMENT)) {
             node.append(new Node("AutoincrementOption")).apply(node => {
@@ -1655,30 +1657,33 @@ export class Sqlite3Parser extends Parser {
           node.append(r.consume())
           node.append(r.consume(Keyword.NULL))
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
         })
       } else if (r.peekIf(Keyword.NULL)) {
         node.append(new Node("NullConstraint")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
         })
       } else if (r.peekIf(Keyword.UNIQUE)) {
         node.append(new Node("UniqueConstraint")).apply(node => {
           node.append(r.consume())
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
         })
       } else if (r.peekIf(Keyword.CHECK)) {
@@ -1760,10 +1765,11 @@ export class Sqlite3Parser extends Parser {
             node.append(r.consume(TokenType.RightParen))
           })
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
         })
       } else if (r.peekIf(Keyword.UNIQUE)) {
@@ -1782,10 +1788,11 @@ export class Sqlite3Parser extends Parser {
             node.append(r.consume(TokenType.RightParen))
           })
           if (r.peekIf(Keyword.ON)) {
-            node.append(this.conflictAction(r, [
-              r.consume(),
-              r.consume(Keyword.CONFLICT)
-            ]))
+            node.append(new Node("OnConflictClause")).apply(node => {
+              node.append(r.consume())
+              node.append(r.consume(Keyword.CONFLICT))
+              node.append(this.conflictAction(r))
+            })
           }
         })
       } else if (r.peekIf(Keyword.CHECK)) {
@@ -1932,32 +1939,30 @@ export class Sqlite3Parser extends Parser {
     })
   }
 
-  private conflictAction(r: TokenReader, prefix?: Token[]) {
-    return new Node("").apply(node => {
-      if (prefix) {
-        for (const token of prefix) {
-          node.append(token)
-        }
-      }
-      if (r.peekIf(Keyword.ROLLBACK)) {
-        node.name = "RollbackOption"
+  private conflictAction(r: TokenReader) {
+    if (r.peekIf(Keyword.ROLLBACK)) {
+      return new Node("RollbackOption").apply(node => {
         node.append(r.consume())
-      } else if (r.peekIf(Keyword.ABORT)) {
-        node.name = "AbortOption"
+      })
+    } else if (r.peekIf(Keyword.ABORT)) {
+      return new Node("AbortOption").apply(node => {
         node.append(r.consume())
-      } else if (r.peekIf(Keyword.FAIL)) {
-        node.name = "FailOption"
+      })
+    } else if (r.peekIf(Keyword.FAIL)) {
+      return new Node("FailOption").apply(node => {
         node.append(r.consume())
-      } else if (r.peekIf(Keyword.IGNORE)) {
-        node.name = "IgnoreOption"
+      })
+    } else if (r.peekIf(Keyword.IGNORE)) {
+      return new Node("IgnoreOption").apply(node => {
         node.append(r.consume())
-      } else if (r.peekIf(Keyword.REPLACE)) {
-        node.name = "ReplaceOption"
+      })
+    } else if (r.peekIf(Keyword.REPLACE)) {
+      return new Node("ReplaceOption").apply(node => {
         node.append(r.consume())
-      } else {
-        throw r.createParseError()
-      }
-    })
+      })
+    } else {
+      throw r.createParseError()
+    }
   }
 
   private pragmaValue(r: TokenReader, name: string) {
