@@ -8,8 +8,8 @@ export default new Node("Script").apply(node => {
       node.data = {"value":"analysis_limit"}
       node.append(new Token(TokenType.Identifier, "analysis_limit", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(22, 1, 22)})], location: new SourceLocation(21, 1, 21)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(22, 1, 22)})], location: new SourceLocation(21, 1, 21)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(23, 2, 1)}))
     node.append(new Node("PragmaName").apply(node => {
@@ -23,8 +23,8 @@ export default new Node("Script").apply(node => {
         node.append(new Token(TokenType.Numeric, "3", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(46, 2, 24)})], location: new SourceLocation(47, 2, 25)}))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(49, 2, 27)})], location: new SourceLocation(48, 2, 26)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(49, 2, 27)})], location: new SourceLocation(48, 2, 26)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(50, 3, 1)}))
     node.append(new Node("SchemaName").apply(node => {
@@ -36,8 +36,8 @@ export default new Node("Script").apply(node => {
       node.data = {"value":"application_id"}
       node.append(new Token(TokenType.Identifier, "application_id", { location: new SourceLocation(62, 3, 13)}))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(77, 3, 28)})], location: new SourceLocation(76, 3, 27)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(77, 3, 28)})], location: new SourceLocation(76, 3, 27)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(78, 4, 1)}))
     node.append(new Node("SchemaName").apply(node => {
@@ -57,8 +57,8 @@ export default new Node("Script").apply(node => {
         node.append(new Token(TokenType.Numeric, "3", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(109, 4, 32)})], location: new SourceLocation(108, 4, 31)}))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(111, 4, 34)})], location: new SourceLocation(110, 4, 33)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(111, 4, 34)})], location: new SourceLocation(110, 4, 33)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(112, 5, 1)}))
     node.append(new Node("SchemaName").apply(node => {
@@ -70,8 +70,8 @@ export default new Node("Script").apply(node => {
       node.data = {"value":"auto_vacuum"}
       node.append(new Token(TokenType.Identifier, "auto_vacuum", { location: new SourceLocation(124, 5, 13)}))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(136, 5, 25)})], location: new SourceLocation(135, 5, 24)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(136, 5, 25)})], location: new SourceLocation(135, 5, 24)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(137, 6, 1)}))
     node.append(new Node("SchemaName").apply(node => {
@@ -90,16 +90,16 @@ export default new Node("Script").apply(node => {
         node.append(new Token(TokenType.Identifier, "NONE", { keyword: Keyword.NONE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(162, 6, 26)})], location: new SourceLocation(163, 6, 27)}))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(168, 6, 32)})], location: new SourceLocation(167, 6, 31)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(168, 6, 32)})], location: new SourceLocation(167, 6, 31)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "pragma", { keyword: Keyword.PRAGMA, location: new SourceLocation(169, 7, 1)}))
     node.append(new Node("PragmaName").apply(node => {
       node.data = {"value":"automatic_index"}
       node.append(new Token(TokenType.Identifier, "automatic_index", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(175, 7, 7)})], location: new SourceLocation(176, 7, 8)}))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(192, 7, 24)})], location: new SourceLocation(191, 7, 23)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(192, 7, 24)})], location: new SourceLocation(191, 7, 23)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "pragma", { keyword: Keyword.PRAGMA, location: new SourceLocation(193, 8, 1)}))
     node.append(new Node("PragmaName").apply(node => {
@@ -113,8 +113,8 @@ export default new Node("Script").apply(node => {
         node.append(new Token(TokenType.Identifier, "true", { keyword: Keyword.TRUE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(217, 8, 25)})], location: new SourceLocation(218, 8, 26)}))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(223, 8, 31)})], location: new SourceLocation(222, 8, 30)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(223, 8, 31)})], location: new SourceLocation(222, 8, 30)}))
   node.append(new Node("PragmaStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "PRAGMA", { keyword: Keyword.PRAGMA, location: new SourceLocation(224, 9, 1)}))
     node.append(new Node("SchemaName").apply(node => {
@@ -136,6 +136,6 @@ export default new Node("Script").apply(node => {
       }))
       node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(261, 9, 38)}))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(263, 9, 40)})], location: new SourceLocation(262, 9, 39)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(263, 9, 40)})], location: new SourceLocation(262, 9, 39)}))
 })

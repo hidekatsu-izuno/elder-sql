@@ -33,14 +33,13 @@ export class Sqlite3Parser extends Parser {
           node.append(r.consume())
         } else if (r.peekIf(TokenType.Command)) {
           node.append(this.command(r))
+        } else if (r.peekIf(Keyword.EXPLAIN)) {
+          node.append(this.explainStatement(r))
         } else {
           node.append(this.statement(r))
         }
       } catch (e) {
         if (e instanceof ParseError) {
-          if (e.node) {
-            node.append(e.node)
-          }
           errors.push(e)
         } else {
           throw e
@@ -91,137 +90,99 @@ export class Sqlite3Parser extends Parser {
           })
         }
       })
-      if (r.peekIf(TokenType.SemiColon)) {
-        node.append(r.consume())
-      }
     })
   }
 
   private statement(r: TokenReader) {
-    let explain
-    let stmt
-
-    try {
-      if (r.peekIf(Keyword.EXPLAIN)) {
-        explain = this.explainStatement(r)
+    if (r.peekIf(Keyword.CREATE)) {
+      const mark = r.pos
+      r.consume()
+      while (!r.peek().eos && !Sqlite3Lexer.isObjectStart(r.peek().keyword)) {
+        r.consume()
       }
 
-      if (r.peekIf(Keyword.CREATE)) {
-        const mark = r.pos
-        r.consume()
-        while (!r.peek().eos && !Sqlite3Lexer.isObjectStart(r.peek().keyword)) {
-          r.consume()
-        }
-
-        if (r.peekIf(Keyword.TABLE)) {
-          r.pos = mark
-          stmt = this.createTableStatement(r)
-        } else if (r.peekIf(Keyword.VIEW)) {
-          r.pos = mark
-          stmt = this.createViewStatement(r)
-        } else if (r.peekIf(Keyword.TRIGGER)) {
-          r.pos = mark
-          stmt = this.createTriggerStatement(r)
-        } else if (r.peekIf(Keyword.INDEX)) {
-          r.pos = mark
-          stmt = this.createIndexStatement(r)
-        } else {
-          r.pos = mark
-        }
-      } else if (r.peekIf(Keyword.ALTER)) {
-        const mark = r.pos
-        r.consume()
-
-        if (r.peekIf(Keyword.TABLE)) {
-          r.pos = mark
-          stmt = this.alterTableStatement(r)
-        } else {
-          r.pos = mark
-        }
-      } else if (r.peekIf(Keyword.DROP)) {
-        const mark = r.pos
-        r.consume()
-
-        if (r.peekIf(Keyword.TABLE)) {
-          r.pos = mark
-          stmt = this.dropTableStatement(r)
-        } else if (r.peekIf(Keyword.VIEW)) {
-          r.pos = mark
-          stmt = this.dropViewStatement(r)
-        } else if (r.peekIf(Keyword.TRIGGER)) {
-          r.pos = mark
-          stmt = this.dropTriggerStatement(r)
-        } else if (r.peekIf(Keyword.INDEX)) {
-          r.pos = mark
-          stmt = this.dropIndexStatement(r)
-        } else {
-          r.pos = mark
-        }
-      } else if (r.peekIf(Keyword.ATTACH, Keyword.DATABASE)) {
-        stmt = this.attachDatabaseStatement(r)
-      } else if (r.peekIf(Keyword.DETACH, Keyword.DATABASE)) {
-        stmt = this.detachDatabaseStatement(r)
-      } else if (r.peekIf(Keyword.ANALYZE)) {
-        stmt = this.analyzeStatement(r)
-      } else if (r.peekIf(Keyword.REINDEX)) {
-        stmt = this.reindexStatement(r)
-      } else if (r.peekIf(Keyword.VACUUM)) {
-        stmt = this.vacuumStatement(r)
-      } else if (r.peekIf(Keyword.PRAGMA)) {
-        stmt = this.pragmaStatement(r)
-      } else if (r.peekIf(Keyword.BEGIN)) {
-        stmt = this.beginTransactionStatement(r)
-      } else if (r.peekIf(Keyword.SAVEPOINT)) {
-        stmt = this.savepointStatement(r)
-      } else if (r.peekIf(Keyword.RELEASE)) {
-        stmt = this.releaseSavepointStatement(r)
-      } else if (r.peekIf([Keyword.COMMIT, Keyword.END])) {
-        stmt = this.commitTransactionStatement(r)
-      } else if (r.peekIf(Keyword.ROLLBACK)) {
-        stmt = this.rollbackTransactionStatement(r)
+      if (r.peekIf(Keyword.TABLE)) {
+        r.pos = mark
+        return this.createTableStatement(r)
+      } else if (r.peekIf(Keyword.VIEW)) {
+        r.pos = mark
+        return this.createViewStatement(r)
+      } else if (r.peekIf(Keyword.TRIGGER)) {
+        r.pos = mark
+        return this.createTriggerStatement(r)
+      } else if (r.peekIf(Keyword.INDEX)) {
+        r.pos = mark
+        return this.createIndexStatement(r)
       } else {
-        const prefix = []
-        if (r.peekIf(Keyword.WITH)) {
-          prefix.push(this.withClause(r))
-        }
-        if (r.peekIf([Keyword.INSERT, Keyword.REPLACE])) {
-          stmt = this.insertStatement(r, prefix)
-        } else if (r.peekIf(Keyword.UPDATE)) {
-          stmt = this.updateStatement(r, prefix)
-        } else if (r.peekIf(Keyword.DELETE)) {
-          stmt = this.deleteStatement(r, prefix)
-        } else if (r.peekIf([Keyword.SELECT, Keyword.VALUES])) {
-          stmt = this.selectStatement(r, prefix)
-        }
-      }
-
-      if (!stmt) {
         throw r.createParseError()
       }
+    } else if (r.peekIf(Keyword.ALTER)) {
+      const mark = r.pos
+      r.consume()
 
-      if (explain) {
-        explain.append(stmt)
-        stmt = explain
+      if (r.peekIf(Keyword.TABLE)) {
+        r.pos = mark
+        return this.alterTableStatement(r)
+      } else {
+        throw r.createParseError()
       }
-      if (r.peekIf(TokenType.SemiColon)) {
-        stmt.append(r.consume())
+    } else if (r.peekIf(Keyword.DROP)) {
+      const mark = r.pos
+      r.consume()
+
+      if (r.peekIf(Keyword.TABLE)) {
+        r.pos = mark
+        return this.dropTableStatement(r)
+      } else if (r.peekIf(Keyword.VIEW)) {
+        r.pos = mark
+        return this.dropViewStatement(r)
+      } else if (r.peekIf(Keyword.TRIGGER)) {
+        r.pos = mark
+        return this.dropTriggerStatement(r)
+      } else if (r.peekIf(Keyword.INDEX)) {
+        r.pos = mark
+        return this.dropIndexStatement(r)
+      } else {
+        throw r.createParseError()
       }
-      return stmt
-    } catch (err) {
-      if (err instanceof ParseError) {
-        // skip tokens
-        if (!stmt) {
-          stmt = new Node("Unknown")
-        }
-        while (!r.peek().eos) {
-          stmt.append(r.consume())
-        }
-        if (r.peekIf(TokenType.SemiColon)) {
-          stmt.append(r.consume())
-        }
-        err.node = stmt
+    } else if (r.peekIf(Keyword.ATTACH, Keyword.DATABASE)) {
+      return this.attachDatabaseStatement(r)
+    } else if (r.peekIf(Keyword.DETACH, Keyword.DATABASE)) {
+      return this.detachDatabaseStatement(r)
+    } else if (r.peekIf(Keyword.ANALYZE)) {
+      return this.analyzeStatement(r)
+    } else if (r.peekIf(Keyword.REINDEX)) {
+      return this.reindexStatement(r)
+    } else if (r.peekIf(Keyword.VACUUM)) {
+      return this.vacuumStatement(r)
+    } else if (r.peekIf(Keyword.PRAGMA)) {
+      return this.pragmaStatement(r)
+    } else if (r.peekIf(Keyword.BEGIN)) {
+      return this.beginTransactionStatement(r)
+    } else if (r.peekIf(Keyword.SAVEPOINT)) {
+      return this.savepointStatement(r)
+    } else if (r.peekIf(Keyword.RELEASE)) {
+      return this.releaseSavepointStatement(r)
+    } else if (r.peekIf([Keyword.COMMIT, Keyword.END])) {
+      return this.commitTransactionStatement(r)
+    } else if (r.peekIf(Keyword.ROLLBACK)) {
+      return this.rollbackTransactionStatement(r)
+    } else {
+      const prefix = []
+      if (r.peekIf(Keyword.WITH)) {
+        prefix.push(this.withClause(r))
       }
-      throw err
+      if (r.peekIf([Keyword.INSERT, Keyword.REPLACE])) {
+        return this.insertStatement(r, prefix)
+      } else if (r.peekIf(Keyword.UPDATE)) {
+        return this.updateStatement(r, prefix)
+      } else if (r.peekIf(Keyword.DELETE)) {
+        return this.deleteStatement(r, prefix)
+      } else if (r.peekIf([Keyword.SELECT, Keyword.VALUES])) {
+        return this.selectStatement(r, prefix)
+      } else {
+        throw r.createParseError()
+      }
     }
   }
 
@@ -229,11 +190,12 @@ export class Sqlite3Parser extends Parser {
     return new Node("ExplainStatement").apply(node => {
       node.append(r.consume())
       if (r.peekIf(Keyword.QUERY)) {
-        node.append(new Node("QueryPlanClause")).apply(node => {
+        node.append(new Node("QueryPlanOption")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.PLAN))
         })
       }
+      node.append(this.statement(r))
     })
   }
 
@@ -526,21 +488,18 @@ export class Sqlite3Parser extends Parser {
 
       node.append(r.consume(Keyword.ON))
       node.append(this.identifier(r, "TargetObjectName"))
-
-      {
-        node.append(new Node("SortingColumnList")).apply(node => {
-          node.append(r.consume(TokenType.LeftParen))
-          do {
-            node.append(this.sortingColumn(r))
-            if (r.peekIf(TokenType.Comma)) {
-              node.append(r.consume())
-            } else {
-              break
-            }
-          } while (!r.peek().eos)
-          node.append(r.consume(TokenType.RightParen))
-        })
-      }
+      node.append(new Node("SortingColumnList")).apply(node => {
+        node.append(r.consume(TokenType.LeftParen))
+        do {
+          node.append(this.sortingColumn(r))
+          if (r.peekIf(TokenType.Comma)) {
+            node.append(r.consume())
+          } else {
+            break
+          }
+        } while (!r.peek().eos)
+        node.append(r.consume(TokenType.RightParen))
+      })
 
       if (r.peekIf(Keyword.WHERE)) {
         node.append(this.whereClause(r))

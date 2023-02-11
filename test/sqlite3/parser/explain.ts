@@ -53,11 +53,11 @@ export default new Node("Script").apply(node => {
         }))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(38, 1, 38)})], location: new SourceLocation(37, 1, 37)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(38, 1, 38)})], location: new SourceLocation(37, 1, 37)}))
   node.append(new Node("ExplainStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "EXPLAIN", { keyword: Keyword.EXPLAIN, preskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(39, 2, 1)})], location: new SourceLocation(40, 3, 1)}))
-    node.append(new Node("QueryPlanClause").apply(node => {
+    node.append(new Node("QueryPlanOption").apply(node => {
       node.append(new Token(TokenType.Identifier, "QUERY", { keyword: Keyword.QUERY, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(47, 3, 8)})], location: new SourceLocation(48, 3, 9)}))
       node.append(new Token(TokenType.Identifier, "PLAN", { keyword: Keyword.PLAN, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(53, 3, 14)})], location: new SourceLocation(54, 3, 15)}))
     }))
@@ -147,6 +147,6 @@ export default new Node("Script").apply(node => {
         }))
       }))
     }))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(112, 3, 73)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(112, 3, 73)}))
 })

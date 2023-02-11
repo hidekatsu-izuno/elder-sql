@@ -99,8 +99,8 @@ export default new Node("Script").apply(node => {
       }))
     }))
     node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(303, 9, 1)}))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(305, 9, 3)})], location: new SourceLocation(304, 9, 2)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(305, 9, 3)})], location: new SourceLocation(304, 9, 2)}))
   node.append(new Node("CreateTableStatement").apply(node => {
     node.append(new Token(TokenType.Reserved, "CREATE", { keyword: Keyword.CREATE, preskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(306, 10, 1)}), new Token(TokenType.BlockComment, "/* test table_2 */", { location: new SourceLocation(307, 11, 1)}), new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(325, 11, 19)})], location: new SourceLocation(326, 12, 1)}))
     node.append(new Node("TemporaryOption").apply(node => {
@@ -220,8 +220,8 @@ export default new Node("Script").apply(node => {
       }))
     }))
     node.append(new Token(TokenType.RightParen, ")", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(667, 20, 2)})], location: new SourceLocation(666, 20, 1)}))
-    node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(669, 21, 2)})], location: new SourceLocation(668, 21, 1)}))
   }))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(669, 21, 2)})], location: new SourceLocation(668, 21, 1)}))
   node.append(new Node("CreateTableStatement").apply(node => {
     node.append(new Token(TokenType.Reserved, "CREATE", { keyword: Keyword.CREATE, preskips: [new Token(TokenType.BlockComment, "/* test table_3 */", { location: new SourceLocation(670, 22, 1)}), new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(688, 22, 19)})], location: new SourceLocation(689, 23, 1)}))
     node.append(new Node("TemporaryOption").apply(node => {
