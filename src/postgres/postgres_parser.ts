@@ -1425,8 +1425,8 @@ export class PostgresParser extends Parser {
               ident.name = "SchemaName"
               node.append(this.identifier(r, "ObjectName"))
             }
-            node.append(r.consume())
             node.append(new Node("ArgumentList")).apply(node => {
+              node.append(r.consume())
               while (!r.peekIf(TokenType.RightParen)) {
                 node.append(new Node("Argument")).apply(node => {
                   node.append(this.expression(r))
@@ -1437,10 +1437,12 @@ export class PostgresParser extends Parser {
                   break
                 }
               }
+              node.append(r.consume(TokenType.RightParen))
             })
-            node.append(r.consume(TokenType.RightParen))
           } else if (!hasOnly && r.peekIf(Keyword.ROWS, Keyword.FROM, TokenType.LeftParen)) {
-            //TODO
+            node.append(new Node("RowsFromClause")).apply(node => {
+              //TODO
+            })
           } else if (!hasLiteral) {
             const ident = this.identifier(r, "ObjectName")
             node.append(ident)
@@ -1464,8 +1466,19 @@ export class PostgresParser extends Parser {
             node.append(this.identifier(r, "ObjectAlias"))
             hasAlias = true
           }
-          if (hasAlias) {
-            //TODO
+          if (hasAlias && r.peekIf(TokenType.LeftParen)) {
+            node.append(new Node("ColumnAliasList")).apply(node => {
+              node.append(r.consume())
+              while (!r.peek().eos) {
+                node.append(this.identifier(r, "ColumnAlias"))
+                if (r.peekIf(TokenType.Comma)) {
+                  node.append(r.consume())
+                } else {
+                  break
+                }
+              }
+              node.append(r.consume(TokenType.RightParen))
+            })
           }
           while (r.peekIf(
             [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL]
