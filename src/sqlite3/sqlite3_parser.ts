@@ -2036,55 +2036,56 @@ export class Sqlite3Parser extends Parser {
     })
   }
 
-  private expression(parent: Node, r: TokenReader, priority = 0) {
+  private expression(parent: Node, r: TokenReader, precedence = 0) {
     let current: Node
-    if (priority < 9 && r.peekIf(Keyword.NOT)) {
+    if (r.peekIf(Keyword.NOT)) {
       current = parent.append(new Node("NotOperation")).apply(node => {
         node.append(r.consume())
-        this.expression(node, r, 9)
+        this.expression(node, r, 3)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
       current = parent.append(new Node("BitwiseNotOperation")).apply(node => {
         node.append(r.consume())
-        this.expression(node, r)
+        this.expression(node, r, 16)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
       current = parent.append(new Node("UnaryPlusOperation")).apply(node => {
         node.append(r.consume())
-        this.expression(node, r)
+        this.expression(node, r, 16)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
       current = parent.append(new Node("UnaryMinusOperation")).apply(node => {
         node.append(r.consume())
-        this.expression(node, r)
+        this.expression(node, r, 16)
       })
     } else {
       current = this.expressionValue(parent, r)
     }
 
     while (!r.peek().eos) {
-      if (priority < 11 && r.peekIf(Keyword.OR)) {
+      if (precedence < 1 && r.peekIf(Keyword.OR)) {
         current = current.wrap(new Node("OrOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 11)
+          this.expression(node, r, 1)
         })
-      } else if (priority < 10 && r.peekIf(Keyword.AND)) {
+      } else if (precedence < 2 && r.peekIf(Keyword.AND)) {
         current = current.wrap(new Node("AndOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 10)
+          this.expression(node, r, 2)
         })
-      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: ["=", "=="] })) {
+      } else if (precedence < 4 && r.peekIf({ type: TokenType.Operator, text: ["=", "=="] })) {
         current = current.wrap(new Node("EqualOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && r.peekIf({ type: TokenType.Operator, text: ["<>", "!="] })) {
+      } else if (precedence < 4 && r.peekIf({ type: TokenType.Operator, text: ["<>", "!="] })) {
         current = current.wrap(new Node("NotEqualOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && r.peekIf(Keyword.IS)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.IS)) {
         current = current.wrap(new Node("Is")).apply(node => {
+          node.append(r.consume())
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name += "Not"
@@ -2096,20 +2097,20 @@ export class Sqlite3Parser extends Parser {
           } else {
             node.name += "Operation"
           }
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.BETWEEN) || r.peekIf(Keyword.NOT, Keyword.BETWEEN)) {
         current = current.wrap(new Node("BetweenOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
           node.append(r.consume(Keyword.AND))
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.IN) || r.peekIf(Keyword.NOT, Keyword.IN)) {
         current = current.wrap(new Node("InOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
@@ -2150,141 +2151,141 @@ export class Sqlite3Parser extends Parser {
             throw r.createParseError()
           }
         })
-      } else if (priority < 8 && (r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH))) {
+      } else if (precedence < 4 && (r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH))) {
         current = current.wrap(new Node("MatchOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && (r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))) {
+      } else if (precedence < 4 && (r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))) {
         current = current.wrap(new Node("LikeOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
           if (r.peekIf(Keyword.ESCAPE)) {
             node.append(new Node("EscapeOption")).apply(node => {
               this.expression(node, r, 6)
             })
           }
         })
-      } else if (priority < 8 && (r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP))) {
+      } else if (precedence < 4 && (r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP))) {
         current = current.wrap(new Node("RegexpOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && (r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB))) {
+      } else if (precedence < 4 && (r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB))) {
         current = current.wrap(new Node("GlobOperation")).apply(node => {
           if (r.peekIf(Keyword.NOT)) {
             node.append(r.consume())
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          this.expression(node, r, 8)
+          this.expression(node, r, 4)
         })
-      } else if (priority < 8 && r.peekIf(Keyword.ISNULL)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.ISNULL)) {
         current = current.wrap(new Node("IsNullOperation")).apply(node => {
           node.append(r.consume())
         })
-      } else if (priority < 8 && r.peekIf(Keyword.NOTNULL)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.NOTNULL)) {
         current = current.wrap(new Node("IsNotNullOperation")).apply(node => {
           node.append(r.consume())
         })
-      } else if (priority < 8 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
+      } else if (precedence < 4 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
         current = current.wrap(new Node("IsNotNullOperation")).apply(node => {
           node.append(r.consume())
           node.append(r.consume())
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<" })) {
+      } else if (precedence < 5 && r.peekIf({ type: TokenType.Operator, text: "<" })) {
         current = current.wrap(new Node("LessThanOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 7)
+          this.expression(node, r, 5)
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">" })) {
+      } else if (precedence < 5 && r.peekIf({ type: TokenType.Operator, text: ">" })) {
         current = current.wrap(new Node("GreaterThanOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 7)
+          this.expression(node, r, 5)
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: "<=" })) {
+      } else if (precedence < 5 && r.peekIf({ type: TokenType.Operator, text: "<=" })) {
         current = current.wrap(new Node("LessThanOrEqualOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 7)
+          this.expression(node, r, 5)
         })
-      } else if (priority < 7 && r.peekIf({ type: TokenType.Operator, text: ">=" })) {
+      } else if (precedence < 5 && r.peekIf({ type: TokenType.Operator, text: ">=" })) {
         current = current.wrap(new Node("GreaterThanOrEqualOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 7)
+          this.expression(node, r, 5)
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "&" })) {
+      } else if (precedence < 7 && r.peekIf({ type: TokenType.Operator, text: "&" })) {
         current = current.wrap(new Node("BitwiseAndOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 5)
+          this.expression(node, r, 7)
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "|" })) {
+      } else if (precedence < 7 && r.peekIf({ type: TokenType.Operator, text: "|" })) {
         current = current.wrap(new Node("BitwiseOrOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 5)
+          this.expression(node, r, 7)
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: "<<" })) {
+      } else if (precedence < 7 && r.peekIf({ type: TokenType.Operator, text: "<<" })) {
         current = current.wrap(new Node("BitwiseLeftShiftOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 5)
+          this.expression(node, r, 7)
         })
-      } else if (priority < 5 && r.peekIf({ type: TokenType.Operator, text: ">>" })) {
+      } else if (precedence < 7 && r.peekIf({ type: TokenType.Operator, text: ">>" })) {
         current = current.wrap(new Node("BitwiseRightShiftOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 5)
+          this.expression(node, r, 7)
         })
-      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
+      } else if (precedence < 8 && r.peekIf({ type: TokenType.Operator, text: "+" })) {
         current = current.wrap(new Node("AddOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 4)
+          this.expression(node, r, 8)
         })
-      } else if (priority < 4 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
+      } else if (precedence < 8 && r.peekIf({ type: TokenType.Operator, text: "-" })) {
         current = current.wrap(new Node("SubtractOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 4)
+          this.expression(node, r, 8)
         })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
+      } else if (precedence < 9 && r.peekIf({ type: TokenType.Operator, text: "*" })) {
         current = current.wrap(new Node("MultiplyOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 3)
+          this.expression(node, r, 9)
         })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
+      } else if (precedence < 9 && r.peekIf({ type: TokenType.Operator, text: "/" })) {
         current = current.wrap(new Node("DivideOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 3)
+          this.expression(node, r, 9)
         })
-      } else if (priority < 3 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
+      } else if (precedence < 9 && r.peekIf({ type: TokenType.Operator, text: "%" })) {
         current = current.wrap(new Node("ModuloOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 3)
+          this.expression(node, r, 9)
         })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
+      } else if (precedence < 10 && r.peekIf({ type: TokenType.Operator, text: "||" })) {
         current = current.wrap(new Node("ConcatenateOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 2)
+          this.expression(node, r, 10)
         })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
+      } else if (precedence < 10 && r.peekIf({ type: TokenType.Operator, text: "->" })) {
         current = current.wrap(new Node("JsonExtractOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 2)
+          this.expression(node, r, 10)
         })
-      } else if (priority < 2 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
+      } else if (precedence < 10 && r.peekIf({ type: TokenType.Operator, text: "->>" })) {
         current = current.wrap(new Node("JsonExtractValueOperation")).apply(node => {
           node.append(r.consume())
-          this.expression(node, r, 2)
+          this.expression(node, r, 10)
         })
-      } else if (priority < 1 && r.peekIf(Keyword.COLLATE)) {
+      } else if (precedence < 11 && r.peekIf(Keyword.COLLATE)) {
         current = current.wrap(new Node("CollateOperation")).apply(node => {
           node.append(r.consume())
           this.identifier(node, r, "CollationName")

@@ -1,1 +1,7 @@
 SELECT 1+2-3, -1*2/3 c1, +1-2*3 AS c2;
+SELECT c1 FROM (SELECT * FROM sample) GROUP BY c1;
+WITH x AS (SELECT s.* FROM sample s)
+SELECT * FROM x
+WHERE x.col1 = 2 AND NOT (x.col2 NOT LIKE '%x%' OR x.col2 IS NULL)
+ORDER BY x.col3
+LIMIT 1;
