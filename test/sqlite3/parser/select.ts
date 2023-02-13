@@ -86,5 +86,5 @@ export default new Node("Script").apply(node => {
       }))
     }))
   }))
-  node.append(new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(37, 1, 37)}))
+  node.append(new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(37, 1, 37)}))
 })

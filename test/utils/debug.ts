@@ -1,5 +1,25 @@
+import path from "node:path"
+import fs from "node:fs"
 import { Token } from "../../src/lexer.js"
 import { Node } from "../../src/parser.js"
+
+export function getRootDir() {
+  let current = process.cwd()
+  while (current) {
+    if (fs.existsSync(path.join(current, "package.json"))) {
+      break
+    } else {
+      current = path.resolve(current, "../")
+    }
+  }
+  return current
+}
+
+export function writeDebugFile(file: string, data: string | NodeJS.ArrayBufferView) {
+  file = path.join(getRootDir(), file)
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, data)
+}
 
 export function toJSScript(target: Node | Token | (Node | Token)[]) {
   let imports = 'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n'

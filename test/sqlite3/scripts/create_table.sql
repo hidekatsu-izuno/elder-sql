@@ -32,3 +32,7 @@ CREATE temporary TABLE table_3 (
     ON UPDATE CASCADE
     NOT DEFERRABLE INITIALLY DEFERRED
 )
+
+CREATE VIRTUAL TABLE tablename USING modulename;
+CREATE VIRTUAL TABLE temp.t1 USING csv(filename = 'thefile.csv');
+CREATE VIRTUAL TABLE email USING fts5(sender, title, body);

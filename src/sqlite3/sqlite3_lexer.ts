@@ -145,29 +145,27 @@ export class Sqlite3Lexer extends Lexer {
       { type: TokenType.Error, re: /./y },
     ], options)
 
-    if (options.compileOptions) {
-      const compileOptions = new Set<string>(options.compileOptions)
-      if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
-        this.reserved.add(Keyword.ALWAYS)
-        this.reserved.add(Keyword.GENERATED)
-      }
-      if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
-        this.reserved.add(Keyword.CURRENT)
-        this.reserved.add(Keyword.EXCLUDE)
-        this.reserved.add(Keyword.FOLLOWING)
-        this.reserved.add(Keyword.GROUPS)
-        this.reserved.add(Keyword.OTHERS)
-        this.reserved.add(Keyword.PARTITION)
-        this.reserved.add(Keyword.PRECEDING)
-        this.reserved.add(Keyword.RANGE)
-        this.reserved.add(Keyword.TIES)
-        this.reserved.add(Keyword.UNBOUNDED)
-      }
-      if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
-        this.reserved.add(Keyword.EXCEPT)
-        this.reserved.add(Keyword.INTERSECT)
-        this.reserved.add(Keyword.UNION)
-      }
+    const compileOptions = new Set(options.compileOptions || [])
+    if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
+      this.reserved.add(Keyword.ALWAYS)
+      this.reserved.add(Keyword.GENERATED)
+    }
+    if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
+      this.reserved.add(Keyword.CURRENT)
+      this.reserved.add(Keyword.EXCLUDE)
+      this.reserved.add(Keyword.FOLLOWING)
+      this.reserved.add(Keyword.GROUPS)
+      this.reserved.add(Keyword.OTHERS)
+      this.reserved.add(Keyword.PARTITION)
+      this.reserved.add(Keyword.PRECEDING)
+      this.reserved.add(Keyword.RANGE)
+      this.reserved.add(Keyword.TIES)
+      this.reserved.add(Keyword.UNBOUNDED)
+    }
+    if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
+      this.reserved.add(Keyword.EXCEPT)
+      this.reserved.add(Keyword.INTERSECT)
+      this.reserved.add(Keyword.UNION)
     }
   }
 

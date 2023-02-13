@@ -18,15 +18,27 @@ export class Node {
 
   append<T extends (Node | Token)>(child: T): T {
     if (child instanceof Node) {
+      if (child.parentNode) {
+        child.remove()
+      }
       child.parentNode = this
     }
     this.children.push(child)
     return child
   }
 
+  wrap(node: Node) {
+    const parent = this.parent()
+    const index = parent.children.lastIndexOf(this)
+    parent.children[index] = node
+    node.parentNode = parent
+    node.append(this)
+    return node
+  }
+
   remove() {
     const parent = this.parent()
-    for (let i = 0; i < parent.children.length; i++) {
+    for (let i = parent.children.length-1; i >= 0; i--) {
       const child = parent.children[i]
       if (child === this) {
         parent.children.splice(i, 1)
@@ -36,16 +48,19 @@ export class Node {
     }
   }
 
-  parent(node?: Node) {
-    if (node) {
-      this.parentNode = node
-      return this
-    } else {
-      if (!this.parentNode) {
-        throw new Error("parent is missing")
-      }
-      return this.parentNode  
+  parent() {
+    if (!this.parentNode) {
+      throw new Error("parent is missing")
     }
+    return this.parentNode  
+  }
+
+  first() {
+    return this.children[0]
+  }
+
+  last() {
+    return this.children[this.children.length - 1]
   }
 
   has(name: string) {
