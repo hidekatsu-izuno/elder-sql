@@ -5,3 +5,35 @@ SELECT * FROM x
 WHERE x.col1 = 2 AND NOT (x.col2 NOT LIKE '%x%' OR x.col2 IS NULL)
 ORDER BY x.col3
 LIMIT 1;
+SELECT * FROM a, main.b x, c as y WHERE a.x = x.x AND x.x = y.x AND y.y = 0;
+SELECT
+  :aaa,
+  ?
+FROM
+  a
+  CROSS JOIN b
+  JOIN c
+    ON c.x = a.x
+  INNER JOIN c1
+    ON c1.x = a.x
+  NATURAL INNER JOIN c2
+    ON c2.x = a.x
+  LEFT JOIN d
+    ON d.x = a.x
+  LEFT OUTER JOIN d1
+    ON d1.x = a.x
+  NATURAL LEFT OUTER JOIN d2
+    ON d2.x = a.x
+  RIGHT JOIN e
+    ON e.x = a.x
+  RIGHT OUTER JOIN e1
+    ON e1.x = a.x
+  NATURAL RIGHT OUTER JOIN e2
+    ON e2.x = a.x
+  FULL JOIN f
+    ON f.x = a.x
+  FULL OUTER JOIN f1
+    ON f1.x = a.x
+  NATURAL FULL OUTER JOIN f2
+    ON f2.x = a.x
+LIMIT 1 OFFSET 2

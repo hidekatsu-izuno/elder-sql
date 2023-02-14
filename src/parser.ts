@@ -239,17 +239,16 @@ export class TokenReader {
 
 export abstract class Parser {
   constructor(
-    public options: Record<string, any> = {},
     public lexer: Lexer,
+    public options: Record<string, any> = {},
   ) {
   }
 
   parse(text: string, filename?: string) {
-    const tokens = this.lexer.lex(text, filename)
-    return this.processTokens(tokens)
+    return this.parseTokens(this.lexer.lex(text, filename))
   }
 
-  abstract processTokens(tokens: Token[]): Node
+  abstract parseTokens(tokens: Token[]): Node
 }
 
 export class AggregateParseError extends Error {

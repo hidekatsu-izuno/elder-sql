@@ -20,7 +20,7 @@ export class OracleParser extends Parser {
     super(options, options.lexer ?? new OracleLexer(options))
   }
 
-  processTokens(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []

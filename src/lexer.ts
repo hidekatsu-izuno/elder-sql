@@ -128,6 +128,16 @@ export class Token {
     return false
   }
 
+  clone() {
+    return new Token(this.type, this.text, {
+      keyword: this.keyword,
+      eos: this.eos,
+      preskips: [ ...this.preskips],
+      postskips: [ ...this.postskips],
+      location: this.location?.clone(),
+    })
+  }
+
   toXmlString() {
     let xml = '<token type="' + escapeXml(this.type.name) + '">\n'
     for (let i = 0; i < this.preskips.length; i++) {

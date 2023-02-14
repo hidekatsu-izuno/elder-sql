@@ -18,10 +18,10 @@ export class PostgresParser extends Parser {
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options, options.lexer ?? new PostgresLexer(options))
+    super(options.lexer ?? new PostgresLexer(options), options)
   }
 
-  processTokens(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Node {
     const r = new TokenReader(tokens)
     const root = new Node("root")
     const errors = []

@@ -38,7 +38,7 @@ export default new Node("Script").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(83, 3, 1)}))
     node.append(new Token(TokenType.Identifier, "DATABASE", { keyword: Keyword.DATABASE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(89, 3, 7)})], location: new SourceLocation(90, 3, 8)}))
     node.append(new Node("DatabaseSource").apply(node => {
-      node.append(new Node("Function").apply(node => {
+      node.append(new Node("FunctionExpression").apply(node => {
         node.append(new Node("ObjectName").apply(node => {
           node.append(new Token(TokenType.Identifier, "CONCAT", { keyword: Keyword.CONCAT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(98, 3, 16)})], location: new SourceLocation(99, 3, 17)}))
         }))
@@ -81,7 +81,7 @@ export default new Node("Script").apply(node => {
               node.append(new Token(TokenType.String, "'database_'", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(168, 4, 29)})], location: new SourceLocation(157, 4, 18)}))
             }))
             node.append(new Token(TokenType.Operator, "||", { location: new SourceLocation(169, 4, 30)}))
-            node.append(new Node("Function").apply(node => {
+            node.append(new Node("FunctionExpression").apply(node => {
               node.append(new Node("ObjectName").apply(node => {
                 node.append(new Token(TokenType.Identifier, "strftime", { keyword: Keyword.STRFTIME, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(171, 4, 32)})], location: new SourceLocation(172, 4, 33)}))
               }))

@@ -14,10 +14,10 @@ export default new Node("Script").apply(node => {
       node.data = {"value":"sample"}
       node.append(new Token(TokenType.Identifier, "sample", { keyword: Keyword.SAMPLE, location: new SourceLocation(17, 1, 17)}))
     }))
-    node.append(new Node("RenameToClause").apply(node => {
+    node.append(new Node("RenameToObjectClause").apply(node => {
       node.append(new Token(TokenType.Identifier, "RENAME", { keyword: Keyword.RENAME, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(23, 1, 23)})], location: new SourceLocation(24, 1, 24)}))
       node.append(new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(30, 1, 30)})], location: new SourceLocation(31, 1, 31)}))
-      node.append(new Node("TargetObjectName").apply(node => {
+      node.append(new Node("ObjectName").apply(node => {
         node.data = {"value":"new_table"}
         node.append(new Token(TokenType.Identifier, "new_table", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(33, 1, 33)})], location: new SourceLocation(34, 1, 34)}))
       }))
@@ -43,10 +43,12 @@ export default new Node("Script").apply(node => {
         node.data = {"value":"old_column"}
         node.append(new Token(TokenType.Identifier, "old_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(82, 2, 38)})], location: new SourceLocation(83, 2, 39)}))
       }))
-      node.append(new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(93, 2, 49)})], location: new SourceLocation(94, 2, 50)}))
-      node.append(new Node("TargetColumnName").apply(node => {
-        node.data = {"value":"new_column"}
-        node.append(new Token(TokenType.Identifier, "new_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(96, 2, 52)})], location: new SourceLocation(97, 2, 53)}))
+      node.append(new Node("RenameToColumnClause").apply(node => {
+        node.append(new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(93, 2, 49)})], location: new SourceLocation(94, 2, 50)}))
+        node.append(new Node("ColumnName").apply(node => {
+          node.data = {"value":"new_column"}
+          node.append(new Token(TokenType.Identifier, "new_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(96, 2, 52)})], location: new SourceLocation(97, 2, 53)}))
+        }))
       }))
     }))
   }))
@@ -69,10 +71,12 @@ export default new Node("Script").apply(node => {
         node.data = {"value":"old_column"}
         node.append(new Token(TokenType.Identifier, "old_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(139, 3, 31)})], location: new SourceLocation(140, 3, 32)}))
       }))
-      node.append(new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(150, 3, 42)})], location: new SourceLocation(151, 3, 43)}))
-      node.append(new Node("TargetColumnName").apply(node => {
-        node.data = {"value":"new_column"}
-        node.append(new Token(TokenType.Identifier, "new_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(153, 3, 45)})], location: new SourceLocation(154, 3, 46)}))
+      node.append(new Node("RenameToColumnClause").apply(node => {
+        node.append(new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(150, 3, 42)})], location: new SourceLocation(151, 3, 43)}))
+        node.append(new Node("ColumnName").apply(node => {
+          node.data = {"value":"new_column"}
+          node.append(new Token(TokenType.Identifier, "new_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(153, 3, 45)})], location: new SourceLocation(154, 3, 46)}))
+        }))
       }))
     }))
   }))
