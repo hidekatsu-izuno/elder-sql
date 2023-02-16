@@ -99,6 +99,27 @@ export class Sqlite3Parser extends Parser {
     }
   }
 
+  private explainStatement(parent: Node, r: TokenReader) {
+    const current = parent.append(new Node("ExplainStatement"))
+    try {
+      return current.apply(node => {
+        node.append(r.consume(Keyword.EXPLAIN))
+        if (r.peekIf(Keyword.QUERY)) {
+          node.append(new Node("QueryPlanOption")).apply(node => {
+            node.append(r.consume())
+            node.append(r.consume(Keyword.PLAN))
+          })
+        }
+        this.statement(node, r)
+      })
+    } catch (err) {
+      if (err instanceof ParseError) {
+        this.unknown(current, r)
+      }
+      throw err
+    }
+  }
+
   private statement(parent: Node, r: TokenReader) {
     if (r.peekIf(Keyword.CREATE)) {
       const mark = r.pos
@@ -119,8 +140,6 @@ export class Sqlite3Parser extends Parser {
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
         return this.createIndexStatement(parent, r)
-      } else {
-        throw r.createParseError()
       }
     } else if (r.peekIf(Keyword.ALTER)) {
       const mark = r.pos
@@ -129,8 +148,6 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(Keyword.TABLE)) {
         r.pos = mark
         return this.alterTableStatement(parent, r)
-      } else {
-        throw r.createParseError()
       }
     } else if (r.peekIf(Keyword.DROP)) {
       const mark = r.pos
@@ -148,8 +165,6 @@ export class Sqlite3Parser extends Parser {
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
         return this.dropIndexStatement(parent, r)
-      } else {
-        throw r.createParseError()
       }
     } else if (r.peekIf(Keyword.ATTACH)) {
       return this.attachDatabaseStatement(parent, r)
@@ -185,31 +200,9 @@ export class Sqlite3Parser extends Parser {
         return this.deleteStatement(parent, r)
       } else if (r.peekIf([Keyword.SELECT, Keyword.VALUES])) {
         return this.selectStatement(parent, r)
-      } else {
-        throw r.createParseError()
       }
     }
-  }
-
-  private explainStatement(parent: Node, r: TokenReader) {
-    const current = parent.append(new Node("ExplainStatement"))
-    try {
-      return current.apply(node => {
-        node.append(r.consume())
-        if (r.peekIf(Keyword.QUERY)) {
-          node.append(new Node("QueryPlanOption")).apply(node => {
-            node.append(r.consume())
-            node.append(r.consume(Keyword.PLAN))
-          })
-        }
-        this.statement(node, r)
-      })
-    } catch (err) {
-      if (err instanceof ParseError) {
-        this.unknown(current, r)
-      }
-      throw err
-    }
+    throw r.createParseError()
   }
 
   private createTableStatement(parent: Node, r: TokenReader) {
@@ -1820,17 +1813,19 @@ export class Sqlite3Parser extends Parser {
             }
           })
           if (r.peekIf(TokenType.LeftParen)) {
-            node.append(r.consume())
-            node.append(new Node("LengthOption")).apply(node => {
-              this.numericLiteral(node, r)
-            })
-            if (r.peekIf(TokenType.Comma)) {
+            node.append(new Node("TypeOptionList")).apply(node => {
               node.append(r.consume())
-              node.append(new Node("ScaleOption")).apply(node => {
+              node.append(new Node("LengthOption")).apply(node => {
                 this.numericLiteral(node, r)
               })
-            }
-            node.append(r.consume(TokenType.RightParen))
+              if (r.peekIf(TokenType.Comma)) {
+                node.append(r.consume())
+                node.append(new Node("ScaleOption")).apply(node => {
+                  this.numericLiteral(node, r)
+                })
+              }
+              node.append(r.consume(TokenType.RightParen))
+            })
           }
         })
       }

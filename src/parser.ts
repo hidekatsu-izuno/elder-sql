@@ -3,7 +3,7 @@ import { TokenType, Token, Lexer, Keyword } from './lexer.js'
 export class Node {
   private parentNode?: Node
   children: (Node | Token)[] = []
-  data: Record<string, any> = {}
+  data: Record<string | symbol, any> = {}
 
   constructor(public name: string) {
   }
@@ -29,8 +29,10 @@ export class Node {
 
   wrap(node: Node) {
     const parent = this.parent()
-    const index = parent.children.lastIndexOf(this)
-    parent.children[index] = node
+    if (parent) {
+      const index = parent.children.lastIndexOf(this)
+      parent.children[index] = node  
+    }
     node.parentNode = parent
     node.append(this)
     return node
@@ -38,20 +40,19 @@ export class Node {
 
   remove() {
     const parent = this.parent()
-    for (let i = parent.children.length-1; i >= 0; i--) {
-      const child = parent.children[i]
-      if (child === this) {
-        parent.children.splice(i, 1)
-        child.parentNode = undefined
-        break
-      }
+    if (parent) {
+      for (let i = parent.children.length-1; i >= 0; i--) {
+        const child = parent.children[i]
+        if (child === this) {
+          parent.children.splice(i, 1)
+          child.parentNode = undefined
+          break
+        }
+      }  
     }
   }
 
   parent() {
-    if (!this.parentNode) {
-      throw new Error("parent is missing")
-    }
     return this.parentNode  
   }
 
@@ -61,6 +62,15 @@ export class Node {
 
   last() {
     return this.children[this.children.length - 1]
+  }
+
+  is(name: string | string[] | RegExp) {
+    if (Array.isArray(name)) {
+      return name.some(val => val === this.name)
+    } else if (name instanceof RegExp) {
+      return name.test(this.name)
+    }
+    return name === this.name
   }
 
   has(name: string) {

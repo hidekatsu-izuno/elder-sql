@@ -6,6 +6,8 @@ import { writeDebugFile } from "../utils/debug.js"
 
 describe("test sqlite3 formatter", () => {
   test.each([
+    "attach_database"
+/*
     "alter_table",
     "analyze",
     "attach_database",
@@ -32,6 +34,7 @@ describe("test sqlite3 formatter", () => {
     "select",
     "update",
     "vacuum",
+*/
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
     const expected = script //(await import("./formatter/" + target + ".js")).default

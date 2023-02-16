@@ -5,7 +5,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(0, 1, 0)}))
     node.append(new Token(TokenType.Identifier, "DATABASE", { keyword: Keyword.DATABASE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("StringLiteral").apply(node => {
         node.data = {"value":":memory:"}
         node.append(new Token(TokenType.String, "':memory:'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(15, 1, 15)})], location: new SourceLocation(16, 1, 16)}))
@@ -21,7 +21,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(38, 2, 1)}))
     node.append(new Token(TokenType.Identifier, "DATABASE", { keyword: Keyword.DATABASE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(44, 2, 7)})], location: new SourceLocation(45, 2, 8)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("StringLiteral").apply(node => {
         node.data = {"value":"new_database.db"}
         node.append(new Token(TokenType.String, "'new_database.db'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(53, 2, 16)})], location: new SourceLocation(54, 2, 17)}))
@@ -37,7 +37,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(83, 3, 1)}))
     node.append(new Token(TokenType.Identifier, "DATABASE", { keyword: Keyword.DATABASE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(89, 3, 7)})], location: new SourceLocation(90, 3, 8)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("FunctionExpression").apply(node => {
         node.append(new Node("ObjectName").apply(node => {
           node.append(new Token(TokenType.Identifier, "CONCAT", { keyword: Keyword.CONCAT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(98, 3, 16)})], location: new SourceLocation(99, 3, 17)}))
@@ -71,7 +71,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(140, 4, 1)}))
     node.append(new Token(TokenType.Identifier, "DATABASE", { keyword: Keyword.DATABASE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(146, 4, 7)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(155, 4, 16)})], location: new SourceLocation(147, 4, 8)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("Expression").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(156, 4, 17)}))
         node.append(new Node("ConcatenateOperation").apply(node => {
@@ -122,7 +122,7 @@ export default new Node("Script").apply(node => {
   node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(218, 4, 79)})], location: new SourceLocation(217, 4, 78)}))
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(219, 5, 1)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("StringLiteral").apply(node => {
         node.data = {"value":"new_database.db"}
         node.append(new Token(TokenType.String, "'new_database.db'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(225, 5, 7)})], location: new SourceLocation(226, 5, 8)}))
@@ -137,7 +137,7 @@ export default new Node("Script").apply(node => {
   node.append(new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(254, 5, 36)})], location: new SourceLocation(253, 5, 35)}))
   node.append(new Node("AttachDatabaseStatement").apply(node => {
     node.append(new Token(TokenType.Identifier, "ATTACH", { keyword: Keyword.ATTACH, location: new SourceLocation(255, 6, 1)}))
-    node.append(new Node("DatabaseSource").apply(node => {
+    node.append(new Node("DatabaseExpression").apply(node => {
       node.append(new Node("ConcatenateOperation").apply(node => {
         node.append(new Node("StringLiteral").apply(node => {
           node.data = {"value":"database_"}
