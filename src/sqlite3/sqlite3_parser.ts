@@ -265,26 +265,28 @@ export class Sqlite3Parser extends Parser {
             }
           })
         } else if (r.peekIf(TokenType.LeftParen)) {
-          node.append(r.consume())
-          let hasTableConstraint = false
-          do {
-            if (!hasTableConstraint) {
-              if (r.peekIf([Keyword.CONSTRAINT, Keyword.UNIQUE, Keyword.CHECK, Keyword.FOREIGN]) || r.peekIf(Keyword.PRIMARY, Keyword.KEY)) {
-                hasTableConstraint = true
-              } else {
-                this.tableColumn(node, r)
+          node.append(new Node("TableColumnList")).apply(node => {
+            node.append(r.consume())
+            let hasTableConstraint = false
+            do {
+              if (!hasTableConstraint) {
+                if (r.peekIf([Keyword.CONSTRAINT, Keyword.UNIQUE, Keyword.CHECK, Keyword.FOREIGN]) || r.peekIf(Keyword.PRIMARY, Keyword.KEY)) {
+                  hasTableConstraint = true
+                } else {
+                  this.tableColumn(node, r)
+                }
               }
-            }
-            if (hasTableConstraint) {
-              this.tableConstraint(node, r)
-            }
-            if (r.peekIf(TokenType.Comma)) {
-              node.append(r.consume())
-            } else {
-              break
-            }
-          } while (!r.peek().eos)
-          node.append(r.consume(TokenType.RightParen))
+              if (hasTableConstraint) {
+                this.tableConstraint(node, r)
+              }
+              if (r.peekIf(TokenType.Comma)) {
+                node.append(r.consume())
+              } else {
+                break
+              }
+            } while (!r.peek().eos)
+            node.append(r.consume(TokenType.RightParen))
+          })
 
           if (r.peekIf(Keyword.WITHOUT)) {
             node.append(new Node("WithoutRowidOption")).apply(node => {

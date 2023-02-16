@@ -83,8 +83,8 @@ export abstract class Formatter {
             if (hit) {
               before = item.before
               after = item.after
+              break
             }
-            break  
           }
         }
 

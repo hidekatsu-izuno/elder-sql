@@ -292,21 +292,23 @@ export default new Node("Script").apply(node => {
             node.data = {"value":"NUMERIC"}
             node.append(new Token(TokenType.Identifier, "NUMERIC", { keyword: Keyword.NUMERIC, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(550, 10, 39)})], location: new SourceLocation(551, 10, 40)}))
           }))
-          node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(558, 10, 47)}))
-          node.append(new Node("LengthOption").apply(node => {
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"1"}
-              node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(559, 10, 48)}))
+          node.append(new Node("TypeOptionList").apply(node => {
+            node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(558, 10, 47)}))
+            node.append(new Node("LengthOption").apply(node => {
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"1"}
+                node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(559, 10, 48)}))
+              }))
             }))
-          }))
-          node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(560, 10, 49)}))
-          node.append(new Node("ScaleOption").apply(node => {
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"0"}
-              node.append(new Token(TokenType.Numeric, "0", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(561, 10, 50)})], location: new SourceLocation(562, 10, 51)}))
+            node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(560, 10, 49)}))
+            node.append(new Node("ScaleOption").apply(node => {
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"0"}
+                node.append(new Token(TokenType.Numeric, "0", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(561, 10, 50)})], location: new SourceLocation(562, 10, 51)}))
+              }))
             }))
+            node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(563, 10, 52)}))
           }))
-          node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(563, 10, 52)}))
         }))
         node.append(new Node("ColumnConstraint").apply(node => {
           node.append(new Node("PrimaryKeyConstraint").apply(node => {
