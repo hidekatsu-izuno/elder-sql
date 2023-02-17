@@ -18,10 +18,12 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(33, 1, 33)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"a"}
-              node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(34, 1, 34)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"a"}
+                node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(34, 1, 34)}))
+              }))
             }))
           }))
         }))
@@ -51,28 +53,34 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(76, 2, 39)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"a"}
-              node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(77, 2, 40)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"a"}
+                node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(77, 2, 40)}))
+              }))
             }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(78, 2, 41)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"b"}
-              node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(79, 2, 42)})], location: new SourceLocation(80, 2, 43)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"b"}
+                node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(79, 2, 42)})], location: new SourceLocation(80, 2, 43)}))
+              }))
             }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(81, 2, 44)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"c"}
-              node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(82, 2, 45)})], location: new SourceLocation(83, 2, 46)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"c"}
+                node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(82, 2, 45)})], location: new SourceLocation(83, 2, 46)}))
+              }))
             }))
           }))
         }))
@@ -97,19 +105,23 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(120, 3, 34)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"a"}
-              node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(121, 3, 35)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"a"}
+                node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(121, 3, 35)}))
+              }))
             }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(122, 3, 36)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"b"}
-              node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(123, 3, 37)})], location: new SourceLocation(124, 3, 38)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"b"}
+                node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(123, 3, 37)})], location: new SourceLocation(124, 3, 38)}))
+              }))
             }))
           }))
           node.append(new Node("AscOption").apply(node => {
@@ -118,10 +130,12 @@ export default new Node("Script").apply(node => {
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(129, 3, 43)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"c"}
-              node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(130, 3, 44)})], location: new SourceLocation(131, 3, 45)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"c"}
+                node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(130, 3, 44)})], location: new SourceLocation(131, 3, 45)}))
+              }))
             }))
           }))
           node.append(new Node("DescOption").apply(node => {
@@ -159,17 +173,19 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(192, 4, 53)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"a"}
-                node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(194, 4, 55)})], location: new SourceLocation(193, 4, 54)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"a"}
+                  node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(194, 4, 55)})], location: new SourceLocation(193, 4, 54)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(195, 4, 56)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"1"}
-              node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(196, 4, 57)})], location: new SourceLocation(197, 4, 58)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(195, 4, 56)}))
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"1"}
+                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(196, 4, 57)})], location: new SourceLocation(197, 4, 58)}))
+              }))
             }))
           }))
         }))
@@ -178,17 +194,19 @@ export default new Node("Script").apply(node => {
     }))
     node.append(new Node("WhereClause").apply(node => {
       node.append(new Token(TokenType.Reserved, "WHERE", { keyword: Keyword.WHERE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(199, 4, 60)})], location: new SourceLocation(200, 4, 61)}))
-      node.append(new Node("EqualOperation").apply(node => {
-        node.append(new Node("ColumnReference").apply(node => {
-          node.append(new Node("ColumnName").apply(node => {
-            node.data = {"value":"a"}
-            node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(205, 4, 66)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(207, 4, 68)})], location: new SourceLocation(206, 4, 67)}))
+      node.append(new Node("Expression").apply(node => {
+        node.append(new Node("EqualOperation").apply(node => {
+          node.append(new Node("ColumnReference").apply(node => {
+            node.append(new Node("ColumnName").apply(node => {
+              node.data = {"value":"a"}
+              node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(205, 4, 66)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(207, 4, 68)})], location: new SourceLocation(206, 4, 67)}))
+            }))
           }))
-        }))
-        node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(208, 4, 69)}))
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"1"}
-          node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(209, 4, 70)})], location: new SourceLocation(210, 4, 71)}))
+          node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(208, 4, 69)}))
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"1"}
+            node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(209, 4, 70)})], location: new SourceLocation(210, 4, 71)}))
+          }))
         }))
       }))
     }))
@@ -218,17 +236,19 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(258, 5, 46)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"a"}
-                node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(260, 5, 48)})], location: new SourceLocation(259, 5, 47)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"a"}
+                  node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(260, 5, 48)})], location: new SourceLocation(259, 5, 47)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(261, 5, 49)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"1"}
-              node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(262, 5, 50)})], location: new SourceLocation(263, 5, 51)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(261, 5, 49)}))
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"1"}
+                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(262, 5, 50)})], location: new SourceLocation(263, 5, 51)}))
+              }))
             }))
           }))
           node.append(new Node("AscOption").apply(node => {
@@ -237,17 +257,19 @@ export default new Node("Script").apply(node => {
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(268, 5, 56)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"b"}
-                node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(269, 5, 57)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(271, 5, 59)})], location: new SourceLocation(270, 5, 58)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"b"}
+                  node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(269, 5, 57)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(271, 5, 59)})], location: new SourceLocation(270, 5, 58)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(272, 5, 60)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"1"}
-              node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(273, 5, 61)})], location: new SourceLocation(274, 5, 62)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(272, 5, 60)}))
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"1"}
+                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(273, 5, 61)})], location: new SourceLocation(274, 5, 62)}))
+              }))
             }))
           }))
           node.append(new Node("DescOption").apply(node => {
@@ -256,10 +278,12 @@ export default new Node("Script").apply(node => {
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(280, 5, 68)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"c"}
-              node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(281, 5, 69)})], location: new SourceLocation(282, 5, 70)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"c"}
+                node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(281, 5, 69)})], location: new SourceLocation(282, 5, 70)}))
+              }))
             }))
           }))
         }))
@@ -297,17 +321,19 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(345, 6, 60)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("CollateOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"a"}
-                node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(346, 6, 61)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("CollateOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"a"}
+                  node.append(new Token(TokenType.Identifier, "a", { location: new SourceLocation(346, 6, 61)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(347, 6, 62)})], location: new SourceLocation(348, 6, 63)}))
-            node.append(new Node("CollationName").apply(node => {
-              node.data = {"value":"test"}
-              node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(355, 6, 70)})], location: new SourceLocation(356, 6, 71)}))
+              node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(347, 6, 62)})], location: new SourceLocation(348, 6, 63)}))
+              node.append(new Node("CollationName").apply(node => {
+                node.data = {"value":"test"}
+                node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(355, 6, 70)})], location: new SourceLocation(356, 6, 71)}))
+              }))
             }))
           }))
         }))
@@ -316,17 +342,19 @@ export default new Node("Script").apply(node => {
     }))
     node.append(new Node("WhereClause").apply(node => {
       node.append(new Token(TokenType.Reserved, "WHERE", { keyword: Keyword.WHERE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(361, 6, 76)})], location: new SourceLocation(362, 6, 77)}))
-      node.append(new Node("EqualOperation").apply(node => {
-        node.append(new Node("ColumnReference").apply(node => {
-          node.append(new Node("ColumnName").apply(node => {
-            node.data = {"value":"a"}
-            node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(367, 6, 82)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(369, 6, 84)})], location: new SourceLocation(368, 6, 83)}))
+      node.append(new Node("Expression").apply(node => {
+        node.append(new Node("EqualOperation").apply(node => {
+          node.append(new Node("ColumnReference").apply(node => {
+            node.append(new Node("ColumnName").apply(node => {
+              node.data = {"value":"a"}
+              node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(367, 6, 82)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(369, 6, 84)})], location: new SourceLocation(368, 6, 83)}))
+            }))
           }))
-        }))
-        node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(370, 6, 85)}))
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"1"}
-          node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(371, 6, 86)})], location: new SourceLocation(372, 6, 87)}))
+          node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(370, 6, 85)}))
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"1"}
+            node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(371, 6, 86)})], location: new SourceLocation(372, 6, 87)}))
+          }))
         }))
       }))
     }))
@@ -361,46 +389,50 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(434, 7, 60)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"a"}
-                node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(436, 7, 62)})], location: new SourceLocation(435, 7, 61)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"a"}
+                  node.append(new Token(TokenType.Identifier, "a", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(436, 7, 62)})], location: new SourceLocation(435, 7, 61)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(437, 7, 63)}))
-            node.append(new Node("CollateOperation").apply(node => {
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"1"}
-                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(438, 7, 64)})], location: new SourceLocation(439, 7, 65)}))
-              }))
-              node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(440, 7, 66)})], location: new SourceLocation(441, 7, 67)}))
-              node.append(new Node("CollationName").apply(node => {
-                node.data = {"value":"test"}
-                node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(448, 7, 74)})], location: new SourceLocation(449, 7, 75)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(437, 7, 63)}))
+              node.append(new Node("CollateOperation").apply(node => {
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"1"}
+                  node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(438, 7, 64)})], location: new SourceLocation(439, 7, 65)}))
+                }))
+                node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(440, 7, 66)})], location: new SourceLocation(441, 7, 67)}))
+                node.append(new Node("CollationName").apply(node => {
+                  node.data = {"value":"test"}
+                  node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(448, 7, 74)})], location: new SourceLocation(449, 7, 75)}))
+                }))
               }))
             }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { location: new SourceLocation(453, 7, 79)}))
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"b"}
-                node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(454, 7, 80)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(456, 7, 82)})], location: new SourceLocation(455, 7, 81)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"b"}
+                  node.append(new Token(TokenType.Identifier, "b", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(454, 7, 80)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(456, 7, 82)})], location: new SourceLocation(455, 7, 81)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(457, 7, 83)}))
-            node.append(new Node("CollateOperation").apply(node => {
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"1"}
-                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(458, 7, 84)})], location: new SourceLocation(459, 7, 85)}))
-              }))
-              node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(460, 7, 86)})], location: new SourceLocation(461, 7, 87)}))
-              node.append(new Node("CollationName").apply(node => {
-                node.data = {"value":"test"}
-                node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(468, 7, 94)})], location: new SourceLocation(469, 7, 95)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(457, 7, 83)}))
+              node.append(new Node("CollateOperation").apply(node => {
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"1"}
+                  node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(458, 7, 84)})], location: new SourceLocation(459, 7, 85)}))
+                }))
+                node.append(new Token(TokenType.Reserved, "COLLATE", { keyword: Keyword.COLLATE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(460, 7, 86)})], location: new SourceLocation(461, 7, 87)}))
+                node.append(new Node("CollationName").apply(node => {
+                  node.data = {"value":"test"}
+                  node.append(new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(468, 7, 94)})], location: new SourceLocation(469, 7, 95)}))
+                }))
               }))
             }))
           }))
@@ -413,17 +445,19 @@ export default new Node("Script").apply(node => {
     }))
     node.append(new Node("WhereClause").apply(node => {
       node.append(new Token(TokenType.Reserved, "WHERE", { keyword: Keyword.WHERE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(478, 7, 104)})], location: new SourceLocation(479, 7, 105)}))
-      node.append(new Node("EqualOperation").apply(node => {
-        node.append(new Node("ColumnReference").apply(node => {
-          node.append(new Node("ColumnName").apply(node => {
-            node.data = {"value":"a"}
-            node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(484, 7, 110)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(486, 7, 112)})], location: new SourceLocation(485, 7, 111)}))
+      node.append(new Node("Expression").apply(node => {
+        node.append(new Node("EqualOperation").apply(node => {
+          node.append(new Node("ColumnReference").apply(node => {
+            node.append(new Node("ColumnName").apply(node => {
+              node.data = {"value":"a"}
+              node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(484, 7, 110)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(486, 7, 112)})], location: new SourceLocation(485, 7, 111)}))
+            }))
           }))
-        }))
-        node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(487, 7, 113)}))
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"1"}
-          node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(488, 7, 114)})], location: new SourceLocation(489, 7, 115)}))
+          node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(487, 7, 113)}))
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"1"}
+            node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(488, 7, 114)})], location: new SourceLocation(489, 7, 115)}))
+          }))
         }))
       }))
     }))

@@ -5,8 +5,8 @@ import { Node, Parser } from "./parser.js"
 export declare type FormatPattern = {
   node?: (string | RegExp)[]
   token?: TokenType | Keyword
-  before?: "reset" | "indent" | "unindent" | "break" | "nospace"
-  after?: "reset" | "indent" | "unindent" | "break" | "nospace"
+  before?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
+  after?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
 }
 
 export declare type FormatterOptions = { 
@@ -98,7 +98,7 @@ export abstract class Formatter {
             const segments = skip.text.split(/\r\n?|\n/g)
             for (let i = 0; i = segments.length; i++) {
               if (i > 0) {
-                out.control("break", true)
+                out.control("forcebreak")
               }
               out.write(new Token(skip.type, segments[i]))
             }
@@ -114,7 +114,7 @@ export abstract class Formatter {
             const segments = skip.text.split(/\r\n?|\n/g)
             for (let i = 0; i = segments.length; i++) {
               if (i > 0) {
-                out.control("break", true)
+                out.control("forcebreak")
               }
               out.write(new Token(skip.type, segments[i]))
             }
@@ -126,7 +126,7 @@ export abstract class Formatter {
           out.control(after)
         }
         if (child.eos) {
-          out.control("break", true)
+          out.control("forcebreak")
           out.control("reset")
         }
       }
@@ -151,7 +151,7 @@ class FormatWriter {
   private text = ""
   private depth = 0
   private line: FormatToken[] = []
-  private action?: "reset" | "indent" | "unindent" | "break" | "nospace"
+  private action?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
 
   constructor(options: FormatterOptions) {
     this.printWidth = options.printWidth ?? 80
@@ -173,7 +173,7 @@ class FormatWriter {
     }
   }
 
-  control(action: "reset" | "indent" | "unindent" | "break" | "nospace", force: boolean = false) {
+  control(action: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace") {
     if (action === "reset") {
       if (this.line.length > 0) {
         this.flushLine()
@@ -192,8 +192,11 @@ class FormatWriter {
       }
       this.depth--
       action = "break"
+    } else if (action === "forcebreak") {
+      this.flushLine()
+      action = "break"
     } else if (action === "break") {
-      if (force || this.line.length > 0 || this.action !== "break") {
+      if (this.line.length > 0 || this.action !== "break") {
         this.flushLine()
       }
     }
@@ -216,7 +219,9 @@ class FormatWriter {
   }
 
   toString() {
-    this.flushLine()
+    if (this.line.length > 0) {
+      this.flushLine()
+    }
     return this.text
   }
 

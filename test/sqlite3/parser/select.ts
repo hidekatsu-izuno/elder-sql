@@ -7,46 +7,50 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "SELECT", { keyword: Keyword.SELECT, location: new SourceLocation(0, 1, 0)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("SubtractOperation").apply(node => {
-            node.append(new Node("AddOperation").apply(node => {
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"1"}
-                node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("SubtractOperation").apply(node => {
+              node.append(new Node("AddOperation").apply(node => {
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"1"}
+                  node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(6, 1, 6)})], location: new SourceLocation(7, 1, 7)}))
+                }))
+                node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(8, 1, 8)}))
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"2"}
+                  node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(9, 1, 9)}))
+                }))
               }))
-              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(8, 1, 8)}))
+              node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(10, 1, 10)}))
               node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"2"}
-                node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(9, 1, 9)}))
+                node.data = {"value":"3"}
+                node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(11, 1, 11)}))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(10, 1, 10)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"3"}
-              node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(11, 1, 11)}))
             }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(13, 1, 13)})], location: new SourceLocation(12, 1, 12)}))
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("DivideOperation").apply(node => {
-            node.append(new Node("MultiplyOperation").apply(node => {
-              node.append(new Node("UnaryMinusOperation").apply(node => {
-                node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(14, 1, 14)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("DivideOperation").apply(node => {
+              node.append(new Node("MultiplyOperation").apply(node => {
+                node.append(new Node("UnaryMinusOperation").apply(node => {
+                  node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(14, 1, 14)}))
+                  node.append(new Node("NumericLiteral").apply(node => {
+                    node.data = {"value":"1"}
+                    node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(15, 1, 15)}))
+                  }))
+                }))
+                node.append(new Token(TokenType.Operator, "*", { location: new SourceLocation(16, 1, 16)}))
                 node.append(new Node("NumericLiteral").apply(node => {
-                  node.data = {"value":"1"}
-                  node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(15, 1, 15)}))
+                  node.data = {"value":"2"}
+                  node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(17, 1, 17)}))
                 }))
               }))
-              node.append(new Token(TokenType.Operator, "*", { location: new SourceLocation(16, 1, 16)}))
+              node.append(new Token(TokenType.Operator, "/", { location: new SourceLocation(18, 1, 18)}))
               node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"2"}
-                node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(17, 1, 17)}))
+                node.data = {"value":"3"}
+                node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(19, 1, 19)}))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "/", { location: new SourceLocation(18, 1, 18)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"3"}
-              node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(19, 1, 19)}))
             }))
           }))
           node.append(new Node("ColumnAlias").apply(node => {
@@ -56,24 +60,26 @@ export default new Node("Script").apply(node => {
         }))
         node.append(new Token(TokenType.Comma, ",", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(24, 1, 24)})], location: new SourceLocation(23, 1, 23)}))
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("SubtractOperation").apply(node => {
-            node.append(new Node("UnaryPlusOperation").apply(node => {
-              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(25, 1, 25)}))
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"1"}
-                node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(26, 1, 26)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("SubtractOperation").apply(node => {
+              node.append(new Node("UnaryPlusOperation").apply(node => {
+                node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(25, 1, 25)}))
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"1"}
+                  node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(26, 1, 26)}))
+                }))
               }))
-            }))
-            node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(27, 1, 27)}))
-            node.append(new Node("MultiplyOperation").apply(node => {
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"2"}
-                node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(28, 1, 28)}))
-              }))
-              node.append(new Token(TokenType.Operator, "*", { location: new SourceLocation(29, 1, 29)}))
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"3"}
-                node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(30, 1, 30)}))
+              node.append(new Token(TokenType.Operator, "-", { location: new SourceLocation(27, 1, 27)}))
+              node.append(new Node("MultiplyOperation").apply(node => {
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"2"}
+                  node.append(new Token(TokenType.Numeric, "2", { location: new SourceLocation(28, 1, 28)}))
+                }))
+                node.append(new Token(TokenType.Operator, "*", { location: new SourceLocation(29, 1, 29)}))
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"3"}
+                  node.append(new Token(TokenType.Numeric, "3", { location: new SourceLocation(30, 1, 30)}))
+                }))
               }))
             }))
           }))
@@ -92,10 +98,12 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "SELECT", { keyword: Keyword.SELECT, location: new SourceLocation(39, 2, 1)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"c1"}
-              node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(45, 2, 7)})], location: new SourceLocation(46, 2, 8)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"c1"}
+                node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(45, 2, 7)})], location: new SourceLocation(46, 2, 8)}))
+              }))
             }))
           }))
         }))
@@ -131,10 +139,12 @@ export default new Node("Script").apply(node => {
       node.append(new Node("GroupByClause").apply(node => {
         node.append(new Token(TokenType.Reserved, "GROUP", { keyword: Keyword.GROUP, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(76, 2, 38)})], location: new SourceLocation(77, 2, 39)}))
         node.append(new Token(TokenType.Identifier, "BY", { keyword: Keyword.BY, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(82, 2, 44)})], location: new SourceLocation(83, 2, 45)}))
-        node.append(new Node("ColumnReference").apply(node => {
-          node.append(new Node("ColumnName").apply(node => {
-            node.data = {"value":"c1"}
-            node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(85, 2, 47)})], location: new SourceLocation(86, 2, 48)}))
+        node.append(new Node("Expression").apply(node => {
+          node.append(new Node("ColumnReference").apply(node => {
+            node.append(new Node("ColumnName").apply(node => {
+              node.data = {"value":"c1"}
+              node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(85, 2, 47)})], location: new SourceLocation(86, 2, 48)}))
+            }))
           }))
         }))
       }))
@@ -204,70 +214,74 @@ export default new Node("Script").apply(node => {
       }))
       node.append(new Node("WhereClause").apply(node => {
         node.append(new Token(TokenType.Reserved, "WHERE", { keyword: Keyword.WHERE, location: new SourceLocation(143, 5, 1)}))
-        node.append(new Node("AndOperation").apply(node => {
-          node.append(new Node("EqualOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ObjectName").apply(node => {
-                node.data = {"value":"x"}
-                node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(148, 5, 6)})], location: new SourceLocation(149, 5, 7)}))
-              }))
-              node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(150, 5, 8)}))
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"col1"}
-                node.append(new Token(TokenType.Identifier, "col1", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(155, 5, 13)})], location: new SourceLocation(151, 5, 9)}))
-              }))
-            }))
-            node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(156, 5, 14)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"2"}
-              node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(157, 5, 15)})], location: new SourceLocation(158, 5, 16)}))
-            }))
-          }))
-          node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(159, 5, 17)})], location: new SourceLocation(160, 5, 18)}))
-          node.append(new Node("NotOperation").apply(node => {
-            node.append(new Token(TokenType.Reserved, "NOT", { keyword: Keyword.NOT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(163, 5, 21)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(167, 5, 25)})], location: new SourceLocation(164, 5, 22)}))
-            node.append(new Node("Expression").apply(node => {
-              node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(168, 5, 26)}))
-              node.append(new Node("OrOperation").apply(node => {
-                node.append(new Node("NotLikeOperation").apply(node => {
-                  node.append(new Node("ColumnReference").apply(node => {
-                    node.append(new Node("ObjectName").apply(node => {
-                      node.data = {"value":"x"}
-                      node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(169, 5, 27)}))
-                    }))
-                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(170, 5, 28)}))
-                    node.append(new Node("ColumnName").apply(node => {
-                      node.data = {"value":"col2"}
-                      node.append(new Token(TokenType.Identifier, "col2", { location: new SourceLocation(171, 5, 29)}))
-                    }))
-                  }))
-                  node.append(new Token(TokenType.Reserved, "NOT", { keyword: Keyword.NOT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(175, 5, 33)})], location: new SourceLocation(176, 5, 34)}))
-                  node.append(new Token(TokenType.Identifier, "LIKE", { keyword: Keyword.LIKE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(179, 5, 37)})], location: new SourceLocation(180, 5, 38)}))
-                  node.append(new Node("StringLiteral").apply(node => {
-                    node.data = {"value":"%x%"}
-                    node.append(new Token(TokenType.String, "'%x%'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(184, 5, 42)})], location: new SourceLocation(185, 5, 43)}))
-                  }))
+        node.append(new Node("Expression").apply(node => {
+          node.append(new Node("AndOperation").apply(node => {
+            node.append(new Node("EqualOperation").apply(node => {
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ObjectName").apply(node => {
+                  node.data = {"value":"x"}
+                  node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(148, 5, 6)})], location: new SourceLocation(149, 5, 7)}))
                 }))
-                node.append(new Token(TokenType.Reserved, "OR", { keyword: Keyword.OR, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(190, 5, 48)})], location: new SourceLocation(191, 5, 49)}))
-                node.append(new Node("IsOperation").apply(node => {
-                  node.append(new Node("ColumnReference").apply(node => {
-                    node.append(new Node("ObjectName").apply(node => {
-                      node.data = {"value":"x"}
-                      node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(193, 5, 51)})], location: new SourceLocation(194, 5, 52)}))
-                    }))
-                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(195, 5, 53)}))
-                    node.append(new Node("ColumnName").apply(node => {
-                      node.data = {"value":"col2"}
-                      node.append(new Token(TokenType.Identifier, "col2", { location: new SourceLocation(196, 5, 54)}))
-                    }))
-                  }))
-                  node.append(new Token(TokenType.Reserved, "IS", { keyword: Keyword.IS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(200, 5, 58)})], location: new SourceLocation(201, 5, 59)}))
-                  node.append(new Node("NullLiteral").apply(node => {
-                    node.append(new Token(TokenType.Reserved, "NULL", { keyword: Keyword.NULL, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(203, 5, 61)})], location: new SourceLocation(204, 5, 62)}))
-                  }))
+                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(150, 5, 8)}))
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"col1"}
+                  node.append(new Token(TokenType.Identifier, "col1", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(155, 5, 13)})], location: new SourceLocation(151, 5, 9)}))
                 }))
               }))
-              node.append(new Token(TokenType.RightParen, ")", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(209, 5, 67)})], location: new SourceLocation(208, 5, 66)}))
+              node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(156, 5, 14)}))
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"2"}
+                node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(157, 5, 15)})], location: new SourceLocation(158, 5, 16)}))
+              }))
+            }))
+            node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(159, 5, 17)})], location: new SourceLocation(160, 5, 18)}))
+            node.append(new Node("NotOperation").apply(node => {
+              node.append(new Token(TokenType.Reserved, "NOT", { keyword: Keyword.NOT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(163, 5, 21)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(167, 5, 25)})], location: new SourceLocation(164, 5, 22)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(168, 5, 26)}))
+                node.append(new Node("Expression").apply(node => {
+                  node.append(new Node("OrOperation").apply(node => {
+                    node.append(new Node("NotLikeOperation").apply(node => {
+                      node.append(new Node("ColumnReference").apply(node => {
+                        node.append(new Node("ObjectName").apply(node => {
+                          node.data = {"value":"x"}
+                          node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(169, 5, 27)}))
+                        }))
+                        node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(170, 5, 28)}))
+                        node.append(new Node("ColumnName").apply(node => {
+                          node.data = {"value":"col2"}
+                          node.append(new Token(TokenType.Identifier, "col2", { location: new SourceLocation(171, 5, 29)}))
+                        }))
+                      }))
+                      node.append(new Token(TokenType.Reserved, "NOT", { keyword: Keyword.NOT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(175, 5, 33)})], location: new SourceLocation(176, 5, 34)}))
+                      node.append(new Token(TokenType.Identifier, "LIKE", { keyword: Keyword.LIKE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(179, 5, 37)})], location: new SourceLocation(180, 5, 38)}))
+                      node.append(new Node("StringLiteral").apply(node => {
+                        node.data = {"value":"%x%"}
+                        node.append(new Token(TokenType.String, "'%x%'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(184, 5, 42)})], location: new SourceLocation(185, 5, 43)}))
+                      }))
+                    }))
+                    node.append(new Token(TokenType.Reserved, "OR", { keyword: Keyword.OR, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(190, 5, 48)})], location: new SourceLocation(191, 5, 49)}))
+                    node.append(new Node("IsOperation").apply(node => {
+                      node.append(new Node("ColumnReference").apply(node => {
+                        node.append(new Node("ObjectName").apply(node => {
+                          node.data = {"value":"x"}
+                          node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(193, 5, 51)})], location: new SourceLocation(194, 5, 52)}))
+                        }))
+                        node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(195, 5, 53)}))
+                        node.append(new Node("ColumnName").apply(node => {
+                          node.data = {"value":"col2"}
+                          node.append(new Token(TokenType.Identifier, "col2", { location: new SourceLocation(196, 5, 54)}))
+                        }))
+                      }))
+                      node.append(new Token(TokenType.Reserved, "IS", { keyword: Keyword.IS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(200, 5, 58)})], location: new SourceLocation(201, 5, 59)}))
+                      node.append(new Node("NullLiteral").apply(node => {
+                        node.append(new Token(TokenType.Reserved, "NULL", { keyword: Keyword.NULL, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(203, 5, 61)})], location: new SourceLocation(204, 5, 62)}))
+                      }))
+                    }))
+                  }))
+                }))
+                node.append(new Token(TokenType.RightParen, ")", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(209, 5, 67)})], location: new SourceLocation(208, 5, 66)}))
+              }))
             }))
           }))
         }))
@@ -278,15 +292,17 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Identifier, "BY", { keyword: Keyword.BY, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(215, 6, 6)})], location: new SourceLocation(216, 6, 7)}))
       node.append(new Node("SortingColumnList").apply(node => {
         node.append(new Node("SortingColumn").apply(node => {
-          node.append(new Node("ColumnReference").apply(node => {
-            node.append(new Node("ObjectName").apply(node => {
-              node.data = {"value":"x"}
-              node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(218, 6, 9)})], location: new SourceLocation(219, 6, 10)}))
-            }))
-            node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(220, 6, 11)}))
-            node.append(new Node("ColumnName").apply(node => {
-              node.data = {"value":"col3"}
-              node.append(new Token(TokenType.Identifier, "col3", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(225, 6, 16)})], location: new SourceLocation(221, 6, 12)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("ColumnReference").apply(node => {
+              node.append(new Node("ObjectName").apply(node => {
+                node.data = {"value":"x"}
+                node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(218, 6, 9)})], location: new SourceLocation(219, 6, 10)}))
+              }))
+              node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(220, 6, 11)}))
+              node.append(new Node("ColumnName").apply(node => {
+                node.data = {"value":"col3"}
+                node.append(new Token(TokenType.Identifier, "col3", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(225, 6, 16)})], location: new SourceLocation(221, 6, 12)}))
+              }))
             }))
           }))
         }))
@@ -295,9 +311,11 @@ export default new Node("Script").apply(node => {
     node.append(new Node("LimitClause").apply(node => {
       node.append(new Token(TokenType.Reserved, "LIMIT", { keyword: Keyword.LIMIT, location: new SourceLocation(226, 7, 1)}))
       node.append(new Node("LimitOption").apply(node => {
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"1"}
-          node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(231, 7, 6)})], location: new SourceLocation(232, 7, 7)}))
+        node.append(new Node("Expression").apply(node => {
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"1"}
+            node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(231, 7, 6)})], location: new SourceLocation(232, 7, 7)}))
+          }))
         }))
       }))
     }))
@@ -352,77 +370,79 @@ export default new Node("Script").apply(node => {
       }))
       node.append(new Node("WhereClause").apply(node => {
         node.append(new Token(TokenType.Reserved, "WHERE", { keyword: Keyword.WHERE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(268, 8, 34)})], location: new SourceLocation(269, 8, 35)}))
-        node.append(new Node("AndOperation").apply(node => {
+        node.append(new Node("Expression").apply(node => {
           node.append(new Node("AndOperation").apply(node => {
-            node.append(new Node("EqualOperation").apply(node => {
-              node.append(new Node("ColumnReference").apply(node => {
-                node.append(new Node("ObjectName").apply(node => {
-                  node.data = {"value":"a"}
-                  node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(274, 8, 40)})], location: new SourceLocation(275, 8, 41)}))
+            node.append(new Node("AndOperation").apply(node => {
+              node.append(new Node("EqualOperation").apply(node => {
+                node.append(new Node("ColumnReference").apply(node => {
+                  node.append(new Node("ObjectName").apply(node => {
+                    node.data = {"value":"a"}
+                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(274, 8, 40)})], location: new SourceLocation(275, 8, 41)}))
+                  }))
+                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(276, 8, 42)}))
+                  node.append(new Node("ColumnName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(278, 8, 44)})], location: new SourceLocation(277, 8, 43)}))
+                  }))
                 }))
-                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(276, 8, 42)}))
-                node.append(new Node("ColumnName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(278, 8, 44)})], location: new SourceLocation(277, 8, 43)}))
+                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(279, 8, 45)}))
+                node.append(new Node("ColumnReference").apply(node => {
+                  node.append(new Node("ObjectName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(280, 8, 46)})], location: new SourceLocation(281, 8, 47)}))
+                  }))
+                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(282, 8, 48)}))
+                  node.append(new Node("ColumnName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(283, 8, 49)}))
+                  }))
                 }))
               }))
-              node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(279, 8, 45)}))
-              node.append(new Node("ColumnReference").apply(node => {
-                node.append(new Node("ObjectName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(280, 8, 46)})], location: new SourceLocation(281, 8, 47)}))
+              node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(284, 8, 50)})], location: new SourceLocation(285, 8, 51)}))
+              node.append(new Node("EqualOperation").apply(node => {
+                node.append(new Node("ColumnReference").apply(node => {
+                  node.append(new Node("ObjectName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(288, 8, 54)})], location: new SourceLocation(289, 8, 55)}))
+                  }))
+                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(290, 8, 56)}))
+                  node.append(new Node("ColumnName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(292, 8, 58)})], location: new SourceLocation(291, 8, 57)}))
+                  }))
                 }))
-                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(282, 8, 48)}))
-                node.append(new Node("ColumnName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(283, 8, 49)}))
+                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(293, 8, 59)}))
+                node.append(new Node("ColumnReference").apply(node => {
+                  node.append(new Node("ObjectName").apply(node => {
+                    node.data = {"value":"y"}
+                    node.append(new Token(TokenType.Identifier, "y", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(294, 8, 60)})], location: new SourceLocation(295, 8, 61)}))
+                  }))
+                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(296, 8, 62)}))
+                  node.append(new Node("ColumnName").apply(node => {
+                    node.data = {"value":"x"}
+                    node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(297, 8, 63)}))
+                  }))
                 }))
               }))
             }))
-            node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(284, 8, 50)})], location: new SourceLocation(285, 8, 51)}))
+            node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(298, 8, 64)})], location: new SourceLocation(299, 8, 65)}))
             node.append(new Node("EqualOperation").apply(node => {
-              node.append(new Node("ColumnReference").apply(node => {
-                node.append(new Node("ObjectName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(288, 8, 54)})], location: new SourceLocation(289, 8, 55)}))
-                }))
-                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(290, 8, 56)}))
-                node.append(new Node("ColumnName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(292, 8, 58)})], location: new SourceLocation(291, 8, 57)}))
-                }))
-              }))
-              node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(293, 8, 59)}))
               node.append(new Node("ColumnReference").apply(node => {
                 node.append(new Node("ObjectName").apply(node => {
                   node.data = {"value":"y"}
-                  node.append(new Token(TokenType.Identifier, "y", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(294, 8, 60)})], location: new SourceLocation(295, 8, 61)}))
+                  node.append(new Token(TokenType.Identifier, "y", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(302, 8, 68)})], location: new SourceLocation(303, 8, 69)}))
                 }))
-                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(296, 8, 62)}))
+                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(304, 8, 70)}))
                 node.append(new Node("ColumnName").apply(node => {
-                  node.data = {"value":"x"}
-                  node.append(new Token(TokenType.Identifier, "x", { location: new SourceLocation(297, 8, 63)}))
+                  node.data = {"value":"y"}
+                  node.append(new Token(TokenType.Identifier, "y", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(306, 8, 72)})], location: new SourceLocation(305, 8, 71)}))
                 }))
               }))
-            }))
-          }))
-          node.append(new Token(TokenType.Reserved, "AND", { keyword: Keyword.AND, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(298, 8, 64)})], location: new SourceLocation(299, 8, 65)}))
-          node.append(new Node("EqualOperation").apply(node => {
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ObjectName").apply(node => {
-                node.data = {"value":"y"}
-                node.append(new Token(TokenType.Identifier, "y", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(302, 8, 68)})], location: new SourceLocation(303, 8, 69)}))
+              node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(307, 8, 73)}))
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"0"}
+                node.append(new Token(TokenType.Numeric, "0", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(308, 8, 74)})], location: new SourceLocation(309, 8, 75)}))
               }))
-              node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(304, 8, 70)}))
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"y"}
-                node.append(new Token(TokenType.Identifier, "y", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(306, 8, 72)})], location: new SourceLocation(305, 8, 71)}))
-              }))
-            }))
-            node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(307, 8, 73)}))
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"0"}
-              node.append(new Token(TokenType.Numeric, "0", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(308, 8, 74)})], location: new SourceLocation(309, 8, 75)}))
             }))
           }))
         }))
@@ -435,16 +455,20 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "SELECT", { keyword: Keyword.SELECT, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(318, 9, 7)})], location: new SourceLocation(312, 9, 1)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("NamedBindVariable").apply(node => {
-            node.data = {"value":"aaa"}
-            node.append(new Token(TokenType.BindVariable, ":aaa", { preskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(319, 10, 1)})], location: new SourceLocation(321, 10, 3)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("NamedBindVariable").apply(node => {
+              node.data = {"value":"aaa"}
+              node.append(new Token(TokenType.BindVariable, ":aaa", { preskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(319, 10, 1)})], location: new SourceLocation(321, 10, 3)}))
+            }))
           }))
         }))
         node.append(new Token(TokenType.Comma, ",", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(326, 10, 8)})], location: new SourceLocation(325, 10, 7)}))
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("PositionalBindVariable").apply(node => {
-            node.data = {"value":"1"}
-            node.append(new Token(TokenType.BindVariable, "?", { preskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(327, 11, 1)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(330, 11, 4)})], location: new SourceLocation(329, 11, 3)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("PositionalBindVariable").apply(node => {
+              node.data = {"value":"1"}
+              node.append(new Token(TokenType.BindVariable, "?", { preskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(327, 11, 1)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(330, 11, 4)})], location: new SourceLocation(329, 11, 3)}))
+            }))
           }))
         }))
       }))
@@ -471,28 +495,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(364, 16, 1)})], location: new SourceLocation(368, 16, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"c"}
-                    node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(370, 16, 7)})], location: new SourceLocation(371, 16, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"c"}
+                      node.append(new Token(TokenType.Identifier, "c", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(370, 16, 7)})], location: new SourceLocation(371, 16, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(372, 16, 9)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(374, 16, 11)})], location: new SourceLocation(373, 16, 10)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(372, 16, 9)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(374, 16, 11)})], location: new SourceLocation(373, 16, 10)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(375, 16, 12)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(376, 16, 13)})], location: new SourceLocation(377, 16, 14)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(378, 16, 15)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(380, 16, 17)})], location: new SourceLocation(379, 16, 16)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(375, 16, 12)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(376, 16, 13)})], location: new SourceLocation(377, 16, 14)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(378, 16, 15)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(380, 16, 17)})], location: new SourceLocation(379, 16, 16)}))
+                    }))
                   }))
                 }))
               }))
@@ -507,28 +533,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(397, 18, 1)})], location: new SourceLocation(401, 18, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"c1"}
-                    node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(403, 18, 7)})], location: new SourceLocation(404, 18, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"c1"}
+                      node.append(new Token(TokenType.Identifier, "c1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(403, 18, 7)})], location: new SourceLocation(404, 18, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(406, 18, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(408, 18, 12)})], location: new SourceLocation(407, 18, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(406, 18, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(408, 18, 12)})], location: new SourceLocation(407, 18, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(409, 18, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(410, 18, 14)})], location: new SourceLocation(411, 18, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(412, 18, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(414, 18, 18)})], location: new SourceLocation(413, 18, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(409, 18, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(410, 18, 14)})], location: new SourceLocation(411, 18, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(412, 18, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(414, 18, 18)})], location: new SourceLocation(413, 18, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -546,28 +574,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(439, 20, 1)})], location: new SourceLocation(443, 20, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"c2"}
-                    node.append(new Token(TokenType.Identifier, "c2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(445, 20, 7)})], location: new SourceLocation(446, 20, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"c2"}
+                      node.append(new Token(TokenType.Identifier, "c2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(445, 20, 7)})], location: new SourceLocation(446, 20, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(448, 20, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(450, 20, 12)})], location: new SourceLocation(449, 20, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(448, 20, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(450, 20, 12)})], location: new SourceLocation(449, 20, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(451, 20, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(452, 20, 14)})], location: new SourceLocation(453, 20, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(454, 20, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(456, 20, 18)})], location: new SourceLocation(455, 20, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(451, 20, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(452, 20, 14)})], location: new SourceLocation(453, 20, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(454, 20, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(456, 20, 18)})], location: new SourceLocation(455, 20, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -582,28 +612,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(471, 22, 1)})], location: new SourceLocation(475, 22, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"d"}
-                    node.append(new Token(TokenType.Identifier, "d", { keyword: Keyword.D, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(477, 22, 7)})], location: new SourceLocation(478, 22, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"d"}
+                      node.append(new Token(TokenType.Identifier, "d", { keyword: Keyword.D, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(477, 22, 7)})], location: new SourceLocation(478, 22, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(479, 22, 9)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(481, 22, 11)})], location: new SourceLocation(480, 22, 10)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(479, 22, 9)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(481, 22, 11)})], location: new SourceLocation(480, 22, 10)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(482, 22, 12)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(483, 22, 13)})], location: new SourceLocation(484, 22, 14)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(485, 22, 15)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(487, 22, 17)})], location: new SourceLocation(486, 22, 16)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(482, 22, 12)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(483, 22, 13)})], location: new SourceLocation(484, 22, 14)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(485, 22, 15)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(487, 22, 17)})], location: new SourceLocation(486, 22, 16)}))
+                    }))
                   }))
                 }))
               }))
@@ -619,28 +651,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(509, 24, 1)})], location: new SourceLocation(513, 24, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"d1"}
-                    node.append(new Token(TokenType.Identifier, "d1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(515, 24, 7)})], location: new SourceLocation(516, 24, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"d1"}
+                      node.append(new Token(TokenType.Identifier, "d1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(515, 24, 7)})], location: new SourceLocation(516, 24, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(518, 24, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(520, 24, 12)})], location: new SourceLocation(519, 24, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(518, 24, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(520, 24, 12)})], location: new SourceLocation(519, 24, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(521, 24, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(522, 24, 14)})], location: new SourceLocation(523, 24, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(524, 24, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(526, 24, 18)})], location: new SourceLocation(525, 24, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(521, 24, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(522, 24, 14)})], location: new SourceLocation(523, 24, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(524, 24, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(526, 24, 18)})], location: new SourceLocation(525, 24, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -659,28 +693,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(556, 26, 1)})], location: new SourceLocation(560, 26, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"d2"}
-                    node.append(new Token(TokenType.Identifier, "d2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(562, 26, 7)})], location: new SourceLocation(563, 26, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"d2"}
+                      node.append(new Token(TokenType.Identifier, "d2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(562, 26, 7)})], location: new SourceLocation(563, 26, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(565, 26, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(567, 26, 12)})], location: new SourceLocation(566, 26, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(565, 26, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(567, 26, 12)})], location: new SourceLocation(566, 26, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(568, 26, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(569, 26, 14)})], location: new SourceLocation(570, 26, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(571, 26, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(573, 26, 18)})], location: new SourceLocation(572, 26, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(568, 26, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(569, 26, 14)})], location: new SourceLocation(570, 26, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(571, 26, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(573, 26, 18)})], location: new SourceLocation(572, 26, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -695,28 +731,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(589, 28, 1)})], location: new SourceLocation(593, 28, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"e"}
-                    node.append(new Token(TokenType.Identifier, "e", { keyword: Keyword.E, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(595, 28, 7)})], location: new SourceLocation(596, 28, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"e"}
+                      node.append(new Token(TokenType.Identifier, "e", { keyword: Keyword.E, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(595, 28, 7)})], location: new SourceLocation(596, 28, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(597, 28, 9)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(599, 28, 11)})], location: new SourceLocation(598, 28, 10)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(597, 28, 9)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(599, 28, 11)})], location: new SourceLocation(598, 28, 10)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(600, 28, 12)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(601, 28, 13)})], location: new SourceLocation(602, 28, 14)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(603, 28, 15)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(605, 28, 17)})], location: new SourceLocation(604, 28, 16)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(600, 28, 12)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(601, 28, 13)})], location: new SourceLocation(602, 28, 14)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(603, 28, 15)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(605, 28, 17)})], location: new SourceLocation(604, 28, 16)}))
+                    }))
                   }))
                 }))
               }))
@@ -732,28 +770,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(628, 30, 1)})], location: new SourceLocation(632, 30, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"e1"}
-                    node.append(new Token(TokenType.Identifier, "e1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(634, 30, 7)})], location: new SourceLocation(635, 30, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"e1"}
+                      node.append(new Token(TokenType.Identifier, "e1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(634, 30, 7)})], location: new SourceLocation(635, 30, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(637, 30, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(639, 30, 12)})], location: new SourceLocation(638, 30, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(637, 30, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(639, 30, 12)})], location: new SourceLocation(638, 30, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(640, 30, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(641, 30, 14)})], location: new SourceLocation(642, 30, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(643, 30, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(645, 30, 18)})], location: new SourceLocation(644, 30, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(640, 30, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(641, 30, 14)})], location: new SourceLocation(642, 30, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(643, 30, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(645, 30, 18)})], location: new SourceLocation(644, 30, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -772,28 +812,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(676, 32, 1)})], location: new SourceLocation(680, 32, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"e2"}
-                    node.append(new Token(TokenType.Identifier, "e2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(682, 32, 7)})], location: new SourceLocation(683, 32, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"e2"}
+                      node.append(new Token(TokenType.Identifier, "e2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(682, 32, 7)})], location: new SourceLocation(683, 32, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(685, 32, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(687, 32, 12)})], location: new SourceLocation(686, 32, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(685, 32, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(687, 32, 12)})], location: new SourceLocation(686, 32, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(688, 32, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(689, 32, 14)})], location: new SourceLocation(690, 32, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(691, 32, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(693, 32, 18)})], location: new SourceLocation(692, 32, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(688, 32, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(689, 32, 14)})], location: new SourceLocation(690, 32, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(691, 32, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(693, 32, 18)})], location: new SourceLocation(692, 32, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -808,28 +850,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(708, 34, 1)})], location: new SourceLocation(712, 34, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"f"}
-                    node.append(new Token(TokenType.Identifier, "f", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(714, 34, 7)})], location: new SourceLocation(715, 34, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"f"}
+                      node.append(new Token(TokenType.Identifier, "f", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(714, 34, 7)})], location: new SourceLocation(715, 34, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(716, 34, 9)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(718, 34, 11)})], location: new SourceLocation(717, 34, 10)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(716, 34, 9)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(718, 34, 11)})], location: new SourceLocation(717, 34, 10)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(719, 34, 12)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(720, 34, 13)})], location: new SourceLocation(721, 34, 14)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(722, 34, 15)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(724, 34, 17)})], location: new SourceLocation(723, 34, 16)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(719, 34, 12)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(720, 34, 13)})], location: new SourceLocation(721, 34, 14)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(722, 34, 15)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(724, 34, 17)})], location: new SourceLocation(723, 34, 16)}))
+                    }))
                   }))
                 }))
               }))
@@ -845,28 +889,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(746, 36, 1)})], location: new SourceLocation(750, 36, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"f1"}
-                    node.append(new Token(TokenType.Identifier, "f1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(752, 36, 7)})], location: new SourceLocation(753, 36, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"f1"}
+                      node.append(new Token(TokenType.Identifier, "f1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(752, 36, 7)})], location: new SourceLocation(753, 36, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(755, 36, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(757, 36, 12)})], location: new SourceLocation(756, 36, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(755, 36, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(757, 36, 12)})], location: new SourceLocation(756, 36, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(758, 36, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(759, 36, 14)})], location: new SourceLocation(760, 36, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(761, 36, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(763, 36, 18)})], location: new SourceLocation(762, 36, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(758, 36, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(759, 36, 14)})], location: new SourceLocation(760, 36, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(761, 36, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(763, 36, 18)})], location: new SourceLocation(762, 36, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -885,28 +931,30 @@ export default new Node("Script").apply(node => {
             }))
             node.append(new Node("JoinOnClause").apply(node => {
               node.append(new Token(TokenType.Reserved, "ON", { keyword: Keyword.ON, preskips: [new Token(TokenType.WhiteSpace, "    ", { location: new SourceLocation(793, 38, 1)})], location: new SourceLocation(797, 38, 5)}))
-              node.append(new Node("EqualOperation").apply(node => {
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"f2"}
-                    node.append(new Token(TokenType.Identifier, "f2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(799, 38, 7)})], location: new SourceLocation(800, 38, 8)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("EqualOperation").apply(node => {
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"f2"}
+                      node.append(new Token(TokenType.Identifier, "f2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(799, 38, 7)})], location: new SourceLocation(800, 38, 8)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(802, 38, 10)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(804, 38, 12)})], location: new SourceLocation(803, 38, 11)}))
+                    }))
                   }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(802, 38, 10)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(804, 38, 12)})], location: new SourceLocation(803, 38, 11)}))
-                  }))
-                }))
-                node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(805, 38, 13)}))
-                node.append(new Node("ColumnReference").apply(node => {
-                  node.append(new Node("ObjectName").apply(node => {
-                    node.data = {"value":"a"}
-                    node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(806, 38, 14)})], location: new SourceLocation(807, 38, 15)}))
-                  }))
-                  node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(808, 38, 16)}))
-                  node.append(new Node("ColumnName").apply(node => {
-                    node.data = {"value":"x"}
-                    node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(810, 38, 18)})], location: new SourceLocation(809, 38, 17)}))
+                  node.append(new Token(TokenType.Operator, "=", { location: new SourceLocation(805, 38, 13)}))
+                  node.append(new Node("ColumnReference").apply(node => {
+                    node.append(new Node("ObjectName").apply(node => {
+                      node.data = {"value":"a"}
+                      node.append(new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(806, 38, 14)})], location: new SourceLocation(807, 38, 15)}))
+                    }))
+                    node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(808, 38, 16)}))
+                    node.append(new Node("ColumnName").apply(node => {
+                      node.data = {"value":"x"}
+                      node.append(new Token(TokenType.Identifier, "x", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(810, 38, 18)})], location: new SourceLocation(809, 38, 17)}))
+                    }))
                   }))
                 }))
               }))
@@ -918,16 +966,20 @@ export default new Node("Script").apply(node => {
     node.append(new Node("LimitClause").apply(node => {
       node.append(new Token(TokenType.Reserved, "LIMIT", { keyword: Keyword.LIMIT, location: new SourceLocation(811, 39, 1)}))
       node.append(new Node("LimitOption").apply(node => {
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"1"}
-          node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(816, 39, 6)})], location: new SourceLocation(817, 39, 7)}))
+        node.append(new Node("Expression").apply(node => {
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"1"}
+            node.append(new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(816, 39, 6)})], location: new SourceLocation(817, 39, 7)}))
+          }))
         }))
       }))
       node.append(new Node("OffsetOption").apply(node => {
         node.append(new Token(TokenType.Identifier, "OFFSET", { keyword: Keyword.OFFSET, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(818, 39, 8)})], location: new SourceLocation(819, 39, 9)}))
-        node.append(new Node("NumericLiteral").apply(node => {
-          node.data = {"value":"2"}
-          node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(825, 39, 15)})], location: new SourceLocation(826, 39, 16)}))
+        node.append(new Node("Expression").apply(node => {
+          node.append(new Node("NumericLiteral").apply(node => {
+            node.data = {"value":"2"}
+            node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(825, 39, 15)})], location: new SourceLocation(826, 39, 16)}))
+          }))
         }))
       }))
     }))

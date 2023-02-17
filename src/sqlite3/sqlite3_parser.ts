@@ -730,7 +730,7 @@ export class Sqlite3Parser extends Parser {
         if (r.peekIf(Keyword.DATABASE)) {
           node.append(r.consume())
         }
-        node.append(new Node("DatabaseExpression")).apply(node => {
+        node.append(new Node("Database")).apply(node => {
           this.expression(node, r)
         })
         node.append(r.consume(Keyword.AS))
@@ -2194,29 +2194,32 @@ export class Sqlite3Parser extends Parser {
   }
 
   private expression(parent: Node, r: TokenReader, precedence = 0) {
-    let current: Node
+    let current: Node = parent
+    if (precedence === 0) {
+      current = parent.append(new Node("Expression"))
+    }
     if (r.peekIf(Keyword.NOT)) {
-      current = parent.append(new Node("NotOperation")).apply(node => {
+      current = current.append(new Node("NotOperation")).apply(node => {
         node.append(r.consume())
         this.expression(node, r, 3)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
-      current = parent.append(new Node("BitwiseNotOperation")).apply(node => {
+      current = current.append(new Node("BitwiseNotOperation")).apply(node => {
         node.append(r.consume())
         this.expression(node, r, 16)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
-      current = parent.append(new Node("UnaryPlusOperation")).apply(node => {
+      current = current.append(new Node("UnaryPlusOperation")).apply(node => {
         node.append(r.consume())
         this.expression(node, r, 16)
       })
     } else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
-      current = parent.append(new Node("UnaryMinusOperation")).apply(node => {
+      current = current.append(new Node("UnaryMinusOperation")).apply(node => {
         node.append(r.consume())
         this.expression(node, r, 16)
       })
     } else {
-      current = this.expressionValue(parent, r)
+      current = this.expressionValue(current, r)
     }
 
     while (!r.peek().eos) {

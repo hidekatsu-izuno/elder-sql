@@ -151,8 +151,10 @@ export default new Node("Script").apply(node => {
         node.append(new Node("ColumnConstraint").apply(node => {
           node.append(new Node("DefaultOption").apply(node => {
             node.append(new Token(TokenType.Reserved, "DEFAULT", { keyword: Keyword.DEFAULT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(298, 6, 46)})], location: new SourceLocation(299, 6, 47)}))
-            node.append(new Node("NullLiteral").apply(node => {
-              node.append(new Token(TokenType.Reserved, "NULL", { keyword: Keyword.NULL, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(306, 6, 54)})], location: new SourceLocation(307, 6, 55)}))
+            node.append(new Node("Expression").apply(node => {
+              node.append(new Node("NullLiteral").apply(node => {
+                node.append(new Token(TokenType.Reserved, "NULL", { keyword: Keyword.NULL, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(306, 6, 54)})], location: new SourceLocation(307, 6, 55)}))
+              }))
             }))
           }))
         }))
@@ -253,9 +255,11 @@ export default new Node("Script").apply(node => {
             node.append(new Token(TokenType.Reserved, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(496, 9, 80)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(499, 9, 83)})], location: new SourceLocation(497, 9, 81)}))
             node.append(new Token(TokenType.LeftParen, "(", { location: new SourceLocation(500, 9, 84)}))
             node.append(new Node("GeneratedColumn").apply(node => {
-              node.append(new Node("NumericLiteral").apply(node => {
-                node.data = {"value":"1"}
-                node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(501, 9, 85)}))
+              node.append(new Node("Expression").apply(node => {
+                node.append(new Node("NumericLiteral").apply(node => {
+                  node.data = {"value":"1"}
+                  node.append(new Token(TokenType.Numeric, "1", { location: new SourceLocation(501, 9, 85)}))
+                }))
               }))
             }))
             node.append(new Token(TokenType.RightParen, ")", { location: new SourceLocation(502, 9, 86)}))

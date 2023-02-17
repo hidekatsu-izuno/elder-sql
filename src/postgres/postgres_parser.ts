@@ -2518,6 +2518,7 @@ export class PostgresParser extends Parser {
       })
     } else if (r.peekIf(TokenType.LeftParen)) {
       return new Node("Expression").apply(node => {
+        node.append(r.consume())
         node.append(this.expression(r))
         if (r.peekIf(TokenType.Comma)) {
           node.name = "ExpressionList"

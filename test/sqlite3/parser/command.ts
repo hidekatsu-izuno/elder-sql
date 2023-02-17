@@ -28,21 +28,23 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, location: new SourceLocation(44, 6, 1)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("AddOperation").apply(node => {
-            node.append(new Node("NumericLiteral").apply(node => {
-              node.data = {"value":"2"}
-              node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(50, 6, 7)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(52, 6, 9)})], location: new SourceLocation(51, 6, 8)}))
-            }))
-            node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(53, 6, 10)}))
-            node.append(new Node("ColumnReference").apply(node => {
-              node.append(new Node("ObjectName").apply(node => {
-                node.data = {"value":"x"}
-                node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(54, 6, 11)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(56, 6, 13)})], location: new SourceLocation(55, 6, 12)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("AddOperation").apply(node => {
+              node.append(new Node("NumericLiteral").apply(node => {
+                node.data = {"value":"2"}
+                node.append(new Token(TokenType.Numeric, "2", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(50, 6, 7)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(52, 6, 9)})], location: new SourceLocation(51, 6, 8)}))
               }))
-              node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(57, 7, 1)}))
-              node.append(new Node("ColumnName").apply(node => {
-                node.data = {"value":"print"}
-                node.append(new Token(TokenType.Identifier, "print", { keyword: Keyword.PRINT, location: new SourceLocation(58, 7, 2)}))
+              node.append(new Token(TokenType.Operator, "+", { location: new SourceLocation(53, 6, 10)}))
+              node.append(new Node("ColumnReference").apply(node => {
+                node.append(new Node("ObjectName").apply(node => {
+                  node.data = {"value":"x"}
+                  node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(54, 6, 11)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(56, 6, 13)})], location: new SourceLocation(55, 6, 12)}))
+                }))
+                node.append(new Token(TokenType.Dot, ".", { location: new SourceLocation(57, 7, 1)}))
+                node.append(new Node("ColumnName").apply(node => {
+                  node.data = {"value":"print"}
+                  node.append(new Token(TokenType.Identifier, "print", { keyword: Keyword.PRINT, location: new SourceLocation(58, 7, 2)}))
+                }))
               }))
             }))
           }))
@@ -60,9 +62,11 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, location: new SourceLocation(71, 9, 1)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("NumericLiteral").apply(node => {
-            node.data = {"value":"3"}
-            node.append(new Token(TokenType.Numeric, "3", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(77, 9, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(79, 9, 9)})], location: new SourceLocation(78, 9, 8)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("NumericLiteral").apply(node => {
+              node.data = {"value":"3"}
+              node.append(new Token(TokenType.Numeric, "3", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(77, 9, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(79, 9, 9)})], location: new SourceLocation(78, 9, 8)}))
+            }))
           }))
         }))
       }))
@@ -74,9 +78,11 @@ export default new Node("Script").apply(node => {
       node.append(new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, preskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(84, 11, 1)})], location: new SourceLocation(85, 12, 1)}))
       node.append(new Node("SelectColumnList").apply(node => {
         node.append(new Node("SelectColumn").apply(node => {
-          node.append(new Node("NumericLiteral").apply(node => {
-            node.data = {"value":"4"}
-            node.append(new Token(TokenType.Numeric, "4", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(91, 12, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(93, 12, 9)})], location: new SourceLocation(92, 12, 8)}))
+          node.append(new Node("Expression").apply(node => {
+            node.append(new Node("NumericLiteral").apply(node => {
+              node.data = {"value":"4"}
+              node.append(new Token(TokenType.Numeric, "4", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(91, 12, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(93, 12, 9)})], location: new SourceLocation(92, 12, 8)}))
+            }))
           }))
         }))
       }))
