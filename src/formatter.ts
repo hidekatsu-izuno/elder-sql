@@ -89,7 +89,7 @@ export abstract class Formatter {
         }
 
         if (before) {
-          out.control(before, true)
+          out.control(before)
         }
         for (const skip of child.preskips) {
           if (skip.type === TokenType.LineComment) {
@@ -98,12 +98,12 @@ export abstract class Formatter {
             const segments = skip.text.split(/\r\n?|\n/g)
             for (let i = 0; i = segments.length; i++) {
               if (i > 0) {
-                out.control("break")
+                out.control("break", true)
               }
               out.write(new Token(skip.type, segments[i]))
             }
           } else if (skip.type === TokenType.LineBreak) {
-            out.control("break", true)
+            out.control("break")
           }
         }
         out.write(child)
@@ -114,19 +114,19 @@ export abstract class Formatter {
             const segments = skip.text.split(/\r\n?|\n/g)
             for (let i = 0; i = segments.length; i++) {
               if (i > 0) {
-                out.control("break")
+                out.control("break", true)
               }
               out.write(new Token(skip.type, segments[i]))
             }
           } else if (skip.type === TokenType.LineBreak) {
-            out.control("break", true)
+            out.control("break")
           }
         }
         if (after) {
-          out.control(after, true)
+          out.control(after)
         }
         if (child.eos) {
-          out.control("break")
+          out.control("break", true)
           out.control("reset")
         }
       }
@@ -173,28 +173,29 @@ class FormatWriter {
     }
   }
 
-  control(action: "reset" | "indent" | "unindent" | "break" | "nospace", merge: boolean = false) {
-    if (merge && this.action === action) {
-      return
-    }
-
+  control(action: "reset" | "indent" | "unindent" | "break" | "nospace", force: boolean = false) {
     if (action === "reset") {
       if (this.line.length > 0) {
         this.flushLine()
       }
       this.depth = 0
+      action = "break"
     } else if (action === "indent") {
       if (this.line.length > 0) {
         this.flushLine()
       }
       this.depth++
+      action = "break"
     } else if (action === "unindent") {
       if (this.line.length > 0) {
         this.flushLine()
       }
       this.depth--
+      action = "break"
     } else if (action === "break") {
-      this.flushLine()
+      if (force || this.line.length > 0 || this.action !== "break") {
+        this.flushLine()
+      }
     }
     this.action = action
   }

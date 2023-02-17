@@ -1346,7 +1346,7 @@ export class Sqlite3Parser extends Parser {
       }
 
       do {
-        node.append(new Node("CommonTable")).apply(node => {
+        node.append(new Node("CommonTableExpression")).apply(node => {
           this.identifier(node, r, "ObjectName")
           if (r.peekIf(TokenType.LeftParen)) {
             this.columnList(node, r)

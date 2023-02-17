@@ -94,14 +94,13 @@ export class Node {
   }
 }
 
-export declare type TokenCondition = Keyword | 
-  TokenType | 
-  (Keyword | TokenType)[] | 
-  {
-    type?: TokenType | TokenType[],
-    text?: string | string[] | RegExp
-  } |
-  ((token: Token) => boolean)
+export declare type TokenQuery = {
+  type?: TokenType | TokenType[],
+  text?: string | string[] | RegExp
+  match?: (token: Token) => boolean
+}
+
+export declare type TokenCondition = Keyword | TokenType | TokenQuery
 
 export class TokenReader {
   pos = 0
@@ -156,10 +155,6 @@ export class TokenReader {
       if (!token.is(...condition)) {
         return false
       }
-    } else if (typeof condition === "function") {
-      if (!condition(token)) {
-        return false
-      }
     } else {
       if (condition.type) {
         if (Array.isArray(condition.type)) {
@@ -187,6 +182,11 @@ export class TokenReader {
           }
         } else {
           throw new RangeError("condition.text is invalid.")          
+        }
+      }
+      if (condition.match) {
+        if (!condition.match(token)) {
+          return false
         }
       }
     }
