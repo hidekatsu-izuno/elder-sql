@@ -144,7 +144,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("SelectStatement").apply(node => {
     node.append(new Node("WithClause").apply(node => {
       node.append(new Token(TokenType.Identifier, "WITH", { keyword: Keyword.WITH, location: new SourceLocation(90, 3, 1)}))
-      node.append(new Node("CommonTable").apply(node => {
+      node.append(new Node("CommonTableExpression").apply(node => {
         node.append(new Node("ObjectName").apply(node => {
           node.data = {"value":"x"}
           node.append(new Token(TokenType.Identifier, "x", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(94, 3, 5)})], location: new SourceLocation(95, 3, 6)}))

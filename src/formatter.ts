@@ -1,6 +1,6 @@
 import { EOL } from "node:os"
 import { Keyword, Token, TokenType } from "./lexer.js"
-import { Node, Parser, TokenCondition } from "./parser.js"
+import { Node, Parser } from "./parser.js"
 
 export declare type FormatPattern = {
   node?: (string | RegExp)[]

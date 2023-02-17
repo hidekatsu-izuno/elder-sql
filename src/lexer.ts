@@ -89,6 +89,12 @@ export class SourceLocation {
   }
 }
 
+export declare type TokenQuery = {
+  type?: TokenType | Keyword | (TokenType | Keyword)[],
+  text?: string | string[] | RegExp
+  match?: (token: Token) => boolean
+}
+
 export class Token {
   keyword?: Keyword
   eos: boolean
@@ -115,13 +121,45 @@ export class Token {
     this.location = options?.location
   }
 
-  is(...types: (TokenType | Keyword)[]) {
-    if (types.length === 0) {
-      throw new RangeError("types must be at least one.")
-    }
-
-    for (let i = 0; i < types.length; i++) {
-      if (types[i] === this.keyword || types[i] === this.type) {
+  is(condition: TokenType | Keyword | TokenQuery) {
+    if ("name" in condition) {
+      if (condition === this.keyword || condition === this.type) {
+        return true
+      }
+    } else {
+      let result = true
+      if (result && condition.type) {
+        if (Array.isArray(condition.type)) {
+          if (!condition.type.some(type => type === this.keyword || type === this.type)) {
+            result = false
+          }
+        } else {
+          if (condition.type !== this.keyword && condition.type !== this.type) {
+            result = false
+          }
+        }
+      }
+      if (result && condition.text) {
+        if (Array.isArray(condition.text)) {
+          if (!condition.text.some(text => text === this.text)) {
+            result = false
+          }
+        } else if (condition.text instanceof RegExp) {
+          if (!condition.text.test(this.text)) {
+            result = false
+          }
+        } else {
+          if (condition.text !== this.text) {
+            result = false
+          }
+        }
+      }
+      if (result && condition.match) {
+        if (!condition.match(this)) {
+          result = false
+        }
+      }
+      if (result) {
         return true
       }
     }

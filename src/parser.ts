@@ -1,4 +1,4 @@
-import { TokenType, Token, Lexer, Keyword } from './lexer.js'
+import { TokenType, Token, Lexer, Keyword, TokenQuery } from './lexer.js'
 
 export class Node {
   private parentNode?: Node
@@ -94,14 +94,6 @@ export class Node {
   }
 }
 
-export declare type TokenQuery = {
-  type?: TokenType | TokenType[],
-  text?: string | string[] | RegExp
-  match?: (token: Token) => boolean
-}
-
-export declare type TokenCondition = Keyword | TokenType | TokenQuery
-
 export class TokenReader {
   pos = 0
   state: Record<string, any> = {}
@@ -115,7 +107,7 @@ export class TokenReader {
     return this.tokens[this.pos + pos]
   }
 
-  peekIf(...conditions: TokenCondition[]) {
+  peekIf(...conditions: (Keyword | TokenType | TokenQuery)[]) {
     if (conditions.length === 0) {
       throw new RangeError("conditions must be at least one.")
     }
@@ -127,70 +119,23 @@ export class TokenReader {
       }
 
       const token = this.peek(i)
-      if (!token || !this.matchToken(condition, token)) {
+      if (!token || !token.is(condition)) {
         return false
       }
     }
     return true
   }
 
-  consume(condition?: TokenCondition) {
+  consume(condition?: Keyword | TokenType | TokenQuery) {
     const token = this.peek()
     if (token == null) {
       throw this.createParseError()
     }
-    if (condition && !this.matchToken(condition, token)) {
+    if (condition && !token.is(condition)) {
       throw this.createParseError()
     }
     this.pos++
     return token
-  }
-
-  private matchToken(condition: TokenCondition, token: Token) {
-    if (condition instanceof TokenType || condition instanceof Keyword) {
-      if (!token.is(condition)) {
-        return false
-      }
-    } else if (Array.isArray(condition)) {
-      if (!token.is(...condition)) {
-        return false
-      }
-    } else {
-      if (condition.type) {
-        if (Array.isArray(condition.type)) {
-          if (!token.is(...condition.type)) {
-            return false
-          }
-        } else {
-          if (!token.is(condition.type)) {
-            return false
-          }
-        }
-      }
-      if (condition.text) {
-        if (typeof condition.text === "string") {
-          if (condition.text !== token.text) {
-            return false
-          }
-        } else if (Array.isArray(condition.text)) {
-          if (!condition.text.some(value => value === token.text)) {
-            return false
-          }
-        } else if (condition.text instanceof RegExp) {
-          if (!condition.text.test(token.text)) {
-            return false
-          }
-        } else {
-          throw new RangeError("condition.text is invalid.")          
-        }
-      }
-      if (condition.match) {
-        if (!condition.match(token)) {
-          return false
-        }
-      }
-    }
-    return true
   }
 
   createParseError(options: { message?: string } = {}) {

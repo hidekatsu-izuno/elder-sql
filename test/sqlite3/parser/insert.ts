@@ -444,7 +444,7 @@ export default new Node("Script").apply(node => {
   node.append(new Node("InsertStatement").apply(node => {
     node.append(new Node("WithClause").apply(node => {
       node.append(new Token(TokenType.Identifier, "WITH", { keyword: Keyword.WITH, location: new SourceLocation(539, 11, 1)}))
-      node.append(new Node("CommonTable").apply(node => {
+      node.append(new Node("CommonTableExpression").apply(node => {
         node.append(new Node("ObjectName").apply(node => {
           node.data = {"value":"X"}
           node.append(new Token(TokenType.Identifier, "X", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(543, 11, 5)})], location: new SourceLocation(544, 11, 6)}))
@@ -527,7 +527,7 @@ export default new Node("Script").apply(node => {
       node.append(new Node("SelectStatement").apply(node => {
         node.append(new Node("WithClause").apply(node => {
           node.append(new Token(TokenType.Identifier, "WITH", { keyword: Keyword.WITH, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(629, 13, 24)})], location: new SourceLocation(630, 13, 25)}))
-          node.append(new Node("CommonTable").apply(node => {
+          node.append(new Node("CommonTableExpression").apply(node => {
             node.append(new Node("ObjectName").apply(node => {
               node.data = {"value":"X"}
               node.append(new Token(TokenType.Identifier, "X", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(634, 13, 29)})], location: new SourceLocation(635, 13, 30)}))

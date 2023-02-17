@@ -19,7 +19,7 @@ export class MysqlParser extends Parser {
   constructor(
     options: Record<string, any> = {},
   ) {
-    super(options, options.lexer ?? new MysqlLexer(options))
+    super(options.lexer ?? new MysqlLexer(options), options)
     this.setSqlMode(options.sqlMode)
   }
 
@@ -30,7 +30,7 @@ export class MysqlParser extends Parser {
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.EoF)) {
+        if (r.peekIf(TokenType.SectionBreak)) {
           root.append(r.consume())
           break
         } else if (r.peekIf(TokenType.Delimiter)) {
@@ -95,7 +95,7 @@ export class MysqlParser extends Parser {
           })
         }
       })
-      if (r.peekIf(TokenType.EoF)) {
+      if (r.peekIf(TokenType.SectionBreak)) {
         node.append(r.consume())
       }
     })
@@ -109,7 +109,7 @@ export class MysqlParser extends Parser {
       if (r.peekIf(TokenType.Delimiter)) {
         stmt.append(r.consume())
       }
-      if (r.peekIf(TokenType.EoF)) {
+      if (r.peekIf(TokenType.SectionBreak)) {
         stmt.append(r.consume())
       }
     } catch (err) {
@@ -122,7 +122,7 @@ export class MysqlParser extends Parser {
         if (r.peekIf(TokenType.Delimiter)) {
           stmt.append(r.consume())
         }
-        if (r.peekIf(TokenType.EoF)) {
+        if (r.peekIf(TokenType.SectionBreak)) {
           stmt.append(r.consume())
         }
         err.node = stmt

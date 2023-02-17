@@ -215,63 +215,63 @@ export class PostgresParser extends Parser {
             if (r.peekIf(Keyword.ANALYZE)) {
               node.append(new Node("AnalyzeOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.VERBOSE)) {
               node.append(new Node("VerboseOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.COSTS)) {
               node.append(new Node("CostsOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.SETTINGS)) {
               node.append(new Node("SettingsOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.BUFFERS)) {
               node.append(new Node("BuffersOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.WAL)) {
               node.append(new Node("WalOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.TIMING)) {
               node.append(new Node("TimingOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.SUMMARY)) {
               node.append(new Node("SummaryOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+                if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
                   node.append(this.booleanLiteral(r))
                 }
               })
             } else if (r.peekIf(Keyword.FORMAT)) {
               node.append(new Node("FormatOption")).apply(node => {
                 node.append(r.consume())
-                if (r.peekIf([Keyword.TEXT, Keyword.XML, Keyword.JSON, Keyword.YAML])) {
+                if (r.peekIf({ type: [Keyword.TEXT, Keyword.XML, Keyword.JSON, Keyword.YAML] })) {
                   node.append(this.identifier(r, "FormatType"))
                 } else {
                   throw r.createParseError()
@@ -1125,7 +1125,7 @@ export class PostgresParser extends Parser {
 
   private typeName(r: TokenReader) {
     const node = this.identifier(r, "TypeName")
-    while (r.peekIf([TokenType.Identifier, TokenType.String])) {
+    while (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
       const ident = this.identifier(r, "")
       for (const child of ident.children) {
         node.append(child)
@@ -1480,9 +1480,7 @@ export class PostgresParser extends Parser {
               node.append(r.consume(TokenType.RightParen))
             })
           }
-          while (r.peekIf(
-            [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL]
-          )) {
+          while (r.peekIf({ type: [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL] })) {
             hasJoinClause = true
             node.append(this.joinClause(r))
           }
@@ -2027,7 +2025,7 @@ export class PostgresParser extends Parser {
           if (r.peekIf(Keyword.NORMALIZED)) {
             node.append(r.consume())
             node.name += "NormalizedOperation"
-          } else if (r.peekIf([Keyword.NFC, Keyword.NFD, Keyword.NFKC, Keyword.NFKD], Keyword.NORMALIZED)) {
+          } else if (r.peekIf({ type: [Keyword.NFC, Keyword.NFD, Keyword.NFKC, Keyword.NFKD] }, Keyword.NORMALIZED)) {
             if (r.peekIf(Keyword.NFC)) {
               node.append(new Node("NfcOption").apply(node => {
                 node.append(r.consume())
@@ -2129,7 +2127,7 @@ export class PostgresParser extends Parser {
             node.name = "Not" + node.name
           }
           node.append(r.consume())
-          if (r.peekIf(TokenType.LeftParen, [Keyword.WITH, Keyword.VALUES, Keyword.SELECT])) {
+          if (r.peekIf(TokenType.LeftParen, { type: [Keyword.WITH, Keyword.VALUES, Keyword.SELECT] })) {
             node.append(new Node("Subquery")).apply(node => {
               node.append(r.consume())
               const prefix = []
@@ -2165,7 +2163,7 @@ export class PostgresParser extends Parser {
                 })
               })
             })
-          } else if (r.peekIf([TokenType.Identifier, TokenType.String])) {
+          } else if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
             node.append(this.columnReference(r))
           } else {
             throw r.createParseError()
@@ -2392,9 +2390,9 @@ export class PostgresParser extends Parser {
       return new Node("NullLiteral").apply(node => {
         node.append(r.consume())
       })
-    } else if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+    } else if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
       return this.booleanLiteral(r)
-    } else if (r.peekIf([Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP])) {
+    } else if (r.peekIf({ type: [Keyword.CURRENT_DATE, Keyword.CURRENT_TIME, Keyword.CURRENT_TIMESTAMP] })) {
       return  new Node("Function").apply(node => {
         node.append(new Node("ObjectName")).apply(node => {
           const token = r.consume()
@@ -2669,7 +2667,7 @@ export class PostgresParser extends Parser {
 
   private booleanLiteral(r: TokenReader) {
     return new Node("BooleanLiteral").apply(node => {
-      if (r.peekIf([Keyword.TRUE, Keyword.FALSE])) {
+      if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
         const token = r.consume()
         node.append(token)
         node.data.value = token.text.toUpperCase()
