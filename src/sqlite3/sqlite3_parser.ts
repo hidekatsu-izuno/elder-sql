@@ -1430,65 +1430,70 @@ export class Sqlite3Parser extends Parser {
   private fromClause(parent: Node, r: TokenReader) {
     return parent.append(new Node("FromClause")).apply(node => {
       node.append(r.consume(Keyword.FROM))
-      let hasJoinClause = false
-      do {
-        node.append(new Node("ObjectReference")).apply(node => {
-          if (r.peekIf(TokenType.LeftParen)) {
-            node.append(r.consume())
-            node.name = "SubqueryExpression"
-            if (r.peekIf({ type: [Keyword.WITH, Keyword.SELECT] })) {
-              if (r.peekIf(Keyword.WITH)) {
-                this.withClause(node, r)
+      node.append(new Node("FromObjectList")).apply(node => {
+        let hasJoinClause = false
+        do {
+          node.append(new Node("FromObject")).apply(node => {
+            if (r.peekIf(TokenType.LeftParen)) {
+              node.append(r.consume())
+              node.name = "SubqueryExpression"
+              if (r.peekIf({ type: [Keyword.WITH, Keyword.SELECT] })) {
+                if (r.peekIf(Keyword.WITH)) {
+                  this.withClause(node, r)
+                }
+                this.selectStatement(node, r)
+              } else {
+                this.fromClause(node, r)
               }
-              this.selectStatement(node, r)
               node.append(r.consume(TokenType.RightParen))
             } else {
-              this.fromClause(node, r)
-              node.append(r.consume(TokenType.RightParen))
-            }
-          } else {
-            const ident = this.identifier(node, r, "ObjectName")
-            if (r.peekIf(TokenType.Dot)) {
-              ident.name = "SchemaName"
-              node.append(r.consume())
-              this.identifier(node, r, "ObjectName")
-            }
-            if (r.peekIf(TokenType.LeftParen)) {
-              node.name = "FunctionExpression"
-              node.append(r.consume())
-              node.append(new Node("ArgumentList")).apply(node => {
-                while (!r.peekIf(TokenType.RightParen)) {
-                  node.append(new Node("Argument")).apply(node => {
-                    this.expression(node, r)
+              node.append(new Node("ObjectReference")).apply(node => {
+                const ident = this.identifier(node, r, "ObjectName")
+                if (r.peekIf(TokenType.Dot)) {
+                  ident.name = "SchemaName"
+                  node.append(r.consume())
+                  this.identifier(node, r, "ObjectName")
+                }
+                if (r.peekIf(TokenType.LeftParen)) {
+                  node.name = "FunctionExpression"
+                  node.append(r.consume())
+                  node.append(new Node("ArgumentList")).apply(node => {
+                    while (!r.peekIf(TokenType.RightParen)) {
+                      node.append(new Node("Argument")).apply(node => {
+                        this.expression(node, r)
+                      })
+                      if (r.peekIf(TokenType.Comma)) {
+                        node.append(r.consume())
+                      } else {
+                        break
+                      }
+                    }
                   })
-                  if (r.peekIf(TokenType.Comma)) {
-                    node.append(r.consume())
-                  } else {
-                    break
-                  }
+                  node.append(r.consume(TokenType.RightParen))
                 }
               })
-              node.append(r.consume(TokenType.RightParen))
             }
-          }
-          if (r.peekIf(Keyword.AS)) {
-            node.append(r.consume())
-            this.identifier(node, r, "ObjectAlias")
-          } else if (r.peekIf(TokenType.Identifier)) {
-            this.identifier(node, r, "ObjectAlias")
-          }
-          while (r.peekIf({ type: [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL] })) {
-            hasJoinClause = true
-            this.joinClause(node, r)
-          }
-        })
 
-        if (!hasJoinClause && r.peekIf(TokenType.Comma)) {
-          node.append(r.consume())
-        } else {
-          break
-        }
-      } while (!r.peek().eos)
+            if (r.peekIf(Keyword.AS)) {
+              node.append(r.consume())
+              this.identifier(node, r, "ObjectAlias")
+            } else if (r.peekIf(TokenType.Identifier)) {
+              this.identifier(node, r, "ObjectAlias")
+            }
+
+            while (r.peekIf({ type: [Keyword.NATURAL, Keyword.JOIN, Keyword.CROSS, Keyword.INNER, Keyword.LEFT, Keyword.RIGHT, Keyword.FULL] })) {
+              hasJoinClause = true
+              this.joinClause(node, r)
+            }
+          })
+
+          if (!hasJoinClause && r.peekIf(TokenType.Comma)) {
+            node.append(r.consume())
+          } else {
+            break
+          }
+        } while (!r.peek().eos)
+      })
     })
   }
 
@@ -1567,14 +1572,7 @@ export class Sqlite3Parser extends Parser {
     return parent.append(new Node("GroupByClause")).apply(node => {
       node.append(r.consume(Keyword.GROUP))
       node.append(r.consume(Keyword.BY))
-      do {
-        this.expression(node, r)
-        if (r.peekIf(TokenType.Comma)) {
-          node.append(r.consume())
-        } else {
-          break
-        }
-      } while (!r.peek().eos)
+      this.expressionList(node, r)
     })
   }
 
