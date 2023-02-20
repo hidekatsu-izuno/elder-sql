@@ -244,8 +244,8 @@ export class Sqlite3Parser extends Parser {
             node.append(r.consume(Keyword.USING))
             this.identifier(node, r, "ModuleName")
             if (r.peekIf(TokenType.LeftParen)) {
+              node.append(r.consume())
               node.append(new Node("ModuleArgumentList")).apply(node => {
-                node.append(r.consume())
                 do {
                   node.append(new Node("ModuleArgument")).apply(node => {
                     do {
@@ -260,13 +260,13 @@ export class Sqlite3Parser extends Parser {
                     break
                   }
                 } while (!r.peek().eos)
-                node.append(r.consume(TokenType.RightParen))
               })
+              node.append(r.consume(TokenType.RightParen))
             }
           })
         } else if (r.peekIf(TokenType.LeftParen)) {
+          node.append(r.consume())
           node.append(new Node("TableColumnList")).apply(node => {
-            node.append(r.consume())
             let hasTableConstraint = false
             do {
               if (!hasTableConstraint) {
@@ -286,8 +286,8 @@ export class Sqlite3Parser extends Parser {
                 break
               }
             } while (!r.peek().eos)
-            node.append(r.consume(TokenType.RightParen))
           })
+          node.append(r.consume(TokenType.RightParen))
 
           if (r.peekIf(Keyword.WITHOUT)) {
             node.append(new Node("WithoutRowidOption")).apply(node => {
@@ -338,7 +338,9 @@ export class Sqlite3Parser extends Parser {
         }
 
         if (r.peekIf(TokenType.LeftParen)) {
+          node.append(r.consume())
           this.columnList(node, r)
+          node.append(r.consume(TokenType.RightParen))
         }
 
         node.append(r.consume(Keyword.AS))
@@ -520,18 +522,18 @@ export class Sqlite3Parser extends Parser {
         node.append(new Node("IndexOnClause")).apply(node => {
           node.append(r.consume(Keyword.ON))
           this.identifier(node, r, "ObjectName")
-          node.append(new Node("SortingColumnList")).apply(node => {
-            node.append(r.consume(TokenType.LeftParen))
+          node.append(r.consume(TokenType.LeftParen))
+          node.append(new Node("SortColumnList")).apply(node => {
             do {
-              this.sortingColumn(node, r)
+              this.sortColumn(node, r)
               if (r.peekIf(TokenType.Comma)) {
                 node.append(r.consume())
               } else {
                 break
               }
             } while (!r.peek().eos)
-            node.append(r.consume(TokenType.RightParen))
           })  
+          node.append(r.consume(TokenType.RightParen))
         })
 
         if (r.peekIf(Keyword.WHERE)) {
@@ -848,11 +850,9 @@ export class Sqlite3Parser extends Parser {
           node.append(r.consume())
           this.pragmaValue(node, r, "PragmaValue")
         } else if (r.peekIf(TokenType.LeftParen)) {
-          node.append(new Node("ArgumentList")).apply(node => {
-            node.append(r.consume())
-            this.pragmaValue(node, r, "Argument")
-            node.append(r.consume(TokenType.RightParen))
-          })
+          node.append(r.consume())
+          this.pragmaValue(node, r, "PragmaValue")
+          node.append(r.consume(TokenType.RightParen))
         }
       })
     } catch (err) {
@@ -1021,7 +1021,9 @@ export class Sqlite3Parser extends Parser {
       }
 
       if (r.peekIf(TokenType.LeftParen)) {
+        node.append(r.consume())
         this.columnList(node, r)
+        node.append(r.consume(TokenType.RightParen))
       }
 
       if (r.peekIf(Keyword.DEFAULT)) {
@@ -1032,13 +1034,16 @@ export class Sqlite3Parser extends Parser {
       } else {
         if (r.peekIf(Keyword.VALUES)) {
           node.append(new Node("ValuesClause")).apply(node => {
-            node.append(r.consume(Keyword.VALUES))
+            node.append(r.consume(TokenType.LeftParen))
             const current = this.expressionList(node, r)
+            node.append(r.consume(TokenType.RightParen))
             if (r.peekIf(TokenType.Comma)) {
               current.wrap(new Node("ExpressionGroupList")).apply(node => {
                 node.append(r.consume())
                 do {
-                  node.append(this.expressionList(node, r))
+                  node.append(r.consume(TokenType.LeftParen))
+                  this.expressionList(node, r)
+                  node.append(r.consume(TokenType.RightParen))
                   if (r.peekIf(TokenType.Comma)) {
                     node.append(r.consume())
                   } else {
@@ -1075,23 +1080,22 @@ export class Sqlite3Parser extends Parser {
       node.append(r.consume(Keyword.ON))
       node.append(r.consume(Keyword.CONFLICT))
       if (r.peekIf(TokenType.LeftParen)) {
-        node.append(new Node("SortingColumnList")).apply(node => {
-          node.append(r.consume())
+        node.append(r.consume())
+        node.append(new Node("SortColumnList")).apply(node => {
           do {
-            this.sortingColumn(node, r)
+            this.sortColumn(node, r)
             if (r.peekIf(TokenType.Comma)) {
               node.append(r.consume())
             } else {
               break
             }
           } while (!r.peek().eos)
-          node.append(r.consume(TokenType.RightParen))
-
-          if (r.peekIf(Keyword.WHERE)) {
-            this.whereClause(node, r)
-          }
         })
-      }
+        node.append(r.consume(TokenType.RightParen))
+        if (r.peekIf(Keyword.WHERE)) {
+          this.whereClause(node, r)
+        }
+    }
       node.append(r.consume(Keyword.DO))
       if (r.peekIf(Keyword.NOTHING)) {
         node.append(new Node("DoNothingOption")).apply(node => {
@@ -1182,25 +1186,29 @@ export class Sqlite3Parser extends Parser {
   private setClause(parent: Node, r: TokenReader) {
     return parent.append(new Node("SetClause")).apply(node => {
       node.append(r.consume(Keyword.SET))
-      do {
-        node.append(new Node("ColumnAssignment")).apply(node => {
-          if (r.peekIf(TokenType.LeftParen)) {
-            this.columnList(node, r)
-          } else {
-            this.identifier(node, r, "ColumnName")
-          }
-          node.append(r.consume({ type: TokenType.Operator, text: "=" }))
-          node.append(new Node("ColumnValue")).apply(node => {
-            this.expression(node, r)
+      node.append(new Node("UpdateColumnList")).apply(node => {
+        do {
+          node.append(new Node("UpdateColumn")).apply(node => {
+            if (r.peekIf(TokenType.LeftParen)) {
+              node.append(r.consume())
+              this.columnList(node, r)
+              node.append(r.consume(TokenType.RightParen))
+            } else {
+              this.identifier(node, r, "ColumnName")
+            }
+            node.append(r.consume({ type: TokenType.Operator, text: "=" }))
+            node.append(new Node("ColumnValue")).apply(node => {
+              this.expression(node, r)
+            })
           })
-        })
-
-        if (r.peekIf(TokenType.Comma)) {
-          node.append(r.consume())
-        } else {
-          break
-        }
-      } while (!r.peek().eos)
+  
+          if (r.peekIf(TokenType.Comma)) {
+            node.append(r.consume())
+          } else {
+            break
+          }
+        } while (!r.peek().eos)  
+      })
     })
   }
 
@@ -1302,7 +1310,9 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(Keyword.VALUES)) {
         node.append(new Node("ValuesClause")).apply(node => {
           node.append(r.consume(Keyword.VALUES))
+          node.append(r.consume(TokenType.LeftParen))
           this.expressionList(node, r)
+          node.append(r.consume(TokenType.RightParen))
         })
       } else {
         node.append(r.consume(Keyword.SELECT))
@@ -1315,7 +1325,7 @@ export class Sqlite3Parser extends Parser {
             node.append(r.consume())
           })
         }
-        this.selectColumns(node, r)
+        this.selectColumnList(node, r)
 
         if (r.peekIf(Keyword.FROM)) {
           this.fromClause(node, r)
@@ -1350,7 +1360,9 @@ export class Sqlite3Parser extends Parser {
         node.append(new Node("CommonTableExpression")).apply(node => {
           this.identifier(node, r, "ObjectName")
           if (r.peekIf(TokenType.LeftParen)) {
+            node.append(r.consume())
             this.columnList(node, r)
+            node.append(r.consume(TokenType.RightParen))
           }
           node.append(r.consume(Keyword.AS))
 
@@ -1378,7 +1390,7 @@ export class Sqlite3Parser extends Parser {
     })
   }
 
-  private selectColumns(parent: Node, r: TokenReader) {
+  private selectColumnList(parent: Node, r: TokenReader) {
     return parent.append(new Node("SelectColumnList")).apply(node => {
       do {
         node.append(new Node("SelectColumn")).apply(node => {
@@ -1743,7 +1755,7 @@ export class Sqlite3Parser extends Parser {
   private returningClause(parent: Node, r: TokenReader) {
     return parent.append(new Node("ReturningClause")).apply(node => {
       node.append(r.consume(Keyword.RETURNING))
-      this.selectColumns(node, r)
+      this.selectColumnList(node, r)
     })
   }
 
@@ -1751,9 +1763,9 @@ export class Sqlite3Parser extends Parser {
     return parent.append(new Node("OrderByClause")).apply(node => {
       node.append(r.consume(Keyword.ORDER))
       node.append(r.consume(Keyword.BY))
-      node.append(new Node("SortingColumnList")).apply(node => {
+      node.append(new Node("SortColumnList")).apply(node => {
         do {
-          this.sortingColumn(node, r).apply(node => {
+          this.sortColumn(node, r).apply(node => {
             if (r.peekIf(Keyword.NULLS, Keyword.FIRST)) {
               node.append(new Node("NullsFirstOption")).apply(node => {
                 node.append(r.consume())
@@ -1814,8 +1826,8 @@ export class Sqlite3Parser extends Parser {
             }
           })
           if (r.peekIf(TokenType.LeftParen)) {
-            node.append(new Node("TypeOptionList")).apply(node => {
-              node.append(r.consume())
+            node.append(r.consume())
+            node.append(new Node("OptionList")).apply(node => {
               node.append(new Node("LengthOption")).apply(node => {
                 this.numericLiteral(node, r)
               })
@@ -1825,8 +1837,8 @@ export class Sqlite3Parser extends Parser {
                   this.numericLiteral(node, r)
                 })
               }
-              node.append(r.consume(TokenType.RightParen))
             })
+            node.append(r.consume(TokenType.RightParen))
           }
         })
       }
@@ -1983,18 +1995,18 @@ export class Sqlite3Parser extends Parser {
         node.append(new Node("PrimaryKeyConstraint")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.KEY))
-          node.append(new Node("SortingColumnList")).apply(node => {
-            node.append(r.consume(TokenType.LeftParen))
+          node.append(r.consume(TokenType.LeftParen))
+          node.append(new Node("SortColumnList")).apply(node => {
             do {
-              this.sortingColumn(node, r)
+              this.sortColumn(node, r)
               if (r.peekIf(TokenType.Comma)) {
                 node.append(r.consume())
               } else {
                 break
               }
             } while (!r.peek().eos)
-            node.append(r.consume(TokenType.RightParen))
           })
+          node.append(r.consume(TokenType.RightParen))
           if (r.peekIf(Keyword.ON)) {
             node.append(new Node("OnConflictClause")).apply(node => {
               node.append(r.consume())
@@ -2006,18 +2018,18 @@ export class Sqlite3Parser extends Parser {
       } else if (r.peekIf(Keyword.UNIQUE)) {
         node.append(new Node("UniqueConstraint")).apply(node => {
           node.append(r.consume())
-          node.append(new Node("SortingColumnList")).apply(node => {
-            node.append(r.consume(TokenType.LeftParen))
+          node.append(r.consume(TokenType.LeftParen))
+          node.append(new Node("SortColumnList")).apply(node => {
             do {
-              this.sortingColumn(node, r)
+              this.sortColumn(node, r)
               if (r.peekIf(TokenType.Comma)) {
                 node.append(r.consume())
               } else {
                 break
               }
             } while (!r.peek().eos)
-            node.append(r.consume(TokenType.RightParen))
           })
+          node.append(r.consume(TokenType.RightParen))
           if (r.peekIf(Keyword.ON)) {
             node.append(new Node("OnConflictClause")).apply(node => {
               node.append(r.consume())
@@ -2037,7 +2049,9 @@ export class Sqlite3Parser extends Parser {
         node.append(new Node("ForeignKeyConstraint")).apply(node => {
           node.append(r.consume())
           node.append(r.consume(Keyword.KEY))
+          node.append(r.consume(TokenType.LeftParen))
           this.columnList(node, r)
+          node.append(r.consume(TokenType.RightParen))
           this.referencesClause(node, r)
         })
       } else {
@@ -2051,7 +2065,9 @@ export class Sqlite3Parser extends Parser {
       node.append(r.consume())
       this.identifier(node, r, "ObjectName")
       if (r.peekIf(TokenType.LeftParen)) {
+        node.append(r.consume())
         this.columnList(node, r)
+        node.append(r.consume(TokenType.RightParen))
       }
 
       while (!r.peek().eos && r.peekIf({ type: [Keyword.ON, Keyword.MATCH] })) {
@@ -2180,16 +2196,14 @@ export class Sqlite3Parser extends Parser {
 
   private expressionList(parent: Node, r: TokenReader) {
     return parent.append(new Node("ExpressionList")).apply(node => {
-      node.append(r.consume(TokenType.LeftParen))
-      while (!r.peek().eos) {
+      do {
         this.expression(node, r)
         if (r.peekIf(TokenType.Comma)) {
           node.append(r.consume())
         } else {
           break
         }
-      }
-      node.append(r.consume(TokenType.RightParen))
+      } while (!r.peek().eos)
     })
   }
 
@@ -2287,14 +2301,16 @@ export class Sqlite3Parser extends Parser {
               node.append(r.consume(TokenType.RightParen))
             })
           } else if (r.peekIf(TokenType.LeftParen)) {
+            node.append(r.consume())
             this.expressionList(node, r)
+            node.append(r.consume(TokenType.RightParen))
           } else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
             node.append(new Node("FunctionExpression")).apply(node => {
               node.append(new Node("ObjectName")).apply(node => {
                 node.append(r.consume())
               })
+              node.append(r.consume(TokenType.LeftParen))
               node.append(new Node("ArgumentList")).apply(node => {
-                node.append(r.consume(TokenType.LeftParen))
                 while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
                   node.append(new Node("Argument")).apply(node => {
                     this.expression(node, r)
@@ -2305,8 +2321,8 @@ export class Sqlite3Parser extends Parser {
                     break
                   }
                 }
-                node.append(r.consume(TokenType.RightParen))
               })
+              node.append(r.consume(TokenType.RightParen))
             })
           } else if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
             this.columnReference(node, r)
@@ -2510,8 +2526,8 @@ export class Sqlite3Parser extends Parser {
           node.data.value = token.text.toUpperCase()
           node.append(token)
         })
+        node.append(r.consume(TokenType.LeftParen))
         node.append(new Node("ArgumentList")).apply(node => {
-          node.append(r.consume(TokenType.LeftParen))
           node.append(new Node("Argument")).apply(node => {
             this.expression(node, r)
           })
@@ -2540,8 +2556,8 @@ export class Sqlite3Parser extends Parser {
               node.append(r.consume(TokenType.RightParen))
             })
           }
-          node.append(r.consume(TokenType.RightParen))
         })
+        node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(Keyword.RAISE)) {
       return parent.append(new Node("FunctionExpression")).apply(node => {
@@ -2550,8 +2566,8 @@ export class Sqlite3Parser extends Parser {
           node.data.value = token.text.toUpperCase()
           node.append(token)
         })
+        node.append(r.consume(TokenType.LeftParen))
         node.append(new Node("ArgumentList")).apply(node => {
-          node.append(r.consume(TokenType.LeftParen))
           node.append(new Node("Argument")).apply(node => {
             this.conflictAction(node, r)
           })
@@ -2559,8 +2575,8 @@ export class Sqlite3Parser extends Parser {
           node.append(new Node("Argument")).apply(node => {
             this.expression(node, r)
           })
-          node.append(r.consume(TokenType.RightParen))
         })
+        node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(Keyword.EXISTS)) {
       return parent.append(new Node("ExistsOperation")).apply(node => {
@@ -2574,7 +2590,9 @@ export class Sqlite3Parser extends Parser {
         node.append(r.consume())
         node.append(new Node("ValuesClause")).apply(node => {
           node.append(r.consume(Keyword.VALUES))
+          node.append(r.consume(TokenType.LeftParen))
           this.expressionList(node, r)
+          node.append(r.consume(TokenType.RightParen))
         })
         node.append(r.consume(TokenType.RightParen))
       })
@@ -2585,7 +2603,7 @@ export class Sqlite3Parser extends Parser {
         node.append(r.consume(TokenType.RightParen))
       })
     } else if (r.peekIf(TokenType.LeftParen)) {
-      return parent.append(new Node("Expression")).apply(node => {
+      return parent.append(new Node("ParenthesesOperation")).apply(node => {
         node.append(r.consume())
         this.expression(node, r)
         if (r.peekIf(TokenType.Comma)) {
@@ -2608,8 +2626,8 @@ export class Sqlite3Parser extends Parser {
           node.append(r.consume())
         })
 
+        node.append(r.consume(TokenType.LeftParen))
         node.append(new Node("ArgumentList")).apply(node => {
-          node.append(r.consume(TokenType.LeftParen))
           if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
             node.append(new Node("Argument")).apply(node => {
               node.append(new Node("AllColumnsOption")).apply(node => {
@@ -2633,8 +2651,8 @@ export class Sqlite3Parser extends Parser {
               }
             }
           }
-          node.append(r.consume(TokenType.RightParen))
         })
+        node.append(r.consume(TokenType.RightParen))
         if (r.peekIf(Keyword.FILTER)) {
           node.append(new Node("FilterClause")).apply(node => {
             node.append(r.consume())
@@ -2691,8 +2709,8 @@ export class Sqlite3Parser extends Parser {
     }
   }
 
-  private sortingColumn(parent: Node, r: TokenReader) {
-    return parent.append(new Node("SortingColumn")).apply(node => {
+  private sortColumn(parent: Node, r: TokenReader) {
+    return parent.append(new Node("SortColumn")).apply(node => {
       this.expression(node, r)
       if (r.peekIf(Keyword.COLLATE)) {
         node.append(r.consume())
@@ -2712,7 +2730,6 @@ export class Sqlite3Parser extends Parser {
 
   private columnList(parent: Node, r: TokenReader) {
     return parent.append(new Node("ColumnList")).apply(node => {
-      node.append(r.consume())
       do {
         this.identifier(node, r, "ColumnName")
         if (r.peekIf(TokenType.Comma)) {
@@ -2721,7 +2738,6 @@ export class Sqlite3Parser extends Parser {
           break
         }
       } while (!r.peek().eos)
-      node.append(r.consume(TokenType.RightParen))
     })
   }
 
