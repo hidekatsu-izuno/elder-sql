@@ -124,7 +124,9 @@
   },
   "dependencies": {
     "acorn": "^8.8.2",
+    "css-select": "^5.1.0",
     "decimal.js": "^10.4.3",
+    "domhandler": "^5.0.3",
     "semver": "^7.3.8",
     "tslib": "^2.5.0"
   },

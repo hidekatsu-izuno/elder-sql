@@ -1,10 +1,6 @@
 import { escapeXml } from "./utils.js"
 
-export interface TokenTag {
-  name: string
-}
-
-export class TokenType implements TokenTag {
+export class TokenType {
   static SectionBreak = new TokenType("SectionBreak", { separator: true })
   static Reserved = new TokenType("Reserved")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
@@ -372,7 +368,7 @@ export abstract class Lexer {
   }
 }
 
-export class Keyword implements TokenTag {
+export class Keyword {
   static ABBREV = new Keyword("ABBREV")
   static ABORT = new Keyword("ABORT")
   static ABS = new Keyword("ABS")
