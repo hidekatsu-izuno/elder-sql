@@ -1,4 +1,5 @@
-CREATE TRIGGER update_customer_address UPDATE OF address ON customers 
+CREATE TRIGGER update_customer_address UPDATE OF address ON customers
+FOR EACH ROW
 BEGIN
   UPDATE orders SET address = new.address WHERE customer_name = old.name;
 END;

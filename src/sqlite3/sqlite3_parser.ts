@@ -382,23 +382,35 @@ export class Sqlite3Parser extends Parser {
           this.identifier(node, r, "ObjectName")
         }
 
+        let hasOption = false
         if (r.peekIf(Keyword.BEFORE)) {
           apply(this.append(node, new Element("BeforeOption", {})), node => {
             this.append(node, r.consume())
           })
+          hasOption = true
         } else if (r.peekIf(Keyword.AFTER)) {
           apply(this.append(node, new Element("AfterOption", {})), node => {
             this.append(node, r.consume())
           })
+          hasOption = true
         } else if (r.peekIf(Keyword.INSTEAD)) {
           apply(this.append(node, new Element("InsteadOfOption", {})), node => {
             this.append(node, r.consume())
             this.append(node, r.consume(Keyword.OF))
           })
+          hasOption = true
         }
 
         if (r.peekIf(Keyword.INSERT)) {
-          apply(this.append(node, new Element("InsertOnClause", {})), node => {
+          let current = new Element("InsertOnClause", {})
+          const last = node.lastChild
+          if (last instanceof Element && hasOption) {
+            this.wrap(last, current)
+          } else {
+            current = this.append(node, current)
+          }
+
+          apply(current, node => {
             this.append(node, r.consume())
             this.append(node, r.consume(Keyword.ON))
 
@@ -410,7 +422,15 @@ export class Sqlite3Parser extends Parser {
             }
           })
         } else if (r.peekIf(Keyword.UPDATE)) {
-          apply(this.append(node, new Element("UpdateOnClause", {})), node => {
+          let current = new Element("UpdateOnClause", {})
+          const last = node.lastChild
+          if (last instanceof Element && hasOption) {
+            this.wrap(last, current)
+          } else {
+            current = this.append(node, current)
+          }
+
+          apply(current, node => {
             this.append(node, r.consume())
             if (r.peekIf(Keyword.OF)) {
               apply(this.append(node, new Element("ColumnList", {})), node => {
@@ -434,7 +454,15 @@ export class Sqlite3Parser extends Parser {
             }
           })
         } else if (r.peekIf(Keyword.DELETE)) {
-          apply(this.append(node, new Element("DeleteOnClause", {})), node => {
+          let current = new Element("DeleteOnClause", {})
+          const last = node.lastChild
+          if (last instanceof Element && hasOption) {
+            this.wrap(last, current)
+          } else {
+            current = this.append(node, current)
+          }
+
+          apply(current, node => {
             this.append(node, r.consume())
             this.append(node, r.consume(Keyword.ON))
             const ident = this.identifier(node, r, "ObjectName")
@@ -563,43 +591,45 @@ export class Sqlite3Parser extends Parser {
           this.identifier(node, r, "ObjectName")
         }
 
-        if (r.peekIf(Keyword.RENAME, Keyword.TO)) {
-          apply(this.append(node, new Element("RenameToObjectClause", {})), node => {
-            this.append(node, r.consume())
-            this.append(node, r.consume())
-            this.identifier(node, r, "ObjectName")
-          })
-        } else if (r.peekIf(Keyword.RENAME)) {
-          apply(this.append(node, new Element("RenameColumnClause", {})), node => {
-            this.append(node, r.consume())
-            if (r.peekIf(Keyword.COLUMN)) {
+        apply(this.append(node, new Element("AlterTableOptionList", {})), node => {
+          if (r.peekIf(Keyword.RENAME, Keyword.TO)) {
+            apply(this.append(node, new Element("RenameToObjectClause", {})), node => {
               this.append(node, r.consume())
-            }
-            this.identifier(node, r, "ColumnName")
-            apply(this.append(node, new Element("RenameToColumnClause", {})), node => {
-              this.append(node, r.consume(Keyword.TO))
+              this.append(node, r.consume())
+              this.identifier(node, r, "ObjectName")
+            })
+          } else if (r.peekIf(Keyword.RENAME)) {
+            apply(this.append(node, new Element("RenameColumnClause", {})), node => {
+              this.append(node, r.consume())
+              if (r.peekIf(Keyword.COLUMN)) {
+                this.append(node, r.consume())
+              }
+              this.identifier(node, r, "ColumnName")
+              apply(this.append(node, new Element("RenameToColumnClause", {})), node => {
+                this.append(node, r.consume(Keyword.TO))
+                this.identifier(node, r, "ColumnName")
+              })
+            })
+          } else if (r.peekIf(Keyword.ADD)) {
+            apply(this.append(node, new Element("AddColumnClause", {})), node => {
+              this.append(node, r.consume())
+              if (r.peekIf(Keyword.COLUMN)) {
+                this.append(node, r.consume())
+              }
+              this.tableColumn(node, r)
+            })
+          } else if (r.peekIf(Keyword.DROP)) {
+            apply(this.append(node, new Element("DropColumnClause", {})), node => {
+              this.append(node, r.consume())
+              if (r.peekIf(Keyword.COLUMN)) {
+                this.append(node, r.consume())
+              }
               this.identifier(node, r, "ColumnName")
             })
-          })
-        } else if (r.peekIf(Keyword.ADD)) {
-          apply(this.append(node, new Element("AddColumnClause", {})), node => {
-            this.append(node, r.consume())
-            if (r.peekIf(Keyword.COLUMN)) {
-              this.append(node, r.consume())
-            }
-            this.tableColumn(node, r)
-          })
-        } else if (r.peekIf(Keyword.DROP)) {
-          apply(this.append(node, new Element("DropColumnClause", {})), node => {
-            this.append(node, r.consume())
-            if (r.peekIf(Keyword.COLUMN)) {
-              this.append(node, r.consume())
-            }
-            this.identifier(node, r, "ColumnName")
-          })
-        } else {
-          throw r.createParseError()
-        }
+          } else {
+            throw r.createParseError()
+          }
+        })
       })
     } catch (err) {
       if (err instanceof ParseError) {

@@ -69,7 +69,7 @@ export abstract class Formatter {
         out.write(textContent(node), true)
       } else if (node.attribs.type === "BlockComment" || node.attribs.type === "HintComment") {
         const segments = textContent(node).split(/\r\n?|\n/g)
-        for (let i = 0; i = segments.length; i++) {
+        for (let i = 0; i < segments.length; i++) {
           if (i > 0) {
             out.control("forcebreak")
           }
