@@ -1,12 +1,15 @@
 import { EOL } from "node:os"
-import { Keyword, Token, TokenType } from "./lexer.js"
-import { Node, Parser } from "./parser.js"
+import { Node, Element } from 'domhandler'
+import { textContent } from 'domutils'
+import { compile } from 'css-select'
+import { Parser } from "./parser.js"
+
+export declare type FormatActionType = "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
 
 export declare type FormatPattern = {
-  node?: (string | RegExp)[]
-  token?: TokenType | Keyword
-  before?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
-  after?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
+  pattern: string
+  before?: FormatActionType | FormatActionType[]
+  after?: FormatActionType | FormatActionType[]
 }
 
 export declare type FormatterOptions = { 
@@ -18,128 +21,83 @@ export declare type FormatterOptions = {
 }
 
 export abstract class Formatter {
+  private patterns = new Array<FormatPattern & {
+    selecter: any
+  }>()
+
   constructor(
     public parser: Parser,
-    public patterns: FormatPattern[],
+    patterns: FormatPattern[],
     public options: FormatterOptions = {},
   ) {
+    for (const pattern of patterns) {
+      this.patterns.push({
+        ...pattern,
+        selecter: compile<Node, Element>(pattern.pattern, { xmlMode: true })
+      })
+    }
   }
 
   format(text: string, filename?: string): string {
     const out = new FormatWriter(this.options)
-    this.formatNode(this.parser.parse(text, filename), out)
+    this.formatElement(this.parser.parse(text, filename), out)
     return out.toString()
   }
 
-  formatNode(node: Node, out: FormatWriter) {
+  formatElement(node: Element, out: FormatWriter) {
     let before
     let after
-    for (const item of this.patterns) {
-      if (item.node && !item.token) {
-        let hit = true
-        let current: Node | undefined = node
-        for (let i = 0; i < item.node.length; i++) {
-          const pattern = item.node[item.node.length - i - 1]
-          if (current && current.is(pattern)) {
-            current = current.parent()
-          } else {
-            hit = false
-            break
-          }
-        }
-        if (hit) {
-          before = item.before
-          after = item.after
-          break
-        }
+    for (const pattern of this.patterns) {
+      if (pattern.selecter(node)) {
+        before = pattern.before
+        after = pattern.after
+        break
       }
     }
 
     if (before) {
-      out.control(before)
-    }
-    for (let i = 0; i < node.children.length; i++) {
-      const child = node.children[i]
-      if (child instanceof Node) {
-        this.formatNode(child, out)
+      if (Array.isArray(before)) {
+        for (const action of before) {
+          out.control(action)
+        }
       } else {
-        let before
-        let after
-        for (const item of this.patterns) {
-          if (item.token && child.is(item.token)) {
-            let hit = true
-            if (item.node) {
-              let current: Node | undefined = node
-              for (let i = 0; i < item.node.length; i++) {
-                const pattern = item.node[item.node.length - i - 1]
-                if (current && current.is(pattern)) {
-                  current = current.parent()
-                } else {
-                  hit = false
-                  break
-                }
-              }  
-            }
-            if (hit) {
-              before = item.before
-              after = item.after
-              break
-            }
+        out.control(before)
+      }
+    }
+    if (node.name === "skip") {
+      if (node.attribs.type === "LineComment") {
+        out.write(textContent(node), true)
+      } else if (node.attribs.type === "BlockComment" || node.attribs.type === "HintComment") {
+        const segments = textContent(node).split(/\r\n?|\n/g)
+        for (let i = 0; i = segments.length; i++) {
+          if (i > 0) {
+            out.control("forcebreak")
           }
+          out.write(segments[i], true)
         }
-
-        if (before) {
-          out.control(before)
-        }
-        for (const skip of child.preskips) {
-          if (skip.type === TokenType.LineComment) {
-            out.write(skip)
-          } else if (skip.type === TokenType.BlockComment || skip.type === TokenType.HintComment) {
-            const segments = skip.text.split(/\r\n?|\n/g)
-            for (let i = 0; i = segments.length; i++) {
-              if (i > 0) {
-                out.control("forcebreak")
-              }
-              out.write(new Token(skip.type, segments[i]))
-            }
-          } else if (skip.type === TokenType.LineBreak) {
-            out.control("break")
-          }
-        }
-        out.write(child)
-        for (const skip of child.postskips) {
-          if (skip.type === TokenType.LineComment) {
-            out.write(skip)
-          } else if (skip.type === TokenType.BlockComment || skip.type === TokenType.HintComment) {
-            const segments = skip.text.split(/\r\n?|\n/g)
-            for (let i = 0; i = segments.length; i++) {
-              if (i > 0) {
-                out.control("forcebreak")
-              }
-              out.write(new Token(skip.type, segments[i]))
-            }
-          } else if (skip.type === TokenType.LineBreak) {
-            out.control("break")
-          }
-        }
-        if (after) {
-          out.control(after)
-        }
-        if (child.eos) {
-          out.control("forcebreak")
-          out.control("reset")
+      } else if (node.attribs.type === "LineBreak") {
+        out.control("break")
+      }
+    } else if (node.name === "token") {
+      out.write(textContent(node), false)
+    } else {
+      for (let i = 0; i < node.childNodes.length; i++) {
+        const child = node.childNodes[i]
+        if (child instanceof Element) {
+          this.formatElement(child, out)
         }
       }
     }
     if (after) {
-      out.control(after)
+      if (Array.isArray(after)) {
+        for (const action of after) {
+          out.control(action)
+        }
+      } else {
+        out.control(after)
+      }
     }
   }
-}
-
-type FormatToken = {
-  token: Token,
-  nospace: boolean,
 }
 
 class FormatWriter {
@@ -150,8 +108,8 @@ class FormatWriter {
 
   private text = ""
   private depth = 0
-  private line: FormatToken[] = []
-  private action?: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
+  private line = new Array<{ text: string, nospace: boolean }>()
+  private action?: FormatActionType
 
   constructor(options: FormatterOptions) {
     this.printWidth = options.printWidth ?? 80
@@ -173,7 +131,7 @@ class FormatWriter {
     }
   }
 
-  control(action: "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace") {
+  control(action: FormatActionType) {
     if (action === "reset") {
       if (this.line.length > 0) {
         this.flushLine()
@@ -203,15 +161,15 @@ class FormatWriter {
     this.action = action
   }
 
-  write(token: Token) {
-    if (token.type.skip) {
+  write(text: string, skip: boolean) {
+    if (skip) {
       this.line.push({
-        token: token,
+        text,
         nospace: false,
       })
     } else {
       this.line.push({
-        token: token,
+        text,
         nospace: this.action === "nospace",
       })
       this.action = undefined  
@@ -232,15 +190,15 @@ class FormatWriter {
     for (let i = 0; i < this.line.length; i++) {
       const item = this.line[i]
       const nospace = i === 0 || item.nospace
-      if (width + item.token.text.length + (nospace ? 0 : 1) < this.printWidth) {
-        width += (nospace ? 0 : 1) + item.token.text.length
-        text += (nospace ? "" : " ") + item.token.text
+      if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
+        width += (nospace ? 0 : 1) + item.text.length
+        text += (nospace ? "" : " ") + item.text
       } else {
         this.text += text + this.eol
         first = false
 
-        width = this.indentWidth * (this.depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.token.text.length
-        text = this.indent.repeat((this.depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.token.text
+        width = this.indentWidth * (this.depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.text.length
+        text = this.indent.repeat((this.depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
       }
     }
     this.text += text + this.eol

@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
+import { Element, Text } from "domhandler"
 import { Token } from "../../src/lexer.js"
-import { Node } from "../../src/parser.js"
 
 export function getRootDir() {
   let current = process.cwd()
@@ -21,10 +21,12 @@ export function writeDebugFile(file: string, data: string | NodeJS.ArrayBufferVi
   fs.writeFileSync(file, data)
 }
 
-export function toJSScript(target: Node | Token | (Node | Token)[]) {
-  let imports = 'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n'
-  if (target instanceof Node) {
-    imports += 'import { Node } from "../../../src/parser"\n'
+export function toJSScript(target: Element | Token | (Element | Token)[]) {
+  let imports = ''
+  if (target instanceof Element) {
+    imports += 'import { Element, Text } from "domhandler"\n'
+  } else {
+    imports += 'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n'
   }
 
   return (
@@ -33,7 +35,7 @@ export function toJSScript(target: Node | Token | (Node | Token)[]) {
   )
 }
 
-export function toJSString(target: Node | Token | (Node | Token)[], options: {
+export function toJSString(target: Element | Token | (Element | Token)[], options: {
   space?: number,
 } = {}) {
   const space = options.space ?? 0
@@ -50,22 +52,26 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
       index++
     }
     text += "\n" + " ".repeat(space * 2) + "]"
-  } else if (target instanceof Node) {
-    text += " ".repeat(space * 2) + "new Node(" + JSON.stringify(target.name)
-    if (Object.keys(target.data).length > 0 || target.children.length > 0) {
-      text += ").apply(node => {\n"
-      if (Object.keys(target.data).length > 0) {
-        text += " ".repeat((space + 1) * 2) + "node.data = " + JSON.stringify(target.data) + "\n"
-      }
+  } else if (target instanceof Element) {
+    text += " ".repeat(space * 2) + "new Element(" + JSON.stringify(target.name) + ", "
+    text += JSON.stringify(target.attribs || {})
+    if (target.children.length === 1 && target.children[0] instanceof Text) {
+      text += ", [new Text(" + JSON.stringify(target.children[0].data) + ")])"
+    } else if (target.children.length > 0) {
+      text += ", [\n"
       for (const child of target.children) {
-        const ctext = toJSString(child, { space: space + 1 }).trimStart()
-        text += " ".repeat((space + 1) * 2) + "node.append(" + ctext + ")\n"
+        if (child instanceof Element) {
+          const ctext = toJSString(child, { space: space + 1 }).trimStart()
+          text += " ".repeat((space + 1) * 2) + ctext + ",\n" 
+        } else if (child instanceof Text) {
+          text += " ".repeat((space + 1) * 2) + "new Text(" + JSON.stringify(child.data) + ")" + ",\n" 
+        }
       }
-      text += " ".repeat(space * 2) + "})"
+      text += " ".repeat(space * 2) + "])"
     } else {
       text += ")"
     }
-  } else if (target instanceof Token) {
+  } else {
     text += " ".repeat(space * 2) + "new Token("
     text += "TokenType." + target.type.name
     text += ", " + JSON.stringify(target.text)
@@ -108,8 +114,6 @@ export function toJSString(target: Node | Token | (Node | Token)[], options: {
       text += "}"
     }
     text += ")"
-  } else {
-    text += space + target
   }
   return text
 }

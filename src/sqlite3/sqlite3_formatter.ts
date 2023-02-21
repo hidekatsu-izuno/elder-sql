@@ -1,5 +1,3 @@
-import { Keyword, Token, TokenType } from "../lexer.js";
-import { Node } from "../parser.js";
 import { Formatter, FormatterOptions } from "../formatter.js";
 import { Sqlite3Parser } from "./sqlite3_parser.js";
 
@@ -8,30 +6,25 @@ export class Sqlite3Formatter extends Formatter {
     options: FormatterOptions = {},
   ) {
     super(options.parser ?? new Sqlite3Parser(options), [
-      { node: [/^Unary(Plus|Minus)Operation$/], token: TokenType.Operator, after: "nospace" },
-      { node: [/^(Argument|Option)List$/], before: "nospace", after: "nospace" },
-      { node: ["ColumnType"], token: TokenType.RightParen, before: "nospace" },
-      { node: ["ParenthesesOperation"], token: TokenType.LeftParen, after: "nospace" },
-      { node: ["ParenthesesOperation"], token: TokenType.RightParen, before: "nospace" },
-      { node: ["AlterTableStatement", "ObjectName"], after: "indent" },
-      { node: ["AlterTableStatement"], after: "unindent" },
-      { node: [/^(FromObject|Expression)List$/], before: "indent", after: "unindent" },
-      { node: [/^(FromObject|Expression)List$/], token: TokenType.Comma, before: "nospace", after: "break" },
-      { node: [/^(Table|Select|Update|Sort)?ColumnList$/], before: "indent", after: "unindent" },
-      { node: [/^(Table|Select|Update|Sort)?ColumnList$/], token: TokenType.Comma, before: "nospace", after: "break" },
-      { node: [/^(CommonTable|Subquery)Expression$/, 'SelectStatement'], before: "indent", after: "unindent" },
-      { node: [/^(Begin)Block$/], token: Keyword.BEGIN, after: "indent" },
-      { node: [/^(Begin)Block$/], token: Keyword.END, before: "unindent" },
-      { node: ["Expression", 'AndOperation'], token: Keyword.AND, before: "break" },
-      { node: ["Expression", /^(And|Or)Operation$/, 'AndOperation'], token: Keyword.AND, before: "break" },
-      { node: ["Expression", 'OrOperation'], token: Keyword.OR, before: "break" },
-      { node: ["Expression", /^(And|Or)Operation$/, 'OrOperation'], token: Keyword.OR, before: "break" },
-      { node: [/^(Where|Having|JoinOn)Clause$/, "Expression"], before: "indent", after: "unindent" },
-      { node: [/^(From|Set|Where|GroupBy|Having|OrderBy|Limit|Returning)Clause$/], before: "break" },
-      { node: [/JoinClause$/], before: "break" },
-      { token: TokenType.Dot, before: "nospace", after: "nospace" },
-      { token: TokenType.Comma, before: "nospace" },
-      { token: TokenType.SemiColon, before: "nospace" },
+      { pattern: 'Script > token:is([type=SemiColon], [type=Delimiter])', before: "nospace", after: ["reset", "forcebreak"] },
+      { pattern: 'UnaryPlusOpeation > token[type=Operator]', after: "nospace" },
+      { pattern: 'UnaryMinusOpeation > token[type=Operator]', after: "nospace" },
+      { pattern: 'ArgumentList, OptionList', before: "nospace", after: "nospace" },
+      { pattern: 'ColumnType > token[type=RightParen]', before: "nospace" },
+      { pattern: 'ParenthesesOperation > token[type=LeftParen]', after: "nospace" },
+      { pattern: 'ParenthesesOperation > token[type=RightParen]', before: "nospace" },
+      { pattern: ':is(CreateTriggerStatement, AlterTableStatement) > ObjectName', after: "indent" },
+      { pattern: 'CreateTriggerStatement > BeginStatement', before: "reset" },
+      { pattern: 'CreateViewStatement > SelectStatement', before: "reset" },
+      { pattern: 'BeginBlock, FromObjectList, ExpressionList, ColumnList, TableColumnList, SelectColumnList, UpdateColumnList, SortColumnList', before: "indent", after: "unindent" },
+      { pattern: ':is(FromObjectList, ExpressionList, ColumnList, TableColumnList, SelectColumnList, UpdateColumnList, SortColumnList) > token[type=Comma]', before: "nospace", after: "break" },
+      { pattern: ':is(CommonTableExpression, SubqueryExpression) > SelectStatement', before: "indent", after: "unindent" },
+      { pattern: ':is(WhereClause, HavingClause, JoinOnClause) > Expression', before: "indent", after: "unindent" },
+      { pattern: 'FromClause, JoinClause, SetClause, WhereClause, GroupByClause, HavingClause, OrderByClause, LimitClause, ReturningClause', before: "break" },
+      { pattern: 'Expression :is(AndOperation > token[value=AND], OrOperation > token[value=OR])', before: "break"},
+      { pattern: "token[type=Dot]", before: "nospace", after: "nospace" },
+      { pattern: "token[type=Comma]", before: "nospace" },
+      { pattern: "token[type=SemiColon]", before: "nospace", after: "break" },
     ], options)
   }
 }
