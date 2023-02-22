@@ -145,11 +145,9 @@ class FormatWriter {
   }
 
   toString() {
+    this.control("break")
     this.performActions()
-    if (this.line.length > 0) {
-      this.flushLine()
-    }
-    return this.text
+    return this.text.replace(/(\r\n?|\n)*$/, this.eol)
   }
 
   private performActions() {
@@ -166,29 +164,34 @@ class FormatWriter {
       let breaked = false
       for (const action of this.actions) {
         if (action === "reset") {
-          if (this.line.length > 0) {
-            this.flushLine()
+          this.flushLine()
+          if (!breaked) {
+            this.text += this.eol
             breaked = true
           }
           this.depth = 0
         } else if (action === "indent") {
-          if (this.line.length > 0) {
-            this.flushLine()
+          this.flushLine()
+          if (!breaked) {
+            this.text += this.eol
             breaked = true
           }
           this.depth++
         } else if (action === "unindent") {
-          if (this.line.length > 0) {
-            this.flushLine()
+          this.flushLine()
+          if (!breaked) {
+            this.text += this.eol
             breaked = true
           }
           this.depth--
         } else if (action === "forcebreak") {
           this.flushLine()
+          this.text += this.eol
           breaked = true
         } else if (action === "break") {
-          if (this.line.length > 0 && !breaked) {
-            this.flushLine()
+          this.flushLine()
+          if (!breaked) {
+            this.text += this.eol
             breaked = true
           }
         } 
@@ -199,6 +202,10 @@ class FormatWriter {
   }
 
   private flushLine() {
+    if (this.line.length === 0) {
+      return
+    }
+
     let first = true
     let width = this.indentWidth * (this.depth + (first ? 0 : 1))
     let text = this.indent.repeat((this.depth + (first ? 0 : 1)))
@@ -216,7 +223,7 @@ class FormatWriter {
         text = this.indent.repeat((this.depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
       }
     }
-    this.text += text + this.eol
+    this.text += text
     this.line.length = 0
   }
 }

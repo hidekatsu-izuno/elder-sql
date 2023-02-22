@@ -7,8 +7,8 @@ export class Sqlite3Formatter extends Formatter {
   ) {
     super(options.parser ?? new Sqlite3Parser(options), [
       { pattern: 'Script > SemiColon', before: "nospace", after: ["reset", "forcebreak"] },
-      { pattern: 'Delimiter', before: "reset", after: ["forcebreak", "forcebreak"] },
-      { pattern: 'SectionBreak', before: "reset", after: "forcebreak" },
+      { pattern: 'Delimiter', before: "reset", after: ["break", "forcebreak"] },
+      { pattern: 'SectionBreak', before: "reset" },
       { pattern: 'UnaryPlusOperation > Operator', after: "nospace" },
       { pattern: 'UnaryMinusOperation > Operator', after: "nospace" },
       { pattern: 'FunctionArgumentList, ModuleArgumentList, PragmaArgumentList, TypeOptionList, ReferencesOptionList', before: "nospace", after: "nospace" },
@@ -28,7 +28,7 @@ export class Sqlite3Formatter extends Formatter {
       { pattern: 'UniqueConstraint > SortColumnList', before: "nospace", after: "nospace" },
       { pattern: 'ReferencesClause', before: "indent", after: "unindent" },
       { pattern: 'ExplainStatement > Statement', before: "break" },
-      { pattern: 'BeginBlock, FromObjectList, ExpressionList, TableColumnList, SelectColumnList, UpdateColumnList, SortColumnList', before: "indent", after: "unindent" },
+      { pattern: 'BeginBlock, FromObjectList, ExpressionList, TableColumnList, SelectColumnList, UpdateColumnList, SortColumnList, ColumnConstraintList', before: "indent", after: "unindent" },
       { pattern: ':is(FromObjectList, ExpressionList, TableColumnList, SelectColumnList, UpdateColumnList, SortColumnList) > Comma', before: "nospace", after: "break" },
       { pattern: ':is(CommonTableExpression, SubqueryExpression) > SelectStatement', before: "indent", after: "unindent" },
       { pattern: ':is(WhereClause, HavingClause, JoinOnClause) > Expression', before: "indent", after: "unindent" },

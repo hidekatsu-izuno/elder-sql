@@ -57,4 +57,3 @@ CREATE VIRTUAL TABLE temp.t1
 
 CREATE VIRTUAL TABLE email
   USING fts5(sender, title, body);
-

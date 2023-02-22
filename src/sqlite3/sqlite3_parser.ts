@@ -1863,7 +1863,7 @@ export class Sqlite3Parser extends Parser {
         this.columnType(node, r)
       }
 
-      while (r.peekIf({ type: [
+      const starts = [
         Keyword.CONSTRAINT,
         Keyword.PRIMARY,
         Keyword.NOT,
@@ -1871,13 +1871,19 @@ export class Sqlite3Parser extends Parser {
         Keyword.CHECK,
         Keyword.DEFAULT,
         Keyword.COLLATE,
-        Keyword.REFERENCES,
-        ...(!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS") ? [
-          Keyword.GENERATED,
-          Keyword.AS
-        ] : [])
-      ] })) {
-        this.columnConstraint(node, r)
+        Keyword.REFERENCES
+      ]
+      if (!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
+        starts.push(Keyword.GENERATED)
+        starts.push(Keyword.AS)
+      }
+
+      if (r.peekIf({ type: starts })) {
+        apply(this.append(parent, new Element("ColumnConstraintList", {})), node => {
+          do {
+            this.columnConstraint(node, r)
+          } while (r.peekIf({ type: starts }))
+        })
       }
     })
   }

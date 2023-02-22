@@ -38,4 +38,3 @@ CREATE UNIQUE INDEX IF NOT EXISTS main.ix_sample ON sample (
 )
 WHERE
   a = 1
-

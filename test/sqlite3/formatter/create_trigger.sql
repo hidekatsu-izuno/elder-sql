@@ -36,4 +36,3 @@ BEGIN
   WHERE
     OLD.x = 1;
 END
-

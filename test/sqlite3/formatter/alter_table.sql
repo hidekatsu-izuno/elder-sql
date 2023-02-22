@@ -37,4 +37,3 @@ ALTER TABLE test.sample
 
 ALTER TABLE test.sample
   DROP new_column
-
