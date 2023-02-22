@@ -2867,30 +2867,23 @@ export class Sqlite3Parser extends Parser {
   
   private append(parent: Element, child: Element | Token) {
     if (child instanceof Token) {
-      const attribs: Record<string, string> = {  }
-      if (child.keyword) {
-        attribs.value = child.keyword.name
+      const childNodes = []
+      for (const skip of child.preskips) {
+        childNodes.push(new Element(skip.type.name,
+          { ...(skip.keyword && {value: skip.keyword.name}) },
+          [new Text(skip.text)]))
       }
+      childNodes.push(new Text(child.text))
+      for (const skip of child.postskips) {
+        childNodes.push(new Element(skip.type.name,
+          { ...(skip.keyword && {value: skip.keyword.name}) },
+          [new Text(skip.text)]))
+      }
+      
       const token = new Element(child.type.name, 
         { ...(child.keyword && {value: child.keyword.name}) },
-        child.text ? [new Text(child.text)] : undefined)
-
-      for (const skip of child.preskips) {
-        appendChild(parent, new Element(skip.type.name, 
-          { ...(skip.keyword && {value: skip.keyword.name}), skip: "true" },
-          skip.text ? [new Text(skip.text)] : undefined))
-      }
+        childNodes)
       appendChild(parent, token)
-      for (const skip of child.postskips) {
-        const attribs: Record<string, string> = { type: skip.type.name }
-        if (skip.keyword) {
-          attribs.value = skip.keyword.name
-        }
-        appendChild(parent, new Element(skip.type.name, 
-        { ...(skip.keyword && {value: skip.keyword.name}), skip: "true" },
-          skip.text ? [new Text(skip.text)] : undefined))
-      }
-
       return token
     } else {
       appendChild(parent, child)

@@ -76,7 +76,7 @@ export abstract class Formatter {
       }
     } else if (node.name === "LineBreak") {
       out.control("break")
-    } else if (node.attribs.skip === "true") {
+    } else if (node.name === "WhiteSpace") {
       // no handle
     } else {
       for (let i = 0; i < node.childNodes.length; i++) {

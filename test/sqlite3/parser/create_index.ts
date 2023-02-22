@@ -3,19 +3,27 @@ import { Element, Text } from "domhandler"
 export default new Element("Script", {}, [
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("ObjectName", {"value":"ix_sample"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {}, [new Text("ix_sample")]),
+      new Element("Identifier", {}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ix_sample"),
+      ]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -32,27 +40,37 @@ export default new Element("Script", {}, [
       new Element("RightParen", {}, [new Text(")")]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
+      new Element("Identifier", {"value":"MAIN"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("main"),
+      ]),
     ]),
     new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"ix_sample"}, [
       new Element("Identifier", {}, [new Text("ix_sample")]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -70,8 +88,10 @@ export default new Element("Script", {}, [
           new Element("Expression", {}, [
             new Element("ColumnReference", {}, [
               new Element("ColumnName", {"value":"b"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {}, [new Text("b")]),
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("b"),
+                ]),
               ]),
             ]),
           ]),
@@ -81,8 +101,10 @@ export default new Element("Script", {}, [
           new Element("Expression", {}, [
             new Element("ColumnReference", {}, [
               new Element("ColumnName", {"value":"c"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {}, [new Text("c")]),
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("c"),
+                ]),
               ]),
             ]),
           ]),
@@ -91,23 +113,33 @@ export default new Element("Script", {}, [
       new Element("RightParen", {}, [new Text(")")]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("ObjectName", {"value":"ix_sample"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {}, [new Text("ix_sample")]),
+      new Element("Identifier", {}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ix_sample"),
+      ]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -125,14 +157,18 @@ export default new Element("Script", {}, [
           new Element("Expression", {}, [
             new Element("ColumnReference", {}, [
               new Element("ColumnName", {"value":"b"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {}, [new Text("b")]),
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("b"),
+                ]),
               ]),
             ]),
           ]),
           new Element("AscOption", {}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Identifier", {"value":"ASC"}, [new Text("ASC")]),
+            new Element("Identifier", {"value":"ASC"}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("ASC"),
+            ]),
           ]),
         ]),
         new Element("Comma", {}, [new Text(",")]),
@@ -140,49 +176,69 @@ export default new Element("Script", {}, [
           new Element("Expression", {}, [
             new Element("ColumnReference", {}, [
               new Element("ColumnName", {"value":"c"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {}, [new Text("c")]),
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("c"),
+                ]),
               ]),
             ]),
           ]),
           new Element("DescOption", {}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Identifier", {"value":"DESC"}, [new Text("DESC")]),
+            new Element("Identifier", {"value":"DESC"}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("DESC"),
+            ]),
           ]),
         ]),
       ]),
       new Element("RightParen", {}, [new Text(")")]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("IfNotExistsOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"IF"}, [new Text("IF")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"NOT"}, [new Text("NOT")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"EXISTS"}, [new Text("EXISTS")]),
+      new Element("Identifier", {"value":"IF"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("IF"),
+      ]),
+      new Element("Reserved", {"value":"NOT"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("NOT"),
+      ]),
+      new Element("Reserved", {"value":"EXISTS"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("EXISTS"),
+      ]),
     ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
+      new Element("Identifier", {"value":"MAIN"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("main"),
+      ]),
     ]),
     new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"ix_sample"}, [
       new Element("Identifier", {}, [new Text("ix_sample")]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -191,14 +247,18 @@ export default new Element("Script", {}, [
             new Element("AddOperation", {}, [
               new Element("ColumnReference", {}, [
                 new Element("ColumnName", {"value":"a"}, [
-                  new Element("Identifier", {}, [new Text("a")]),
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                  new Element("Identifier", {}, [
+                    new Text("a"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
                 ]),
               ]),
               new Element("Operator", {}, [new Text("+")]),
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Numeric", {}, [new Text("1")]),
+                new Element("Numeric", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("1"),
+                ]),
               ]),
             ]),
           ]),
@@ -207,51 +267,69 @@ export default new Element("Script", {}, [
       new Element("RightParen", {}, [new Text(")")]),
     ]),
     new Element("WhereClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"WHERE"}, [new Text("WHERE")]),
+      new Element("Reserved", {"value":"WHERE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("WHERE"),
+      ]),
       new Element("Expression", {}, [
         new Element("EqualOperation", {}, [
           new Element("ColumnReference", {}, [
             new Element("ColumnName", {"value":"a"}, [
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-              new Element("Identifier", {}, [new Text("a")]),
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+              new Element("Identifier", {}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("a"),
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+              ]),
             ]),
           ]),
           new Element("Operator", {}, [new Text("=")]),
           new Element("NumericLiteral", {"value":"1"}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Numeric", {}, [new Text("1")]),
+            new Element("Numeric", {}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("1"),
+            ]),
           ]),
         ]),
       ]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("UniqueOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"UNIQUE"}, [new Text("UNIQUE")]),
+      new Element("Reserved", {"value":"UNIQUE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("UNIQUE"),
+      ]),
     ]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
+      new Element("Identifier", {"value":"MAIN"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("main"),
+      ]),
     ]),
     new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"ix_sample"}, [
       new Element("Identifier", {}, [new Text("ix_sample")]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -260,20 +338,26 @@ export default new Element("Script", {}, [
             new Element("AddOperation", {}, [
               new Element("ColumnReference", {}, [
                 new Element("ColumnName", {"value":"a"}, [
-                  new Element("Identifier", {}, [new Text("a")]),
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                  new Element("Identifier", {}, [
+                    new Text("a"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
                 ]),
               ]),
               new Element("Operator", {}, [new Text("+")]),
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Numeric", {}, [new Text("1")]),
+                new Element("Numeric", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("1"),
+                ]),
               ]),
             ]),
           ]),
           new Element("AscOption", {}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Identifier", {"value":"ASC"}, [new Text("ASC")]),
+            new Element("Identifier", {"value":"ASC"}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("ASC"),
+            ]),
           ]),
         ]),
         new Element("Comma", {}, [new Text(",")]),
@@ -282,21 +366,27 @@ export default new Element("Script", {}, [
             new Element("AddOperation", {}, [
               new Element("ColumnReference", {}, [
                 new Element("ColumnName", {"value":"b"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Identifier", {}, [new Text("b")]),
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                  new Element("Identifier", {}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("b"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
                 ]),
               ]),
               new Element("Operator", {}, [new Text("+")]),
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Numeric", {}, [new Text("1")]),
+                new Element("Numeric", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("1"),
+                ]),
               ]),
             ]),
           ]),
           new Element("DescOption", {}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Identifier", {"value":"DESC"}, [new Text("DESC")]),
+            new Element("Identifier", {"value":"DESC"}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("DESC"),
+            ]),
           ]),
         ]),
         new Element("Comma", {}, [new Text(",")]),
@@ -304,8 +394,10 @@ export default new Element("Script", {}, [
           new Element("Expression", {}, [
             new Element("ColumnReference", {}, [
               new Element("ColumnName", {"value":"c"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {}, [new Text("c")]),
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("c"),
+                ]),
               ]),
             ]),
           ]),
@@ -314,39 +406,57 @@ export default new Element("Script", {}, [
       new Element("RightParen", {}, [new Text(")")]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("UniqueOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"UNIQUE"}, [new Text("UNIQUE")]),
+      new Element("Reserved", {"value":"UNIQUE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("UNIQUE"),
+      ]),
     ]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("IfNotExistsOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"IF"}, [new Text("IF")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"NOT"}, [new Text("NOT")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"EXISTS"}, [new Text("EXISTS")]),
+      new Element("Identifier", {"value":"IF"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("IF"),
+      ]),
+      new Element("Reserved", {"value":"NOT"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("NOT"),
+      ]),
+      new Element("Reserved", {"value":"EXISTS"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("EXISTS"),
+      ]),
     ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
+      new Element("Identifier", {"value":"MAIN"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("main"),
+      ]),
     ]),
     new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"ix_sample"}, [
       new Element("Identifier", {}, [new Text("ix_sample")]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -358,11 +468,15 @@ export default new Element("Script", {}, [
                   new Element("Identifier", {}, [new Text("a")]),
                 ]),
               ]),
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-              new Element("Reserved", {"value":"COLLATE"}, [new Text("COLLATE")]),
+              new Element("Reserved", {"value":"COLLATE"}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("COLLATE"),
+              ]),
               new Element("CollationName", {"value":"test"}, [
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Identifier", {"value":"TEST"}, [new Text("test")]),
+                new Element("Identifier", {"value":"TEST"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("test"),
+                ]),
               ]),
             ]),
           ]),
@@ -371,59 +485,83 @@ export default new Element("Script", {}, [
       new Element("RightParen", {}, [new Text(")")]),
     ]),
     new Element("WhereClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"WHERE"}, [new Text("WHERE")]),
+      new Element("Reserved", {"value":"WHERE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("WHERE"),
+      ]),
       new Element("Expression", {}, [
         new Element("EqualOperation", {}, [
           new Element("ColumnReference", {}, [
             new Element("ColumnName", {"value":"a"}, [
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-              new Element("Identifier", {}, [new Text("a")]),
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+              new Element("Identifier", {}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("a"),
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+              ]),
             ]),
           ]),
           new Element("Operator", {}, [new Text("=")]),
           new Element("NumericLiteral", {"value":"1"}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Numeric", {}, [new Text("1")]),
+            new Element("Numeric", {}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("1"),
+            ]),
           ]),
         ]),
       ]),
     ]),
   ]),
-  new Element("SemiColon", {}, [new Text(";")]),
-  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [
+    new Text(";"),
+    new Element("LineBreak", {}, [new Text("\n")]),
+  ]),
   new Element("CreateIndexStatement", {}, [
     new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("UniqueOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"UNIQUE"}, [new Text("UNIQUE")]),
+      new Element("Reserved", {"value":"UNIQUE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("UNIQUE"),
+      ]),
     ]),
-    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-    new Element("Reserved", {"value":"INDEX"}, [new Text("INDEX")]),
+    new Element("Reserved", {"value":"INDEX"}, [
+      new Element("WhiteSpace", {}, [new Text(" ")]),
+      new Text("INDEX"),
+    ]),
     new Element("IfNotExistsOption", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"IF"}, [new Text("IF")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"NOT"}, [new Text("NOT")]),
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"EXISTS"}, [new Text("EXISTS")]),
+      new Element("Identifier", {"value":"IF"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("IF"),
+      ]),
+      new Element("Reserved", {"value":"NOT"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("NOT"),
+      ]),
+      new Element("Reserved", {"value":"EXISTS"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("EXISTS"),
+      ]),
     ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
+      new Element("Identifier", {"value":"MAIN"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("main"),
+      ]),
     ]),
     new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"ix_sample"}, [
       new Element("Identifier", {}, [new Text("ix_sample")]),
     ]),
     new Element("IndexOnClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"ON"}, [new Text("ON")]),
+      new Element("Reserved", {"value":"ON"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("ON"),
+      ]),
       new Element("ObjectName", {"value":"sample"}, [
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-        new Element("Identifier", {"value":"SAMPLE"}, [new Text("sample")]),
-        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {"value":"SAMPLE"}, [
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+          new Text("sample"),
+          new Element("WhiteSpace", {}, [new Text(" ")]),
+        ]),
       ]),
       new Element("LeftParen", {}, [new Text("(")]),
       new Element("SortColumnList", {}, [
@@ -432,21 +570,29 @@ export default new Element("Script", {}, [
             new Element("AddOperation", {}, [
               new Element("ColumnReference", {}, [
                 new Element("ColumnName", {"value":"a"}, [
-                  new Element("Identifier", {}, [new Text("a")]),
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                  new Element("Identifier", {}, [
+                    new Text("a"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
                 ]),
               ]),
               new Element("Operator", {}, [new Text("+")]),
               new Element("CollateOperation", {}, [
                 new Element("NumericLiteral", {"value":"1"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Numeric", {}, [new Text("1")]),
+                  new Element("Numeric", {}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("1"),
+                  ]),
                 ]),
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Reserved", {"value":"COLLATE"}, [new Text("COLLATE")]),
+                new Element("Reserved", {"value":"COLLATE"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("COLLATE"),
+                ]),
                 new Element("CollationName", {"value":"test"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Identifier", {"value":"TEST"}, [new Text("test")]),
+                  new Element("Identifier", {"value":"TEST"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("test"),
+                  ]),
                 ]),
               ]),
             ]),
@@ -458,54 +604,70 @@ export default new Element("Script", {}, [
             new Element("AddOperation", {}, [
               new Element("ColumnReference", {}, [
                 new Element("ColumnName", {"value":"b"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Identifier", {}, [new Text("b")]),
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                  new Element("Identifier", {}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("b"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
                 ]),
               ]),
               new Element("Operator", {}, [new Text("+")]),
               new Element("CollateOperation", {}, [
                 new Element("NumericLiteral", {"value":"1"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Numeric", {}, [new Text("1")]),
+                  new Element("Numeric", {}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("1"),
+                  ]),
                 ]),
-                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                new Element("Reserved", {"value":"COLLATE"}, [new Text("COLLATE")]),
+                new Element("Reserved", {"value":"COLLATE"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("COLLATE"),
+                ]),
                 new Element("CollationName", {"value":"test"}, [
-                  new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-                  new Element("Identifier", {"value":"TEST"}, [new Text("test")]),
+                  new Element("Identifier", {"value":"TEST"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("test"),
+                  ]),
                 ]),
               ]),
             ]),
           ]),
           new Element("AscOption", {}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Identifier", {"value":"ASC"}, [new Text("ASC")]),
+            new Element("Identifier", {"value":"ASC"}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("ASC"),
+            ]),
           ]),
         ]),
       ]),
       new Element("RightParen", {}, [new Text(")")]),
     ]),
     new Element("WhereClause", {}, [
-      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-      new Element("Reserved", {"value":"WHERE"}, [new Text("WHERE")]),
+      new Element("Reserved", {"value":"WHERE"}, [
+        new Element("WhiteSpace", {}, [new Text(" ")]),
+        new Text("WHERE"),
+      ]),
       new Element("Expression", {}, [
         new Element("EqualOperation", {}, [
           new Element("ColumnReference", {}, [
             new Element("ColumnName", {"value":"a"}, [
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-              new Element("Identifier", {}, [new Text("a")]),
-              new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+              new Element("Identifier", {}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("a"),
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+              ]),
             ]),
           ]),
           new Element("Operator", {}, [new Text("=")]),
           new Element("NumericLiteral", {"value":"1"}, [
-            new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
-            new Element("Numeric", {}, [new Text("1")]),
+            new Element("Numeric", {}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("1"),
+            ]),
           ]),
         ]),
       ]),
     ]),
   ]),
-  new Element("SectionBreak", {}),
+  new Element("SectionBreak", {}, [new Text("")]),
 ])
