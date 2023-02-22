@@ -34,7 +34,7 @@ describe("test sqlite3 formatter", () => {
     "vacuum",
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
-    const expected = script //(await import("./formatter/" + target + ".js")).default
+    const expected = fs.readFileSync(path.join(__dirname, "formatter", target + ".sql"), "utf8")
     const formatted = new Sqlite3Formatter().format(script)
 
     writeDebugFile(`test/dump/sqlite3/formatter/${target}.sql.txt`, formatted)

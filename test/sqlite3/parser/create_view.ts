@@ -2,25 +2,25 @@ import { Element, Text } from "domhandler"
 
 export default new Element("Script", {}, [
   new Element("CreateViewStatement", {}, [
-    new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Identifier","value":"VIEW"}, [new Text("VIEW")]),
+    new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Identifier", {"value":"VIEW"}, [new Text("VIEW")]),
     new Element("ObjectName", {"value":"v_sample"}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier"}, [new Text("v_sample")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {}, [new Text("v_sample")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Reserved","value":"AS"}, [new Text("AS")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Reserved", {"value":"AS"}, [new Text("AS")]),
     new Element("SelectStatement", {}, [
       new Element("SelectClause", {}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("1")]),
               ]),
             ]),
           ]),
@@ -28,48 +28,48 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("token", {"type":"SemiColon"}, [new Text(";")]),
-  new Element("skip", {"type":"LineBreak"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [new Text(";")]),
+  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
   new Element("CreateViewStatement", {}, [
-    new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Identifier","value":"VIEW"}, [new Text("VIEW")]),
+    new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Identifier", {"value":"VIEW"}, [new Text("VIEW")]),
     new Element("IfNotExistsOption", {}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"IF"}, [new Text("IF")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"NOT"}, [new Text("NOT")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"EXISTS"}, [new Text("EXISTS")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"IF"}, [new Text("IF")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"NOT"}, [new Text("NOT")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"EXISTS"}, [new Text("EXISTS")]),
     ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"MAIN"}, [new Text("main")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
     ]),
-    new Element("token", {"type":"Dot"}, [new Text(".")]),
+    new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"v_sample"}, [
-      new Element("token", {"type":"Identifier"}, [new Text("v_sample")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Element("Identifier", {}, [new Text("v_sample")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
     ]),
-    new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+    new Element("LeftParen", {}, [new Text("(")]),
     new Element("ColumnList", {}, [
       new Element("ColumnName", {"value":"x"}, [
-        new Element("token", {"type":"Identifier"}, [new Text("x")]),
+        new Element("Identifier", {}, [new Text("x")]),
       ]),
     ]),
-    new Element("token", {"type":"RightParen"}, [new Text(")")]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Reserved","value":"AS"}, [new Text("AS")]),
+    new Element("RightParen", {}, [new Text(")")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Reserved", {"value":"AS"}, [new Text("AS")]),
     new Element("SelectStatement", {}, [
       new Element("SelectClause", {}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("1")]),
               ]),
             ]),
           ]),
@@ -77,36 +77,36 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("token", {"type":"SemiColon"}, [new Text(";")]),
-  new Element("skip", {"type":"LineBreak"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [new Text(";")]),
+  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
   new Element("CreateViewStatement", {}, [
-    new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
+    new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("TemporaryOption", {}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"TEMP"}, [new Text("TEMP")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"TEMP"}, [new Text("TEMP")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Identifier","value":"VIEW"}, [new Text("VIEW")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Identifier", {"value":"VIEW"}, [new Text("VIEW")]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"MAIN"}, [new Text("main")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
     ]),
-    new Element("token", {"type":"Dot"}, [new Text(".")]),
+    new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"v_sample"}, [
-      new Element("token", {"type":"Identifier"}, [new Text("v_sample")]),
+      new Element("Identifier", {}, [new Text("v_sample")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Reserved","value":"AS"}, [new Text("AS")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Reserved", {"value":"AS"}, [new Text("AS")]),
     new Element("SelectStatement", {}, [
       new Element("SelectClause", {}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("1")]),
               ]),
             ]),
           ]),
@@ -114,72 +114,72 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("token", {"type":"SemiColon"}, [new Text(";")]),
-  new Element("skip", {"type":"LineBreak"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [new Text(";")]),
+  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
   new Element("CreateViewStatement", {}, [
-    new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
+    new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("TemporaryOption", {}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"TEMPORARY"}, [new Text("TEMPORARY")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"TEMPORARY"}, [new Text("TEMPORARY")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Identifier","value":"VIEW"}, [new Text("VIEW")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Identifier", {"value":"VIEW"}, [new Text("VIEW")]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"MAIN"}, [new Text("main")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
     ]),
-    new Element("token", {"type":"Dot"}, [new Text(".")]),
+    new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"v_sample"}, [
-      new Element("token", {"type":"Identifier"}, [new Text("v_sample")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Element("Identifier", {}, [new Text("v_sample")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
     ]),
-    new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+    new Element("LeftParen", {}, [new Text("(")]),
     new Element("ColumnList", {}, [
       new Element("ColumnName", {"value":"a"}, [
-        new Element("token", {"type":"Identifier"}, [new Text("a")]),
+        new Element("Identifier", {}, [new Text("a")]),
       ]),
-      new Element("token", {"type":"Comma"}, [new Text(",")]),
+      new Element("Comma", {}, [new Text(",")]),
       new Element("ColumnName", {"value":"b"}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Identifier"}, [new Text("b")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {}, [new Text("b")]),
       ]),
-      new Element("token", {"type":"Comma"}, [new Text(",")]),
+      new Element("Comma", {}, [new Text(",")]),
       new Element("ColumnName", {"value":"c"}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Identifier"}, [new Text("c")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Identifier", {}, [new Text("c")]),
       ]),
     ]),
-    new Element("token", {"type":"RightParen"}, [new Text(")")]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Reserved","value":"AS"}, [new Text("AS")]),
+    new Element("RightParen", {}, [new Text(")")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Reserved", {"value":"AS"}, [new Text("AS")]),
     new Element("SelectStatement", {}, [
       new Element("SelectClause", {}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("1")]),
               ]),
             ]),
           ]),
-          new Element("token", {"type":"Comma"}, [new Text(",")]),
+          new Element("Comma", {}, [new Text(",")]),
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"2"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("2")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("2")]),
               ]),
             ]),
           ]),
-          new Element("token", {"type":"Comma"}, [new Text(",")]),
+          new Element("Comma", {}, [new Text(",")]),
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"3"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("3")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("3")]),
               ]),
             ]),
           ]),
@@ -187,44 +187,44 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("token", {"type":"SemiColon"}, [new Text(";")]),
-  new Element("skip", {"type":"LineBreak"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [new Text(";")]),
+  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
   new Element("CreateViewStatement", {}, [
-    new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
+    new Element("Reserved", {"value":"CREATE"}, [new Text("CREATE")]),
     new Element("TemporaryOption", {}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"TEMPORARY"}, [new Text("TEMPORARY")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"TEMPORARY"}, [new Text("TEMPORARY")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Identifier","value":"VIEW"}, [new Text("VIEW")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Identifier", {"value":"VIEW"}, [new Text("VIEW")]),
     new Element("IfNotExistsOption", {}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"IF"}, [new Text("IF")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"NOT"}, [new Text("NOT")]),
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Reserved","value":"EXISTS"}, [new Text("EXISTS")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"IF"}, [new Text("IF")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"NOT"}, [new Text("NOT")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Reserved", {"value":"EXISTS"}, [new Text("EXISTS")]),
     ]),
     new Element("SchemaName", {"value":"main"}, [
-      new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-      new Element("token", {"type":"Identifier","value":"MAIN"}, [new Text("main")]),
+      new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+      new Element("Identifier", {"value":"MAIN"}, [new Text("main")]),
     ]),
-    new Element("token", {"type":"Dot"}, [new Text(".")]),
+    new Element("Dot", {}, [new Text(".")]),
     new Element("ObjectName", {"value":"v_sample"}, [
-      new Element("token", {"type":"Identifier"}, [new Text("v_sample")]),
+      new Element("Identifier", {}, [new Text("v_sample")]),
     ]),
-    new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-    new Element("token", {"type":"Reserved","value":"AS"}, [new Text("AS")]),
+    new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+    new Element("Reserved", {"value":"AS"}, [new Text("AS")]),
     new Element("SelectStatement", {}, [
       new Element("SelectClause", {}, [
-        new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-        new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
+        new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+        new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
-                new Element("skip", {"type":"WhiteSpace"}, [new Text(" ")]),
-                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+                new Element("WhiteSpace", {"skip":"true"}, [new Text(" ")]),
+                new Element("Numeric", {}, [new Text("1")]),
               ]),
             ]),
           ]),
@@ -232,6 +232,6 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("token", {"type":"SemiColon"}, [new Text(";")]),
-  new Element("skip", {"type":"LineBreak"}, [new Text("\n")]),
+  new Element("SemiColon", {}, [new Text(";")]),
+  new Element("LineBreak", {"skip":"true"}, [new Text("\n")]),
 ])
