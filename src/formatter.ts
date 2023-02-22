@@ -1,10 +1,10 @@
 import { EOL } from "node:os"
-import { Node, Element } from 'domhandler'
+import { Node, Element, Text } from 'domhandler'
 import { textContent } from 'domutils'
 import { compile } from 'css-select'
 import { Parser } from "./parser.js"
 
-export declare type FormatActionType = "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace"
+export declare type FormatActionType = "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace" | "nobreak"
 
 export declare type FormatPattern = {
   pattern: string
@@ -64,27 +64,27 @@ export abstract class Formatter {
         out.control(before)
       }
     }
-    if (node.name === "skip") {
-      if (node.attribs.type === "LineComment") {
-        out.write(textContent(node), true)
-      } else if (node.attribs.type === "BlockComment" || node.attribs.type === "HintComment") {
-        const segments = textContent(node).split(/\r\n?|\n/g)
-        for (let i = 0; i < segments.length; i++) {
-          if (i > 0) {
-            out.control("forcebreak")
-          }
-          out.write(segments[i], true)
+    if (node.name === "LineComment") {
+      out.write(textContent(node), true)
+    } else if (node.name === "BlockComment" || node.name === "HintComment") {
+      const segments = textContent(node).split(/\r\n?|\n/g)
+      for (let i = 0; i < segments.length; i++) {
+        if (i > 0) {
+          out.control("forcebreak")
         }
-      } else if (node.attribs.type === "LineBreak") {
-        out.control("break")
+        out.write(segments[i], true)
       }
-    } else if (node.name === "token") {
-      out.write(textContent(node), false)
+    } else if (node.name === "LineBreak") {
+      out.control("break")
+    } else if (node.attribs.skip === "true") {
+      // no handle
     } else {
       for (let i = 0; i < node.childNodes.length; i++) {
         const child = node.childNodes[i]
         if (child instanceof Element) {
           this.formatElement(child, out)
+        } else if (child instanceof Text) {
+          out.write(child.data, false)
         }
       }
     }
@@ -108,8 +108,8 @@ class FormatWriter {
 
   private text = ""
   private depth = 0
-  private line = new Array<{ text: string, nospace: boolean }>()
-  private action?: FormatActionType
+  private line = new Array<{ text: string, action?: string }>()
+  private actions = new Array<FormatActionType>()
 
   constructor(options: FormatterOptions) {
     this.printWidth = options.printWidth ?? 80
@@ -132,55 +132,70 @@ class FormatWriter {
   }
 
   control(action: FormatActionType) {
-    if (action === "reset") {
-      if (this.line.length > 0) {
-        this.flushLine()
-      }
-      this.depth = 0
-      action = "break"
-    } else if (action === "indent") {
-      if (this.line.length > 0) {
-        this.flushLine()
-      }
-      this.depth++
-      action = "break"
-    } else if (action === "unindent") {
-      if (this.line.length > 0) {
-        this.flushLine()
-      }
-      this.depth--
-      action = "break"
-    } else if (action === "forcebreak") {
-      this.flushLine()
-      action = "break"
-    } else if (action === "break") {
-      if (this.line.length > 0 || this.action !== "break") {
-        this.flushLine()
-      }
-    }
-    this.action = action
+    this.actions.push(action)
   }
 
   write(text: string, skip: boolean) {
+    const action = this.performActions()
     if (skip) {
-      this.line.push({
-        text,
-        nospace: false,
-      })
+      this.line.push({ text })
     } else {
-      this.line.push({
-        text,
-        nospace: this.action === "nospace",
-      })
-      this.action = undefined  
+      this.line.push({ text, action })
     }
   }
 
   toString() {
+    this.performActions()
     if (this.line.length > 0) {
       this.flushLine()
     }
     return this.text
+  }
+
+  private performActions() {
+    if (this.actions.length === 0) {
+      return undefined
+    }
+
+    let action
+    if (this.actions.some(action => action === "nospace")) {
+      action = "nospace"
+    } else if (this.actions.some(action => action === "nobreak")) {
+      // no handle
+    } else {
+      let breaked = false
+      for (const action of this.actions) {
+        if (action === "reset") {
+          if (this.line.length > 0) {
+            this.flushLine()
+            breaked = true
+          }
+          this.depth = 0
+        } else if (action === "indent") {
+          if (this.line.length > 0) {
+            this.flushLine()
+            breaked = true
+          }
+          this.depth++
+        } else if (action === "unindent") {
+          if (this.line.length > 0) {
+            this.flushLine()
+            breaked = true
+          }
+          this.depth--
+        } else if (action === "forcebreak") {
+          this.flushLine()
+          breaked = true
+        } else if (action === "break") {
+          if (this.line.length > 0 && !breaked) {
+            this.flushLine()
+            breaked = true
+          }
+        } 
+      }
+    }
+    this.actions.length = 0
+    return action
   }
 
   private flushLine() {
@@ -189,7 +204,7 @@ class FormatWriter {
     let text = this.indent.repeat((this.depth + (first ? 0 : 1)))
     for (let i = 0; i < this.line.length; i++) {
       const item = this.line[i]
-      const nospace = i === 0 || item.nospace
+      const nospace = i === 0 || item.action === "nospace"
       if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
         width += (nospace ? 0 : 1) + item.text.length
         text += (nospace ? "" : " ") + item.text

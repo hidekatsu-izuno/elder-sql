@@ -6,9 +6,14 @@ WHERE x.col1 = 2 AND NOT (x.col2 NOT LIKE '%x%' OR x.col2 IS NULL)
 ORDER BY x.col3
 LIMIT 1;
 SELECT * FROM a, main.b x, c as y WHERE a.x = x.x AND x.x = y.x AND y.y = 0;
-SELECT
-  :aaa,
-  ?
+SELECT -1, TRUE, FALSE, NULL, CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP, 'aaa', "aaa", x'53514C697465' ;
+SELECT ?1, ?, :param, @param, $param;
+SELECT CASE x WHEN 1 THEN 'a' END x FROM test;
+SELECT CASE x WHEN 1 THEN 'a' WHEN 2 THEN 'b' ELSE 'c' END x FROM test;
+SELECT CASE WHEN x = 1 THEN 'a' END AS x FROM test;
+SELECT CASE WHEN x = 1 THEN 'a' WHEN x = 2 THEN 'b' ELSE 'c' END AS x FROM test;
+SELECT DISTINCT
+  a.x
 FROM
   a
   CROSS JOIN b

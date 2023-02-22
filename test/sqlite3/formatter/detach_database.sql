@@ -1,0 +1,3 @@
+DETACH DATABASE mem_db;
+
+DETACH new_db

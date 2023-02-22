@@ -23,7 +23,8 @@ CREATE temp TABLE table_2 (
 CREATE temporary TABLE table_3 (
   col_1 TEXT,
   col_2 NUMERIC,
-  CONSTRAINT c_001 UNIQUE ( col_1, col_2 ) ON CONFLICT ROLLBACK,
+  CONSTRAINT c_001 UNIQUE ( col_1, col_2 )
+    ON CONFLICT ROLLBACK,
   CONSTRAINT c_002 CHECK ( col_1 + col_2 > 0 ),
   CONSTRAINT c_003 FOREIGN KEY ( col_1, col_2 )
     REFERENCES table_1 (text_column, num_column)
@@ -31,7 +32,7 @@ CREATE temporary TABLE table_3 (
     MATCH SIMPLE
     ON UPDATE CASCADE
     NOT DEFERRABLE INITIALLY DEFERRED
-)
+);
 
 CREATE VIRTUAL TABLE tablename USING modulename;
 CREATE VIRTUAL TABLE temp.t1 USING csv(filename = 'thefile.csv');
