@@ -4,7 +4,7 @@ import { textContent } from 'domutils'
 import { compile } from 'css-select'
 import { Parser } from "./parser.js"
 
-export declare type FormatActionType = "reset" | "indent" | "unindent" | "break" | "forcebreak" | "nospace" | "nobreak"
+export declare type FormatActionType = "reset" | "indent" | "unindent" | "softbreak" | "break" | "nospace" | "nobreak"
 
 export declare type FormatPattern = {
   pattern: string
@@ -70,12 +70,12 @@ export abstract class Formatter {
       const segments = textContent(node).split(/\r\n?|\n/g)
       for (let i = 0; i < segments.length; i++) {
         if (i > 0) {
-          out.control("forcebreak")
+          out.control("break")
         }
         out.write(segments[i], true)
       }
     } else if (node.name === "LineBreak") {
-      out.control("break")
+      out.control("softbreak")
     } else if (node.name === "WhiteSpace") {
       // no handle
     } else {
@@ -108,7 +108,10 @@ class FormatWriter {
 
   private text = ""
   private depth = 0
-  private line = new Array<{ text: string, action?: string }>()
+  private line = new Array<{ text: string, depth: number, nospace?: boolean }>()
+
+  private nospace = false
+  private nobreak = false
   private actions = new Array<FormatActionType>()
 
   constructor(options: FormatterOptions) {
@@ -132,73 +135,73 @@ class FormatWriter {
   }
 
   control(action: FormatActionType) {
-    this.actions.push(action)
+    if (action === "nospace") {
+      this.nospace = true
+    } else if (action === "nobreak") {
+      this.nobreak = true
+    } else {
+      this.actions.push(action)
+    }
   }
 
   write(text: string, skip: boolean) {
-    const action = this.performActions()
+    this.performActions()
     if (skip) {
-      this.line.push({ text })
+      this.line.push({ text, depth: this.depth })
     } else {
-      this.line.push({ text, action })
+      this.line.push({ text, depth: this.depth, nospace: this.nospace })
+      this.nospace = false
+      this.nobreak = false
     }
   }
 
   toString() {
-    this.control("break")
+    this.control("softbreak")
     this.performActions()
     return this.text.replace(/(\r\n?|\n)*$/, this.eol)
   }
 
   private performActions() {
     if (this.actions.length === 0) {
-      return undefined
+      return
     }
 
-    let action
-    if (this.actions.some(action => action === "nospace")) {
-      action = "nospace"
-    } else if (this.actions.some(action => action === "nobreak")) {
-      // no handle
-    } else {
-      let breaked = false
-      for (const action of this.actions) {
-        if (action === "reset") {
-          this.flushLine()
-          if (!breaked) {
-            this.text += this.eol
-            breaked = true
-          }
-          this.depth = 0
-        } else if (action === "indent") {
-          this.flushLine()
-          if (!breaked) {
-            this.text += this.eol
-            breaked = true
-          }
-          this.depth++
-        } else if (action === "unindent") {
-          this.flushLine()
-          if (!breaked) {
-            this.text += this.eol
-            breaked = true
-          }
-          this.depth--
-        } else if (action === "forcebreak") {
-          this.flushLine()
-          this.text += this.eol
+    let breaked = false
+    let breakCount = 0
+    let depth = this.depth
+    for (const action of this.actions) {
+      if (action === "break") {
+        breakCount++
+        breaked = true
+      } else {
+        if (!breaked) {
+          breakCount++
           breaked = true
-        } else if (action === "break") {
-          this.flushLine()
-          if (!breaked) {
-            this.text += this.eol
-            breaked = true
-          }
-        } 
+        }
+
+        if (action === "softbreak") {
+          // no handle
+        } else if (action === "indent") {
+          depth++
+        } else if (action === "unindent") {
+          depth--
+        } else if (action === "reset") {
+          depth = 0
+        } else {
+          throw new Error("Unexpected action: " + action)
+        }
       }
     }
     this.actions.length = 0
-    return action
+
+    if (!(this.nospace || this.nobreak)) {
+      this.flushLine()
+      for (let i = 0; i < breakCount; i++) {
+        this.text += this.eol
+      }
+    }
+
+    this.depth = depth
   }
 
   private flushLine() {
@@ -206,12 +209,14 @@ class FormatWriter {
       return
     }
 
+    let depth = this.line[0].depth
+
     let first = true
-    let width = this.indentWidth * (this.depth + (first ? 0 : 1))
-    let text = this.indent.repeat((this.depth + (first ? 0 : 1)))
+    let width = this.indentWidth * (depth + (first ? 0 : 1))
+    let text = this.indent.repeat((depth + (first ? 0 : 1)))
     for (let i = 0; i < this.line.length; i++) {
       const item = this.line[i]
-      const nospace = i === 0 || item.action === "nospace"
+      const nospace = i === 0 || item.nospace
       if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
         width += (nospace ? 0 : 1) + item.text.length
         text += (nospace ? "" : " ") + item.text
@@ -219,8 +224,8 @@ class FormatWriter {
         this.text += text + this.eol
         first = false
 
-        width = this.indentWidth * (this.depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.text.length
-        text = this.indent.repeat((this.depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
+        width = this.indentWidth * (depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.text.length
+        text = this.indent.repeat((depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
       }
     }
     this.text += text

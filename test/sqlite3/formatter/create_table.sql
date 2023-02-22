@@ -2,16 +2,11 @@
 CREATE TABLE test.table_1 (
   text_column TEXT
     NOT NULL
-    PRIMARY KEY,
-  -- text affinity
-  num_column NUMERIC,
-  -- numeric affinity
-  int_column INTEGER,
-  -- integer affinity
-  real_column INTEGER,
-  -- real affinity
-  blob_column BLOB,
-  -- no affinity
+    PRIMARY KEY, -- text affinity
+  num_column NUMERIC, -- numeric affinity
+  int_column INTEGER, -- integer affinity
+  real_column INTEGER, -- real affinity
+  blob_column BLOB, -- no affinity
   no_affinity_column -- no affinity
 );
 

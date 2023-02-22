@@ -603,45 +603,43 @@ export class Sqlite3Parser extends Parser {
           this.identifier(node, r, "ObjectName")
         }
 
-        apply(this.append(node, new Element("AlterTableOptionList", {})), node => {
-          if (r.peekIf(Keyword.RENAME, Keyword.TO)) {
-            apply(this.append(node, new Element("RenameToObjectClause", {})), node => {
+        if (r.peekIf(Keyword.RENAME, Keyword.TO)) {
+          apply(this.append(node, new Element("RenameToObjectClause", {})), node => {
+            this.append(node, r.consume())
+            this.append(node, r.consume())
+            this.identifier(node, r, "ObjectName")
+          })
+        } else if (r.peekIf(Keyword.RENAME)) {
+          apply(this.append(node, new Element("RenameColumnClause", {})), node => {
+            this.append(node, r.consume())
+            if (r.peekIf(Keyword.COLUMN)) {
               this.append(node, r.consume())
-              this.append(node, r.consume())
-              this.identifier(node, r, "ObjectName")
-            })
-          } else if (r.peekIf(Keyword.RENAME)) {
-            apply(this.append(node, new Element("RenameColumnClause", {})), node => {
-              this.append(node, r.consume())
-              if (r.peekIf(Keyword.COLUMN)) {
-                this.append(node, r.consume())
-              }
-              this.identifier(node, r, "ColumnName")
-              apply(this.append(node, new Element("RenameToColumnClause", {})), node => {
-                this.append(node, r.consume(Keyword.TO))
-                this.identifier(node, r, "ColumnName")
-              })
-            })
-          } else if (r.peekIf(Keyword.ADD)) {
-            apply(this.append(node, new Element("AddColumnClause", {})), node => {
-              this.append(node, r.consume())
-              if (r.peekIf(Keyword.COLUMN)) {
-                this.append(node, r.consume())
-              }
-              this.tableColumn(node, r)
-            })
-          } else if (r.peekIf(Keyword.DROP)) {
-            apply(this.append(node, new Element("DropColumnClause", {})), node => {
-              this.append(node, r.consume())
-              if (r.peekIf(Keyword.COLUMN)) {
-                this.append(node, r.consume())
-              }
+            }
+            this.identifier(node, r, "ColumnName")
+            apply(this.append(node, new Element("RenameToColumnClause", {})), node => {
+              this.append(node, r.consume(Keyword.TO))
               this.identifier(node, r, "ColumnName")
             })
-          } else {
-            throw r.createParseError()
-          }
-        })
+          })
+        } else if (r.peekIf(Keyword.ADD)) {
+          apply(this.append(node, new Element("AddColumnClause", {})), node => {
+            this.append(node, r.consume())
+            if (r.peekIf(Keyword.COLUMN)) {
+              this.append(node, r.consume())
+            }
+            this.tableColumn(node, r)
+          })
+        } else if (r.peekIf(Keyword.DROP)) {
+          apply(this.append(node, new Element("DropColumnClause", {})), node => {
+            this.append(node, r.consume())
+            if (r.peekIf(Keyword.COLUMN)) {
+              this.append(node, r.consume())
+            }
+            this.identifier(node, r, "ColumnName")
+          })
+        } else {
+          throw r.createParseError()
+        }
       })
     } catch (err) {
       if (err instanceof ParseError) {
@@ -2567,20 +2565,16 @@ export class Sqlite3Parser extends Parser {
         if (!r.peekIf(Keyword.WHEN)) {
           this.expression(node, r)
         }
-        apply(this.append(node, new Element("CaseConditionList", {})), node => {
-          do {
-            apply(this.append(node, new Element("CaseCondition", {})), node => {
-              apply(this.append(node, new Element("WhenClause", {})), node => {
-                this.append(node, r.consume(Keyword.WHEN))
-                this.expression(node, r)
-              })
-              apply(this.append(node, new Element("ThenClause", {})), node => {
-                this.append(node, r.consume(Keyword.THEN))
-                this.expression(node, r)
-              })
+        do {
+          apply(this.append(node, new Element("WhenClause", {})), node => {
+            this.append(node, r.consume(Keyword.WHEN))
+            this.expression(node, r)
+            apply(this.append(node, new Element("ThenClause", {})), node => {
+              this.append(node, r.consume(Keyword.THEN))
+              this.expression(node, r)
             })
-          } while (r.peekIf(Keyword.WHEN))
-        })
+          })
+        } while (r.peekIf(Keyword.WHEN))
         if (r.peekIf(Keyword.ELSE)) {
           apply(this.append(node, new Element("ElseClause", {})), node => {
             this.append(node, r.consume())
