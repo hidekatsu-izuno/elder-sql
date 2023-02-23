@@ -2,7 +2,7 @@ import { EOL } from "node:os"
 import { Node, Element, Text } from 'domhandler'
 import { textContent } from 'domutils'
 import { compile } from 'css-select'
-import { Parser } from "./parser.js"
+import { AggregateParseError, Parser } from "./parser.js"
 
 export declare type FormatActionType = "reset" | "indent" | "unindent" | "softbreak" | "break" | "nospace" | "nobreak"
 
@@ -39,8 +39,19 @@ export abstract class Formatter {
   }
 
   format(text: string, filename?: string): string {
+    let node
+    try {
+      node = this.parser.parse(text, filename)
+    } catch (err) {
+      if (err instanceof AggregateParseError) {
+        node = err.node
+      } else {
+        throw err
+      }
+    }
+
     const out = new FormatWriter(this.options)
-    this.formatElement(this.parser.parse(text, filename), out)
+    this.formatElement(node, out)
     return out.toString()
   }
 
@@ -79,6 +90,8 @@ export abstract class Formatter {
       // no handle
     } else if (node.name === "EoF") {
       out.write("", false)
+    } else if (node.name === "Unknown") {
+      out.write(this.concatNode(node), false)
     } else {
       for (let i = 0; i < node.childNodes.length; i++) {
         const child = node.childNodes[i]
@@ -98,6 +111,19 @@ export abstract class Formatter {
         out.control(after)
       }
     }
+  }
+
+  private concatNode(node: Element) {
+    let out = ""
+    for (let i = 0; i < node.childNodes.length; i++) {
+      const child = node.childNodes[i]
+      if (child instanceof Element) {
+        out += this.concatNode(child)
+      } else if (child instanceof Text) {
+        out += child.data
+      }
+    }
+    return out
   }
 }
 

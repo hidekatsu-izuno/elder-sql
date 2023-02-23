@@ -52,11 +52,8 @@ export class Sqlite3Parser extends Parser {
     }
 
     if (errors.length) {
-      const err = new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
-        e => e.message
-      ).join("\n")}`)
-      err.node = root
-      throw err
+      throw new AggregateParseError(root, errors, 
+        `${errors.length} error found\n${errors.map(e => e.message).join("\n")}`)
     }
 
     return root
@@ -142,6 +139,8 @@ export class Sqlite3Parser extends Parser {
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
         return this.createIndexStatement(parent, r)
+      } else {
+        r.pos = mark
       }
     } else if (r.peekIf(Keyword.ALTER)) {
       const mark = r.pos
@@ -150,6 +149,8 @@ export class Sqlite3Parser extends Parser {
       if (r.peekIf(Keyword.TABLE)) {
         r.pos = mark
         return this.alterTableStatement(parent, r)
+      } else {
+        r.pos = mark
       }
     } else if (r.peekIf(Keyword.DROP)) {
       const mark = r.pos
@@ -167,6 +168,8 @@ export class Sqlite3Parser extends Parser {
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
         return this.dropIndexStatement(parent, r)
+      } else {
+        r.pos = mark
       }
     } else if (r.peekIf(Keyword.ATTACH)) {
       return this.attachDatabaseStatement(parent, r)

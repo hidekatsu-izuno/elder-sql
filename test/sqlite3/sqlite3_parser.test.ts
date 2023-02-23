@@ -3,6 +3,7 @@ import path from "node:path"
 import fs from "node:fs"
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.js"
 import { writeDebugFile, toJSScript, toJSString } from "../utils/debug.js"
+import { AggregateParseError } from '../../src/parser.js'
 
 describe("test sqlite3 parser", () => {
   test.each([
@@ -32,10 +33,20 @@ describe("test sqlite3 parser", () => {
     "select",
     "update",
     "vacuum",
+    "unknown",
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
     const expected = (await import("./parser/" + target + ".js")).default
-    const node = new Sqlite3Parser().parse(script)
+    let node
+    try {
+      node = new Sqlite3Parser().parse(script)
+    } catch (err) {
+      if (target === "unknown" && err instanceof AggregateParseError) {
+        node = err.node
+      } else {
+        throw err
+      }
+    }
 
     writeDebugFile(`test/dump/sqlite3/parser/${target}.js.txt`, toJSScript(node))
 

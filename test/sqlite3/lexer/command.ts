@@ -14,11 +14,11 @@ export default [
     new Token(TokenType.Identifier, "print", { keyword: Keyword.PRINT, location: new SourceLocation(58, 7, 2)}),
     new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(63, 7, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(68, 7, 12)})], location: new SourceLocation(64, 7, 8)}),
     new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(70, 8, 2)})], location: new SourceLocation(69, 8, 1)}),
-    new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, location: new SourceLocation(71, 9, 1)}),
-    new Token(TokenType.Numeric, "3", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(77, 9, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(79, 9, 9)})], location: new SourceLocation(78, 9, 8)}),
-    new Token(TokenType.Delimiter, "/", { eos: true, postskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(81, 10, 2)}), new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(83, 10, 4)})], location: new SourceLocation(80, 10, 1)}),
-    new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, preskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(84, 11, 1)})], location: new SourceLocation(85, 12, 1)}),
-    new Token(TokenType.Numeric, "4", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(91, 12, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(93, 12, 9)})], location: new SourceLocation(92, 12, 8)}),
-    new Token(TokenType.Delimiter, "GO", { eos: true, location: new SourceLocation(94, 13, 1)}),
-    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(96, 13, 3)})
+    new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, preskips: [new Token(TokenType.BlockComment, "/*.print*/", { location: new SourceLocation(71, 9, 1)}), new Token(TokenType.WhiteSpace, "   ", { location: new SourceLocation(81, 9, 11)}), new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(84, 9, 14)})], location: new SourceLocation(85, 10, 1)}),
+    new Token(TokenType.Numeric, "3", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(91, 10, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(93, 10, 9)})], location: new SourceLocation(92, 10, 8)}),
+    new Token(TokenType.Delimiter, "/", { eos: true, postskips: [new Token(TokenType.WhiteSpace, "  ", { location: new SourceLocation(95, 11, 2)}), new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(97, 11, 4)})], location: new SourceLocation(94, 11, 1)}),
+    new Token(TokenType.Reserved, "select", { keyword: Keyword.SELECT, preskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(98, 12, 1)})], location: new SourceLocation(99, 13, 1)}),
+    new Token(TokenType.Numeric, "4", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(105, 13, 7)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(107, 13, 9)})], location: new SourceLocation(106, 13, 8)}),
+    new Token(TokenType.Delimiter, "GO", { eos: true, location: new SourceLocation(108, 14, 1)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(110, 14, 3)})
 ]

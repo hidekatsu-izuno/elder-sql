@@ -32,6 +32,7 @@ describe("test sqlite3 formatter", () => {
     "select",
     "update",
     "vacuum",
+    "unknown",
   ])("%s", async (target) => {
     const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
     const expected = fs.readFileSync(path.join(__dirname, "formatter", target + ".sql"), "utf8")

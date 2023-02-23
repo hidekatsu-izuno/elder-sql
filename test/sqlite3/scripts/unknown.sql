@@ -1,0 +1,6 @@
+SELECT
+UPDATE
+select 1 2 3
+CREATE TABLE;
+
+CREATE @aaa@ FROM ###;
