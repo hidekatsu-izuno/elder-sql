@@ -141,7 +141,7 @@ export default new Element("Script", {}, [
   new Element("UpdateStatement", {}, [
     new Element("WithClause", {}, [
       new Element("Identifier", {"value":"WITH"}, [new Text("WITH")]),
-      new Element("CommonTableExpression", {}, [
+      new Element("CommonTable", {}, [
         new Element("ObjectName", {"value":"X"}, [
           new Element("Identifier", {}, [
             new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -452,4 +452,5 @@ export default new Element("Script", {}, [
     new Text(";"),
     new Element("LineBreak", {}, [new Text("\n")]),
   ]),
+  new Element("EoF", {}),
 ])

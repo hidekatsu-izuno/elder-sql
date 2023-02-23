@@ -67,4 +67,5 @@ export default new Element("Script", {}, [
     ]),
   ]),
   new Element("SemiColon", {}, [new Text(";")]),
+  new Element("EoF", {}),
 ])

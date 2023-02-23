@@ -240,5 +240,6 @@ export default [
     new Token(TokenType.Identifier, "Z", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(841, 16, 49)})], location: new SourceLocation(842, 16, 50)}),
     new Token(TokenType.Comma, ",", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(844, 16, 52)})], location: new SourceLocation(843, 16, 51)}),
     new Token(TokenType.Operator, "*", { location: new SourceLocation(845, 16, 53)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(847, 16, 55)})], location: new SourceLocation(846, 16, 54)})
+    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(847, 16, 55)})], location: new SourceLocation(846, 16, 54)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(848, 17, 1)})
 ]

@@ -1,7 +1,5 @@
-import { escapeXml } from "./utils.js"
-
 export class TokenType {
-  static SectionBreak = new TokenType("SectionBreak", { separator: true })
+  static EoF = new TokenType("EoF", { separator: true })
   static Reserved = new TokenType("Reserved")
   static WhiteSpace = new TokenType("WhiteSpace", { skip: true })
   static LineComment = new TokenType("LineComment", { skip: true })
@@ -171,25 +169,6 @@ export class Token {
       location: this.location?.clone(),
     })
   }
-
-  toXmlString() {
-    let xml = '<token type="' + escapeXml(this.type.name) + '">\n'
-    for (let i = 0; i < this.preskips.length; i++) {
-      xml += this.preskips[i].toXmlString()
-    }
-    xml += '<text'
-    if (this.location) {
-      xml += ' pos="' + this.location.position + '"'
-      xml += ' row="' + this.location.lineNumber + '"'
-      xml += ' col="' + this.location.columnNumber + '"'
-    }
-    xml += '>' + escapeXml(this.text) + '</text>\n'
-    for (let i = 0; i < this.postskips.length; i++) {
-      xml += this.postskips[i].toXmlString()
-    }
-    xml += '</token>\n'
-    return xml
-  }
   
   toString() {
     if (this.preskips.length > 0 || this.postskips.length > 0) {
@@ -326,7 +305,7 @@ export abstract class Lexer {
       }
       if (newTokens && newTokens.length > 0) {
         const last = tokens[tokens.length - 1]
-        if (last && last.type === TokenType.SectionBreak) {
+        if (last && last.type === TokenType.EoF) {
           if (this.options.skipTokenStrategy !== 'ignore') {
             skips.push(...last.preskips)
             skips.push(...last.postskips)
@@ -351,18 +330,16 @@ export abstract class Lexer {
       }
     }
 
-    if (skips.length > 0 || !tokens[tokens.length - 1]?.eos) {
-      tokens.push(new Token(TokenType.SectionBreak, "", {
-        eos: true,
-        preskips: skips,
-        location : start ? new SourceLocation(
-          pos + start.position, 
-          lineNumber, 
-          columnNumber,
-          fileName,
-        ) : undefined,
-      }))
-    }
+    tokens.push(new Token(TokenType.EoF, "", {
+      eos: true,
+      preskips: skips,
+      location : start ? new SourceLocation(
+        pos + start.position, 
+        lineNumber, 
+        columnNumber,
+        fileName,
+      ) : undefined,
+    }))
 
     return tokens
   }

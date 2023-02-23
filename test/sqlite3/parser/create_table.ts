@@ -44,8 +44,6 @@ export default new Element("Script", {}, [
             ]),
           ]),
         ]),
-      ]),
-      new Element("ColumnConstraintList", {}, [
         new Element("ColumnConstraint", {}, [
           new Element("NotNullConstraint", {}, [
             new Element("Reserved", {"value":"NOT"}, [
@@ -227,8 +225,6 @@ export default new Element("Script", {}, [
             ]),
           ]),
         ]),
-      ]),
-      new Element("ColumnConstraintList", {}, [
         new Element("ColumnConstraint", {}, [
           new Element("NotNullConstraint", {}, [
             new Element("Reserved", {"value":"NOT"}, [
@@ -263,8 +259,6 @@ export default new Element("Script", {}, [
             ]),
           ]),
         ]),
-      ]),
-      new Element("ColumnConstraintList", {}, [
         new Element("ColumnConstraint", {}, [
           new Element("NotNullConstraint", {}, [
             new Element("Reserved", {"value":"NOT"}, [
@@ -685,75 +679,75 @@ export default new Element("Script", {}, [
               new Text(")"),
               new Element("LineBreak", {}, [new Text("\n")]),
             ]),
-            new Element("ReferencesOptionList", {}, [
-              new Element("OnDeleteClause", {}, [
-                new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
-                  new Text("ON"),
-                ]),
-                new Element("Reserved", {"value":"DELETE"}, [
+            new Element("OnDeleteClause", {}, [
+              new Element("Reserved", {"value":"ON"}, [
+                new Element("WhiteSpace", {}, [new Text("    ")]),
+                new Text("ON"),
+              ]),
+              new Element("Reserved", {"value":"DELETE"}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("DELETE"),
+              ]),
+              new Element("SetNullOption", {}, [
+                new Element("Reserved", {"value":"SET"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("DELETE"),
+                  new Text("SET"),
                 ]),
-                new Element("SetNullOption", {}, [
-                  new Element("Reserved", {"value":"SET"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("SET"),
-                  ]),
-                  new Element("Reserved", {"value":"NULL"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("NULL"),
-                    new Element("LineBreak", {}, [new Text("\n")]),
-                  ]),
+                new Element("Reserved", {"value":"NULL"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("NULL"),
+                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
-              new Element("MatchSimpleOption", {}, [
-                new Element("Identifier", {"value":"MATCH"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
-                  new Text("MATCH"),
-                ]),
+            ]),
+            new Element("MatchClause", {}, [
+              new Element("Identifier", {"value":"MATCH"}, [
+                new Element("WhiteSpace", {}, [new Text("    ")]),
+                new Text("MATCH"),
+              ]),
+              new Element("SimpleOption", {}, [
                 new Element("Identifier", {"value":"SIMPLE"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("SIMPLE"),
                   new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
-              new Element("OnUpdateClause", {}, [
-                new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
-                  new Text("ON"),
-                ]),
-                new Element("Reserved", {"value":"UPDATE"}, [
+            ]),
+            new Element("OnUpdateClause", {}, [
+              new Element("Reserved", {"value":"ON"}, [
+                new Element("WhiteSpace", {}, [new Text("    ")]),
+                new Text("ON"),
+              ]),
+              new Element("Reserved", {"value":"UPDATE"}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("UPDATE"),
+              ]),
+              new Element("CascadeOption", {}, [
+                new Element("Identifier", {"value":"CASCADE"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("UPDATE"),
-                ]),
-                new Element("CascadeOption", {}, [
-                  new Element("Identifier", {"value":"CASCADE"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("CASCADE"),
-                    new Element("LineBreak", {}, [new Text("\n")]),
-                  ]),
+                  new Text("CASCADE"),
+                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
-              new Element("NotDeferrableOption", {}, [
-                new Element("Reserved", {"value":"NOT"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
-                  new Text("NOT"),
-                ]),
-                new Element("Reserved", {"value":"DEFERRABLE"}, [
+            ]),
+            new Element("NotDeferrableOption", {}, [
+              new Element("Reserved", {"value":"NOT"}, [
+                new Element("WhiteSpace", {}, [new Text("    ")]),
+                new Text("NOT"),
+              ]),
+              new Element("Reserved", {"value":"DEFERRABLE"}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("DEFERRABLE"),
+              ]),
+              new Element("InitiallyDeferredOption", {}, [
+                new Element("Identifier", {"value":"INITIALLY"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("DEFERRABLE"),
+                  new Text("INITIALLY"),
                 ]),
-                new Element("InitiallyDeferredOption", {}, [
-                  new Element("Identifier", {"value":"INITIALLY"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("INITIALLY"),
-                  ]),
-                  new Element("Identifier", {"value":"DEFERRED"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("DEFERRED"),
-                    new Element("LineBreak", {}, [new Text("\n")]),
-                  ]),
+                new Element("Identifier", {"value":"DEFERRED"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("DEFERRED"),
+                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
             ]),
@@ -912,4 +906,5 @@ export default new Element("Script", {}, [
     ]),
   ]),
   new Element("SemiColon", {}, [new Text(";")]),
+  new Element("EoF", {}),
 ])

@@ -67,18 +67,15 @@ SELECT
 
 SELECT
   CASE x
-    WHEN 1
-      THEN 'a'
+    WHEN 1 THEN 'a'
   END x
 FROM
   test;
 
 SELECT
   CASE x
-    WHEN 1
-      THEN 'a'
-    WHEN 2
-      THEN 'b'
+    WHEN 1 THEN 'a'
+    WHEN 2 THEN 'b'
     ELSE 'c'
   END x
 FROM
@@ -86,18 +83,15 @@ FROM
 
 SELECT
   CASE
-    WHEN x = 1
-      THEN 'a'
+    WHEN x = 1 THEN 'a'
   END AS x
 FROM
   test;
 
 SELECT
   CASE
-    WHEN x = 1
-      THEN 'a'
-    WHEN x = 2
-      THEN 'b'
+    WHEN x = 1 THEN 'a'
+    WHEN x = 2 THEN 'b'
     ELSE 'c'
   END AS x
 FROM

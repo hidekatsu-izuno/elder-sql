@@ -7,5 +7,5 @@ export default [
     new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(23, 1, 23)})], location: new SourceLocation(22, 1, 22)}),
     new Token(TokenType.Identifier, "DETACH", { keyword: Keyword.DETACH, location: new SourceLocation(24, 2, 1)}),
     new Token(TokenType.Identifier, "new_db", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(30, 2, 7)})], location: new SourceLocation(31, 2, 8)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(37, 2, 14)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(37, 2, 14)})
 ]

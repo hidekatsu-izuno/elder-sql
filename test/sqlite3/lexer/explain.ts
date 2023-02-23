@@ -40,5 +40,6 @@ export default [
     new Token(TokenType.Identifier, "b", { location: new SourceLocation(109, 3, 70)}),
     new Token(TokenType.Operator, ">", { location: new SourceLocation(110, 3, 71)}),
     new Token(TokenType.Numeric, "2", { location: new SourceLocation(111, 3, 72)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(112, 3, 73)})
+    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(112, 3, 73)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(113, 3, 74)})
 ]

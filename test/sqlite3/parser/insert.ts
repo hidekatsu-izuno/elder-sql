@@ -20,15 +20,17 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -59,33 +61,35 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
-          ]),
-          new Element("Comma", {}, [new Text(",")]),
-          new Element("Expression", {}, [
-            new Element("StringLiteral", {"value":"2"}, [
-              new Element("String", {}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("'2'"),
+            new Element("Comma", {}, [new Text(",")]),
+            new Element("Expression", {}, [
+              new Element("StringLiteral", {"value":"2"}, [
+                new Element("String", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("Comma", {}, [new Text(",")]),
+            new Element("Expression", {}, [
+              new Element("NullLiteral", {}, [
+                new Element("Reserved", {"value":"NULL"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("NULL"),
+                ]),
               ]),
             ]),
           ]),
-          new Element("Comma", {}, [new Text(",")]),
-          new Element("Expression", {}, [
-            new Element("NullLiteral", {}, [
-              new Element("Reserved", {"value":"NULL"}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("NULL"),
-              ]),
-            ]),
-          ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -138,15 +142,17 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -210,24 +216,26 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
-          ]),
-          new Element("Comma", {}, [new Text(",")]),
-          new Element("Expression", {}, [
-            new Element("StringLiteral", {"value":"2"}, [
-              new Element("Identifier", {}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("\"2\""),
+            new Element("Comma", {}, [new Text(",")]),
+            new Element("Expression", {}, [
+              new Element("StringLiteral", {"value":"2"}, [
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("\"2\""),
+                ]),
               ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -302,8 +310,8 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionGroupList", {}, [
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
           new Element("ExpressionList", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
@@ -329,6 +337,7 @@ export default new Element("Script", {}, [
               ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
           new Element("Comma", {}, [
             new Text(","),
             new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -361,7 +370,6 @@ export default new Element("Script", {}, [
           ]),
           new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -400,8 +408,8 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionGroupList", {}, [
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
           new Element("ExpressionList", {}, [
             new Element("Expression", {}, [
               new Element("NumericLiteral", {"value":"1"}, [
@@ -427,6 +435,7 @@ export default new Element("Script", {}, [
               ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
           new Element("Comma", {}, [
             new Text(","),
             new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -490,7 +499,6 @@ export default new Element("Script", {}, [
           ]),
           new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -678,15 +686,17 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
   ]),
@@ -697,7 +707,7 @@ export default new Element("Script", {}, [
   new Element("InsertStatement", {}, [
     new Element("WithClause", {}, [
       new Element("Identifier", {"value":"WITH"}, [new Text("WITH")]),
-      new Element("CommonTableExpression", {}, [
+      new Element("CommonTable", {}, [
         new Element("ObjectName", {"value":"X"}, [
           new Element("Identifier", {}, [
             new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -828,7 +838,7 @@ export default new Element("Script", {}, [
             new Element("WhiteSpace", {}, [new Text(" ")]),
             new Text("WITH"),
           ]),
-          new Element("CommonTableExpression", {}, [
+          new Element("CommonTable", {}, [
             new Element("ObjectName", {"value":"X"}, [
               new Element("Identifier", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -939,33 +949,35 @@ export default new Element("Script", {}, [
           new Text("VALUES"),
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("ExpressionList", {}, [
-          new Element("Expression", {}, [
-            new Element("NumericLiteral", {"value":"1"}, [
-              new Element("Numeric", {}, [new Text("1")]),
+        new Element("ExpressionListGroup", {}, [
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("ExpressionList", {}, [
+            new Element("Expression", {}, [
+              new Element("NumericLiteral", {"value":"1"}, [
+                new Element("Numeric", {}, [new Text("1")]),
+              ]),
             ]),
-          ]),
-          new Element("Comma", {}, [new Text(",")]),
-          new Element("Expression", {}, [
-            new Element("StringLiteral", {"value":"2"}, [
-              new Element("String", {}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("'2'"),
+            new Element("Comma", {}, [new Text(",")]),
+            new Element("Expression", {}, [
+              new Element("StringLiteral", {"value":"2"}, [
+                new Element("String", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("Comma", {}, [new Text(",")]),
+            new Element("Expression", {}, [
+              new Element("NullLiteral", {}, [
+                new Element("Reserved", {"value":"NULL"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("NULL"),
+                ]),
               ]),
             ]),
           ]),
-          new Element("Comma", {}, [new Text(",")]),
-          new Element("Expression", {}, [
-            new Element("NullLiteral", {}, [
-              new Element("Reserved", {"value":"NULL"}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("NULL"),
-              ]),
-            ]),
-          ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
       new Element("ReturningClause", {}, [
         new Element("Reserved", {"value":"RETURNING"}, [
@@ -1157,4 +1169,5 @@ export default new Element("Script", {}, [
     new Text(";"),
     new Element("LineBreak", {}, [new Text("\n")]),
   ]),
+  new Element("EoF", {}),
 ])

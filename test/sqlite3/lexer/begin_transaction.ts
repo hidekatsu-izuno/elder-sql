@@ -26,5 +26,5 @@ export default [
     new Token(TokenType.Identifier, "BEGIN", { keyword: Keyword.BEGIN, location: new SourceLocation(133, 8, 1)}),
     new Token(TokenType.Identifier, "EXCLUSIVE", { keyword: Keyword.EXCLUSIVE, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(138, 8, 6)})], location: new SourceLocation(139, 8, 7)}),
     new Token(TokenType.Reserved, "TRANSACTION", { keyword: Keyword.TRANSACTION, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(148, 8, 16)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(160, 8, 28)})], location: new SourceLocation(149, 8, 17)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(161, 9, 1)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(161, 9, 1)})
 ]

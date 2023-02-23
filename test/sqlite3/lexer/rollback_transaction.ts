@@ -16,5 +16,6 @@ export default [
     new Token(TokenType.Reserved, "TO", { keyword: Keyword.TO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(83, 4, 21)})], location: new SourceLocation(84, 4, 22)}),
     new Token(TokenType.Identifier, "SAVEPOINT", { keyword: Keyword.SAVEPOINT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(86, 4, 24)})], location: new SourceLocation(87, 4, 25)}),
     new Token(TokenType.Identifier, "sect1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(96, 4, 34)})], location: new SourceLocation(97, 4, 35)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(103, 4, 41)})], location: new SourceLocation(102, 4, 40)})
+    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(103, 4, 41)})], location: new SourceLocation(102, 4, 40)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(104, 5, 1)})
 ]

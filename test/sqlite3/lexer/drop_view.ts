@@ -18,5 +18,6 @@ export default [
     new Token(TokenType.Identifier, "main", { keyword: Keyword.MAIN, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(64, 3, 20)})], location: new SourceLocation(65, 3, 21)}),
     new Token(TokenType.Dot, ".", { location: new SourceLocation(69, 3, 25)}),
     new Token(TokenType.Identifier, "v_sample", { location: new SourceLocation(70, 3, 26)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(78, 3, 34)})
+    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(78, 3, 34)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(79, 3, 35)})
 ]

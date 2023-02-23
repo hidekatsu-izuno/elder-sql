@@ -10,5 +10,5 @@ export default [
     new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(32, 3, 5)})], location: new SourceLocation(31, 3, 4)}),
     new Token(TokenType.Identifier, "END", { keyword: Keyword.END, location: new SourceLocation(33, 4, 1)}),
     new Token(TokenType.Reserved, "TRANSACTION", { keyword: Keyword.TRANSACTION, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(36, 4, 4)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(48, 4, 16)})], location: new SourceLocation(37, 4, 5)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(49, 5, 1)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(49, 5, 1)})
 ]

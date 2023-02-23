@@ -62,5 +62,5 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("SectionBreak", {}, [new Text("")]),
+  new Element("EoF", {}),
 ])

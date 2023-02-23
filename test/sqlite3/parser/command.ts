@@ -17,13 +17,21 @@ export default new Element("Script", {}, [
           new Element("LineBreak", {}, [new Text("\n")]),
         ]),
       ]),
-      new Element("CommandArgument", {"value":"select"}, [
-        new Element("Reserved", {"value":"SELECT"}, [new Text("select")]),
-      ]),
-      new Element("CommandArgument", {"value":"1"}, [
-        new Element("Numeric", {}, [
-          new Element("WhiteSpace", {}, [new Text(" ")]),
-          new Text("1"),
+    ]),
+  ]),
+  new Element("SelectStatement", {}, [
+    new Element("SelectClause", {}, [
+      new Element("Reserved", {"value":"SELECT"}, [new Text("select")]),
+      new Element("SelectColumnList", {}, [
+        new Element("SelectColumn", {}, [
+          new Element("Expression", {}, [
+            new Element("NumericLiteral", {"value":"1"}, [
+              new Element("Numeric", {}, [
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Text("1"),
+              ]),
+            ]),
+          ]),
         ]),
       ]),
     ]),
@@ -79,7 +87,12 @@ export default new Element("Script", {}, [
   ]),
   new Element("SelectStatement", {}, [
     new Element("SelectClause", {}, [
-      new Element("Reserved", {"value":"SELECT"}, [new Text("select")]),
+      new Element("Reserved", {"value":"SELECT"}, [
+        new Element("BlockComment", {}, [new Text("/*.print*/")]),
+        new Element("WhiteSpace", {}, [new Text("   ")]),
+        new Element("LineBreak", {}, [new Text("\n")]),
+        new Text("select"),
+      ]),
       new Element("SelectColumnList", {}, [
         new Element("SelectColumn", {}, [
           new Element("Expression", {}, [
@@ -122,4 +135,5 @@ export default new Element("Script", {}, [
     ]),
   ]),
   new Element("Delimiter", {}, [new Text("GO")]),
+  new Element("EoF", {}),
 ])

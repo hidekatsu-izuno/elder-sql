@@ -234,21 +234,23 @@ export default new Element("Script", {}, [
                 new Text("VALUES"),
                 new Element("WhiteSpace", {}, [new Text(" ")]),
               ]),
-              new Element("LeftParen", {}, [new Text("(")]),
-              new Element("ExpressionList", {}, [
-                new Element("Expression", {}, [
-                  new Element("ColumnReference", {}, [
-                    new Element("ObjectName", {"value":"NEW"}, [
-                      new Element("Identifier", {"value":"NEW"}, [new Text("NEW")]),
-                    ]),
-                    new Element("Dot", {}, [new Text(".")]),
-                    new Element("ColumnName", {"value":"x"}, [
-                      new Element("Identifier", {}, [new Text("x")]),
+              new Element("ExpressionListGroup", {}, [
+                new Element("LeftParen", {}, [new Text("(")]),
+                new Element("ExpressionList", {}, [
+                  new Element("Expression", {}, [
+                    new Element("ColumnReference", {}, [
+                      new Element("ObjectName", {"value":"NEW"}, [
+                        new Element("Identifier", {"value":"NEW"}, [new Text("NEW")]),
+                      ]),
+                      new Element("Dot", {}, [new Text(".")]),
+                      new Element("ColumnName", {"value":"x"}, [
+                        new Element("Identifier", {}, [new Text("x")]),
+                      ]),
                     ]),
                   ]),
                 ]),
+                new Element("RightParen", {}, [new Text(")")]),
               ]),
-              new Element("RightParen", {}, [new Text(")")]),
             ]),
           ]),
         ]),
@@ -516,5 +518,5 @@ export default new Element("Script", {}, [
       new Element("Identifier", {"value":"END"}, [new Text("END")]),
     ]),
   ]),
-  new Element("SectionBreak", {}, [new Text("")]),
+  new Element("EoF", {}),
 ])

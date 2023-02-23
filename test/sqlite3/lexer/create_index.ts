@@ -132,5 +132,5 @@ export default [
     new Token(TokenType.Identifier, "a", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(484, 7, 110)})], postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(486, 7, 112)})], location: new SourceLocation(485, 7, 111)}),
     new Token(TokenType.Operator, "=", { location: new SourceLocation(487, 7, 113)}),
     new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(488, 7, 114)})], location: new SourceLocation(489, 7, 115)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(490, 7, 116)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(490, 7, 116)})
 ]

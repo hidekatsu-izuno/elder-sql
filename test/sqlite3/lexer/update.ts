@@ -80,5 +80,6 @@ export default [
     new Token(TokenType.Identifier, "Z", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(228, 5, 63)})], location: new SourceLocation(229, 5, 64)}),
     new Token(TokenType.Comma, ",", { postskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(231, 5, 66)})], location: new SourceLocation(230, 5, 65)}),
     new Token(TokenType.Operator, "*", { location: new SourceLocation(232, 5, 67)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(234, 5, 69)})], location: new SourceLocation(233, 5, 68)})
+    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(234, 5, 69)})], location: new SourceLocation(233, 5, 68)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(235, 6, 1)})
 ]

@@ -263,10 +263,7 @@ export class Sqlite3Lexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
-    tokens.push(new Token(TokenType.SectionBreak, "", {
-      eos: true,
-      location: tokens[tokens.length - 1].location?.clone()
-    }))
+    tokens[tokens.length - 1].eos = true
 
     return tokens
   }

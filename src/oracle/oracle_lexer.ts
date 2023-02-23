@@ -414,7 +414,7 @@ export class OracleLexer extends Lexer {
     if (skips.length > 0) {
       tokens[tokens.length - 1].postskips = skips
     }
-    tokens.push(new Token(TokenType.SectionBreak, "", { eos: true }))
+    tokens.push(new Token(TokenType.EoF, "", { eos: true }))
 
     return tokens
   }

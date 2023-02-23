@@ -106,5 +106,5 @@ export default [
     new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(531, 16, 35)})], location: new SourceLocation(532, 16, 36)}),
     new Token(TokenType.SemiColon, ";", { postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(534, 16, 38)})], location: new SourceLocation(533, 16, 37)}),
     new Token(TokenType.Identifier, "END", { keyword: Keyword.END, location: new SourceLocation(535, 17, 1)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(538, 17, 4)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(538, 17, 4)})
 ]

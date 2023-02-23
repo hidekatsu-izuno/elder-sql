@@ -31,29 +31,26 @@ INSERT OR IGNORE INTO main.sample AS sample2 (
 ) VALUES (
   1,
   "2",
-  TRUE,
-    (
-      1,
-      '2',
-      FALSE
-    )
-  );
+  TRUE
+), (
+  1,
+  '2',
+  FALSE
+);
 
 INSERT OR REPLACE INTO sample
 VALUES (
   1,
   "2",
-  NULL,
-  (
-    1,
-    '2',
-    TRUE
-  ),
-  (
-    1,
-    "2",
-    FALSE
-  )
+  NULL
+), (
+  1,
+  '2',
+  TRUE
+), (
+  1,
+  "2",
+  FALSE
 );
 
 INSERT OR ROLLBACK INTO main.sample
@@ -89,7 +86,8 @@ INSERT INTO main.sample
 WITH X AS (
   SELECT
     1 AS Y
-) SELECT
+)
+SELECT
   Y
 FROM
   X;

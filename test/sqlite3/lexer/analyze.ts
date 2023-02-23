@@ -8,5 +8,5 @@ export default [
     new Token(TokenType.Identifier, "main", { keyword: Keyword.MAIN, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(21, 2, 8)})], location: new SourceLocation(22, 2, 9)}),
     new Token(TokenType.Dot, ".", { location: new SourceLocation(26, 2, 13)}),
     new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(31, 2, 18)})], location: new SourceLocation(27, 2, 14)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(32, 3, 1)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(32, 3, 1)})
 ]

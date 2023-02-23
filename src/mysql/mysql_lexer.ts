@@ -413,11 +413,12 @@ export class MysqlLexer extends Lexer {
       const m = /^\/\*!([0-9]{5})?[ \f\t\v\r\n](.*)[ \f\t\v\r\n]\*\/$/s.exec(token.text)
       if (m && (!m[1] || !this.options.version || semver.gte(this.options.version, this.toSemverString(m[1])))) {
         const start = (m[1] ? m[1].length : 0) + 3
-        return this.sublex(
+        const tokens = this.sublex(
           state,
           " ".repeat(start) + token.text.substring(start, token.text.length-2) + "  ",
           token.location,
         )
+        return tokens
       }
     }
   }

@@ -2,11 +2,13 @@
 .print test
 */
 .print test
-select 1;
+select
+  1;
 
 select
   2 + x.print test;
 
+/*.print*/
 select
   3
 /

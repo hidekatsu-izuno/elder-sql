@@ -163,5 +163,6 @@ export default [
     new Token(TokenType.Comma, ",", { location: new SourceLocation(1237, 39, 52)}),
     new Token(TokenType.Identifier, "body", { keyword: Keyword.BODY, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(1238, 39, 53)})], location: new SourceLocation(1239, 39, 54)}),
     new Token(TokenType.RightParen, ")", { location: new SourceLocation(1243, 39, 58)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(1244, 39, 59)})
+    new Token(TokenType.SemiColon, ";", { eos: true, location: new SourceLocation(1244, 39, 59)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(1245, 39, 60)})
 ]

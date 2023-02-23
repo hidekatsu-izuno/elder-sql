@@ -66,6 +66,7 @@ export abstract class Formatter {
     }
     if (node.name === "LineComment") {
       out.write(textContent(node), true)
+      out.control("softbreak")
     } else if (node.name === "BlockComment" || node.name === "HintComment") {
       const segments = textContent(node).split(/\r\n?|\n/g)
       for (let i = 0; i < segments.length; i++) {
@@ -74,10 +75,10 @@ export abstract class Formatter {
         }
         out.write(segments[i], true)
       }
-    } else if (node.name === "LineBreak") {
-      out.control("softbreak")
-    } else if (node.name === "WhiteSpace") {
+    } else if (node.name === "WhiteSpace" || node.name === "LineBreak") {
       // no handle
+    } else if (node.name === "EoF") {
+      out.write("", false)
     } else {
       for (let i = 0; i < node.childNodes.length; i++) {
         const child = node.childNodes[i]
@@ -145,7 +146,9 @@ class FormatWriter {
   }
 
   write(text: string, skip: boolean) {
-    this.performActions()
+    if (this.actions.length > 0) {
+      this.performActions()
+    }
     if (skip) {
       this.line.push({ text, depth: this.depth })
     } else {
@@ -156,16 +159,13 @@ class FormatWriter {
   }
 
   toString() {
-    this.control("softbreak")
+    this.nospace = false
+    this.nobreak = false
     this.performActions()
-    return this.text.replace(/(\r\n?|\n)*$/, this.eol)
+    return this.text
   }
 
   private performActions() {
-    if (this.actions.length === 0) {
-      return
-    }
-
     let breaked = false
     let breakCount = 0
     let depth = this.depth
@@ -195,40 +195,38 @@ class FormatWriter {
     this.actions.length = 0
 
     if (!(this.nospace || this.nobreak)) {
-      this.flushLine()
+      if (this.line.length > 0) {
+        let depth = this.line[0].depth
+  
+        let first = true
+        let width = this.indentWidth * (depth + (first ? 0 : 1))
+        let text = this.indent.repeat((depth + (first ? 0 : 1)))
+        for (let i = 0; i < this.line.length; i++) {
+          const item = this.line[i]
+          const nospace = i === 0 || item.nospace
+          if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
+            width += (nospace ? 0 : 1) + item.text.length
+            text += (nospace ? "" : " ") + item.text
+          } else {
+            this.text += text + this.eol
+            first = false
+    
+            width = this.indentWidth * (depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.text.length
+            text = this.indent.repeat((depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
+          }
+        }
+        this.text += text
+        this.line.length = 0
+      }
+
+      if (breakCount > 2) {
+        breakCount = 2
+      }
       for (let i = 0; i < breakCount; i++) {
         this.text += this.eol
       }
     }
 
     this.depth = depth
-  }
-
-  private flushLine() {
-    if (this.line.length === 0) {
-      return
-    }
-
-    let depth = this.line[0].depth
-
-    let first = true
-    let width = this.indentWidth * (depth + (first ? 0 : 1))
-    let text = this.indent.repeat((depth + (first ? 0 : 1)))
-    for (let i = 0; i < this.line.length; i++) {
-      const item = this.line[i]
-      const nospace = i === 0 || item.nospace
-      if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
-        width += (nospace ? 0 : 1) + item.text.length
-        text += (nospace ? "" : " ") + item.text
-      } else {
-        this.text += text + this.eol
-        first = false
-
-        width = this.indentWidth * (depth + (first ? 0 : 1)) + (nospace ? 0 : 1) + item.text.length
-        text = this.indent.repeat((depth + (first ? 0 : 1))) + (nospace ? "" : " ") + item.text
-      }
-    }
-    this.text += text
-    this.line.length = 0
   }
 }

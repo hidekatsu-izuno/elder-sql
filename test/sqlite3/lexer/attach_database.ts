@@ -52,5 +52,6 @@ export default [
     new Token(TokenType.String, "'.db'", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(276, 6, 22)})], location: new SourceLocation(277, 6, 23)}),
     new Token(TokenType.Reserved, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(282, 6, 28)})], location: new SourceLocation(283, 6, 29)}),
     new Token(TokenType.Identifier, "new_db", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(285, 6, 31)})], location: new SourceLocation(286, 6, 32)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(293, 6, 39)})], location: new SourceLocation(292, 6, 38)})
+    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(293, 6, 39)})], location: new SourceLocation(292, 6, 38)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(294, 7, 1)})
 ]

@@ -14,5 +14,5 @@ export default [
     new Token(TokenType.Identifier, "VACUUM", { keyword: Keyword.VACUUM, location: new SourceLocation(54, 4, 1)}),
     new Token(TokenType.Reserved, "INTO", { keyword: Keyword.INTO, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(60, 4, 7)})], location: new SourceLocation(61, 4, 8)}),
     new Token(TokenType.Identifier, "\"database.dat\"", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(65, 4, 12)})], postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(80, 4, 27)})], location: new SourceLocation(66, 4, 13)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(81, 5, 1)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(81, 5, 1)})
 ]

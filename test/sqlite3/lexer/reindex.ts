@@ -10,5 +10,5 @@ export default [
     new Token(TokenType.Identifier, "test", { keyword: Keyword.TEST, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(40, 3, 8)})], location: new SourceLocation(41, 3, 9)}),
     new Token(TokenType.Dot, ".", { location: new SourceLocation(45, 3, 13)}),
     new Token(TokenType.Identifier, "sample", { keyword: Keyword.SAMPLE, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(52, 3, 20)})], location: new SourceLocation(46, 3, 14)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(53, 4, 1)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(53, 4, 1)})
 ]

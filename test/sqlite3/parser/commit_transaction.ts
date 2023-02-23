@@ -34,5 +34,5 @@ export default new Element("Script", {}, [
       new Element("LineBreak", {}, [new Text("\n")]),
     ]),
   ]),
-  new Element("SectionBreak", {}, [new Text("")]),
+  new Element("EoF", {}),
 ])

@@ -201,4 +201,5 @@ export default new Element("Script", {}, [
     new Text(";"),
     new Element("LineBreak", {}, [new Text("\n")]),
   ]),
+  new Element("EoF", {}),
 ])

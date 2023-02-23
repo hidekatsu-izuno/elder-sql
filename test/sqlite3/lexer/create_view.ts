@@ -66,5 +66,6 @@ export default [
     new Token(TokenType.Reserved, "AS", { keyword: Keyword.AS, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(249, 5, 50)})], location: new SourceLocation(250, 5, 51)}),
     new Token(TokenType.Reserved, "SELECT", { keyword: Keyword.SELECT, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(252, 5, 53)})], location: new SourceLocation(253, 5, 54)}),
     new Token(TokenType.Numeric, "1", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(259, 5, 60)})], location: new SourceLocation(260, 5, 61)}),
-    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(262, 5, 63)})], location: new SourceLocation(261, 5, 62)})
+    new Token(TokenType.SemiColon, ";", { eos: true, postskips: [new Token(TokenType.LineBreak, "\n", { location: new SourceLocation(262, 5, 63)})], location: new SourceLocation(261, 5, 62)}),
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(263, 6, 1)})
 ]

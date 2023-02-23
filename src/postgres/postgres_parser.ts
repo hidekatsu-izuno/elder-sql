@@ -28,7 +28,7 @@ export class PostgresParser extends Parser {
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.SectionBreak)) {
+        if (r.peekIf(TokenType.EoF)) {
           root.append(r.consume())
           break
         } else if (r.peekIf(TokenType.SemiColon)) {
@@ -93,7 +93,7 @@ export class PostgresParser extends Parser {
           })
         }
       })
-      if (r.peekIf(TokenType.SectionBreak)) {
+      if (r.peekIf(TokenType.EoF)) {
         node.append(r.consume())
       }
     })
@@ -180,7 +180,7 @@ export class PostgresParser extends Parser {
       if (r.peekIf(TokenType.SemiColon)) {
         stmt.append(r.consume())
       }
-      if (r.peekIf(TokenType.SectionBreak)) {
+      if (r.peekIf(TokenType.EoF)) {
         stmt.append(r.consume())
       }
     } catch (err) {
@@ -195,7 +195,7 @@ export class PostgresParser extends Parser {
         if (r.peekIf(TokenType.SemiColon)) {
           stmt.append(r.consume())
         }
-        if (r.peekIf(TokenType.SectionBreak)) {
+        if (r.peekIf(TokenType.EoF)) {
           stmt.append(r.consume())
         }
         err.node = stmt

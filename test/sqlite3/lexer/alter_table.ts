@@ -129,5 +129,5 @@ export default [
     new Token(TokenType.Identifier, "sample", { keyword: Keyword.SAMPLE, location: new SourceLocation(643, 12, 18)}),
     new Token(TokenType.Identifier, "DROP", { keyword: Keyword.DROP, preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(649, 12, 24)})], location: new SourceLocation(650, 12, 25)}),
     new Token(TokenType.Identifier, "new_column", { preskips: [new Token(TokenType.WhiteSpace, " ", { location: new SourceLocation(654, 12, 29)})], location: new SourceLocation(655, 12, 30)}),
-    new Token(TokenType.SectionBreak, "", { eos: true, location: new SourceLocation(665, 12, 40)})
+    new Token(TokenType.EoF, "", { eos: true, location: new SourceLocation(665, 12, 40)})
 ]

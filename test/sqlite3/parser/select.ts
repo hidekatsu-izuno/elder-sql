@@ -196,7 +196,7 @@ export default new Element("Script", {}, [
   new Element("SelectStatement", {}, [
     new Element("WithClause", {}, [
       new Element("Identifier", {"value":"WITH"}, [new Text("WITH")]),
-      new Element("CommonTableExpression", {}, [
+      new Element("CommonTable", {}, [
         new Element("ObjectName", {"value":"x"}, [
           new Element("Identifier", {}, [
             new Element("WhiteSpace", {}, [new Text(" ")]),
@@ -841,33 +841,29 @@ export default new Element("Script", {}, [
                   ]),
                 ]),
               ]),
-              new Element("CaseConditionList", {}, [
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("NumericLiteral", {"value":"1"}, [
+                    new Element("Numeric", {}, [
                       new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("NumericLiteral", {"value":"1"}, [
-                        new Element("Numeric", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("1"),
-                        ]),
-                      ]),
+                      new Text("1"),
                     ]),
                   ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"a"}, [
-                        new Element("String", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'a'"),
-                        ]),
+                ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"a"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'a'"),
                       ]),
                     ]),
                   ]),
@@ -932,63 +928,57 @@ export default new Element("Script", {}, [
                   ]),
                 ]),
               ]),
-              new Element("CaseConditionList", {}, [
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("NumericLiteral", {"value":"1"}, [
+                    new Element("Numeric", {}, [
                       new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("NumericLiteral", {"value":"1"}, [
-                        new Element("Numeric", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("1"),
-                        ]),
-                      ]),
+                      new Text("1"),
                     ]),
                   ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"a"}, [
-                        new Element("String", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'a'"),
-                        ]),
+                ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"a"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'a'"),
                       ]),
                     ]),
                   ]),
                 ]),
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
+              ]),
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("NumericLiteral", {"value":"2"}, [
+                    new Element("Numeric", {}, [
                       new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("NumericLiteral", {"value":"2"}, [
-                        new Element("Numeric", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("2"),
-                        ]),
-                      ]),
+                      new Text("2"),
                     ]),
                   ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"b"}, [
-                        new Element("String", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'b'"),
-                        ]),
+                ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"b"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'b'"),
                       ]),
                     ]),
                   ]),
@@ -1057,45 +1047,41 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("CASE"),
               ]),
-              new Element("CaseConditionList", {}, [
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("EqualOperation", {}, [
-                        new Element("ColumnReference", {}, [
-                          new Element("ColumnName", {"value":"x"}, [
-                            new Element("Identifier", {}, [
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                              new Text("x"),
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                            ]),
-                          ]),
-                        ]),
-                        new Element("Operator", {}, [new Text("=")]),
-                        new Element("NumericLiteral", {"value":"1"}, [
-                          new Element("Numeric", {}, [
-                            new Element("WhiteSpace", {}, [new Text(" ")]),
-                            new Text("1"),
-                          ]),
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("EqualOperation", {}, [
+                    new Element("ColumnReference", {}, [
+                      new Element("ColumnName", {"value":"x"}, [
+                        new Element("Identifier", {}, [
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
+                          new Text("x"),
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
                         ]),
                       ]),
                     ]),
-                  ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
+                    new Element("Operator", {}, [new Text("=")]),
+                    new Element("NumericLiteral", {"value":"1"}, [
+                      new Element("Numeric", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("1"),
+                      ]),
                     ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"a"}, [
-                        new Element("String", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'a'"),
-                        ]),
+                  ]),
+                ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"a"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'a'"),
                       ]),
                     ]),
                   ]),
@@ -1154,87 +1140,81 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("CASE"),
               ]),
-              new Element("CaseConditionList", {}, [
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("EqualOperation", {}, [
-                        new Element("ColumnReference", {}, [
-                          new Element("ColumnName", {"value":"x"}, [
-                            new Element("Identifier", {}, [
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                              new Text("x"),
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                            ]),
-                          ]),
-                        ]),
-                        new Element("Operator", {}, [new Text("=")]),
-                        new Element("NumericLiteral", {"value":"1"}, [
-                          new Element("Numeric", {}, [
-                            new Element("WhiteSpace", {}, [new Text(" ")]),
-                            new Text("1"),
-                          ]),
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("EqualOperation", {}, [
+                    new Element("ColumnReference", {}, [
+                      new Element("ColumnName", {"value":"x"}, [
+                        new Element("Identifier", {}, [
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
+                          new Text("x"),
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
                         ]),
                       ]),
                     ]),
-                  ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"a"}, [
-                        new Element("String", {}, [
-                          new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'a'"),
-                        ]),
+                    new Element("Operator", {}, [new Text("=")]),
+                    new Element("NumericLiteral", {"value":"1"}, [
+                      new Element("Numeric", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("1"),
                       ]),
                     ]),
                   ]),
                 ]),
-                new Element("CaseCondition", {}, [
-                  new Element("WhenClause", {}, [
-                    new Element("Reserved", {"value":"WHEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("WHEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("EqualOperation", {}, [
-                        new Element("ColumnReference", {}, [
-                          new Element("ColumnName", {"value":"x"}, [
-                            new Element("Identifier", {}, [
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                              new Text("x"),
-                              new Element("WhiteSpace", {}, [new Text(" ")]),
-                            ]),
-                          ]),
-                        ]),
-                        new Element("Operator", {}, [new Text("=")]),
-                        new Element("NumericLiteral", {"value":"2"}, [
-                          new Element("Numeric", {}, [
-                            new Element("WhiteSpace", {}, [new Text(" ")]),
-                            new Text("2"),
-                          ]),
-                        ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"a"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'a'"),
                       ]),
                     ]),
                   ]),
-                  new Element("ThenClause", {}, [
-                    new Element("Reserved", {"value":"THEN"}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("THEN"),
-                    ]),
-                    new Element("Expression", {}, [
-                      new Element("StringLiteral", {"value":"b"}, [
-                        new Element("String", {}, [
+                ]),
+              ]),
+              new Element("WhenClause", {}, [
+                new Element("Reserved", {"value":"WHEN"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("WHEN"),
+                ]),
+                new Element("Expression", {}, [
+                  new Element("EqualOperation", {}, [
+                    new Element("ColumnReference", {}, [
+                      new Element("ColumnName", {"value":"x"}, [
+                        new Element("Identifier", {}, [
                           new Element("WhiteSpace", {}, [new Text(" ")]),
-                          new Text("'b'"),
+                          new Text("x"),
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
                         ]),
+                      ]),
+                    ]),
+                    new Element("Operator", {}, [new Text("=")]),
+                    new Element("NumericLiteral", {"value":"2"}, [
+                      new Element("Numeric", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("2"),
+                      ]),
+                    ]),
+                  ]),
+                ]),
+                new Element("ThenClause", {}, [
+                  new Element("Reserved", {"value":"THEN"}, [
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                    new Text("THEN"),
+                  ]),
+                  new Element("Expression", {}, [
+                    new Element("StringLiteral", {"value":"b"}, [
+                      new Element("String", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("'b'"),
                       ]),
                     ]),
                   ]),
@@ -1369,12 +1349,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("c"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1427,12 +1406,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("c1"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1491,12 +1469,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("c2"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1549,12 +1526,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {"value":"D"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("d"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1611,12 +1587,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("d1"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1737,12 +1712,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {"value":"E"}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("e"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1799,12 +1773,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("e1"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1867,12 +1840,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("e2"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1925,12 +1897,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("f"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -1987,12 +1958,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("f1"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -2055,12 +2025,11 @@ export default new Element("Script", {}, [
                 new Element("Identifier", {}, [
                   new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("f2"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
                 new Element("Reserved", {"value":"ON"}, [
-                  new Element("WhiteSpace", {}, [new Text("    ")]),
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
                   new Text("ON"),
                 ]),
                 new Element("Expression", {}, [
@@ -2132,5 +2101,5 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("SectionBreak", {}, [new Text("")]),
+  new Element("EoF", {}),
 ])
