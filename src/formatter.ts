@@ -38,15 +38,19 @@ export abstract class Formatter {
     }
   }
 
-  format(text: string, filename?: string): string {
+  format(script: string | Element, filename?: string): string {
     let node
-    try {
-      node = this.parser.parse(text, filename)
-    } catch (err) {
-      if (err instanceof AggregateParseError) {
-        node = err.node
-      } else {
-        throw err
+    if (script instanceof Element) {
+      node = script
+    } else {
+      try {
+        node = this.parser.parse(script, filename)
+      } catch (err) {
+        if (err instanceof AggregateParseError) {
+          node = err.node
+        } else {
+          throw err
+        }
       }
     }
 
@@ -55,7 +59,7 @@ export abstract class Formatter {
     return out.toString()
   }
 
-  formatElement(node: Element, out: FormatWriter) {
+  private formatElement(node: Element, out: FormatWriter) {
     let before
     let after
     for (const pattern of this.patterns) {
@@ -91,7 +95,8 @@ export abstract class Formatter {
     } else if (node.name === "EoF") {
       out.write("", false)
     } else if (node.name === "Unknown") {
-      out.write(this.concatNode(node), false)
+      out.write(this.concatNode(node, out).trim(), false)
+      out.control("break")
     } else {
       for (let i = 0; i < node.childNodes.length; i++) {
         const child = node.childNodes[i]
@@ -113,25 +118,29 @@ export abstract class Formatter {
     }
   }
 
-  private concatNode(node: Element) {
-    let out = ""
+  private concatNode(node: Element, out: FormatWriter) {
+    let text = ""
     for (let i = 0; i < node.childNodes.length; i++) {
       const child = node.childNodes[i]
       if (child instanceof Element) {
-        out += this.concatNode(child)
+        if (child.name === "LineBreak") {
+          text += out.eol
+        } else {
+          text += this.concatNode(child, out)
+        }
       } else if (child instanceof Text) {
-        out += child.data
+        text += child.data
       }
     }
-    return out
+    return text
   }
 }
 
 class FormatWriter {
-  private printWidth: number
-  private indent: string
-  private indentWidth: number
-  private eol: string
+  printWidth: number
+  indent: string
+  indentWidth: number
+  eol: string
 
   private text = ""
   private depth = 0

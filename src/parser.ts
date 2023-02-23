@@ -106,8 +106,9 @@ export abstract class Parser {
   ) {
   }
 
-  parse(text: string, filename?: string) {
-    return this.parseTokens(this.lexer.lex(text, filename))
+  parse(script: string | Token[], filename?: string) {
+    const tokens = Array.isArray(script) ? script : this.lexer.lex(script, filename)
+    return this.parseTokens(tokens)
   }
 
   abstract parseTokens(tokens: Token[]): Element

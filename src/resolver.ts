@@ -1,5 +1,6 @@
-import { Element } from "domhandler";
-import { Parser } from "./parser.js";
+import { Element } from "domhandler"
+import { Parser } from "./parser.js"
+import { compile, selectOne } from 'css-select'
 
 export declare type ResolverOptions = {
   [key: string]: any
@@ -79,6 +80,8 @@ export declare type ResolvedColumn = ColumnDef & {
   objectType?: string,
 }
 
+const SELECTER_STATEMENT = compile(".Statement", { xmlMode: true })
+
 export abstract class Resolver {
   constructor(
     public parser: Parser,
@@ -87,9 +90,14 @@ export abstract class Resolver {
   ) {
   }
 
-  resolve(query: string, filename?: string): ResolvedColumn[] {
-    return this.resolveNode(this.parser.parse(query, filename))
+  resolve(query: string | Element, filename?: string): ResolvedColumn[] {
+    const node = query instanceof Element ? query : this.parser.parse(query, filename)
+    const statement = selectOne(SELECTER_STATEMENT, node)
+    if (!statement) {
+      throw new TypeError("Statement node is not found.")
+    }
+    return this.resolveNode(statement)
   }
 
-  abstract resolveNode(node: Element): ResolvedColumn[]
+  protected abstract resolveNode(statement: Element): ResolvedColumn[]
 }

@@ -16,12 +16,12 @@ export class Sqlite3Formatter extends Formatter {
         ].join(","), after: "break" },
       { pattern: [
           "CreateViewStatement > SelectStatement",
-          "ExplainStatement > :last-child",
+          "ExplainStatement > .Statement",
           "WithClause + :is(SelectClause, InsertClause, UpdateClause, DeleteClause)",
           "InsertClause > ObjectName + :is(ValuesClause, SelectStatement)",
         ].join(","), before: "softbreak" },
       { pattern: "TableConstraint :is(SortColumnList, ColumnList)", before: "nospace", after: "nospace" },
-      { pattern: "UpdateOnClause :is(SortColumnList, ColumnList)" },
+      { pattern: "UpdateOnClause > ColumnList" },
       { pattern: ":is(TableConstraint, UpdateOnClause) :is(SortColumnList, ColumnList) > Comma", before: "nospace" },
       { pattern: [
           "RenameToObjectClause",

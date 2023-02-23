@@ -70,7 +70,7 @@ export class Sqlite3Parser extends Parser {
   }
 
   private command(parent: Element, r: TokenReader) {
-    const current = this.append(parent, new Element("CommandStatement", {}))
+    const current = this.append(parent, new Element("CommandStatement", { class: "Statement" }))
     try {
       return apply(current, node => {
         apply(this.append(node, new Element("CommandName", {})), node => {
@@ -120,6 +120,7 @@ export class Sqlite3Parser extends Parser {
   }
 
   private statement(parent: Element, r: TokenReader) {
+    let stmt
     if (r.peekIf(Keyword.CREATE)) {
       const mark = r.pos
       r.consume()
@@ -129,16 +130,16 @@ export class Sqlite3Parser extends Parser {
 
       if (r.peekIf(Keyword.TABLE)) {
         r.pos = mark
-        return this.createTableStatement(parent, r)
+        stmt = this.createTableStatement(parent, r)
       } else if (r.peekIf(Keyword.VIEW)) {
         r.pos = mark
-        return this.createViewStatement(parent, r)
+        stmt = this.createViewStatement(parent, r)
       } else if (r.peekIf(Keyword.TRIGGER)) {
         r.pos = mark
-        return this.createTriggerStatement(parent, r)
+        stmt = this.createTriggerStatement(parent, r)
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
-        return this.createIndexStatement(parent, r)
+        stmt = this.createIndexStatement(parent, r)
       } else {
         r.pos = mark
       }
@@ -148,7 +149,7 @@ export class Sqlite3Parser extends Parser {
 
       if (r.peekIf(Keyword.TABLE)) {
         r.pos = mark
-        return this.alterTableStatement(parent, r)
+        stmt = this.alterTableStatement(parent, r)
       } else {
         r.pos = mark
       }
@@ -158,56 +159,62 @@ export class Sqlite3Parser extends Parser {
 
       if (r.peekIf(Keyword.TABLE)) {
         r.pos = mark
-        return this.dropTableStatement(parent, r)
+        stmt = this.dropTableStatement(parent, r)
       } else if (r.peekIf(Keyword.VIEW)) {
         r.pos = mark
-        return this.dropViewStatement(parent, r)
+        stmt = this.dropViewStatement(parent, r)
       } else if (r.peekIf(Keyword.TRIGGER)) {
         r.pos = mark
-        return this.dropTriggerStatement(parent, r)
+        stmt = this.dropTriggerStatement(parent, r)
       } else if (r.peekIf(Keyword.INDEX)) {
         r.pos = mark
-        return this.dropIndexStatement(parent, r)
+        stmt = this.dropIndexStatement(parent, r)
       } else {
         r.pos = mark
       }
     } else if (r.peekIf(Keyword.ATTACH)) {
-      return this.attachDatabaseStatement(parent, r)
+      stmt = this.attachDatabaseStatement(parent, r)
     } else if (r.peekIf(Keyword.DETACH)) {
-      return this.detachDatabaseStatement(parent, r)
+      stmt = this.detachDatabaseStatement(parent, r)
     } else if (r.peekIf(Keyword.ANALYZE)) {
-      return this.analyzeStatement(parent, r)
+      stmt = this.analyzeStatement(parent, r)
     } else if (r.peekIf(Keyword.REINDEX)) {
-      return this.reindexStatement(parent, r)
+      stmt = this.reindexStatement(parent, r)
     } else if (r.peekIf(Keyword.VACUUM)) {
-      return this.vacuumStatement(parent, r)
+      stmt = this.vacuumStatement(parent, r)
     } else if (r.peekIf(Keyword.PRAGMA)) {
-      return this.pragmaStatement(parent, r)
+      stmt = this.pragmaStatement(parent, r)
     } else if (r.peekIf(Keyword.BEGIN)) {
-      return this.beginTransactionStatement(parent, r)
+      stmt = this.beginTransactionStatement(parent, r)
     } else if (r.peekIf(Keyword.SAVEPOINT)) {
-      return this.savepointStatement(parent, r)
+      stmt = this.savepointStatement(parent, r)
     } else if (r.peekIf(Keyword.RELEASE)) {
-      return this.releaseSavepointStatement(parent, r)
+      stmt = this.releaseSavepointStatement(parent, r)
     } else if (r.peekIf({ type: [Keyword.COMMIT, Keyword.END] })) {
-      return this.commitTransactionStatement(parent, r)
+      stmt = this.commitTransactionStatement(parent, r)
     } else if (r.peekIf(Keyword.ROLLBACK)) {
-      return this.rollbackTransactionStatement(parent, r)
+      stmt = this.rollbackTransactionStatement(parent, r)
     } else {
       if (r.peekIf(Keyword.WITH)) {
         this.withClause(parent, r)
       }
       if (r.peekIf({ type: [Keyword.INSERT, Keyword.REPLACE] })) {
-        return this.insertStatement(parent, r)
+        stmt = this.insertStatement(parent, r)
       } else if (r.peekIf(Keyword.UPDATE)) {
-        return this.updateStatement(parent, r)
+        stmt = this.updateStatement(parent, r)
       } else if (r.peekIf(Keyword.DELETE)) {
-        return this.deleteStatement(parent, r)
+        stmt = this.deleteStatement(parent, r)
       } else if (r.peekIf({ type: [Keyword.SELECT, Keyword.VALUES] })) {
-        return this.selectStatement(parent, r)
+        stmt = this.selectStatement(parent, r)
       }
     }
-    throw r.createParseError()
+
+    if (stmt) {
+      stmt.attribs.class = "Statement"
+    } else {
+      throw r.createParseError()
+    }
+    return stmt
   }
 
   private createTableStatement(parent: Element, r: TokenReader) {
