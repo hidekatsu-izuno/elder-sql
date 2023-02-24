@@ -1407,37 +1407,39 @@ export class Sqlite3Parser extends Parser {
         })
       }
 
-      do {
-        apply(this.append(node, new Element("CommonTable", {})), node => {
-          this.identifier(node, r, "ObjectName")
-          if (r.peekIf(TokenType.LeftParen)) {
-            this.append(node, r.consume())
-            this.columnList(node, r)
-            this.append(node, r.consume(TokenType.RightParen))
-          }
-          this.append(node, r.consume(Keyword.AS))
-
-          if (r.peekIf(Keyword.MATERIALIZED) || r.peekIf(Keyword.NOT, Keyword.MATERIALIZED)) {
-            apply(this.append(node, new Element("MaterializedOption", {})), node => {
-              if (r.peekIf(Keyword.NOT)) {
-                node.name = "NotMaterializedOption"
-                this.append(node, r.consume())
-              }
+      apply(this.append(node, new Element("CommonTableList", {})), node => {
+        do {
+          apply(this.append(node, new Element("CommonTable", {})), node => {
+            this.identifier(node, r, "ObjectName")
+            if (r.peekIf(TokenType.LeftParen)) {
               this.append(node, r.consume())
-            })
+              this.columnList(node, r)
+              this.append(node, r.consume(TokenType.RightParen))
+            }
+            this.append(node, r.consume(Keyword.AS))
+
+            if (r.peekIf(Keyword.MATERIALIZED) || r.peekIf(Keyword.NOT, Keyword.MATERIALIZED)) {
+              apply(this.append(node, new Element("MaterializedOption", {})), node => {
+                if (r.peekIf(Keyword.NOT)) {
+                  node.name = "NotMaterializedOption"
+                  this.append(node, r.consume())
+                }
+                this.append(node, r.consume())
+              })
+            }
+
+            this.append(node, r.consume(TokenType.LeftParen))
+            this.selectStatement(node, r)
+            this.append(node, r.consume(TokenType.RightParen))
+          })
+
+          if (r.peekIf(TokenType.Comma)) {
+            this.append(node, r.consume())
+          } else {
+            break
           }
-
-          this.append(node, r.consume(TokenType.LeftParen))
-          this.selectStatement(node, r)
-          this.append(node, r.consume(TokenType.RightParen))
-        })
-
-        if (r.peekIf(TokenType.Comma)) {
-          this.append(node, r.consume())
-        } else {
-          break
-        }
-      } while (!r.peek().eos)
+        } while (!r.peek().eos)
+      })
     })
   }
 
