@@ -14,5 +14,7 @@ select
 /
 
 select
-  4
+  4 /*.print*/
+-- aaa
+-- bbb
 GO

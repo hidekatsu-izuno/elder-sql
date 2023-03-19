@@ -10,5 +10,7 @@ select 2 + x
 select 3
 /  
 
-select 4
+select 4 /*.print*/ 
+-- aaa
+-- bbb
 GO

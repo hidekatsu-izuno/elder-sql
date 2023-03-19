@@ -126,6 +126,9 @@ export default new Element("Script", {}, [
               new Element("Numeric", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("4"),
+                new Element("WhiteSpace", {}, [new Text(" ")]),
+                new Element("BlockComment", {}, [new Text("/*.print*/")]),
+                new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Element("LineBreak", {}, [new Text("\n")]),
               ]),
             ]),
@@ -134,6 +137,12 @@ export default new Element("Script", {}, [
       ]),
     ]),
   ]),
-  new Element("Delimiter", {}, [new Text("GO")]),
+  new Element("Delimiter", {}, [
+    new Element("LineComment", {}, [new Text("-- aaa")]),
+    new Element("LineBreak", {}, [new Text("\n")]),
+    new Element("LineComment", {}, [new Text("-- bbb")]),
+    new Element("LineBreak", {}, [new Text("\n")]),
+    new Text("GO"),
+  ]),
   new Element("EoF", {}),
 ])
