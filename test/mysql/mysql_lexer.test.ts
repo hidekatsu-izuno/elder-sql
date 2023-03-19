@@ -2,7 +2,7 @@ import { test, describe, expect } from 'vitest'
 import path from "node:path"
 import fs from "node:fs"
 import { MysqlLexer } from "../../src/mysql/mysql_lexer.js"
-import { toJSScript, toJSString } from "../utils/debug.js"
+import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.js"
 
 describe("test mysql lexer", () => {
   test.each([
@@ -14,9 +14,7 @@ describe("test mysql lexer", () => {
       version: "5.7.0"
     }).lex(script)
 
-    if (target === "") {
-      fs.writeFileSync("temp.txt", toJSScript(tokens))
-    }
+    writeDebugFile(`test/dump/mysql/lexer/${target}.js.txt`, toJSScript(tokens))
 
     expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
   })

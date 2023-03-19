@@ -16,7 +16,31 @@ export class Sqlite3Formatter extends Formatter {
         ].join(","), after: "break" },
       { pattern: [
           "CreateViewStatement > SelectStatement",
-          "ExplainStatement > .Statement",
+          "ExplainStatement > :is(" 
+            + "AlterTableStatement, " 
+            + "AnalyzeStatement, " 
+            + "AttachStatement, "
+            + "BeginStatement, "
+            + "CommitStatement, "
+            + "CreateIndexStatement, "
+            + "CreateTableStatement, "
+            + "CreateTriggerStatement, "
+            + "CreateViewStatement, "
+            + "DeleteStatement, "
+            + "DetachStatement, "
+            + "DropIndexStatement, "
+            + "DropTableStatement, "
+            + "DropTriggerStatement, "
+            + "DropViewStatement, "
+            + "InsertStatement, "
+            + "PragmaStatement, "
+            + "ReindexStatement, "
+            + "ReleaseStatement, "
+            + "RollbackStatement, "
+            + "SavepointStatement, "
+            + "SelectStatement, "
+            + "UpdateStatement, "
+            + "VacuumStatement)",
           "WithClause + :is(SelectClause, InsertClause, UpdateClause, DeleteClause)",
           "InsertClause > ObjectName + :is(ValuesClause, SelectStatement)",
         ].join(","), before: "softbreak" },

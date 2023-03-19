@@ -106,26 +106,26 @@ export default new Element("Script", {}, [
         ]),
         new Element("SelectColumnList", {}, [
           new Element("SelectColumn", {}, [
-            new Element("SchemaName", {"value":"t1"}, [
-              new Element("Identifier", {}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("t1"),
-              ]),
-            ]),
             new Element("AllColumnsOption", {}, [
+              new Element("SchemaName", {"value":"t1"}, [
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("t1"),
+                ]),
+              ]),
               new Element("Dot", {}, [new Text(".")]),
               new Element("Operator", {}, [new Text("*")]),
             ]),
           ]),
           new Element("Comma", {}, [new Text(",")]),
           new Element("SelectColumn", {}, [
-            new Element("SchemaName", {"value":"t2"}, [
-              new Element("Identifier", {}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("t2"),
-              ]),
-            ]),
             new Element("AllColumnsOption", {}, [
+              new Element("SchemaName", {"value":"t2"}, [
+                new Element("Identifier", {}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("t2"),
+                ]),
+              ]),
               new Element("Dot", {}, [new Text(".")]),
               new Element("Operator", {}, [new Text("*")]),
             ]),

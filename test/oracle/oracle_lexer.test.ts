@@ -2,7 +2,7 @@ import { test, describe, expect } from 'vitest'
 import path from "node:path"
 import fs from "node:fs"
 import { OracleLexer } from "../../src/oracle/oracle_lexer.js"
-import { toJSScript, toJSString } from "../utils/debug.js"
+import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.js"
 
 describe("test oracle lexer", () => {
   test.each([
@@ -13,9 +13,7 @@ describe("test oracle lexer", () => {
     const expected = (await import("./lexer/" + target + ".js")).default
     const tokens = new OracleLexer().lex(script)
 
-    if (target === "") {
-      fs.writeFileSync("temp.txt", toJSScript(tokens))
-    }
+    writeDebugFile(`test/dump/oracle/lexer/${target}.js.txt`, toJSScript(tokens))
 
     expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
   })

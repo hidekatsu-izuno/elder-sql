@@ -126,33 +126,35 @@ export default new Element("Script", {}, [
           new Element("WhiteSpace", {}, [new Text(" ")]),
         ]),
         new Element("FromObjectList", {}, [
-          new Element("SubqueryExpression", {}, [
+          new Element("FromObject", {}, [
             new Element("LeftParen", {}, [new Text("(")]),
-            new Element("SelectStatement", {}, [
-              new Element("SelectClause", {}, [
-                new Element("Reserved", {"value":"SELECT"}, [
-                  new Text("SELECT"),
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                ]),
-                new Element("SelectColumnList", {}, [
-                  new Element("SelectColumn", {}, [
-                    new Element("AllColumnsOption", {}, [
-                      new Element("Operator", {}, [new Text("*")]),
+            new Element("SubqueryExpression", {}, [
+              new Element("SelectStatement", {}, [
+                new Element("SelectClause", {}, [
+                  new Element("Reserved", {"value":"SELECT"}, [
+                    new Text("SELECT"),
+                    new Element("WhiteSpace", {}, [new Text(" ")]),
+                  ]),
+                  new Element("SelectColumnList", {}, [
+                    new Element("SelectColumn", {}, [
+                      new Element("AllColumnsOption", {}, [
+                        new Element("Operator", {}, [new Text("*")]),
+                      ]),
                     ]),
                   ]),
-                ]),
-                new Element("FromClause", {}, [
-                  new Element("Reserved", {"value":"FROM"}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("FROM"),
-                  ]),
-                  new Element("FromObjectList", {}, [
-                    new Element("FromObject", {}, [
-                      new Element("ObjectReference", {}, [
-                        new Element("ObjectName", {"value":"sample"}, [
-                          new Element("Identifier", {"value":"SAMPLE"}, [
-                            new Element("WhiteSpace", {}, [new Text(" ")]),
-                            new Text("sample"),
+                  new Element("FromClause", {}, [
+                    new Element("Reserved", {"value":"FROM"}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("FROM"),
+                    ]),
+                    new Element("FromObjectList", {}, [
+                      new Element("FromObject", {}, [
+                        new Element("ObjectReference", {}, [
+                          new Element("ObjectName", {"value":"sample"}, [
+                            new Element("Identifier", {"value":"SAMPLE"}, [
+                              new Element("WhiteSpace", {}, [new Text(" ")]),
+                              new Text("sample"),
+                            ]),
                           ]),
                         ]),
                       ]),
@@ -196,65 +198,67 @@ export default new Element("Script", {}, [
   new Element("SelectStatement", {}, [
     new Element("WithClause", {}, [
       new Element("Identifier", {"value":"WITH"}, [new Text("WITH")]),
-      new Element("CommonTable", {}, [
-        new Element("ObjectName", {"value":"x"}, [
-          new Element("Identifier", {}, [
-            new Element("WhiteSpace", {}, [new Text(" ")]),
-            new Text("x"),
+      new Element("CommonTableList", {}, [
+        new Element("CommonTable", {}, [
+          new Element("ObjectName", {"value":"x"}, [
+            new Element("Identifier", {}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("x"),
+            ]),
           ]),
-        ]),
-        new Element("Reserved", {"value":"AS"}, [
-          new Element("WhiteSpace", {}, [new Text(" ")]),
-          new Text("AS"),
-          new Element("WhiteSpace", {}, [new Text(" ")]),
-        ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("SelectStatement", {}, [
-          new Element("SelectClause", {}, [
-            new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
-            new Element("SelectColumnList", {}, [
-              new Element("SelectColumn", {}, [
-                new Element("SchemaName", {"value":"s"}, [
-                  new Element("Identifier", {}, [
-                    new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("s"),
+          new Element("Reserved", {"value":"AS"}, [
+            new Element("WhiteSpace", {}, [new Text(" ")]),
+            new Text("AS"),
+            new Element("WhiteSpace", {}, [new Text(" ")]),
+          ]),
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("SelectStatement", {}, [
+            new Element("SelectClause", {}, [
+              new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
+              new Element("SelectColumnList", {}, [
+                new Element("SelectColumn", {}, [
+                  new Element("AllColumnsOption", {}, [
+                    new Element("SchemaName", {"value":"s"}, [
+                      new Element("Identifier", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("s"),
+                      ]),
+                    ]),
+                    new Element("Dot", {}, [new Text(".")]),
+                    new Element("Operator", {}, [new Text("*")]),
                   ]),
                 ]),
-                new Element("AllColumnsOption", {}, [
-                  new Element("Dot", {}, [new Text(".")]),
-                  new Element("Operator", {}, [new Text("*")]),
+              ]),
+              new Element("FromClause", {}, [
+                new Element("Reserved", {"value":"FROM"}, [
+                  new Element("WhiteSpace", {}, [new Text(" ")]),
+                  new Text("FROM"),
                 ]),
-              ]),
-            ]),
-            new Element("FromClause", {}, [
-              new Element("Reserved", {"value":"FROM"}, [
-                new Element("WhiteSpace", {}, [new Text(" ")]),
-                new Text("FROM"),
-              ]),
-              new Element("FromObjectList", {}, [
-                new Element("FromObject", {}, [
-                  new Element("ObjectReference", {}, [
-                    new Element("ObjectName", {"value":"sample"}, [
-                      new Element("Identifier", {"value":"SAMPLE"}, [
+                new Element("FromObjectList", {}, [
+                  new Element("FromObject", {}, [
+                    new Element("ObjectReference", {}, [
+                      new Element("ObjectName", {"value":"sample"}, [
+                        new Element("Identifier", {"value":"SAMPLE"}, [
+                          new Element("WhiteSpace", {}, [new Text(" ")]),
+                          new Text("sample"),
+                        ]),
+                      ]),
+                    ]),
+                    new Element("ObjectAlias", {"value":"s"}, [
+                      new Element("Identifier", {}, [
                         new Element("WhiteSpace", {}, [new Text(" ")]),
-                        new Text("sample"),
+                        new Text("s"),
                       ]),
                     ]),
                   ]),
-                  new Element("ObjectAlias", {"value":"s"}, [
-                    new Element("Identifier", {}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("s"),
-                    ]),
-                  ]),
                 ]),
               ]),
             ]),
           ]),
-        ]),
-        new Element("RightParen", {}, [
-          new Text(")"),
-          new Element("LineBreak", {}, [new Text("\n")]),
+          new Element("RightParen", {}, [
+            new Text(")"),
+            new Element("LineBreak", {}, [new Text("\n")]),
+          ]),
         ]),
       ]),
     ]),
@@ -1332,11 +1336,15 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"b"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("b"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"b"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("b"),
+                      new Element("LineBreak", {}, [new Text("\n")]),
+                    ]),
+                  ]),
                 ]),
               ]),
             ]),
@@ -1345,10 +1353,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text("  ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"c"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("c"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"c"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("c"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1402,10 +1414,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"c1"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("c1"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"c1"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("c1"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1465,10 +1481,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"c2"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("c2"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"c2"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("c2"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1522,10 +1542,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"d"}, [
-                new Element("Identifier", {"value":"D"}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("d"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"d"}, [
+                    new Element("Identifier", {"value":"D"}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("d"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1583,10 +1607,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"d1"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("d1"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"d1"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("d1"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1650,11 +1678,15 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"d2"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("d2"),
-                  new Element("LineBreak", {}, [new Text("\n")]),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"d2"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("d2"),
+                      new Element("LineBreak", {}, [new Text("\n")]),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1708,10 +1740,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"e"}, [
-                new Element("Identifier", {"value":"E"}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("e"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"e"}, [
+                    new Element("Identifier", {"value":"E"}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("e"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1769,10 +1805,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"e1"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("e1"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"e1"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("e1"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1836,10 +1876,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"e2"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("e2"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"e2"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("e2"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1893,10 +1937,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"f"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("f"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"f"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("f"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -1954,10 +2002,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"f1"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("f1"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"f1"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("f1"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [
@@ -2021,10 +2073,14 @@ export default new Element("Script", {}, [
                 new Element("WhiteSpace", {}, [new Text(" ")]),
                 new Text("JOIN"),
               ]),
-              new Element("ObjectName", {"value":"f2"}, [
-                new Element("Identifier", {}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("f2"),
+              new Element("FromObject", {}, [
+                new Element("ObjectReference", {}, [
+                  new Element("ObjectName", {"value":"f2"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("f2"),
+                    ]),
+                  ]),
                 ]),
               ]),
               new Element("JoinOnClause", {}, [

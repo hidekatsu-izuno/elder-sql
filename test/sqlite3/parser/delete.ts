@@ -46,47 +46,49 @@ export default new Element("Script", {}, [
   new Element("DeleteStatement", {}, [
     new Element("WithClause", {}, [
       new Element("Identifier", {"value":"WITH"}, [new Text("WITH")]),
-      new Element("CommonTable", {}, [
-        new Element("ObjectName", {"value":"X"}, [
-          new Element("Identifier", {}, [
-            new Element("WhiteSpace", {}, [new Text(" ")]),
-            new Text("X"),
+      new Element("CommonTableList", {}, [
+        new Element("CommonTable", {}, [
+          new Element("ObjectName", {"value":"X"}, [
+            new Element("Identifier", {}, [
+              new Element("WhiteSpace", {}, [new Text(" ")]),
+              new Text("X"),
+            ]),
           ]),
-        ]),
-        new Element("Reserved", {"value":"AS"}, [
-          new Element("WhiteSpace", {}, [new Text(" ")]),
-          new Text("AS"),
-          new Element("WhiteSpace", {}, [new Text(" ")]),
-        ]),
-        new Element("LeftParen", {}, [new Text("(")]),
-        new Element("SelectStatement", {}, [
-          new Element("SelectClause", {}, [
-            new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
-            new Element("SelectColumnList", {}, [
-              new Element("SelectColumn", {}, [
-                new Element("Expression", {}, [
-                  new Element("NumericLiteral", {"value":"1"}, [
-                    new Element("Numeric", {}, [
-                      new Element("WhiteSpace", {}, [new Text(" ")]),
-                      new Text("1"),
+          new Element("Reserved", {"value":"AS"}, [
+            new Element("WhiteSpace", {}, [new Text(" ")]),
+            new Text("AS"),
+            new Element("WhiteSpace", {}, [new Text(" ")]),
+          ]),
+          new Element("LeftParen", {}, [new Text("(")]),
+          new Element("SelectStatement", {}, [
+            new Element("SelectClause", {}, [
+              new Element("Reserved", {"value":"SELECT"}, [new Text("SELECT")]),
+              new Element("SelectColumnList", {}, [
+                new Element("SelectColumn", {}, [
+                  new Element("Expression", {}, [
+                    new Element("NumericLiteral", {"value":"1"}, [
+                      new Element("Numeric", {}, [
+                        new Element("WhiteSpace", {}, [new Text(" ")]),
+                        new Text("1"),
+                      ]),
                     ]),
                   ]),
-                ]),
-                new Element("Reserved", {"value":"AS"}, [
-                  new Element("WhiteSpace", {}, [new Text(" ")]),
-                  new Text("AS"),
-                ]),
-                new Element("ColumnAlias", {"value":"Y"}, [
-                  new Element("Identifier", {}, [
+                  new Element("Reserved", {"value":"AS"}, [
                     new Element("WhiteSpace", {}, [new Text(" ")]),
-                    new Text("Y"),
+                    new Text("AS"),
+                  ]),
+                  new Element("ColumnAlias", {"value":"Y"}, [
+                    new Element("Identifier", {}, [
+                      new Element("WhiteSpace", {}, [new Text(" ")]),
+                      new Text("Y"),
+                    ]),
                   ]),
                 ]),
               ]),
             ]),
           ]),
+          new Element("RightParen", {}, [new Text(")")]),
         ]),
-        new Element("RightParen", {}, [new Text(")")]),
       ]),
     ]),
     new Element("DeleteClause", {}, [
