@@ -1,6 +1,6 @@
 {
   "name": "elder-sql",
-  "version": "0.1.0-alpha.11",
+  "version": "0.1.0-alpha.12",
   "description": "Database connection library of a elder style.",
   "type": "module",
   "main": "./lib/index.js",
