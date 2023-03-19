@@ -1,5 +1,5 @@
 import { Token, TokenType, Lexer, Keyword } from "./lexer.js"
-import { TokenReader } from "./parser.js"
+import { TokenReader } from "./lexer.js"
 import { MysqlLexer } from "./mysql/mysql_lexer.js"
 import { OracleLexer } from "./oracle/oracle_lexer.js"
 import { PostgresLexer } from "./postgres/postgres_lexer.js"

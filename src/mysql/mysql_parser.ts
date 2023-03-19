@@ -1,219 +1,179 @@
-import semver from "semver"
+import { Element, Text } from 'domhandler'
+import { appendChild, replaceElement } from 'domutils'
 import {
   TokenType,
   Token,
+  Keyword,
+  ParseError,
+  TokenReader,
 } from "../lexer.js"
 import {
-  Node,
   Parser,
-  ParseError,
   AggregateParseError,
-  TokenReader,
 } from "../parser.js"
-import { dequote, ucase } from "../utils.js"
+import { apply, dequote } from "../utils.js"
 import { MysqlLexer } from "./mysql_lexer.js"
 
-export class MysqlParser extends Parser {
-  private sqlMode = new Set<string>()
-
+export class OracleParser extends Parser {
   constructor(
     options: Record<string, any> = {},
   ) {
     super(options.lexer ?? new MysqlLexer(options), options)
-    this.setSqlMode(options.sqlMode)
   }
 
-  parseTokens(tokens: Token[]): Node {
+  parseTokens(tokens: Token[]): Element {
     const r = new TokenReader(tokens)
-    const root = new Node("root")
+
+    const root = new Element("Script", {})
     const errors = []
 
     while (r.peek()) {
       try {
-        if (r.peekIf(TokenType.EoF)) {
-          root.append(r.consume())
-          break
-        } else if (r.peekIf(TokenType.Delimiter)) {
-          root.append(r.consume())
+        if (r.peekIf({ type: [TokenType.SemiColon, TokenType.Delimiter, TokenType.EoF] })) {
+          this.append(root, r.consume())
         } else if (r.peekIf(TokenType.Command)) {
-          root.append(this.command(r))
+          this.command(root, r)
+        } else if (r.peekIf(Keyword.EXPLAIN)) {
+          this.explainStatement(root, r)
         } else {
-          root.append(this.statement(r))
+          this.statement(root, r)
         }
-      } catch (e) {
-        if (e instanceof ParseError) {
-          if (e.node) {
-            root.append(e.node)
-          }
-          errors.push(e)
+      } catch (err) {
+        if (err instanceof ParseError) {
+          this.unknown(root, r)
+          errors.push(err)
         } else {
-          throw e
-        }
-      }
-    }
-
-    if (r.peek() != null) {
-      for (let i = r.pos; i < r.tokens.length; i++) {
-        root.append(r.tokens[i])
-      }
-      
-      try {
-        throw r.createParseError()
-      } catch (e) {
-        if (e instanceof ParseError) {
-          errors.push(e)
-        } else {
-          throw e
+          throw err
         }
       }
     }
 
     if (errors.length) {
-      const err = new AggregateParseError(errors, `${errors.length} error found\n${errors.map(
-        e => e.message
-      ).join("\n")}`)
-      err.node = root
-      throw err
+      throw new AggregateParseError(root, errors, 
+        `${errors.length} error found\n${errors.map(e => e.message).join("\n")}`)
     }
 
     return root
   }
 
-  private command(r: TokenReader) {
-    return new Node("CommandStatement").apply(node => {
-      node.append(new Node("CommandName")).apply(node => {
-        const command = r.consume(TokenType.Command)
-        node.append(command)
-        node.data.value = command.text
-      })
-      node.append(new Node("CommandArgumentList")).apply(node => {
-        while (!r.peek().eos) {
-          node.append(new Node("CommandArgument")).apply(node => {
-            const arg = r.consume()
-            node.append(arg)
-            node.data.value = dequote(arg.text)
+  private explainStatement(parent: Element, r: TokenReader) {
+    const current = this.append(parent, new Element("ExplainStatement", {}))
+    try {
+      return apply(current, node => {
+        this.append(node, r.consume(Keyword.EXPLAIN))
+        if (r.peekIf(Keyword.QUERY)) {
+          apply(this.append(node, new Element("QueryPlanOption", {})), node => {
+            this.append(node, r.consume())
+            this.append(node, r.consume(Keyword.PLAN))
           })
         }
+        this.statement(node, r)
       })
-      if (r.peekIf(TokenType.EoF)) {
-        node.append(r.consume())
-      }
-    })
-  }
-
-  private statement(r: TokenReader) {
-    const stmt = new Node("")
-
-    try {
-
-      if (r.peekIf(TokenType.Delimiter)) {
-        stmt.append(r.consume())
-      }
-      if (r.peekIf(TokenType.EoF)) {
-        stmt.append(r.consume())
-      }
     } catch (err) {
       if (err instanceof ParseError) {
-        // skip tokens
-        while (r.peek() && !r.peekIf(TokenType.Delimiter)) {
-          r.consume()
-          stmt.append(r.peek(-1))
-        }
-        if (r.peekIf(TokenType.Delimiter)) {
-          stmt.append(r.consume())
-        }
-        if (r.peekIf(TokenType.EoF)) {
-          stmt.append(r.consume())
-        }
-        err.node = stmt
+        this.unknown(current, r)
       }
       throw err
+    }
+  }
+
+  private statement(parent: Element, r: TokenReader) {
+    let stmt
+    if (r.peekIf(Keyword.CREATE)) {
+      const mark = r.pos
+      r.consume()
+      while (!r.peek().eos && !MysqlLexer.isObjectStart(r.peek().keyword)) {
+        r.consume()
+      }
+    } else if (r.peekIf(Keyword.ALTER)) {
+      const mark = r.pos
+      r.consume()
+    } else if (r.peekIf(Keyword.DROP)) {
+      const mark = r.pos
+      r.consume()
+    } else {
+    }
+    
+    if (!stmt) {
+      throw r.createParseError()
     }
     return stmt
   }
 
-  private setSqlMode(text: string) {
-    this.sqlMode.clear()
-    if (text) {
-      for (let mode of text.split(/,/g)) {
-        mode = ucase(mode)
-        if (mode === "ANSI") {
-          this.sqlMode.add("REAL_AS_FLOAT")
-          this.sqlMode.add("PIPES_AS_CONCAT")
-          this.sqlMode.add("ANSI_QUOTES")
-          this.sqlMode.add("IGNORE_SPACE")
-          if (this.options.variant === "mysql") {
-            if (!this.options.version || semver.gte(this.options.version, "8.0.0")) {
-              this.sqlMode.add("ONLY_FULL_GROUP_BY")
-            }
-          }
-        } else if (mode === "TRADITIONAL") {
-          this.sqlMode.add("STRICT_TRANS_TABLES")
-          this.sqlMode.add("STRICT_ALL_TABLES")
-          this.sqlMode.add("NO_ZERO_IN_DATE")
-          this.sqlMode.add("NO_ZERO_DATE")
-          this.sqlMode.add("ERROR_FOR_DIVISION_BY_ZERO")
-          this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
-        } else {
-          if (this.options.variant === "mariadb" || semver.lt(this.options.version, "8.0.0")) {
-            if (mode === "DB2" || mode === "MAXDB" || mode === "MSSQL" || mode === "ORACLE" || mode === "POSTGRESQL") {
-              if (mode === "DB2") {
-                this.sqlMode.add("DB2")
-              } else if (mode === "MAXDB") {
-                this.sqlMode.add("MAXDB")
-                this.sqlMode.add("NO_AUTO_CREATE_USER")
-              } else if (mode === "ORACLE") {
-                this.sqlMode.add("NO_AUTO_CREATE_USER")
-                this.sqlMode.add("SIMULTANEOUS_ASSIGNMENT")
-              } else if (mode === "POSTGRESQL") {
-                this.sqlMode.add("POSTGRESQL")
-              }
-              this.sqlMode.add("PIPES_AS_CONCAT")
-              this.sqlMode.add("ANSI_QUOTES")
-              this.sqlMode.add("IGNORE_SPACE")
-              this.sqlMode.add("NO_KEY_OPTIONS")
-              this.sqlMode.add("NO_TABLE_OPTIONS")
-              this.sqlMode.add("NO_FIELD_OPTIONS")
-            } else if (mode === "MYSQL323" || mode === "MYSQL40") {
-              this.sqlMode.add("NO_FIELD_OPTIONS")
-              this.sqlMode.add("HIGH_NOT_PRECEDENCE")
-            } else {
-              this.sqlMode.add(mode)
-            }
-          } else {
-            this.sqlMode.add(mode)
-          }
+  private unknown(parent: Element, r: TokenReader) {
+    if (!r.peek().eos) {
+      return apply(this.append(parent, new Element("Unknown", {})), node => {
+        while (!r.peek().eos) {
+          this.append(node, r.consume())
+        }
+      })
+    }
+  }
+
+  private command(parent: Element, r: TokenReader) {
+    const current = this.append(parent, new Element("CommandStatement", {}))
+    try {
+      return apply(current, node => {
+        apply(this.append(node, new Element("CommandName", {})), node => {
+          const token = r.consume(TokenType.Command)
+          this.append(node, token)
+          node.attribs.value = token.text
+        })
+        if (!r.peek(-1).eos) {
+          apply(this.append(node, new Element("CommandArgumentList", {})), node => {
+            do {
+              apply(this.append(node, new Element("CommandArgument", {})), node => {
+                const token = r.consume()
+                this.append(node, token)
+                node.attribs.value = dequote(token.text)
+              })
+            } while (!r.peek(-1).eos)
+          })
+        }
+      })
+    } catch (err) {
+      if (err instanceof ParseError) {
+        this.unknown(current, r)
+      }
+      throw err
+    }
+  }
+
+  private wrap(elem: Element, wrapper: Element) {
+    replaceElement(elem, wrapper)
+    appendChild(wrapper, elem)
+    return wrapper
+  }
+  
+  private append(parent: Element, child: Element | Token) {
+    if (child instanceof Token) {
+      const token = new Element(child.type.name, 
+        { ...(child.keyword && {value: child.keyword.name}) })
+      appendChild(parent, token)
+    
+      for (const skip of child.preskips) {
+        const skipToken = new Element(skip.type.name,
+          { ...(skip.keyword && {value: skip.keyword.name}) })
+          appendChild(token, skipToken)
+        if (skip.text) {
+          appendChild(skipToken, new Text(skip.text))
         }
       }
-    } else if (this.options.variant === "mariadb") {
-      if (!this.options.version || semver.gte(this.options.version, "10.2.4")) {
-        this.sqlMode.add("STRICT_TRANS_TABLES")
-        this.sqlMode.add("NO_AUTO_CREATE_USER")
-        this.sqlMode.add("ERROR_FOR_DIVISION_BY_ZERO")
-        this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
-      } else if (semver.gte(this.options.version, "10.1.7")) {
-        this.sqlMode.add("NO_AUTO_CREATE_USER")
-        this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
+      if (child.text) {
+        appendChild(token, new Text(child.text))
       }
+      for (const skip of child.postskips) {
+        const skipToken = new Element(skip.type.name,
+          { ...(skip.keyword && {value: skip.keyword.name}) })
+          appendChild(token, skipToken)
+        if (skip.text) {
+          appendChild(skipToken, new Text(skip.text))
+        }
+      }
+      return token
     } else {
-      if (!this.options.version || semver.gte(this.options.version, "8.0.0")) {
-        this.sqlMode.add("ONLY_FULL_GROUP_BY")
-        this.sqlMode.add("STRICT_TRANS_TABLES")
-        this.sqlMode.add("NO_ZERO_IN_DATE")
-        this.sqlMode.add("NO_ZERO_DATE")
-        this.sqlMode.add("ERROR_FOR_DIVISION_BY_ZERO")
-        this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
-      } else if (semver.gte(this.options.version, "5.7.0")) {
-        this.sqlMode.add("ONLY_FULL_GROUP_BY")
-        this.sqlMode.add("STRICT_TRANS_TABLES")
-        this.sqlMode.add("NO_ZERO_IN_DATE")
-        this.sqlMode.add("NO_ZERO_DATE")
-        this.sqlMode.add("ERROR_FOR_DIVISION_BY_ZERO")
-        this.sqlMode.add("NO_AUTO_CREATE_USER")
-        this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
-      } else if (semver.gte(this.options.version, "5.6.6")) {
-        this.sqlMode.add("NO_ENGINE_SUBSTITUTION")
-      }
+      appendChild(parent, child)
+      return child  
     }
   }
 }
