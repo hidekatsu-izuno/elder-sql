@@ -137,8 +137,7 @@ const Mode = {
   SQL_PART: Number.MAX_SAFE_INTEGER,
 } as const
 
-export declare type PostgresLexerOptions = LexerOptions & {
-}
+export declare type PostgresLexerOptions = LexerOptions
 
 export class PostgresLexer extends Lexer {
   static isObjectStart(keyword?: Keyword) {
