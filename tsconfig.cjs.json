@@ -3,7 +3,6 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "outDir": "./lib/",
-    "importHelpers": true
+    "outDir": "./lib/"
   }
 }

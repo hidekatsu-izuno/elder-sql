@@ -1,7 +1,8 @@
+import type { Options } from "acorn"
 import { parseExpressionAt } from "acorn"
-import { Element, Node } from "domhandler"
+import { Element } from "domhandler"
 
-const acornOption: acorn.Options = {
+const acornOption: Options = {
   ecmaVersion: "latest"
 }
 
@@ -68,13 +69,13 @@ export function dequote(text: string) {
       return text.substring(1, text.length - 1).replace(/``/g, "`")
     } else if (text.startsWith("[") && text.endsWith("]")) {
       return text.substring(1, text.length - 1)
-    } else if (m = /^[Nn]'((?:''|[^'])*)'$/.exec(text)) {
+    } else if ((m = /^[Nn]'((?:''|[^'])*)'$/.exec(text))) {
       return m[1].replace(/''/g, "'")
-    } else if (m = /^[Nn]"((?:""|[^"])*)"$/.exec(text)) {
+    } else if ((m = /^[Nn]"((?:""|[^"])*)"$/.exec(text))) {
       return m[1].replace(/""/g, '"')
-    } else if (m = /^\$([^$]*)\$(.*?)\$\1\$$/s.exec(text)) {
+    } else if ((m = /^\$([^$]*)\$(.*?)\$\1\$$/s.exec(text))) {
       return m[2]
-    } else if (m = /^[Nn]?[Qq]'(?:\[(.*?)\]|\{(.*?)\}|\((.*?)\)|([^ \t\r\n])(.*?)\4)'$/s.exec(text)) {
+    } else if ((m = /^[Nn]?[Qq]'(?:\[(.*?)\]|\{(.*?)\}|\((.*?)\)|([^ \t\r\n])(.*?)\4)'$/s.exec(text))) {
       return m[1] || m[2] || m[3] || m[5]
     }
   }
@@ -82,7 +83,7 @@ export function dequote(text: string) {
 }
 
 export function escapeRegExp(text: string) {
-  return text.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
+  return text.replace(/[.*+?^=!:${}()|[\]/\\]/g, '\\$&')
 }
 
 export function escapeXml(text: string) {
@@ -145,7 +146,7 @@ export function isJSExpression(text: string) {
 export function findElementFirst(elem: Element, ...names: string[]): Element | undefined {
   for (const child of elem.childNodes) {
     if (child instanceof Element && child.tagName === names[0]) {
-      let result = (names.length > 1) ? 
+      const result = (names.length > 1) ? 
         findElementFirst(child, ...names.slice(1)) : 
         child
       if (result) {

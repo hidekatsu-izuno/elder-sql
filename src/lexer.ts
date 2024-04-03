@@ -242,7 +242,7 @@ export abstract class Lexer {
       let text
       let location
       for (const pat of this.patterns) {
-        let re = (typeof pat.re  === 'function') ? pat.re(state) : pat.re
+        const re = (typeof pat.re  === 'function') ? pat.re(state) : pat.re
         if (re) {
           re.lastIndex = pos
           const m = re.exec(input)
@@ -269,11 +269,7 @@ export abstract class Lexer {
       const token = new Token(pattern.type, text, {
         location
       })
-      let newTokens: Token[] | void
-      if (pattern.onMatch) {
-        newTokens = pattern.onMatch(state, token)
-      }
-
+      const newTokens = pattern.onMatch && pattern.onMatch(state, token)
       if (newTokens && newTokens.length > 0) {
         skips.push(...newTokens[0].preskips)
         newTokens[0].preskips = []
@@ -2573,7 +2569,7 @@ export class TokenReader {
     const token = this.peek()
     const fileName = token?.location?.fileName
     let lineNumber = token?.location?.lineNumber
-    let columnNumber = token?.location?.columnNumber
+    const columnNumber = token?.location?.columnNumber
     let message = options.message
 
     if (message == null) {
