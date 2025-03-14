@@ -10,11 +10,11 @@
 		"build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
 		"test": "vitest --config vite.config.ts",
 		"biome:check": "biome check --write",
-		"version.major": "npm run build && standard-version --release-as major",
-		"version.major.alpha": "npm run build && standard-version --release-as major --prerelease alpha",
-		"version.minor": "npm run build && standard-version --release-as minor",
-		"version.minor.alpha": "npm run build && standard-version --release-as minor --prerelease alpha",
-		"version.patch": "npm run build && standard-version --release-as patch",
+		"version.major": "npm run build && commit-and-tag-version --release-as major",
+		"version.major.alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
+		"version.minor": "npm run build && commit-and-tag-version --release-as minor",
+		"version.minor.alpha": "npm run build && commit-and-tag-version --release-as minor --prerelease alpha",
+		"version.patch": "npm run build && commit-and-tag-version --release-as patch",
 		"release": "git push --follow-tags origin main && npm publish",
 		"release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
 	},
@@ -40,9 +40,7 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": [
-		"sql"
-	],
+	"keywords": ["sql"],
 	"exports": {
 		".": {
 			"import": {
@@ -117,7 +115,7 @@
 		"@tsconfig/recommended": "^1.0.8",
 		"@types/node": "^22.13.10",
 		"@types/semver": "^7.5.8",
-		"standard-version": "^9.5.0",
+		"commit-and-tag-version": "^12.5.0",
 		"typescript": "^5.8.2",
 		"vitest": "^3.0.8"
 	},

@@ -4,11 +4,8 @@ import type { Lexer, Token } from "./lexer.js";
 export abstract class Parser {
 	public lexer: Lexer;
 	public options: Record<string, any>;
-	
-	constructor(
-		lexer: Lexer,
-		options: Record<string, any> = {},
-	) {
+
+	constructor(lexer: Lexer, options: Record<string, any> = {}) {
 		this.lexer = lexer;
 		this.options = options;
 	}

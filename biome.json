@@ -11,7 +11,7 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"useEditorconfig": true
 	},
 	"organizeImports": {
 		"enabled": true
@@ -25,7 +25,8 @@
 				"noUnusedTemplateLiteral": "off"
 			},
 			"suspicious": {
-				"noExplicitAny": "off"
+				"noExplicitAny": "off",
+				"noConfusingVoidType": "off"
 			},
 			"performance": {
 				"noDelete": "off"
