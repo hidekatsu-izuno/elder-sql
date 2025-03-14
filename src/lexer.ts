@@ -205,7 +205,7 @@ export class Token {
 export declare type TokenPattern = {
 	type: TokenType;
 	re: RegExp | ((state: Record<string, any>) => RegExp | false);
-	onMatch?: (state: Record<string, any>, token: Token) => Token[] | undefined;
+	onMatch?: (state: Record<string, any>, token: Token) => Token[] | void;
 	onUnmatch?: (state: Record<string, any>) => void;
 };
 

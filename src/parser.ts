@@ -2,10 +2,16 @@ import type { Element } from "domhandler";
 import type { Lexer, Token } from "./lexer.js";
 
 export abstract class Parser {
+	public lexer: Lexer;
+	public options: Record<string, any>;
+	
 	constructor(
-		public lexer: Lexer,
-		public options: Record<string, any> = {},
-	) {}
+		lexer: Lexer,
+		options: Record<string, any> = {},
+	) {
+		this.lexer = lexer;
+		this.options = options;
+	}
 
 	parse(script: string | Token[], filename?: string) {
 		const tokens = Array.isArray(script)

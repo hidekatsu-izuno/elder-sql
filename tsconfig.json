@@ -9,6 +9,7 @@
 		"sourceMap": true,
 		"declaration": true,
 		"declarationMap": true,
+		"erasableSyntaxOnly": true,
 		"paths": {
 			"@/*": ["./src/*"]
 		}

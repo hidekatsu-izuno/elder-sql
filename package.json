@@ -40,7 +40,9 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": ["sql"],
+	"keywords": [
+		"sql"
+	],
 	"exports": {
 		".": {
 			"import": {
@@ -114,6 +116,7 @@
 		"@biomejs/biome": "1.9.4",
 		"@tsconfig/recommended": "^1.0.8",
 		"@types/node": "^22.13.10",
+		"@types/semver": "^7.5.8",
 		"standard-version": "^9.5.0",
 		"typescript": "^5.8.2",
 		"vitest": "^3.0.8"
