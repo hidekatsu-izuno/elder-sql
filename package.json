@@ -1,131 +1,127 @@
 {
-  "name": "elder-sql",
-  "version": "0.1.0-alpha.12",
-  "description": "Database connection library of a elder style.",
-  "type": "module",
-  "main": "./lib/index.js",
-  "module": "./module/index.js",
-  "types": "./module/index.d.ts",
-  "scripts": {
-    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
-    "test": "vitest --config vite.config.ts",
-    "lint": "eslint",
-    "version.major": "npm run build && standard-version --release-as major",
-    "version.major.alpha": "npm run build && standard-version --release-as major --prerelease alpha",
-    "version.minor": "npm run build && standard-version --release-as minor",
-    "version.minor.alpha": "npm run build && standard-version --release-as minor --prerelease alpha",
-    "version.patch": "npm run build && standard-version --release-as patch",
-    "release": "git push --follow-tags origin main && npm publish",
-    "release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
-  },
-  "files": [
-    "bin/",
-    "lib/",
-    "module/",
-    "src/",
-    "LICENSE",
-    "package.json",
-    "README.md"
-  ],
-  "bin": {
-    "esql": "./lib/cli.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hidekatsu-izuno/elder-sql.git"
-  },
-  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
-  },
-  "homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-  "keywords": [
-    "sql"
-  ],
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./module/index.d.ts",
-        "default": "./module/index.js"
-      },
-      "require": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
-      },
-      "default": "./lib/index.js"
-    },
-    "./mssql": {
-      "import": {
-        "types": "./module/mssql/index.d.ts",
-        "default": "./module/mssql/index.js"
-      },
-      "require": {
-        "types": "./lib/mssql/index.d.ts",
-        "default": "./lib/mssql/index.js"
-      },
-      "default": "./lib/mssql/index.js"
-    },
-    "./mysql": {
-      "import": {
-        "types": "./module/mysql/index.d.ts",
-        "default": "./module/mysql/index.js"
-      },
-      "require": {
-        "types": "./lib/mysql/index.d.ts",
-        "default": "./lib/mysql/index.js"
-      },
-      "default": "./lib/mysql/index.js"
-    },
-    "./oracle": {
-      "import": {
-        "types": "./module/oracle/index.d.ts",
-        "default": "./module/oracle/index.js"
-      },
-      "require": {
-        "types": "./lib/oracle/index.d.ts",
-        "default": "./lib/oracle/index.js"
-      },
-      "default": "./lib/oracle/index.js"
-    },
-    "./postgres": {
-      "import": {
-        "types": "./module/postgres/index.d.ts",
-        "default": "./module/postgres/index.js"
-      },
-      "require": {
-        "types": "./lib/postgres/index.d.ts",
-        "default": "./lib/postgres/index.js"
-      },
-      "default": "./lib/postgres/index.js"
-    },
-    "./sqlite3": {
-      "import": {
-        "types": "./module/sqlite3/index.d.ts",
-        "default": "./module/sqlite3/index.js"
-      },
-      "require": {
-        "types": "./lib/sqlite3/index.d.ts",
-        "default": "./lib/sqlite3/index.js"
-      },
-      "default": "./lib/sqlite3/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "devDependencies": {
-    "@types/node": "^20.12.3",
-    "@tsconfig/recommended": "^1.0.5",
-    "@typescript-eslint/eslint-plugin": "^7.5.0",
-    "@typescript-eslint/parser": "^7.5.0",
-    "eslint": "^8.57.0",
-    "standard-version": "^9.5.0",
-    "typescript": "^5.4.3",
-    "vitest": "^1.4.0"
-  },
-  "dependencies": {
-    "acorn": "^8.11.3",
-    "css-select": "^5.1.0",
-    "decimal.js": "^10.4.3",
-    "semver": "^7.6.0"
-  }
+	"name": "elder-sql",
+	"version": "0.1.0-alpha.12",
+	"description": "Database connection library of a elder style.",
+	"type": "module",
+	"main": "./lib/index.js",
+	"module": "./module/index.js",
+	"types": "./module/index.d.ts",
+	"scripts": {
+		"build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+		"test": "vitest --config vite.config.ts",
+		"biome:check": "biome check --write",
+		"version.major": "npm run build && standard-version --release-as major",
+		"version.major.alpha": "npm run build && standard-version --release-as major --prerelease alpha",
+		"version.minor": "npm run build && standard-version --release-as minor",
+		"version.minor.alpha": "npm run build && standard-version --release-as minor --prerelease alpha",
+		"version.patch": "npm run build && standard-version --release-as patch",
+		"release": "git push --follow-tags origin main && npm publish",
+		"release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
+	},
+	"files": [
+		"bin/",
+		"lib/",
+		"module/",
+		"src/",
+		"LICENSE",
+		"package.json",
+		"README.md"
+	],
+	"bin": {
+		"esql": "./lib/cli.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hidekatsu-izuno/elder-sql.git"
+	},
+	"author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
+	},
+	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
+	"keywords": ["sql"],
+	"exports": {
+		".": {
+			"import": {
+				"types": "./module/index.d.ts",
+				"default": "./module/index.js"
+			},
+			"require": {
+				"types": "./lib/index.d.ts",
+				"default": "./lib/index.js"
+			},
+			"default": "./lib/index.js"
+		},
+		"./mssql": {
+			"import": {
+				"types": "./module/mssql/index.d.ts",
+				"default": "./module/mssql/index.js"
+			},
+			"require": {
+				"types": "./lib/mssql/index.d.ts",
+				"default": "./lib/mssql/index.js"
+			},
+			"default": "./lib/mssql/index.js"
+		},
+		"./mysql": {
+			"import": {
+				"types": "./module/mysql/index.d.ts",
+				"default": "./module/mysql/index.js"
+			},
+			"require": {
+				"types": "./lib/mysql/index.d.ts",
+				"default": "./lib/mysql/index.js"
+			},
+			"default": "./lib/mysql/index.js"
+		},
+		"./oracle": {
+			"import": {
+				"types": "./module/oracle/index.d.ts",
+				"default": "./module/oracle/index.js"
+			},
+			"require": {
+				"types": "./lib/oracle/index.d.ts",
+				"default": "./lib/oracle/index.js"
+			},
+			"default": "./lib/oracle/index.js"
+		},
+		"./postgres": {
+			"import": {
+				"types": "./module/postgres/index.d.ts",
+				"default": "./module/postgres/index.js"
+			},
+			"require": {
+				"types": "./lib/postgres/index.d.ts",
+				"default": "./lib/postgres/index.js"
+			},
+			"default": "./lib/postgres/index.js"
+		},
+		"./sqlite3": {
+			"import": {
+				"types": "./module/sqlite3/index.d.ts",
+				"default": "./module/sqlite3/index.js"
+			},
+			"require": {
+				"types": "./lib/sqlite3/index.d.ts",
+				"default": "./lib/sqlite3/index.js"
+			},
+			"default": "./lib/sqlite3/index.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@tsconfig/recommended": "^1.0.8",
+		"@types/node": "^22.13.10",
+		"standard-version": "^9.5.0",
+		"typescript": "^5.8.2",
+		"vitest": "^3.0.8"
+	},
+	"dependencies": {
+		"acorn": "^8.14.1",
+		"css-select": "^5.1.0",
+		"decimal.js": "^10.4.3",
+		"semver": "^7.7.1"
+	}
 }

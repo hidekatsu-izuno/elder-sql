@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-console.log('esql!')
+console.log("esql!");

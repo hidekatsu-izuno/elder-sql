@@ -1,20 +1,23 @@
-import { test, describe, expect } from 'vitest'
-import path from "node:path"
-import fs from "node:fs"
-import { OracleLexer } from "../../src/oracle/oracle_lexer.js"
-import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.js"
+import fs from "node:fs";
+import path from "node:path";
+import { describe, expect, test } from "vitest";
+import { OracleLexer } from "../../src/oracle/oracle_lexer.ts";
+import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 
 describe("test oracle lexer", () => {
-  test.each([
-    "select",
-    "create_package",
-  ])("%s", async (target) => {
-    const script = fs.readFileSync(path.join(__dirname, "scripts", target + ".sql"), "utf8")
-    const expected = (await import("./lexer/" + target + ".js")).default
-    const tokens = new OracleLexer().lex(script)
+	test.each(["select", "create_package"])("%s", async (target) => {
+		const script = fs.readFileSync(
+			path.join(__dirname, "scripts", `${target}.sql`),
+			"utf8",
+		);
+		const expected = (await import(`./lexer/${target}.ts`)).default;
+		const tokens = new OracleLexer().lex(script);
 
-    writeDebugFile(`test/dump/oracle/lexer/${target}.js.txt`, toJSScript(tokens))
+		writeDebugFile(
+			`test/dump/oracle/lexer/${target}.js.txt`,
+			toJSScript(tokens),
+		);
 
-    expect(toJSString(tokens)).toStrictEqual(toJSString(expected))
-  })
-})
+		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));
+	});
+});

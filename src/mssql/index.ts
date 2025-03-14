@@ -1,1 +1,1 @@
-export * from "./mssql_lexer.js"
+export * from "./mssql_lexer.js";

@@ -1,13 +1,13 @@
 import {
-  TokenType,
-  Token,
-  Lexer,
-  Keyword,
-  LexerOptions,
-} from "../lexer.js"
+	Keyword,
+	Lexer,
+	type LexerOptions,
+	type Token,
+	TokenType,
+} from "../lexer.js";
 
 const ReservedSet = new Set<Keyword>([
-  Keyword.ADD,
+	Keyword.ADD,
 	Keyword.ALL,
 	Keyword.ALTER,
 	Keyword.AND,
@@ -192,249 +192,284 @@ const ReservedSet = new Set<Keyword>([
 	Keyword.WITH,
 	Keyword.WITHIN,
 	Keyword.WRITETEXT,
-])
+]);
 
 const StatementStartSet = new Set<Keyword>([
-  Keyword.ADD,
-  Keyword.ALTER,
-  Keyword.BACKUP,
-  Keyword.BEGIN,
-  Keyword.BULK,
-  Keyword.CLOSE,
-  Keyword.CREATE,
-  Keyword.DECLARE,
-  Keyword.DELETE,
-  Keyword.DENY,
-  Keyword.DISABLE,
-  Keyword.DROP,
-  Keyword.ENABLE,
-  Keyword.END,
-  Keyword.GRANT,
-  Keyword.GET,
-  Keyword.INSERT,
-  Keyword.UPDATE,
-  Keyword.UPDATETEXT,
-  Keyword.MERGE,
-  Keyword.MOVE,
-  Keyword.OPEN,
-  Keyword.READTEXT,
-  Keyword.RECEIVE,
-  Keyword.REVERT,
-  Keyword.REVOKE,
-  Keyword.RESTORE,
-  Keyword.SEND,
-  Keyword.SET,
-  Keyword.SETUSER,
-  Keyword.TRUNCATE,
-  Keyword.WAITFOR,
-  Keyword.WITH,
-  Keyword.WRITETEXT,
-])
+	Keyword.ADD,
+	Keyword.ALTER,
+	Keyword.BACKUP,
+	Keyword.BEGIN,
+	Keyword.BULK,
+	Keyword.CLOSE,
+	Keyword.CREATE,
+	Keyword.DECLARE,
+	Keyword.DELETE,
+	Keyword.DENY,
+	Keyword.DISABLE,
+	Keyword.DROP,
+	Keyword.ENABLE,
+	Keyword.END,
+	Keyword.GRANT,
+	Keyword.GET,
+	Keyword.INSERT,
+	Keyword.UPDATE,
+	Keyword.UPDATETEXT,
+	Keyword.MERGE,
+	Keyword.MOVE,
+	Keyword.OPEN,
+	Keyword.READTEXT,
+	Keyword.RECEIVE,
+	Keyword.REVERT,
+	Keyword.REVOKE,
+	Keyword.RESTORE,
+	Keyword.SEND,
+	Keyword.SET,
+	Keyword.SETUSER,
+	Keyword.TRUNCATE,
+	Keyword.WAITFOR,
+	Keyword.WITH,
+	Keyword.WRITETEXT,
+]);
 
 const ObjectStartSet = new Set<Keyword>([
-  Keyword.AGGREGATE,
-  Keyword.APPICATION,
-  Keyword.ASSEMBLY,
-  Keyword.ASYMMETRIC,
-  Keyword.AVAILABILITY,
-  Keyword.BROKER,
-  Keyword.CERTIFICATE,
-  Keyword.COLUMNSTORE,
-  Keyword.COLUMN,
-  Keyword.CONTRACT,
-  Keyword.CREDENTIAL,
-  Keyword.CRYPTOGRAPHIC,
-  Keyword.DATABASE,
-  Keyword.DEFAULT,
-  Keyword.ENDPOINT,
-  Keyword.EVENT,
-  Keyword.EXTERNAL,
-  Keyword.FULLTEXT,
-  Keyword.FUNCTION,
-  Keyword.INDEX,
-  Keyword.LOGIN,
-  Keyword.MASTER,
-  Keyword.MESSAGE,
-  Keyword.PARTITION,
-  Keyword.PROCEDURE,
-  Keyword.QUEUE,
-  Keyword.REMOTE,
-  Keyword.RESOURCE,
-  Keyword.ROLE,
-  Keyword.ROUTE,
-  Keyword.RULE,
-  Keyword.SCHEMA,
-  Keyword.SEARCH,
-  Keyword.SECURITY,
-  Keyword.SELECTIVE,
-  Keyword.SEQUENCE,
-  Keyword.SERVICE,
-  Keyword.SIGNATURE,
-  Keyword.SPATIAL,
-  Keyword.STATISTICS,
-  Keyword.SYMMETRIC,
-  Keyword.SYNONYM,
-  Keyword.TABLE,
-  Keyword.TRIGGER,
-  Keyword.TYPE,
-  Keyword.USER,
-  Keyword.VIEW,
-  Keyword.WORKLOAD,
-  Keyword.XML,
-])
+	Keyword.AGGREGATE,
+	Keyword.APPICATION,
+	Keyword.ASSEMBLY,
+	Keyword.ASYMMETRIC,
+	Keyword.AVAILABILITY,
+	Keyword.BROKER,
+	Keyword.CERTIFICATE,
+	Keyword.COLUMNSTORE,
+	Keyword.COLUMN,
+	Keyword.CONTRACT,
+	Keyword.CREDENTIAL,
+	Keyword.CRYPTOGRAPHIC,
+	Keyword.DATABASE,
+	Keyword.DEFAULT,
+	Keyword.ENDPOINT,
+	Keyword.EVENT,
+	Keyword.EXTERNAL,
+	Keyword.FULLTEXT,
+	Keyword.FUNCTION,
+	Keyword.INDEX,
+	Keyword.LOGIN,
+	Keyword.MASTER,
+	Keyword.MESSAGE,
+	Keyword.PARTITION,
+	Keyword.PROCEDURE,
+	Keyword.QUEUE,
+	Keyword.REMOTE,
+	Keyword.RESOURCE,
+	Keyword.ROLE,
+	Keyword.ROUTE,
+	Keyword.RULE,
+	Keyword.SCHEMA,
+	Keyword.SEARCH,
+	Keyword.SECURITY,
+	Keyword.SELECTIVE,
+	Keyword.SEQUENCE,
+	Keyword.SERVICE,
+	Keyword.SIGNATURE,
+	Keyword.SPATIAL,
+	Keyword.STATISTICS,
+	Keyword.SYMMETRIC,
+	Keyword.SYNONYM,
+	Keyword.TABLE,
+	Keyword.TRIGGER,
+	Keyword.TYPE,
+	Keyword.USER,
+	Keyword.VIEW,
+	Keyword.WORKLOAD,
+	Keyword.XML,
+]);
 
-export declare type MssqlLexerOptions = LexerOptions & {
-}
+export declare type MssqlLexerOptions = LexerOptions & {};
 
 const Mode = {
-  INITIAL: 0,
-  SQL_START: 1,
-  SQL_OBJECT_DEF: 2,
-  SQL_PROC: 3,
-  SQL_PART: Number.MAX_SAFE_INTEGER,
-} as const
+	INITIAL: 0,
+	SQL_START: 1,
+	SQL_OBJECT_DEF: 2,
+	SQL_PROC: 3,
+	SQL_PART: Number.MAX_SAFE_INTEGER,
+} as const;
 
-const BLOCK_COMMENT_START = /\/\*.*?\*\//sy
-const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy
+const BLOCK_COMMENT_START = /\/\*.*?\*\//sy;
+const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy;
 
 export class MssqlLexer extends Lexer {
-  static isStatementStart(keyword: Keyword) {
-    return keyword != null && StatementStartSet.has(keyword)
-  }
+	static isStatementStart(keyword: Keyword) {
+		return keyword != null && StatementStartSet.has(keyword);
+	}
 
-  static isObjectStart(keyword?: Keyword) {
-    return keyword != null && ObjectStartSet.has(keyword)
-  }
+	static isObjectStart(keyword?: Keyword) {
+		return keyword != null && ObjectStartSet.has(keyword);
+	}
 
-  constructor(
-    options: { [key: string]: any } = {}
-  ) {
-    super("mssql", [
-      { type: TokenType.BlockComment, re: (state) => (state.level > 0) ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
-        onMatch: (state, token) => this.onMatchBlockComment(state, token)
-      },
-      { type: TokenType.LineComment, re: /--.*/y },
-      { type: TokenType.LineBreak, re: /\n|\r\n?/y },
-      { type: TokenType.WhiteSpace, re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y },
-      { type: TokenType.Delimiter, re: /(?<=^|[\r\n])[ \t]*GO[ \t]*(\n|\r\n?|$)/iy,
-        onMatch: (state, token) => this.onMatchDelimiter(state, token)
-      },
-      { type: TokenType.Command,
-        re: (state) => state.mode === Mode.INITIAL ? /(?<=^|[\r\n]):.+(\n|\r\n?|$)/y : false,
-        onMatch: (state, token) => this.onMatchCommand(state, token),
-        onUnmatch: (state) => this.onUnmatchCommand(state)
-      },
-      { type: TokenType.SemiColon, re: /;/y,
-        onMatch: (state, token) => this.onMatchSemiColon(state, token)
-      },
-      { type: TokenType.LeftBrace, re: /\{/y },
-      { type: TokenType.RightBrace, re: /\}/y },
-      { type: TokenType.LeftParen, re: /\(/y },
-      { type: TokenType.RightParen, re: /\)/y },
-      { type: TokenType.Comma, re: /,/y },
-      { type: TokenType.Label, re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*:/y },
-      { type: TokenType.Blob, re: /0[xX][0-9a-fA-F]*/y },
-      { type: TokenType.Numeric, re: /([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y },
-      { type: TokenType.Dot, re: /\./y },
-      { type: TokenType.String, re: /[Nn]?'([^']|'')*'/y },
-      { type: TokenType.Identifier, re: /("([^"]|"")*"|\[[^\]]*\])/y },
-      { type: TokenType.BindVariable, re: /\?/y },
-      { type: TokenType.BindVariable, re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Variable, re: /@[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y },
-      { type: TokenType.Operator, re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y },
-      { type: TokenType.Identifier, re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
-        onMatch: (state, token) => this.onMatchIdentifier(state, token)
-      },
-      { type: TokenType.Error, re: /./y },
-    ], options)
-  }
-  
-  isReserved(keyword: Keyword) {
-    return keyword != null && ReservedSet.has(keyword)
-  }
+	constructor(options: { [key: string]: any } = {}) {
+		super(
+			"mssql",
+			[
+				{
+					type: TokenType.BlockComment,
+					re: (state) =>
+						state.level > 0 ? BLOCK_COMMENT_PART : BLOCK_COMMENT_START,
+					onMatch: (state, token) => this.onMatchBlockComment(state, token),
+				},
+				{ type: TokenType.LineComment, re: /--.*/y },
+				{ type: TokenType.LineBreak, re: /\n|\r\n?/y },
+				{
+					type: TokenType.WhiteSpace,
+					re: /[ \f\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/y,
+				},
+				{
+					type: TokenType.Delimiter,
+					re: /(?<=^|[\r\n])[ \t]*GO[ \t]*(\n|\r\n?|$)/iy,
+					onMatch: (state, token) => this.onMatchDelimiter(state, token),
+				},
+				{
+					type: TokenType.Command,
+					re: (state) =>
+						state.mode === Mode.INITIAL
+							? /(?<=^|[\r\n]):.+(\n|\r\n?|$)/y
+							: false,
+					onMatch: (state, token) => this.onMatchCommand(state, token),
+					onUnmatch: (state) => this.onUnmatchCommand(state),
+				},
+				{
+					type: TokenType.SemiColon,
+					re: /;/y,
+					onMatch: (state, token) => this.onMatchSemiColon(state, token),
+				},
+				{ type: TokenType.LeftBrace, re: /\{/y },
+				{ type: TokenType.RightBrace, re: /\}/y },
+				{ type: TokenType.LeftParen, re: /\(/y },
+				{ type: TokenType.RightParen, re: /\)/y },
+				{ type: TokenType.Comma, re: /,/y },
+				{
+					type: TokenType.Label,
+					re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*:/y,
+				},
+				{ type: TokenType.Blob, re: /0[xX][0-9a-fA-F]*/y },
+				{
+					type: TokenType.Numeric,
+					re: /([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
+				},
+				{ type: TokenType.Dot, re: /\./y },
+				{ type: TokenType.String, re: /[Nn]?'([^']|'')*'/y },
+				{ type: TokenType.Identifier, re: /("([^"]|"")*"|\[[^\]]*\])/y },
+				{ type: TokenType.BindVariable, re: /\?/y },
+				{
+					type: TokenType.BindVariable,
+					re: /:[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
+				},
+				{
+					type: TokenType.Variable,
+					re: /@[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
+				},
+				{
+					type: TokenType.Operator,
+					re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y,
+				},
+				{
+					type: TokenType.Identifier,
+					re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
+					onMatch: (state, token) => this.onMatchIdentifier(state, token),
+				},
+				{ type: TokenType.Error, re: /./y },
+			],
+			options,
+		);
+	}
 
-  private onMatchBlockComment(state: Record<string, any>, token: Token) {
-    if (state.comment) {
-      let pos = 0
-      do {
-        pos = token.text.indexOf('/*', pos)
-        if (pos !== -1) {
-          state.level++
-        }
-      } while (pos !== -1)
-      state.level--
+	isReserved(keyword: Keyword) {
+		return keyword != null && ReservedSet.has(keyword);
+	}
 
-      state.comment.text += token.text
-      if (state.level === 0) {
-        delete state.comment
-      }
-      return []
-    } else {
-      state.level = 0
-      let pos = 2
-      do {
-        pos = token.text.indexOf('/*', pos)
-        if (pos !== -1) {
-          state.level++
-        }
-      } while (pos !== -1)
+	private onMatchBlockComment(state: Record<string, any>, token: Token) {
+		if (state.comment) {
+			let pos = 0;
+			do {
+				pos = token.text.indexOf("/*", pos);
+				if (pos !== -1) {
+					state.level++;
+				}
+			} while (pos !== -1);
+			state.level--;
 
-      if (state.level > 0) {
-        state.comment = token
-      }
-    }
-  }
+			state.comment.text += token.text;
+			if (state.level === 0) {
+				delete state.comment;
+			}
+			return [];
+		} else {
+			state.level = 0;
+			let pos = 2;
+			do {
+				pos = token.text.indexOf("/*", pos);
+				if (pos !== -1) {
+					state.level++;
+				}
+			} while (pos !== -1);
 
-  private onMatchCommand(state: Record<string, any>, token: Token) {
-    state.mode = Mode.INITIAL
-    //TODO
-    token.eos = true
-  }
+			if (state.level > 0) {
+				state.comment = token;
+			}
+		}
+	}
 
-  private onUnmatchCommand(state: Record<string, any>) {
-    if (state.mode === Mode.INITIAL) {
-      state.mode = Mode.SQL_START
-    }
-  }
+	private onMatchCommand(state: Record<string, any>, token: Token) {
+		state.mode = Mode.INITIAL;
+		//TODO
+		token.eos = true;
+	}
 
-  private onMatchIdentifier(state: Record<string, any>, token: Token) {
-    const keyword = Keyword.for(token.text)
-    if (keyword) {
-      token.keyword = keyword
-      if (this.isReserved(keyword)) {
-        token.type = TokenType.Reserved
-      }
+	private onUnmatchCommand(state: Record<string, any>) {
+		if (state.mode === Mode.INITIAL) {
+			state.mode = Mode.SQL_START;
+		}
+	}
 
-      if (state.mode === Mode.SQL_START) {
-        if (keyword === Keyword.CREATE || keyword === Keyword.ALTER) {
-          state.mode = Mode.SQL_OBJECT_DEF
-        } else if (keyword === Keyword.IF || keyword === Keyword.WHILE) {
-          state.mode = Mode.SQL_PROC
-        } else {
-          state.mode = Mode.SQL_PART
-        }
-      } else if (state.mode === Mode.SQL_OBJECT_DEF && MssqlLexer.isObjectStart(keyword)) {
-        if (
-          keyword === Keyword.FUNCTION
-          || keyword === Keyword.PROCEDURE
-          || keyword === Keyword.TRIGGER
-        ) {
-          state.mode = Mode.SQL_PROC
-        } else {
-          state.mode = Mode.SQL_PART
-        }
-      }
-    }
-  }
+	private onMatchIdentifier(state: Record<string, any>, token: Token) {
+		const keyword = Keyword.for(token.text);
+		if (keyword) {
+			token.keyword = keyword;
+			if (this.isReserved(keyword)) {
+				token.type = TokenType.Reserved;
+			}
 
-  private onMatchSemiColon(state: Record<string, any>, token: Token) {
-    if (state.mode !== Mode.SQL_PROC) {
-      state.mode = Mode.INITIAL
-      token.eos = true
-    }
-  }
+			if (state.mode === Mode.SQL_START) {
+				if (keyword === Keyword.CREATE || keyword === Keyword.ALTER) {
+					state.mode = Mode.SQL_OBJECT_DEF;
+				} else if (keyword === Keyword.IF || keyword === Keyword.WHILE) {
+					state.mode = Mode.SQL_PROC;
+				} else {
+					state.mode = Mode.SQL_PART;
+				}
+			} else if (
+				state.mode === Mode.SQL_OBJECT_DEF &&
+				MssqlLexer.isObjectStart(keyword)
+			) {
+				if (
+					keyword === Keyword.FUNCTION ||
+					keyword === Keyword.PROCEDURE ||
+					keyword === Keyword.TRIGGER
+				) {
+					state.mode = Mode.SQL_PROC;
+				} else {
+					state.mode = Mode.SQL_PART;
+				}
+			}
+		}
+	}
 
-  private onMatchDelimiter(state: Record<string, any>, token: Token) {
-    token.eos = true
-  }
+	private onMatchSemiColon(state: Record<string, any>, token: Token) {
+		if (state.mode !== Mode.SQL_PROC) {
+			state.mode = Mode.INITIAL;
+			token.eos = true;
+		}
+	}
+
+	private onMatchDelimiter(state: Record<string, any>, token: Token) {
+		token.eos = true;
+	}
 }
