@@ -17,11 +17,16 @@ export abstract class Parser {
 }
 
 export class AggregateParseError extends Error {
+  public node: Element
+  public errors: Error[]
+
   constructor(
-    public node: Element,
-    public errors: Error[],
+    node: Element,
+    errors: Error[],
     message: string
   ) {
     super(message)
+    this.node = node;
+    this.errors = errors;
   }
 }

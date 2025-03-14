@@ -28,16 +28,18 @@ export class TokenType {
   static Identifier = new TokenType("Identifier")
   static Error = new TokenType("Error", { separator: true })
 
-  skip: boolean
-  separator: boolean
+  public name: string;
+  skip: boolean;
+  separator: boolean;
 
   constructor(
-    public name: string,
+    name: string,
     options?: {
       skip?: boolean,
       separator?: boolean
     }
   ) {
+    this.name = name;
     this.skip = !!options?.skip
     this.separator = !!options?.separator
   }
@@ -48,12 +50,21 @@ export class TokenType {
 }
 
 export class SourceLocation {
+  public position: number;
+  public lineNumber: number;
+  public columnNumber: number;
+  public source?: string;
+
   constructor(
-    public position: number = 0,
-    public lineNumber: number = 1,
-    public columnNumber: number = 0,
-    public fileName?: string,
+    position: number = 0,
+    lineNumber: number = 1,
+    columnNumber: number = 0,
+    source?: string,
   ) {
+    this.position = position;
+    this.lineNumber = lineNumber;
+    this.columnNumber = columnNumber;
+    this.source = source;
   }
 
   clone() {
@@ -61,14 +72,14 @@ export class SourceLocation {
       this.position,
       this.lineNumber,
       this.columnNumber,
-      this.fileName,
+      this.source,
     )
   }
 
   toString() {
     let out = ""
-    if (this.fileName != null) {
-      out += this.fileName
+    if (this.source != null) {
+      out += this.source
     }
     if (this.lineNumber != null) {
       out += "[" + this.lineNumber
@@ -90,6 +101,8 @@ export declare type TokenQuery = {
 }
 
 export class Token {
+  public type: TokenType;
+  public text: string;
   keyword?: Keyword
   eos: boolean
   preskips: Token[]
@@ -97,8 +110,8 @@ export class Token {
   location?: SourceLocation
 
   constructor(
-    public type: TokenType,
-    public text: string,
+    type: TokenType,
+    text: string,
     options?: {
       keyword?: Keyword,
       eos? :boolean,
@@ -108,6 +121,7 @@ export class Token {
     }
   ) {
     this.type = type
+    this.text = text;
     this.keyword = options?.keyword
     this.eos = !!options?.eos
     this.preskips = options?.preskips ?? []
@@ -199,11 +213,18 @@ export declare type LexerOptions = {
 }
 
 export abstract class Lexer {
+  public name: string;
+  public patterns: TokenPattern[];
+  public options: LexerOptions = {};
+
   constructor(
-    public name: string,
-    public patterns: TokenPattern[], 
-    public options: LexerOptions = {},
+    name: string,
+    patterns: TokenPattern[], 
+    options: LexerOptions = {},
   ) {
+    this.name = name;
+    this.patterns = patterns;
+    this.options = options;
     if (!options.skipTokenStrategy) {
       options.skipTokenStrategy = 'adaptive'
     }
@@ -234,7 +255,7 @@ export abstract class Lexer {
     let pos = 0
     let lineNumber = start?.lineNumber ?? 1
     let columnNumber = start?.columnNumber ?? 0
-    const fileName = start?.fileName
+    const fileName = start?.source
 
     let skips = []
     while (pos < input.length) {
@@ -2514,20 +2535,25 @@ export class Keyword {
     return undefined
   }
 
+  public name: string
+
   constructor(
-    public name: string
+    name: string
   ) {
+    this.name = name;
   }
 }
 
 
 export class TokenReader {
+  public tokens: Token[]
   pos = 0
   state: Record<string, any> = {}
 
   constructor(
-    public tokens: Token[]
+    tokens: Token[]
   ) {
+    this.tokens = tokens
   }
 
   peek(pos = 0) {
@@ -2567,7 +2593,7 @@ export class TokenReader {
 
   createParseError(options: { message?: string } = {}) {
     const token = this.peek()
-    const fileName = token?.location?.fileName
+    const fileName = token?.location?.source
     let lineNumber = token?.location?.lineNumber
     const columnNumber = token?.location?.columnNumber
     let message = options.message

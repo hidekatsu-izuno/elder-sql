@@ -27,9 +27,11 @@ const ElderSqlType = {
 }
 
 export class ElderSqlCompiler {
+  public options: ElderSqlCompilerOptions
   private lexer: Lexer
 
-  constructor(public options: ElderSqlCompilerOptions) {
+  constructor(options: ElderSqlCompilerOptions) {
+    this.options = options;
     if (options.dialect === 'sqlite3') {
       this.lexer = new Sqlite3Lexer(options.lexer)
     } else if (options.dialect === 'mysql') {
@@ -365,10 +367,15 @@ export class ElderSqlCompiler {
 }
 
 export class ElderSqlCompileResult {
+  public js: string
+  public map: object
+
   constructor(
-    public js: string,
-    public map: object,
+    js: string,
+    map: object,
   ) {
+    this.js = js;
+    this.map = map;
   }
 }
 

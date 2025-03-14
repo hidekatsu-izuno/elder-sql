@@ -220,7 +220,7 @@ export class PostgresLexer extends Lexer {
             token.location.position + pos,
             token.location.lineNumber,
             token.location.columnNumber + pos,
-            token.location.fileName,
+            token.location.source,
           )
         }
         

@@ -190,7 +190,7 @@ export class Sqlite3Lexer extends Lexer {
           location.position + m[1].length,
           location.lineNumber,
           location.columnNumber + m[1].length,
-          location.fileName,
+          location.source,
         )
       }
       if (m[2]) {
@@ -203,7 +203,7 @@ export class Sqlite3Lexer extends Lexer {
           location.position + m[2].length,
           location.lineNumber,
           location.columnNumber + m[2].length,
-          location.fileName,
+          location.source,
         )  
       }
       if (m[3]) {
@@ -238,7 +238,7 @@ export class Sqlite3Lexer extends Lexer {
             token.location.position + pos,
             token.location.lineNumber,
             token.location.columnNumber + pos,
-            token.location.fileName,
+            token.location.source,
           )
         }
         

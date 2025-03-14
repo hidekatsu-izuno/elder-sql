@@ -21,21 +21,25 @@ export declare type FormatterOptions = {
 }
 
 export abstract class Formatter {
+  public parser: Parser;
   private patterns = new Array<FormatPattern & {
     selecter: any
   }>()
+  public options: FormatterOptions;
 
   constructor(
-    public parser: Parser,
+    parser: Parser,
     patterns: FormatPattern[],
-    public options: FormatterOptions = {},
+    options: FormatterOptions = {},
   ) {
+    this.parser = parser;
     for (const pattern of patterns) {
       this.patterns.push({
         ...pattern,
         selecter: compile<Node, Element>(pattern.pattern, { xmlMode: true })
       })
     }
+    this.options = options;
   }
 
   format(script: string | Element, filename?: string): string {

@@ -16,12 +16,14 @@ export class ResolverContext {
 }
 
 export class FromObject {
+  public objectType: string
   schemaName?: string
   objectName?: string
   columns = new Array<ResolvedColumn>()
   children = new Array<FromObject>()
 
-  constructor(public objectType: string) {
+  constructor(objectType: string) {
+    this.objectType = objectType;
   }
 }
 
@@ -37,10 +39,15 @@ export declare type ResolvedColumn = {
 }
 
 export abstract class Resolver {
+  public parser: Parser
+  public options: ResolverOptions = {}
+
   constructor(
-    public parser: Parser,
-    public options: ResolverOptions = {},
+    parser: Parser,
+    options: ResolverOptions = {},
   ) {
+    this.parser = parser;
+    this.options = options;
   }
 
   resolve(query: string | Element, filename?: string): ResolvedColumn[] {

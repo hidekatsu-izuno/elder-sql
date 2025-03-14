@@ -126,8 +126,6 @@
     "acorn": "^8.11.3",
     "css-select": "^5.1.0",
     "decimal.js": "^10.4.3",
-    "domhandler": "^5.0.3",
-    "domutils": "^3.1.0",
     "semver": "^7.6.0"
   }
 }

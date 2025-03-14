@@ -31,9 +31,12 @@ export declare type ElderSqlTransactionOptions = {
 }
 
 export abstract class ElderSqlDriver {
+  public options: ElderSqlDriverOptions
+
   constructor(
-    public options: ElderSqlDriverOptions
+    options: ElderSqlDriverOptions
   ) {
+    this.options = options;
   }
 
   abstract transaction<T=void>(fn: (con: ElderSqlConnection) => Promise<T>): Promise<T>
