@@ -1,61 +1,26 @@
-import { ElderSqlConnection, utils } from "elder-sql";
-
-const CODE_listEmployees = `
-$out.append("\nselect * from employee where");
-if (employeeId != null) {
-  $out.append("\n  employee_id = ?");
-  $out.append(employeeId);
-  if (employeeName != null) {
-    $out.append("\n    and\n    employee_name = ?").bind(employeeName);
-  } else {
-    $out.append("\n    and\n    employee_name is null");
-  }
-}
-$out.append("\n\n  ");
-if (employeeTypes.length > 0) {
-  $out.append("\n    and (");
-  for (let $index = 0; $index < employeeTypes.length; $index++) {
-    const employeeType = employeeTypes[$index];
-    const index = $index;
-    $out.append("      or employee_type = ?").bind(employeeType);
-  }
-  $out.append("\n    )\n  ");
-}
-`;
-
-export declare type SelectEmployees_Params {
-  employeeId?: string,
-  employeeName?: string,
-  employeeTypes?: string[],
-}
-
-export declare type SelectEmployees_Record {
-  employeeId?: string,
-  employeeName?: string,
-  employeeTypes?: string[],
-}
-
-/** 
+/**
  * 
  * List employees
  */
-export const SelectEmployees {
-  get(con: ElderSqlConnection, params: SelectEmployees_Params) {
-    const out = new ElderSqlBuilder();
-    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
-    const sql = out.toSQL();
-    return _con.get(sql.text, sql.args) as any;
+export function listEmployees(engine, params) {
+  let text = "";
+  const args = [];
+  const ctx0 = { ...params };
+  text += "select* from employee where";
+  if (sandbox(employeeId != null)) {
+    text += "\n  employee_id= :employeeId  and employee_id= :employeeId  ";
+    if (sandbox(employeeName != null)) {
+      text += "\n    and employee_name in :employeeId    or employee_name LIKE :employeeName  /*#elsif employeeName === \"test\"*/\n    and    employee_name= :employeeId    or    employee_name={#= \"'\"+ employeeName+ \"'\"}  ";
+    } else {
+      text += "\n    and    employee_name is null  ";
+    }
+    text += "\n\n  and(  ";
+    (employeeTypes).forEach((employeeType) => {
+      const ctx1 = {...ctx0, employeeType};
+      text += "\n    or employee_type= :employeeType  ";
+    })
+    text += "\n  )";
   }
-  list(con: ElderSqlConnection, params: SelectEmployees_Params) {
-    const out = new ElderSqlBuilder();
-    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
-    const sql = out.toSQL();
-    return _con.list(sql.text, sql.args) as any;
-  }
-  iterate(con: ElderSqlConnection, params: SelectEmployees_Params) {
-    const out = new ElderSqlBuilder();
-    utils.sandbox(CODE_listEmployees)({ ...params, $out: out });
-    const sql = out.toSQL();
-    return _con.iterate(sql.text, sql.args) as any;
-  }
+  return engine.execute(text, args);
 }
+

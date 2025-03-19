@@ -18,9 +18,8 @@ describe("test compiler", () => {
 		}).compile(script);
 
 		if (target === "select") {
-			fs.writeFileSync("temp.txt", result.js);
+			// fs.writeFileSync("temp.txt", result.js);
 		}
-
 		expect(result.js).toStrictEqual(expected);
 	});
 });
