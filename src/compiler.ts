@@ -47,10 +47,10 @@ export class ElderSqlCompiler {
 		}
 	}
 
-	compile(input: string, fileName?: string) {
+	compile(input: string, source?: string) {
 		let text = "";
 
-		const tokens = this.lexer.lex(input.replace(/^--\*/gm, "   "), fileName);
+		const tokens = this.lexer.lex(input.replace(/^--\*/gm, "   "), source);
 		const segment = new Array<Token>();
 		for (const token of tokens) {
 			for (let i = 0; i < token.preskips.length; i++) {

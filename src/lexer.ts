@@ -235,14 +235,14 @@ export abstract class Lexer {
 		}
 	}
 
-	lex(input: string, fileName?: string) {
+	lex(input: string, source?: string) {
 		let pos = 0;
 		if (input.charAt(0) === "\uFEFF") {
 			pos++;
 		}
 		const state = {};
 		this.initState(state);
-		return this.sublex(state, input, new SourceLocation(pos, 1, 0, fileName));
+		return this.sublex(state, input, new SourceLocation(pos, 1, 0, source));
 	}
 
 	isReserved(keyword?: Keyword) {
@@ -260,7 +260,7 @@ export abstract class Lexer {
 		let pos = 0;
 		let lineNumber = start?.lineNumber ?? 1;
 		let columnNumber = start?.columnNumber ?? 0;
-		const fileName = start?.source;
+		const source = start?.source;
 
 		let skips = [];
 		while (pos < input.length) {
@@ -280,7 +280,7 @@ export abstract class Lexer {
 								pos + start.position,
 								lineNumber,
 								columnNumber,
-								fileName,
+								source,
 							);
 						}
 
@@ -366,7 +366,7 @@ export abstract class Lexer {
 							pos + start.position,
 							lineNumber,
 							columnNumber,
-							fileName,
+							source,
 						)
 					: undefined,
 			}),
@@ -2644,7 +2644,7 @@ export class TokenReader {
 
 	createParseError(options: { message?: string } = {}) {
 		const token = this.peek();
-		const fileName = token?.location?.source;
+		const source = token?.location?.source;
 		let lineNumber = token?.location?.lineNumber;
 		const columnNumber = token?.location?.columnNumber;
 		let message = options.message;
@@ -2679,8 +2679,8 @@ export class TokenReader {
 		}
 
 		let prefix = "";
-		if (fileName != null) {
-			prefix += fileName;
+		if (source != null) {
+			prefix += source;
 		}
 		prefix += `[${lineNumber}`;
 		if (columnNumber != null) {
@@ -2689,7 +2689,7 @@ export class TokenReader {
 		prefix += "] ";
 
 		const err = new ParseError(prefix + message);
-		err.fileName = fileName;
+		err.source = source;
 		err.lineNumber = lineNumber;
 		err.columnNumber = columnNumber;
 		return err;
@@ -2697,7 +2697,7 @@ export class TokenReader {
 }
 
 export class ParseError extends Error {
-	fileName?: string;
+	source?: string;
 	lineNumber?: number;
 	columnNumber?: number;
 }
