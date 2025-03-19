@@ -2592,6 +2592,10 @@ export class Keyword {
 	constructor(name: string) {
 		this.name = name;
 	}
+
+	toString() {
+		return this.name;
+	}
 }
 
 export class TokenReader {
