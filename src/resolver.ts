@@ -7,14 +7,14 @@ export declare type ResolverOptions = {
 };
 
 export class ResolverContext {
-	public parent?: ResolverContext;
-	public children: ResolverContext[] = [];
+	parent?: ResolverContext;
+	children: ResolverContext[] = [];
 
 	//constructor(fos: FromObject[] = []) {}
 }
 
 export class FromObject {
-	public objectType: string;
+	objectType: string;
 	schemaName?: string;
 	objectName?: string;
 	columns = new Array<ResolvedColumn>();
@@ -37,8 +37,8 @@ export declare type ResolvedColumn = {
 };
 
 export abstract class Resolver {
-	public parser: Parser;
-	public options: ResolverOptions = {};
+	parser: Parser;
+	options: ResolverOptions = {};
 
 	constructor(parser: Parser, options: ResolverOptions = {}) {
 		this.parser = parser;

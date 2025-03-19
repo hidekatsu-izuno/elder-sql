@@ -28,13 +28,13 @@ export declare type FormatterOptions = {
 };
 
 export abstract class Formatter {
-	public parser: Parser;
+	parser: Parser;
 	private patterns = new Array<
 		FormatPattern & {
 			selecter: any;
 		}
 	>();
-	public options: FormatterOptions;
+	options: FormatterOptions;
 
 	constructor(
 		parser: Parser,

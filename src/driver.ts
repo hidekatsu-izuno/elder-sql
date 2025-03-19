@@ -36,7 +36,7 @@ export abstract class ElderSqlConnection {
 export declare type ElderSqlTransactionOptions = Record<string, never>;
 
 export abstract class ElderSqlDriver {
-	public options: ElderSqlDriverOptions;
+	options: ElderSqlDriverOptions;
 
 	constructor(options: ElderSqlDriverOptions) {
 		this.options = options;

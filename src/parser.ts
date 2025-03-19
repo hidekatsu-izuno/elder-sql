@@ -2,8 +2,8 @@ import type { Element } from "domhandler";
 import type { Lexer, Token } from "./lexer.js";
 
 export abstract class Parser {
-	public lexer: Lexer;
-	public options: Record<string, any>;
+	lexer: Lexer;
+	options: Record<string, any>;
 
 	constructor(lexer: Lexer, options: Record<string, any> = {}) {
 		this.lexer = lexer;
@@ -21,8 +21,8 @@ export abstract class Parser {
 }
 
 export class AggregateParseError extends Error {
-	public node: Element;
-	public errors: Error[];
+	node: Element;
+	errors: Error[];
 
 	constructor(node: Element, errors: Error[], message: string) {
 		super(message);

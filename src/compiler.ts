@@ -27,7 +27,7 @@ const ElderSqlType = {
 };
 
 export class ElderSqlCompiler {
-	public options: ElderSqlCompilerOptions;
+	options: ElderSqlCompilerOptions;
 	private lexer: Lexer;
 
 	constructor(options: ElderSqlCompilerOptions) {
@@ -404,8 +404,8 @@ export class ElderSqlCompiler {
 }
 
 export class ElderSqlCompileResult {
-	public js: string;
-	public map: object;
+	js: string;
+	map: object;
 
 	constructor(js: string, map: object) {
 		this.js = js;

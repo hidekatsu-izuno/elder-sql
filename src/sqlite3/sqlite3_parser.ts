@@ -12,7 +12,7 @@ import { apply, dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
 export class Sqlite3Parser extends Parser {
-	public compileOptions: Set<string>;
+	compileOptions: Set<string>;
 
 	constructor(options: Record<string, any> = {}) {
 		super(options.lexer ?? new Sqlite3Lexer(options), options);

@@ -31,7 +31,7 @@ export class TokenType {
 	static Identifier = new TokenType("Identifier");
 	static Error = new TokenType("Error", { separator: true });
 
-	public name: string;
+	name: string;
 	skip: boolean;
 	separator: boolean;
 
@@ -53,10 +53,10 @@ export class TokenType {
 }
 
 export class SourceLocation {
-	public position: number;
-	public lineNumber: number;
-	public columnNumber: number;
-	public source?: string;
+	position: number;
+	lineNumber: number;
+	columnNumber: number;
+	source?: string;
 
 	constructor(position = 0, lineNumber = 1, columnNumber = 0, source?: string) {
 		this.position = position;
@@ -99,8 +99,8 @@ export declare type TokenQuery = {
 };
 
 export class Token {
-	public type: TokenType;
-	public text: string;
+	type: TokenType;
+	text: string;
 	keyword?: Keyword;
 	eos: boolean;
 	preskips: Token[];
@@ -215,9 +215,9 @@ export declare type LexerOptions = {
 };
 
 export abstract class Lexer {
-	public name: string;
-	public patterns: TokenPattern[];
-	public options: LexerOptions = {};
+	name: string;
+	patterns: TokenPattern[];
+	options: LexerOptions = {};
 
 	constructor(
 		name: string,
@@ -2587,7 +2587,7 @@ export class Keyword {
 		return undefined;
 	}
 
-	public name: string;
+	name: string;
 
 	constructor(name: string) {
 		this.name = name;
@@ -2595,7 +2595,7 @@ export class Keyword {
 }
 
 export class TokenReader {
-	public tokens: Token[];
+	tokens: Token[];
 	pos = 0;
 	state: Record<string, any> = {};
 
