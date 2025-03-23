@@ -1,15 +1,41 @@
-import { Element as DomHandlerElement, Text as DomHandlerText } from "domhandler";
+import { Element, Text } from "domhandler";
+import { appendChild, replaceElement } from "domutils";
 import type { Lexer, Token } from "./lexer.js";
 
-export class SyntaxNode extends DomHandlerElement {
+export class SyntaxNode extends Element {
+	append(child: SyntaxNode | TokenNode | TriviaNode) {
+		appendChild(this, child);
+	}
 
+	replaceWith(replacement: SyntaxNode) {
+		replaceElement(this, replacement);
+	}
 }
 
-export class TokenNode extends DomHandlerElement {
+export class TokenNode extends Element {
+	constructor(name: string, attribs: { [name: string]: string }) {
+		super(name, attribs);
+		
+	}
+
+	append(child: string | TriviaNode) {
+		if (child instanceof TriviaNode) {
+			appendChild(this, child);
+		} else {
+			appendChild(this, new Text(child));
+		}
+	}
 }
 
-export class Text extends DomHandlerText {
+export class TriviaNode extends Element {
+	constructor(name: string, attribs: { [name: string]: string }) {
+		super(name, attribs);
+		
+	}
 
+	append(text: string) {
+		appendChild(this, new Text(text));
+	}
 }
 
 export abstract class Parser {

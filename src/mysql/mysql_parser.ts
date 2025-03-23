@@ -1,4 +1,3 @@
-import { appendChild, replaceElement } from "domutils";
 import {
 	Keyword,
 	ParseError,
@@ -6,7 +5,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { SyntaxNode, TokenNode, Text, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, TokenNode, TriviaNode, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { MysqlLexer } from "./mysql_lexer.js";
 
@@ -28,7 +27,7 @@ export class OracleParser extends Parser {
 						type: [TokenType.SemiColon, TokenType.Delimiter, TokenType.EoF],
 					})
 				) {
-					this.append(root, r.consume());
+					this.appendToken(root, r.consume());
 				} else if (r.peekIf(TokenType.Command)) {
 					this.command(root, r);
 				} else if (r.peekIf(Keyword.EXPLAIN)) {
@@ -61,13 +60,13 @@ export class OracleParser extends Parser {
 		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.EXPLAIN));
+				this.appendToken(node, r.consume(Keyword.EXPLAIN));
 				if (r.peekIf(Keyword.QUERY)) {
 					apply(
 						this.append(node, new SyntaxNode("QueryPlanOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.PLAN));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.PLAN));
 						},
 					);
 				}
@@ -108,7 +107,7 @@ export class OracleParser extends Parser {
 		if (!r.peek().eos) {
 			return apply(this.append(parent, new SyntaxNode("Unknown", {})), (node) => {
 				while (!r.peek().eos) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 			});
 		}
@@ -120,7 +119,7 @@ export class OracleParser extends Parser {
 			return apply(current, (node) => {
 				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
 					const token = r.consume(TokenType.Command);
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = token.text;
 				});
 				if (!r.peek(-1).eos) {
@@ -132,7 +131,7 @@ export class OracleParser extends Parser {
 									this.append(node, new SyntaxNode("CommandArgument", {})),
 									(node) => {
 										const token = r.consume();
-										this.append(node, token);
+										this.appendToken(node, token);
 										node.attribs.value = dequote(token.text);
 									},
 								);
@@ -150,43 +149,42 @@ export class OracleParser extends Parser {
 	}
 
 	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
-		replaceElement(elem, wrapper);
-		appendChild(wrapper, elem);
+		elem.replaceWith(wrapper);
+		wrapper.append(elem);
 		return wrapper;
 	}
 
-	private append(parent: SyntaxNode, child: SyntaxNode | Token) {
-		if (child instanceof Token) {
-			const token = new TokenNode(child.type.name, {
-				...(child.keyword && { value: child.keyword.name }),
-			});
-			appendChild(parent, token);
+	private append(parent: SyntaxNode, child: SyntaxNode) {
+		parent.append(child);
+		return child;
+	}
 
-			for (const skip of child.preskips) {
-				const skipToken = new TokenNode(skip.type.name, {
-					...(skip.keyword && { value: skip.keyword.name }),
-				});
-				appendChild(token, skipToken);
-				if (skip.text) {
-					appendChild(skipToken, new Text(skip.text));
-				}
+	private appendToken(parent: SyntaxNode, child: Token) {
+		const token = new TokenNode(child.type.name, {
+			...(child.keyword && { value: child.keyword.name }),
+		});
+		for (const skip of child.preskips) {
+			const skipToken = new TriviaNode(skip.type.name, {
+				...(skip.keyword && { value: skip.keyword.name }),
+			});
+			if (skip.text) {
+				skipToken.append(skip.text);
 			}
-			if (child.text) {
-				appendChild(token, new Text(child.text));
-			}
-			for (const skip of child.postskips) {
-				const skipToken = new TokenNode(skip.type.name, {
-					...(skip.keyword && { value: skip.keyword.name }),
-				});
-				appendChild(token, skipToken);
-				if (skip.text) {
-					appendChild(skipToken, new Text(skip.text));
-				}
-			}
-			return token;
-		} else {
-			appendChild(parent, child);
-			return child;
+			token.append(skipToken);
 		}
+		if (child.text) {
+			token.append(child.text);
+		}
+		for (const skip of child.postskips) {
+			const skipToken = new TriviaNode(skip.type.name, {
+				...(skip.keyword && { value: skip.keyword.name }),
+			});
+			if (skip.text) {
+				skipToken.append(skip.text);
+			}
+			token.append(skipToken);
+		}
+		parent.append(token);
+		return token;
 	}
 }

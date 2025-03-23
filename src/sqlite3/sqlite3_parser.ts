@@ -1,4 +1,3 @@
-import { appendChild, replaceElement } from "domutils";
 import {
 	Keyword,
 	ParseError,
@@ -6,7 +5,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { SyntaxNode, TokenNode, Text, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, TokenNode, TriviaNode, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
@@ -31,7 +30,7 @@ export class Sqlite3Parser extends Parser {
 						type: [TokenType.SemiColon, TokenType.Delimiter, TokenType.EoF],
 					})
 				) {
-					this.append(root, r.consume());
+					this.appendToken(root, r.consume());
 				} else if (r.peekIf(TokenType.Command)) {
 					this.command(root, r);
 				} else if (r.peekIf(Keyword.EXPLAIN)) {
@@ -64,7 +63,7 @@ export class Sqlite3Parser extends Parser {
 		if (!r.peek().eos) {
 			return apply(this.append(parent, new SyntaxNode("Unknown", {})), (node) => {
 				while (!r.peek().eos) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 			});
 		}
@@ -76,7 +75,7 @@ export class Sqlite3Parser extends Parser {
 			return apply(current, (node) => {
 				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
 					const token = r.consume(TokenType.Command);
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = token.text;
 				});
 				if (!r.peek(-1).eos) {
@@ -88,7 +87,7 @@ export class Sqlite3Parser extends Parser {
 									this.append(node, new SyntaxNode("CommandArgument", {})),
 									(node) => {
 										const token = r.consume();
-										this.append(node, token);
+										this.appendToken(node, token);
 										node.attribs.value = dequote(token.text);
 									},
 								);
@@ -109,13 +108,13 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.EXPLAIN));
+				this.appendToken(node, r.consume(Keyword.EXPLAIN));
 				if (r.peekIf(Keyword.QUERY)) {
 					apply(
 						this.append(node, new SyntaxNode("QueryPlanOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.PLAN));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.PLAN));
 						},
 					);
 				}
@@ -234,29 +233,29 @@ export class Sqlite3Parser extends Parser {
 			return apply(current, (node) => {
 				let virtual = false;
 
-				this.append(node, r.consume(Keyword.CREATE));
+				this.appendToken(node, r.consume(Keyword.CREATE));
 				if (r.peekIf({ type: [Keyword.TEMPORARY, Keyword.TEMP] })) {
 					apply(
 						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.VIRTUAL)) {
 					apply(this.append(node, new SyntaxNode("VirtualOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 					virtual = true;
 				}
-				this.append(node, r.consume(Keyword.TABLE));
+				this.appendToken(node, r.consume(Keyword.TABLE));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.NOT));
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.NOT));
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -264,7 +263,7 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
@@ -272,10 +271,10 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("UsingModuleClause", {})),
 						(node) => {
-							this.append(node, r.consume(Keyword.USING));
+							this.appendToken(node, r.consume(Keyword.USING));
 							this.identifier(node, r, "ModuleName");
 							if (r.peekIf(TokenType.LeftParen)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								apply(
 									this.append(node, new SyntaxNode("ModuleArgumentList", {})),
 									(node) => {
@@ -284,7 +283,7 @@ export class Sqlite3Parser extends Parser {
 												this.append(node, new SyntaxNode("ModuleArgument", {})),
 												(node) => {
 													do {
-														this.append(node, r.consume());
+														this.appendToken(node, r.consume());
 													} while (
 														!r.peek().eos &&
 														!r.peekIf({
@@ -294,19 +293,19 @@ export class Sqlite3Parser extends Parser {
 												},
 											);
 											if (r.peekIf(TokenType.Comma)) {
-												this.append(node, r.consume());
+												this.appendToken(node, r.consume());
 											} else {
 												break;
 											}
 										} while (!r.peek().eos);
 									},
 								);
-								this.append(node, r.consume(TokenType.RightParen));
+								this.appendToken(node, r.consume(TokenType.RightParen));
 							}
 						},
 					);
 				} else if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(
 						this.append(node, new SyntaxNode("TableColumnList", {})),
 						(node) => {
@@ -333,40 +332,40 @@ export class Sqlite3Parser extends Parser {
 									this.tableConstraint(node, r);
 								}
 								if (r.peekIf(TokenType.Comma)) {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								} else {
 									break;
 								}
 							} while (!r.peek().eos);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 
 					while (r.peekIf({ type: [Keyword.WITHOUT, Keyword.STRICT] })) {
 						if (r.peekIf(Keyword.WITHOUT)) {
 							apply(
 								this.append(node, new SyntaxNode("WithoutRowidOption", {})),
 								(node) => {
-									this.append(node, r.consume());
-									this.append(node, r.consume(Keyword.ROWID));
+									this.appendToken(node, r.consume());
+									this.appendToken(node, r.consume(Keyword.ROWID));
 								},
 							);
 						} else if (r.peekIf(Keyword.STRICT)) {
 							apply(
 								this.append(node, new SyntaxNode("StrictOption", {})),
 								(node) => {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								},
 							);
 						}
 						if (r.peekIf(TokenType.Comma)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						} else {
 							break;
 						}
 					}
 				} else if (r.peekIf(Keyword.AS)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.selectStatement(node, r);
 				} else {
 					throw r.createParseError();
@@ -384,24 +383,24 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("CreateViewStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.CREATE));
+				this.appendToken(node, r.consume(Keyword.CREATE));
 				if (r.peekIf({ type: [Keyword.TEMPORARY, Keyword.TEMP] })) {
 					apply(
 						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				}
-				this.append(node, r.consume(Keyword.VIEW));
+				this.appendToken(node, r.consume(Keyword.VIEW));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.NOT));
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.NOT));
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -409,17 +408,17 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
 				if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.columnList(node, r);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				}
 
-				this.append(node, r.consume(Keyword.AS));
+				this.appendToken(node, r.consume(Keyword.AS));
 				this.selectStatement(node, r);
 			});
 		} catch (err) {
@@ -437,24 +436,24 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.CREATE));
+				this.appendToken(node, r.consume(Keyword.CREATE));
 				if (r.peekIf(Keyword.TEMPORARY) || r.peekIf(Keyword.TEMP)) {
 					apply(
 						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				}
-				this.append(node, r.consume(Keyword.TRIGGER));
+				this.appendToken(node, r.consume(Keyword.TRIGGER));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.NOT));
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.NOT));
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -462,27 +461,27 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
 				let hasOption = false;
 				if (r.peekIf(Keyword.BEFORE)) {
 					apply(this.append(node, new SyntaxNode("BeforeOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 					hasOption = true;
 				} else if (r.peekIf(Keyword.AFTER)) {
 					apply(this.append(node, new SyntaxNode("AfterOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 					hasOption = true;
 				} else if (r.peekIf(Keyword.INSTEAD)) {
 					apply(
 						this.append(node, new SyntaxNode("InsteadOfOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.OF));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.OF));
 						},
 					);
 					hasOption = true;
@@ -498,13 +497,13 @@ export class Sqlite3Parser extends Parser {
 					}
 
 					apply(current, (node) => {
-						this.append(node, r.consume());
-						this.append(node, r.consume(Keyword.ON));
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume(Keyword.ON));
 
 						const ident = this.identifier(node, r, "ObjectName");
 						if (r.peekIf(TokenType.Dot)) {
 							ident.name = "SchemaName";
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.identifier(node, r, "ObjectName");
 						}
 					});
@@ -518,27 +517,27 @@ export class Sqlite3Parser extends Parser {
 					}
 
 					apply(current, (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OF)) {
 							apply(
 								this.append(node, new SyntaxNode("ColumnList", {})),
 								(node) => {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 									do {
 										this.identifier(node, r, "ColumnName");
 										if (r.peekIf(TokenType.Comma)) {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										} else {
 											break;
 										}
 									} while (!r.peek().eos);
 								},
 							);
-							this.append(node, r.consume(Keyword.ON));
+							this.appendToken(node, r.consume(Keyword.ON));
 							const ident = this.identifier(node, r, "ObjectName");
 							if (r.peekIf(TokenType.Dot)) {
 								ident.name = "SchemaName";
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.identifier(node, r, "ObjectName");
 							}
 						}
@@ -553,12 +552,12 @@ export class Sqlite3Parser extends Parser {
 					}
 
 					apply(current, (node) => {
-						this.append(node, r.consume());
-						this.append(node, r.consume(Keyword.ON));
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume(Keyword.ON));
 						const ident = this.identifier(node, r, "ObjectName");
 						if (r.peekIf(TokenType.Dot)) {
 							ident.name = "SchemaName";
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.identifier(node, r, "ObjectName");
 						}
 					});
@@ -570,22 +569,22 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("ForEachRowOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.EACH));
-							this.append(node, r.consume(Keyword.ROW));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.EACH));
+							this.appendToken(node, r.consume(Keyword.ROW));
 						},
 					);
 				}
 
 				if (r.peekIf(Keyword.WHEN)) {
 					apply(this.append(node, new SyntaxNode("WhenClause", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r);
 					});
 				}
 
 				apply(this.append(node, new SyntaxNode("BeginStatement", {})), (node) => {
-					this.append(node, r.consume(Keyword.BEGIN));
+					this.appendToken(node, r.consume(Keyword.BEGIN));
 					apply(this.append(node, new SyntaxNode("BeginBlock", {})), (node) => {
 						if (r.peekIf(Keyword.WITH)) {
 							this.withClause(node, r);
@@ -601,9 +600,9 @@ export class Sqlite3Parser extends Parser {
 						} else {
 							throw r.createParseError();
 						}
-						this.append(node, r.consume(TokenType.SemiColon));
+						this.appendToken(node, r.consume(TokenType.SemiColon));
 					});
-					this.append(node, r.consume(Keyword.END));
+					this.appendToken(node, r.consume(Keyword.END));
 				});
 			});
 		} catch (err) {
@@ -621,21 +620,21 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.CREATE));
+				this.appendToken(node, r.consume(Keyword.CREATE));
 				if (r.peekIf(Keyword.UNIQUE)) {
 					apply(this.append(node, new SyntaxNode("UniqueOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 				}
-				this.append(node, r.consume(Keyword.INDEX));
+				this.appendToken(node, r.consume(Keyword.INDEX));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.NOT));
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.NOT));
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -643,28 +642,28 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
 				apply(this.append(node, new SyntaxNode("IndexOnClause", {})), (node) => {
-					this.append(node, r.consume(Keyword.ON));
+					this.appendToken(node, r.consume(Keyword.ON));
 					this.identifier(node, r, "ObjectName");
-					this.append(node, r.consume(TokenType.LeftParen));
+					this.appendToken(node, r.consume(TokenType.LeftParen));
 					apply(
 						this.append(node, new SyntaxNode("SortColumnList", {})),
 						(node) => {
 							do {
 								this.sortColumn(node, r);
 								if (r.peekIf(TokenType.Comma)) {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								} else {
 									break;
 								}
 							} while (!r.peek().eos);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				});
 
 				if (r.peekIf(Keyword.WHERE)) {
@@ -683,13 +682,13 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("AlterTableStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.ALTER));
-				this.append(node, r.consume(Keyword.TABLE));
+				this.appendToken(node, r.consume(Keyword.ALTER));
+				this.appendToken(node, r.consume(Keyword.TABLE));
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
@@ -697,8 +696,8 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("RenameToObjectClause", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.identifier(node, r, "ObjectName");
 						},
 					);
@@ -706,15 +705,15 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("RenameColumnClause", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							}
 							this.identifier(node, r, "ColumnName");
 							apply(
 								this.append(node, new SyntaxNode("RenameToColumnClause", {})),
 								(node) => {
-									this.append(node, r.consume(Keyword.TO));
+									this.appendToken(node, r.consume(Keyword.TO));
 									this.identifier(node, r, "ColumnName");
 								},
 							);
@@ -724,9 +723,9 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("AddColumnClause", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							}
 							this.tableColumn(node, r);
 						},
@@ -735,9 +734,9 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("DropColumnClause", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							}
 							this.identifier(node, r, "ColumnName");
 						},
@@ -758,15 +757,15 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("DropTableStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.DROP));
-				this.append(node, r.consume(Keyword.TABLE));
+				this.appendToken(node, r.consume(Keyword.DROP));
+				this.appendToken(node, r.consume(Keyword.TABLE));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -774,7 +773,7 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 			});
@@ -790,15 +789,15 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("DropViewStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.DROP));
-				this.append(node, r.consume(Keyword.VIEW));
+				this.appendToken(node, r.consume(Keyword.DROP));
+				this.appendToken(node, r.consume(Keyword.VIEW));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -806,7 +805,7 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 			});
@@ -825,15 +824,15 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.DROP));
-				this.append(node, r.consume(Keyword.TRIGGER));
+				this.appendToken(node, r.consume(Keyword.DROP));
+				this.appendToken(node, r.consume(Keyword.TRIGGER));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
 						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.EXISTS));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.EXISTS));
 						},
 					);
 				}
@@ -841,7 +840,7 @@ export class Sqlite3Parser extends Parser {
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 			});
@@ -857,20 +856,20 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("DropIndexStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.DROP));
-				this.append(node, r.consume(Keyword.INDEX));
+				this.appendToken(node, r.consume(Keyword.DROP));
+				this.appendToken(node, r.consume(Keyword.INDEX));
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(this.append(node, new SyntaxNode("IfExists", {})), (node) => {
-						this.append(node, r.consume());
-						this.append(node, r.consume(Keyword.EXISTS));
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume(Keyword.EXISTS));
 					});
 				}
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 			});
@@ -889,14 +888,14 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.ATTACH));
+				this.appendToken(node, r.consume(Keyword.ATTACH));
 				if (r.peekIf(Keyword.DATABASE)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 				apply(this.append(node, new SyntaxNode("Database", {})), (node) => {
 					this.expression(node, r);
 				});
-				this.append(node, r.consume(Keyword.AS));
+				this.appendToken(node, r.consume(Keyword.AS));
 				this.identifier(node, r, "SchemaName");
 			});
 		} catch (err) {
@@ -914,9 +913,9 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.DETACH));
+				this.appendToken(node, r.consume(Keyword.DETACH));
 				if (r.peekIf(Keyword.DATABASE)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 				this.identifier(node, r, "SchemaName");
 			});
@@ -932,12 +931,12 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("AnalyzeStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.ANALYZE));
+				this.appendToken(node, r.consume(Keyword.ANALYZE));
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 			});
@@ -953,13 +952,13 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("ReindexStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.REINDEX));
+				this.appendToken(node, r.consume(Keyword.REINDEX));
 
 				if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
 					const ident = this.identifier(node, r, "ObjectName");
 					if (r.peekIf(TokenType.Dot)) {
 						ident.name = "SchemaName";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.identifier(node, r, "ObjectName");
 					}
 				}
@@ -976,14 +975,14 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("VacuumStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.VACUUM));
+				this.appendToken(node, r.consume(Keyword.VACUUM));
 
 				if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
 					this.identifier(node, r, "SchemaName");
 				}
 
 				if (r.peekIf(Keyword.INTO)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(this.append(node, new SyntaxNode("FileName", {})), (node) => {
 						this.stringLiteral(node, r);
 					});
@@ -1001,20 +1000,20 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("PragmaStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.PRAGMA));
+				this.appendToken(node, r.consume(Keyword.PRAGMA));
 
 				const ident = this.identifier(node, r, "PragmaName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "PragmaName");
 				}
 
 				if (r.peekIf({ type: TokenType.Operator, text: "=" })) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.pragmaValue(node, r);
 				} else if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(
 						this.append(node, new SyntaxNode("PragmaArgumentList", {})),
 						(node) => {
@@ -1026,7 +1025,7 @@ export class Sqlite3Parser extends Parser {
 							);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				}
 			});
 		} catch (err) {
@@ -1044,31 +1043,31 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.BEGIN));
+				this.appendToken(node, r.consume(Keyword.BEGIN));
 				if (r.peekIf(Keyword.DEFERRED)) {
 					apply(
 						this.append(node, new SyntaxNode("DeferredOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.IMMEDIATE)) {
 					apply(
 						this.append(node, new SyntaxNode("ImmediateOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.EXCLUSIVE)) {
 					apply(
 						this.append(node, new SyntaxNode("ExclusiveOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				}
 				if (r.peekIf(Keyword.TRANSACTION)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 			});
 		} catch (err) {
@@ -1083,7 +1082,7 @@ export class Sqlite3Parser extends Parser {
 		const current = this.append(parent, new SyntaxNode("SavepointStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.SAVEPOINT));
+				this.appendToken(node, r.consume(Keyword.SAVEPOINT));
 				this.identifier(node, r, "SavepointName");
 			});
 		} catch (err) {
@@ -1101,9 +1100,9 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.RELEASE));
+				this.appendToken(node, r.consume(Keyword.RELEASE));
 				if (r.peekIf(Keyword.SAVEPOINT)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 				this.identifier(node, r, "SavepointName");
 			});
@@ -1123,12 +1122,12 @@ export class Sqlite3Parser extends Parser {
 		try {
 			return apply(current, (node) => {
 				if (r.peekIf(Keyword.END)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				} else {
-					this.append(node, r.consume(Keyword.COMMIT));
+					this.appendToken(node, r.consume(Keyword.COMMIT));
 				}
 				if (r.peekIf(Keyword.TRANSACTION)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 			});
 		} catch (err) {
@@ -1146,14 +1145,14 @@ export class Sqlite3Parser extends Parser {
 		);
 		try {
 			return apply(current, (node) => {
-				this.append(node, r.consume(Keyword.ROLLBACK));
+				this.appendToken(node, r.consume(Keyword.ROLLBACK));
 				if (r.peekIf(Keyword.TRANSACTION)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				}
 				if (r.peekIf(Keyword.TO)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					if (r.peekIf(Keyword.SAVEPOINT)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					}
 					this.identifier(node, r, "SavepointName");
 				}
@@ -1192,46 +1191,46 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				if (r.peekIf(Keyword.REPLACE)) {
 					apply(this.append(node, new SyntaxNode("ReplaceOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 				} else {
-					this.append(node, r.consume(Keyword.INSERT));
+					this.appendToken(node, r.consume(Keyword.INSERT));
 					if (r.peekIf(Keyword.OR)) {
 						apply(
 							this.append(node, new SyntaxNode("OrConflictClause", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.conflictAction(node, r);
 							},
 						);
 					}
 				}
-				this.append(node, r.consume(Keyword.INTO));
+				this.appendToken(node, r.consume(Keyword.INTO));
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
 				if (r.peekIf(Keyword.AS)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectAlias");
 				}
 
 				if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.columnList(node, r);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				}
 
 				if (r.peekIf(Keyword.DEFAULT)) {
 					apply(
 						this.append(node, new SyntaxNode("DefaultValuesOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.VALUES));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.VALUES));
 						},
 					);
 				} else {
@@ -1239,17 +1238,17 @@ export class Sqlite3Parser extends Parser {
 						apply(
 							this.append(node, new SyntaxNode("ValuesClause", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								apply(
 									this.append(node, new SyntaxNode("ExpressionListGroup", {})),
 									(node) => {
 										do {
-											this.append(node, r.consume(TokenType.LeftParen));
+											this.appendToken(node, r.consume(TokenType.LeftParen));
 											const current = this.expressionList(node, r);
-											this.append(node, r.consume(TokenType.RightParen));
+											this.appendToken(node, r.consume(TokenType.RightParen));
 
 											if (r.peekIf(TokenType.Comma)) {
-												this.append(node, r.consume());
+												this.appendToken(node, r.consume());
 											} else {
 												break;
 											}
@@ -1285,41 +1284,41 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("OnConflictClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.ON));
-				this.append(node, r.consume(Keyword.CONFLICT));
+				this.appendToken(node, r.consume(Keyword.ON));
+				this.appendToken(node, r.consume(Keyword.CONFLICT));
 				if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(
 						this.append(node, new SyntaxNode("SortColumnList", {})),
 						(node) => {
 							do {
 								this.sortColumn(node, r);
 								if (r.peekIf(TokenType.Comma)) {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								} else {
 									break;
 								}
 							} while (!r.peek().eos);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 					if (r.peekIf(Keyword.WHERE)) {
 						this.whereClause(node, r);
 					}
 				}
-				this.append(node, r.consume(Keyword.DO));
+				this.appendToken(node, r.consume(Keyword.DO));
 				if (r.peekIf(Keyword.NOTHING)) {
 					apply(
 						this.append(node, new SyntaxNode("DoNothingOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.UPDATE)) {
 					apply(
 						this.append(node, new SyntaxNode("DoUpdateOption", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.setClause(node, r);
 							if (r.peekIf(Keyword.WHERE)) {
 								this.whereClause(node, r);
@@ -1357,17 +1356,17 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("UpdateClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.UPDATE));
+				this.appendToken(node, r.consume(Keyword.UPDATE));
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
 				if (r.peekIf(Keyword.AS)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectAlias");
 				}
 
@@ -1375,8 +1374,8 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("IndexedByOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.BY));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.BY));
 							this.identifier(node, r, "ObjectName");
 						},
 					);
@@ -1384,8 +1383,8 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("NotIndexedOption", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.INDEXED));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.INDEXED));
 						},
 					);
 				}
@@ -1412,18 +1411,18 @@ export class Sqlite3Parser extends Parser {
 
 	private setClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(this.append(parent, new SyntaxNode("SetClause", {})), (node) => {
-			this.append(node, r.consume(Keyword.SET));
+			this.appendToken(node, r.consume(Keyword.SET));
 			apply(this.append(node, new SyntaxNode("UpdateColumnList", {})), (node) => {
 				do {
 					apply(this.append(node, new SyntaxNode("UpdateColumn", {})), (node) => {
 						if (r.peekIf(TokenType.LeftParen)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.columnList(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						} else {
 							this.identifier(node, r, "ColumnName");
 						}
-						this.append(
+						this.appendToken(
 							node,
 							r.consume({ type: TokenType.Operator, text: "=" }),
 						);
@@ -1433,7 +1432,7 @@ export class Sqlite3Parser extends Parser {
 					});
 
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -1466,13 +1465,13 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("DeleteClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.DELETE));
-				this.append(node, r.consume(Keyword.FROM));
+				this.appendToken(node, r.consume(Keyword.DELETE));
+				this.appendToken(node, r.consume(Keyword.FROM));
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
 					ident.name = "SchemaName";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
 
@@ -1505,12 +1504,12 @@ export class Sqlite3Parser extends Parser {
 						current = apply(
 							this.wrap(current, new SyntaxNode("UnionOperation", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								if (r.peekIf(Keyword.ALL)) {
 									apply(
 										this.append(node, new SyntaxNode("AllOption", {})),
 										(node) => {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								}
@@ -1521,7 +1520,7 @@ export class Sqlite3Parser extends Parser {
 						current = apply(
 							this.wrap(current, new SyntaxNode("IntersectOperation", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.selectClause(node, r);
 							},
 						);
@@ -1529,7 +1528,7 @@ export class Sqlite3Parser extends Parser {
 						current = apply(
 							this.wrap(current, new SyntaxNode("ExceptOperation", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.selectClause(node, r);
 							},
 						);
@@ -1559,23 +1558,23 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				if (r.peekIf(Keyword.VALUES)) {
 					apply(this.append(node, new SyntaxNode("ValuesClause", {})), (node) => {
-						this.append(node, r.consume(Keyword.VALUES));
-						this.append(node, r.consume(TokenType.LeftParen));
+						this.appendToken(node, r.consume(Keyword.VALUES));
+						this.appendToken(node, r.consume(TokenType.LeftParen));
 						this.expressionList(node, r);
-						this.append(node, r.consume(TokenType.RightParen));
+						this.appendToken(node, r.consume(TokenType.RightParen));
 					});
 				} else {
-					this.append(node, r.consume(Keyword.SELECT));
+					this.appendToken(node, r.consume(Keyword.SELECT));
 					if (r.peekIf(Keyword.DISTINCT)) {
 						apply(
 							this.append(node, new SyntaxNode("DistinctOption", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							},
 						);
 					} else if (r.peekIf(Keyword.ALL)) {
 						apply(this.append(node, new SyntaxNode("AllOption", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						});
 					}
 					this.selectColumnList(node, r);
@@ -1605,11 +1604,11 @@ export class Sqlite3Parser extends Parser {
 
 	private withClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(this.append(parent, new SyntaxNode("WithClause", {})), (node) => {
-			this.append(node, r.consume(Keyword.WITH));
+			this.appendToken(node, r.consume(Keyword.WITH));
 
 			if (r.peekIf(Keyword.RECURSIVE)) {
 				apply(this.append(node, new SyntaxNode("RecursiveOption", {})), (node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				});
 			}
 
@@ -1618,11 +1617,11 @@ export class Sqlite3Parser extends Parser {
 					apply(this.append(node, new SyntaxNode("CommonTable", {})), (node) => {
 						this.identifier(node, r, "ObjectName");
 						if (r.peekIf(TokenType.LeftParen)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.columnList(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						}
-						this.append(node, r.consume(Keyword.AS));
+						this.appendToken(node, r.consume(Keyword.AS));
 
 						if (
 							r.peekIf(Keyword.MATERIALIZED) ||
@@ -1633,20 +1632,20 @@ export class Sqlite3Parser extends Parser {
 								(node) => {
 									if (r.peekIf(Keyword.NOT)) {
 										node.name = "NotMaterializedOption";
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									}
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								},
 							);
 						}
 
-						this.append(node, r.consume(TokenType.LeftParen));
+						this.appendToken(node, r.consume(TokenType.LeftParen));
 						this.selectStatement(node, r);
-						this.append(node, r.consume(TokenType.RightParen));
+						this.appendToken(node, r.consume(TokenType.RightParen));
 					});
 
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -1665,7 +1664,7 @@ export class Sqlite3Parser extends Parser {
 							apply(
 								this.append(node, new SyntaxNode("AllColumnsOption", {})),
 								(node) => {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								},
 							);
 						} else if (
@@ -1679,14 +1678,14 @@ export class Sqlite3Parser extends Parser {
 								this.append(node, new SyntaxNode("AllColumnsOption", {})),
 								(node) => {
 									this.identifier(node, r, "SchemaName");
-									this.append(node, r.consume());
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
+									this.appendToken(node, r.consume());
 								},
 							);
 						} else {
 							this.expression(node, r);
 							if (r.peekIf(Keyword.AS)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.identifier(node, r, "ColumnAlias");
 							} else if (
 								r.peekIf({ type: [TokenType.Identifier, TokenType.String] })
@@ -1696,7 +1695,7 @@ export class Sqlite3Parser extends Parser {
 						}
 					});
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -1707,7 +1706,7 @@ export class Sqlite3Parser extends Parser {
 
 	private fromClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(this.append(parent, new SyntaxNode("FromClause", {})), (node) => {
-			this.append(node, r.consume(Keyword.FROM));
+			this.appendToken(node, r.consume(Keyword.FROM));
 			apply(this.append(node, new SyntaxNode("FromObjectList", {})), (node) => {
 				let hasJoinClause = false;
 				do {
@@ -1731,7 +1730,7 @@ export class Sqlite3Parser extends Parser {
 					}
 
 					if (!hasJoinClause && r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -1743,7 +1742,7 @@ export class Sqlite3Parser extends Parser {
 	private fromObject(parent: SyntaxNode, r: TokenReader) {
 		return apply(this.append(parent, new SyntaxNode("FromObject", {})), (node) => {
 			if (r.peekIf(TokenType.LeftParen)) {
-				this.append(node, r.consume());
+				this.appendToken(node, r.consume());
 				apply(
 					this.append(node, new SyntaxNode("SubqueryExpression", {})),
 					(node) => {
@@ -1757,18 +1756,18 @@ export class Sqlite3Parser extends Parser {
 						}
 					},
 				);
-				this.append(node, r.consume(TokenType.RightParen));
+				this.appendToken(node, r.consume(TokenType.RightParen));
 			} else {
 				apply(this.append(node, new SyntaxNode("ObjectReference", {})), (node) => {
 					const ident = this.identifier(node, r, "ObjectName");
 					if (r.peekIf(TokenType.Dot)) {
 						ident.name = "SchemaName";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.identifier(node, r, "ObjectName");
 					}
 					if (r.peekIf(TokenType.LeftParen)) {
 						node.name = "FunctionExpression";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						apply(
 							this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 							(node) => {
@@ -1780,20 +1779,20 @@ export class Sqlite3Parser extends Parser {
 										},
 									);
 									if (r.peekIf(TokenType.Comma)) {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									} else {
 										break;
 									}
 								}
 							},
 						);
-						this.append(node, r.consume(TokenType.RightParen));
+						this.appendToken(node, r.consume(TokenType.RightParen));
 					}
 				});
 			}
 
 			if (r.peekIf(Keyword.AS)) {
-				this.append(node, r.consume());
+				this.appendToken(node, r.consume());
 				this.identifier(node, r, "ObjectAlias");
 			} else if (r.peekIf(TokenType.Identifier)) {
 				this.identifier(node, r, "ObjectAlias");
@@ -1807,52 +1806,52 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				if (r.peekIf(Keyword.CROSS)) {
 					node.name = "CrossJoinClause";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				} else {
 					if (r.peekIf(Keyword.NATURAL)) {
 						apply(
 							this.append(node, new SyntaxNode("NatualOption", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							},
 						);
 					}
 					if (r.peekIf(Keyword.LEFT)) {
 						node.name = "LeftOuterJoinClause";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						}
 					} else if (r.peekIf(Keyword.RIGHT)) {
 						node.name = "RightOuterJoinClause";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						}
 					} else if (r.peekIf(Keyword.FULL)) {
 						node.name = "FullOuterJoinClause";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						}
 					} else if (r.peekIf(Keyword.INNER)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					}
 				}
-				this.append(node, r.consume(Keyword.JOIN));
+				this.appendToken(node, r.consume(Keyword.JOIN));
 
 				this.fromObject(node, r);
 
 				if (r.peekIf(Keyword.ON)) {
 					apply(this.append(node, new SyntaxNode("JoinOnClause", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r);
 					});
 				} else if (r.peekIf(Keyword.USING)) {
 					apply(this.append(node, new SyntaxNode("UsingClause", {})), (node) => {
-						this.append(node, r.consume());
-						this.append(node, r.consume(TokenType.LeftParen));
-						this.append(node, r.consume(TokenType.RightParen));
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume(TokenType.LeftParen));
+						this.appendToken(node, r.consume(TokenType.RightParen));
 					});
 				}
 			},
@@ -1863,7 +1862,7 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("WhereClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.WHERE));
+				this.appendToken(node, r.consume(Keyword.WHERE));
 				this.expression(node, r);
 			},
 		);
@@ -1873,8 +1872,8 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("GroupByClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.GROUP));
-				this.append(node, r.consume(Keyword.BY));
+				this.appendToken(node, r.consume(Keyword.GROUP));
+				this.appendToken(node, r.consume(Keyword.BY));
 				this.expressionList(node, r);
 			},
 		);
@@ -1884,7 +1883,7 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("HavingClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.HAVING));
+				this.appendToken(node, r.consume(Keyword.HAVING));
 				this.expression(node, r);
 			},
 		);
@@ -1894,13 +1893,13 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("WindowClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.WINDOW));
+				this.appendToken(node, r.consume(Keyword.WINDOW));
 				do {
 					this.identifier(node, r, "WindowName");
-					this.append(node, r.consume(Keyword.AS));
+					this.appendToken(node, r.consume(Keyword.AS));
 					this.window(node, r);
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -1923,15 +1922,15 @@ export class Sqlite3Parser extends Parser {
 			apply(this.append(node, new SyntaxNode("FrameClause", {})), (node) => {
 				if (r.peekIf(Keyword.RANGE)) {
 					apply(this.append(node, new SyntaxNode("RangeOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 				} else if (r.peekIf(Keyword.ROWS)) {
 					apply(this.append(node, new SyntaxNode("RowsOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 				} else if (r.peekIf(Keyword.GROUPS)) {
 					apply(this.append(node, new SyntaxNode("GroupsOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 				}
 				if (r.peekIf(Keyword.CURRENT)) {
@@ -1941,8 +1940,8 @@ export class Sqlite3Parser extends Parser {
 							apply(
 								this.append(node, new SyntaxNode("CurrentRowOption", {})),
 								(node) => {
-									this.append(node, r.consume());
-									this.append(node, r.consume(Keyword.ROW));
+									this.appendToken(node, r.consume());
+									this.appendToken(node, r.consume(Keyword.ROW));
 								},
 							);
 						},
@@ -1954,24 +1953,24 @@ export class Sqlite3Parser extends Parser {
 							apply(
 								this.append(node, new SyntaxNode("UnboundedPrecedingOption", {})),
 								(node) => {
-									this.append(node, r.consume());
-									this.append(node, r.consume(Keyword.PRECEDING));
+									this.appendToken(node, r.consume());
+									this.appendToken(node, r.consume(Keyword.PRECEDING));
 								},
 							);
 						},
 					);
 				} else if (r.peekIf(Keyword.BETWEEN)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(
 						this.append(node, new SyntaxNode("FrameStartClause", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.CURRENT)) {
 								apply(
 									this.append(node, new SyntaxNode("CurrentRowOption", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.ROW));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.ROW));
 									},
 								);
 							} else if (r.peekIf(Keyword.UNBOUNDED)) {
@@ -1981,8 +1980,8 @@ export class Sqlite3Parser extends Parser {
 										new SyntaxNode("UnboundedPrecedingOption", {}),
 									),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.PRECEDING));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.PRECEDING));
 									},
 								);
 							} else {
@@ -1991,7 +1990,7 @@ export class Sqlite3Parser extends Parser {
 										this.append(node, new SyntaxNode("PrecedingOption", {})),
 										(node) => {
 											this.expression(node, r);
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.FOLLOWING)) {
@@ -1999,7 +1998,7 @@ export class Sqlite3Parser extends Parser {
 										this.append(node, new SyntaxNode("FollowingOption", {})),
 										(node) => {
 											this.expression(node, r);
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else {
@@ -2008,17 +2007,17 @@ export class Sqlite3Parser extends Parser {
 							}
 						},
 					);
-					this.append(node, r.consume(Keyword.AND));
+					this.appendToken(node, r.consume(Keyword.AND));
 					apply(
 						this.append(node, new SyntaxNode("FrameEndClause", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.CURRENT)) {
 								apply(
 									this.append(node, new SyntaxNode("CurrentRowOption", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.ROW));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.ROW));
 									},
 								);
 							} else if (r.peekIf(Keyword.UNBOUNDED)) {
@@ -2028,8 +2027,8 @@ export class Sqlite3Parser extends Parser {
 										new SyntaxNode("UnboundedFollowingOption", {}),
 									),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.FOLLOWING));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.FOLLOWING));
 									},
 								);
 							} else {
@@ -2038,7 +2037,7 @@ export class Sqlite3Parser extends Parser {
 										this.append(node, new SyntaxNode("PrecedingOption", {})),
 										(node) => {
 											this.expression(node, r);
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.FOLLOWING)) {
@@ -2046,7 +2045,7 @@ export class Sqlite3Parser extends Parser {
 										this.append(node, new SyntaxNode("FollowingOption", {})),
 										(node) => {
 											this.expression(node, r);
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else {
@@ -2063,7 +2062,7 @@ export class Sqlite3Parser extends Parser {
 								this.append(node, new SyntaxNode("PrecedingOption", {})),
 								(node) => {
 									this.expression(node, r);
-									this.append(node, r.consume(Keyword.PRECEDING));
+									this.appendToken(node, r.consume(Keyword.PRECEDING));
 								},
 							);
 						},
@@ -2072,30 +2071,30 @@ export class Sqlite3Parser extends Parser {
 			});
 			if (r.peekIf(Keyword.EXCLUDE)) {
 				apply(this.append(node, new SyntaxNode("ExcludeClause", {})), (node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					if (r.peekIf(Keyword.NO)) {
 						apply(
 							this.append(node, new SyntaxNode("NoOthersOption", {})),
 							(node) => {
-								this.append(node, r.consume());
-								this.append(node, r.consume(Keyword.OTHERS));
+								this.appendToken(node, r.consume());
+								this.appendToken(node, r.consume(Keyword.OTHERS));
 							},
 						);
 					} else if (r.peekIf(Keyword.CURRENT)) {
 						apply(
 							this.append(node, new SyntaxNode("CurrentRowOption", {})),
 							(node) => {
-								this.append(node, r.consume());
-								this.append(node, r.consume(Keyword.ROW));
+								this.appendToken(node, r.consume());
+								this.appendToken(node, r.consume(Keyword.ROW));
 							},
 						);
 					} else if (r.peekIf(Keyword.GROUP)) {
 						apply(this.append(node, new SyntaxNode("GroupOption", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						});
 					} else if (r.peekIf(Keyword.TIES)) {
 						apply(this.append(node, new SyntaxNode("TiesOption", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						});
 					} else {
 						throw r.createParseError();
@@ -2109,12 +2108,12 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("PartitionByClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.PARTITION));
-				this.append(node, r.consume(Keyword.BY));
+				this.appendToken(node, r.consume(Keyword.PARTITION));
+				this.appendToken(node, r.consume(Keyword.BY));
 				do {
 					this.expression(node, r);
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -2127,7 +2126,7 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("ReturningClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.RETURNING));
+				this.appendToken(node, r.consume(Keyword.RETURNING));
 				this.selectColumnList(node, r);
 			},
 		);
@@ -2137,8 +2136,8 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("OrderByClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.ORDER));
-				this.append(node, r.consume(Keyword.BY));
+				this.appendToken(node, r.consume(Keyword.ORDER));
+				this.appendToken(node, r.consume(Keyword.BY));
 				apply(this.append(node, new SyntaxNode("SortColumnList", {})), (node) => {
 					do {
 						apply(this.sortColumn(node, r), (node) => {
@@ -2146,23 +2145,23 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(node, new SyntaxNode("NullsFirstOption", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.NULLS, Keyword.LAST)) {
 								apply(
 									this.append(node, new SyntaxNode("NullsLastOption", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							}
 						});
 
 						if (r.peekIf(TokenType.Comma)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 						} else {
 							break;
 						}
@@ -2176,18 +2175,18 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("LimitClause", {})),
 			(node) => {
-				this.append(node, r.consume(Keyword.LIMIT));
+				this.appendToken(node, r.consume(Keyword.LIMIT));
 				apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
 					this.expression(node, r);
 				});
 				if (r.peekIf(Keyword.OFFSET)) {
 					apply(this.append(node, new SyntaxNode("OffsetOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r);
 					});
 				} else if (r.peekIf(TokenType.Comma)) {
 					node.name = "OffsetOption";
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
 						this.expression(node, r);
 					});
@@ -2231,28 +2230,28 @@ export class Sqlite3Parser extends Parser {
 		return apply(this.append(parent, new SyntaxNode("ColumnType", {})), (node) => {
 			apply(this.append(node, new SyntaxNode("TypeName", {})), (node) => {
 				const token = r.consume();
-				this.append(node, token);
+				this.appendToken(node, token);
 				node.attribs.value = token.text;
 				while (r.peekIf(TokenType.Identifier)) {
 					const token = r.consume();
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = `${node.attribs.value} ${token.text}`;
 				}
 			});
 			if (r.peekIf(TokenType.LeftParen)) {
-				this.append(node, r.consume());
+				this.appendToken(node, r.consume());
 				apply(this.append(node, new SyntaxNode("TypeOptionList", {})), (node) => {
 					apply(this.append(node, new SyntaxNode("LengthOption", {})), (node) => {
 						this.numericLiteral(node, r);
 					});
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						apply(this.append(node, new SyntaxNode("ScaleOption", {})), (node) => {
 							this.numericLiteral(node, r);
 						});
 					}
 				});
-				this.append(node, r.consume(TokenType.RightParen));
+				this.appendToken(node, r.consume(TokenType.RightParen));
 			}
 		});
 	}
@@ -2262,28 +2261,28 @@ export class Sqlite3Parser extends Parser {
 			this.append(parent, new SyntaxNode("ColumnConstraint", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CONSTRAINT)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ConstraintName");
 				}
 				if (r.peekIf(Keyword.PRIMARY)) {
 					apply(
 						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.KEY));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.KEY));
 
 							if (r.peekIf(Keyword.ASC)) {
 								apply(
 									this.append(node, new SyntaxNode("AscOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.DESC)) {
 								apply(
 									this.append(node, new SyntaxNode("DescOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							}
@@ -2291,8 +2290,8 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2301,7 +2300,7 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(node, new SyntaxNode("AutoincrementOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							}
@@ -2311,14 +2310,14 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("NotNullConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.NULL));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.NULL));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2329,13 +2328,13 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("NullConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.ON)) {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2346,13 +2345,13 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("UniqueConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.ON)) {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2363,26 +2362,26 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("CheckConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							this.expression(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						},
 					);
 				} else if (r.peekIf(Keyword.DEFAULT)) {
 					apply(this.append(node, new SyntaxNode("DefaultOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (r.peekIf(TokenType.LeftParen)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.expression(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						} else {
 							this.expression(node, r);
 						}
 					});
 				} else if (r.peekIf(Keyword.COLLATE)) {
 					apply(this.append(node, new SyntaxNode("CollateOption", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.identifier(node, r, "CollateName");
 					});
 				} else if (r.peekIf(Keyword.REFERENCES)) {
@@ -2397,31 +2396,31 @@ export class Sqlite3Parser extends Parser {
 						this.append(node, new SyntaxNode("GeneratedColumnOption", {})),
 						(node) => {
 							if (r.peekIf(Keyword.GENERATED)) {
-								this.append(node, r.consume());
-								this.append(node, r.consume(Keyword.ALWAYS));
+								this.appendToken(node, r.consume());
+								this.appendToken(node, r.consume(Keyword.ALWAYS));
 							}
-							this.append(node, r.consume(Keyword.AS));
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume(Keyword.AS));
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							apply(
 								this.append(node, new SyntaxNode("GeneratedColumn", {})),
 								(node) => {
 									this.expression(node, r);
 								},
 							);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 
 							if (r.peekIf(Keyword.STORED)) {
 								apply(
 									this.append(node, new SyntaxNode("StoredOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.VIRTUAL)) {
 								apply(
 									this.append(node, new SyntaxNode("virtual option", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							}
@@ -2439,36 +2438,36 @@ export class Sqlite3Parser extends Parser {
 			this.append(parent, new SyntaxNode("TableConstraint", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CONSTRAINT)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ConstraintName");
 				}
 				if (r.peekIf(Keyword.PRIMARY)) {
 					apply(
 						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.KEY));
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.KEY));
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							apply(
 								this.append(node, new SyntaxNode("SortColumnList", {})),
 								(node) => {
 									do {
 										this.sortColumn(node, r);
 										if (r.peekIf(TokenType.Comma)) {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										} else {
 											break;
 										}
 									} while (!r.peek().eos);
 								},
 							);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2479,28 +2478,28 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("UniqueConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							apply(
 								this.append(node, new SyntaxNode("SortColumnList", {})),
 								(node) => {
 									do {
 										this.sortColumn(node, r);
 										if (r.peekIf(TokenType.Comma)) {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										} else {
 											break;
 										}
 									} while (!r.peek().eos);
 								},
 							);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
 									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume(Keyword.CONFLICT));
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume(Keyword.CONFLICT));
 										this.conflictAction(node, r);
 									},
 								);
@@ -2511,21 +2510,21 @@ export class Sqlite3Parser extends Parser {
 					apply(
 						this.append(node, new SyntaxNode("CheckConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							this.expression(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						},
 					);
 				} else if (r.peekIf(Keyword.FOREIGN)) {
 					apply(
 						this.append(node, new SyntaxNode("ForeignKeyConstraint", {})),
 						(node) => {
-							this.append(node, r.consume());
-							this.append(node, r.consume(Keyword.KEY));
-							this.append(node, r.consume(TokenType.LeftParen));
+							this.appendToken(node, r.consume());
+							this.appendToken(node, r.consume(Keyword.KEY));
+							this.appendToken(node, r.consume(TokenType.LeftParen));
 							this.columnList(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 							this.referencesClause(node, r);
 						},
 					);
@@ -2540,12 +2539,12 @@ export class Sqlite3Parser extends Parser {
 		return apply(
 			this.append(parent, new SyntaxNode("ReferencesClause", {})),
 			(node) => {
-				this.append(node, r.consume());
+				this.appendToken(node, r.consume());
 				this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.LeftParen)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.columnList(node, r);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				}
 
 				while (
@@ -2556,49 +2555,49 @@ export class Sqlite3Parser extends Parser {
 						apply(
 							this.append(node, new SyntaxNode("OnUpdateClause", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								if (r.peekIf(Keyword.DELETE)) {
 									node.name = "OnDeleteClause";
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 								} else {
-									this.append(node, r.consume(Keyword.UPDATE));
+									this.appendToken(node, r.consume(Keyword.UPDATE));
 								}
 								if (r.peekIf(Keyword.SET, Keyword.NULL)) {
 									apply(
 										this.append(node, new SyntaxNode("SetNullOption", {})),
 										(node) => {
-											this.append(node, r.consume());
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.SET, Keyword.DEFAULT)) {
 									apply(
 										this.append(node, new SyntaxNode("SetDefaultOption", {})),
 										(node) => {
-											this.append(node, r.consume());
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.CASCADE)) {
 									apply(
 										this.append(node, new SyntaxNode("CascadeOption", {})),
 										(node) => {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.RESTRICT)) {
 									apply(
 										this.append(node, new SyntaxNode("RestrictOption", {})),
 										(node) => {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.NO, Keyword.ACTION)) {
 									apply(
 										this.append(node, new SyntaxNode("NoActionOption", {})),
 										(node) => {
-											this.append(node, r.consume());
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								} else {
@@ -2608,26 +2607,26 @@ export class Sqlite3Parser extends Parser {
 						);
 					} else if (r.peekIf(Keyword.MATCH)) {
 						apply(this.append(node, new SyntaxNode("MatchClause", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(Keyword.SIMPLE)) {
 								apply(
 									this.append(node, new SyntaxNode("SimpleOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.FULL)) {
 								apply(
 									this.append(node, new SyntaxNode("FullOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.PARTIAL)) {
 								apply(
 									this.append(node, new SyntaxNode("PartialOption", {})),
 									(node) => {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else {
@@ -2648,16 +2647,16 @@ export class Sqlite3Parser extends Parser {
 						(node) => {
 							if (r.peekIf(Keyword.NOT)) {
 								node.name = "NotDeferrableOption";
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							}
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 
 							if (r.peekIf(Keyword.INITIALLY, Keyword.DEFERRED)) {
 								apply(
 									this.append(node, new SyntaxNode("InitiallyDeferredOption", {})),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.INITIALLY, Keyword.IMMEDIATE)) {
@@ -2667,8 +2666,8 @@ export class Sqlite3Parser extends Parser {
 										new SyntaxNode("InitiallyImmediateOption", {}),
 									),
 									(node) => {
-										this.append(node, r.consume());
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
+										this.appendToken(node, r.consume());
 									},
 								);
 							}
@@ -2684,35 +2683,35 @@ export class Sqlite3Parser extends Parser {
 			return apply(
 				this.append(parent, new SyntaxNode("RollbackOption", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.ABORT)) {
 			return apply(
 				this.append(parent, new SyntaxNode("AbortOption", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.FAIL)) {
 			return apply(
 				this.append(parent, new SyntaxNode("FailOption", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.IGNORE)) {
 			return apply(
 				this.append(parent, new SyntaxNode("IgnoreOption", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.REPLACE)) {
 			return apply(
 				this.append(parent, new SyntaxNode("ReplaceOption", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else {
@@ -2729,7 +2728,7 @@ export class Sqlite3Parser extends Parser {
 						apply(
 							this.append(node, new SyntaxNode("UnaryPlusOperation", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.numericLiteral(node, r);
 							},
 						);
@@ -2739,7 +2738,7 @@ export class Sqlite3Parser extends Parser {
 						apply(
 							this.append(node, new SyntaxNode("UnaryMinusOperation", {})),
 							(node) => {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.numericLiteral(node, r);
 							},
 						);
@@ -2764,7 +2763,7 @@ export class Sqlite3Parser extends Parser {
 				do {
 					this.expression(node, r);
 					if (r.peekIf(TokenType.Comma)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					} else {
 						break;
 					}
@@ -2782,7 +2781,7 @@ export class Sqlite3Parser extends Parser {
 			current = apply(
 				this.append(current, new SyntaxNode("NotOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.expression(node, r, 3);
 				},
 			);
@@ -2790,7 +2789,7 @@ export class Sqlite3Parser extends Parser {
 			current = apply(
 				this.append(current, new SyntaxNode("BitwiseNotOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.expression(node, r, 16);
 				},
 			);
@@ -2798,7 +2797,7 @@ export class Sqlite3Parser extends Parser {
 			current = apply(
 				this.append(current, new SyntaxNode("UnaryPlusOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.expression(node, r, 16);
 				},
 			);
@@ -2806,7 +2805,7 @@ export class Sqlite3Parser extends Parser {
 			current = apply(
 				this.append(current, new SyntaxNode("UnaryMinusOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.expression(node, r, 16);
 				},
 			);
@@ -2819,7 +2818,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("OrOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 1);
 					},
 				);
@@ -2827,7 +2826,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("AndOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 2);
 					},
 				);
@@ -2838,7 +2837,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("EqualOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
@@ -2849,20 +2848,20 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("NotEqualOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.IS)) {
 				current = apply(this.wrap(current, new SyntaxNode("Is", {})), (node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					if (r.peekIf(Keyword.NOT)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						node.name += "Not";
 					}
 					if (r.peekIf(Keyword.DISTINCT)) {
-						this.append(node, r.consume());
-						this.append(node, r.consume(Keyword.FROM));
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume(Keyword.FROM));
 						node.name += "DistinctFromOperation";
 					} else {
 						node.name += "Operation";
@@ -2877,12 +2876,12 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("BetweenOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
-						this.append(node, r.consume(Keyword.AND));
+						this.appendToken(node, r.consume(Keyword.AND));
 						this.expression(node, r, 4);
 					},
 				);
@@ -2894,10 +2893,10 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("InOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						if (
 							r.peekIf(TokenType.LeftParen, {
 								type: [Keyword.WITH, Keyword.SELECT],
@@ -2906,18 +2905,18 @@ export class Sqlite3Parser extends Parser {
 							apply(
 								this.append(node, new SyntaxNode("SubqueryExpression", {})),
 								(node) => {
-									this.append(node, r.consume());
+									this.appendToken(node, r.consume());
 									if (r.peekIf(Keyword.WITH)) {
 										this.withClause(node, r);
 									}
 									this.selectStatement(node, r);
-									this.append(node, r.consume(TokenType.RightParen));
+									this.appendToken(node, r.consume(TokenType.RightParen));
 								},
 							);
 						} else if (r.peekIf(TokenType.LeftParen)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.expressionList(node, r);
-							this.append(node, r.consume(TokenType.RightParen));
+							this.appendToken(node, r.consume(TokenType.RightParen));
 						} else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
 							apply(
 								this.append(node, new SyntaxNode("FunctionExpression", {})),
@@ -2925,10 +2924,10 @@ export class Sqlite3Parser extends Parser {
 									apply(
 										this.append(node, new SyntaxNode("ObjectName", {})),
 										(node) => {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
-									this.append(node, r.consume(TokenType.LeftParen));
+									this.appendToken(node, r.consume(TokenType.LeftParen));
 									apply(
 										this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 										(node) => {
@@ -2943,14 +2942,14 @@ export class Sqlite3Parser extends Parser {
 													},
 												);
 												if (r.peekIf(TokenType.Comma)) {
-													this.append(node, r.consume());
+													this.appendToken(node, r.consume());
 												} else {
 													break;
 												}
 											}
 										},
 									);
-									this.append(node, r.consume(TokenType.RightParen));
+									this.appendToken(node, r.consume(TokenType.RightParen));
 								},
 							);
 						} else if (
@@ -2970,10 +2969,10 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("MatchOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
@@ -2985,10 +2984,10 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("LikeOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 						if (r.peekIf(Keyword.ESCAPE)) {
 							apply(
@@ -3008,10 +3007,10 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("RegexpOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
@@ -3023,10 +3022,10 @@ export class Sqlite3Parser extends Parser {
 					this.wrap(current, new SyntaxNode("GlobOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							node.name = `Not${node.name}`;
 						}
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
@@ -3034,22 +3033,22 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("IsNullOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.NOTNULL)) {
 				current = apply(
 					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
 				current = apply(
 					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
+						this.appendToken(node, r.consume());
 					},
 				);
 			} else if (
@@ -3059,7 +3058,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("LessThanOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 5);
 					},
 				);
@@ -3070,7 +3069,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("GreaterThanOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 5);
 					},
 				);
@@ -3081,7 +3080,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("LessThanOrEqualOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 5);
 					},
 				);
@@ -3092,7 +3091,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("GreaterThanOrEqualOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 5);
 					},
 				);
@@ -3103,7 +3102,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("BitwiseAndOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 7);
 					},
 				);
@@ -3114,7 +3113,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("BitwiseOrOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 7);
 					},
 				);
@@ -3125,7 +3124,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("BitwiseLeftShiftOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 7);
 					},
 				);
@@ -3136,7 +3135,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("BitwiseRightShiftOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 7);
 					},
 				);
@@ -3147,7 +3146,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("AddOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 8);
 					},
 				);
@@ -3158,7 +3157,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("SubtractOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 8);
 					},
 				);
@@ -3169,7 +3168,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("MultiplyOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 9);
 					},
 				);
@@ -3180,7 +3179,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("DivideOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 9);
 					},
 				);
@@ -3191,7 +3190,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("ModuloOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 9);
 					},
 				);
@@ -3202,7 +3201,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("ConcatenateOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 10);
 					},
 				);
@@ -3213,7 +3212,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("JsonExtractOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 10);
 					},
 				);
@@ -3224,7 +3223,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("JsonExtractValueOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.expression(node, r, 10);
 					},
 				);
@@ -3232,7 +3231,7 @@ export class Sqlite3Parser extends Parser {
 				current = apply(
 					this.wrap(current, new SyntaxNode("CollateOperation", {})),
 					(node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						this.identifier(node, r, "CollationName");
 					},
 				);
@@ -3248,7 +3247,7 @@ export class Sqlite3Parser extends Parser {
 			return apply(
 				this.append(parent, new SyntaxNode("NullLiteral", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				},
 			);
 		} else if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -3267,7 +3266,7 @@ export class Sqlite3Parser extends Parser {
 				(node) => {
 					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						const token = r.consume();
-						this.append(node, token);
+						this.appendToken(node, token);
 						node.attribs.value = token.text.toUpperCase();
 					});
 				},
@@ -3276,18 +3275,18 @@ export class Sqlite3Parser extends Parser {
 			return apply(
 				this.append(parent, new SyntaxNode("CaseExpression", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					if (!r.peekIf(Keyword.WHEN)) {
 						this.expression(node, r);
 					}
 					do {
 						apply(this.append(node, new SyntaxNode("WhenClause", {})), (node) => {
-							this.append(node, r.consume(Keyword.WHEN));
+							this.appendToken(node, r.consume(Keyword.WHEN));
 							this.expression(node, r);
 							apply(
 								this.append(node, new SyntaxNode("ThenClause", {})),
 								(node) => {
-									this.append(node, r.consume(Keyword.THEN));
+									this.appendToken(node, r.consume(Keyword.THEN));
 									this.expression(node, r);
 								},
 							);
@@ -3295,11 +3294,11 @@ export class Sqlite3Parser extends Parser {
 					} while (r.peekIf(Keyword.WHEN));
 					if (r.peekIf(Keyword.ELSE)) {
 						apply(this.append(node, new SyntaxNode("ElseClause", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							this.expression(node, r);
 						});
 					}
-					this.append(node, r.consume(Keyword.END));
+					this.appendToken(node, r.consume(Keyword.END));
 				},
 			);
 		} else if (r.peekIf(Keyword.CAST)) {
@@ -3309,9 +3308,9 @@ export class Sqlite3Parser extends Parser {
 					const token = r.consume();
 					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						node.attribs.value = token.text.toUpperCase();
-						this.append(node, token);
+						this.appendToken(node, token);
 					});
-					this.append(node, r.consume(TokenType.LeftParen));
+					this.appendToken(node, r.consume(TokenType.LeftParen));
 					apply(
 						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
@@ -3321,11 +3320,11 @@ export class Sqlite3Parser extends Parser {
 									this.expression(node, r);
 								},
 							);
-							this.append(node, r.consume(Keyword.AS));
+							this.appendToken(node, r.consume(Keyword.AS));
 							this.columnType(node, r);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(Keyword.RAISE)) {
@@ -3334,10 +3333,10 @@ export class Sqlite3Parser extends Parser {
 				(node) => {
 					const token = r.consume();
 					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						this.append(node, token);
+						this.appendToken(node, token);
 						node.attribs.value = token.text.toUpperCase();
 					});
-					this.append(node, r.consume(TokenType.LeftParen));
+					this.appendToken(node, r.consume(TokenType.LeftParen));
 					apply(
 						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
@@ -3347,7 +3346,7 @@ export class Sqlite3Parser extends Parser {
 									this.conflictAction(node, r);
 								},
 							);
-							this.append(node, r.consume(TokenType.Comma));
+							this.appendToken(node, r.consume(TokenType.Comma));
 							apply(
 								this.append(node, new SyntaxNode("FunctionArgument", {})),
 								(node) => {
@@ -3356,61 +3355,61 @@ export class Sqlite3Parser extends Parser {
 							);
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(Keyword.EXISTS)) {
 			return apply(
 				this.append(parent, new SyntaxNode("ExistsOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
-					this.append(node, r.consume(TokenType.LeftParen));
+					this.appendToken(node, r.consume());
+					this.appendToken(node, r.consume(TokenType.LeftParen));
 					this.selectStatement(node, r);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(TokenType.LeftParen, Keyword.VALUES)) {
 			return apply(
 				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					apply(this.append(node, new SyntaxNode("ValuesClause", {})), (node) => {
-						this.append(node, r.consume(Keyword.VALUES));
-						this.append(node, r.consume(TokenType.LeftParen));
+						this.appendToken(node, r.consume(Keyword.VALUES));
+						this.appendToken(node, r.consume(TokenType.LeftParen));
 						this.expressionList(node, r);
-						this.append(node, r.consume(TokenType.RightParen));
+						this.appendToken(node, r.consume(TokenType.RightParen));
 					});
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(TokenType.LeftParen, Keyword.SELECT)) {
 			return apply(
 				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.selectStatement(node, r);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(TokenType.LeftParen)) {
 			return apply(
 				this.append(parent, new SyntaxNode("ParenthesesOperation", {})),
 				(node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					this.expression(node, r);
 					if (r.peekIf(TokenType.Comma)) {
 						node.name = "ExpressionList";
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						do {
 							this.expression(node, r);
 							if (r.peekIf(TokenType.Comma)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 							} else {
 								break;
 							}
 						} while (!r.peek().eos);
 					}
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 				},
 			);
 		} else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
@@ -3418,10 +3417,10 @@ export class Sqlite3Parser extends Parser {
 				this.append(parent, new SyntaxNode("FunctionExpression", {})),
 				(node) => {
 					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 					});
 
-					this.append(node, r.consume(TokenType.LeftParen));
+					this.appendToken(node, r.consume(TokenType.LeftParen));
 					apply(
 						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
@@ -3432,7 +3431,7 @@ export class Sqlite3Parser extends Parser {
 										apply(
 											this.append(node, new SyntaxNode("AllColumnsOption", {})),
 											(node) => {
-												this.append(node, r.consume());
+												this.appendToken(node, r.consume());
 											},
 										);
 									},
@@ -3442,7 +3441,7 @@ export class Sqlite3Parser extends Parser {
 									apply(
 										this.append(node, new SyntaxNode("DistinctOption", {})),
 										(node) => {
-											this.append(node, r.consume());
+											this.appendToken(node, r.consume());
 										},
 									);
 								}
@@ -3454,7 +3453,7 @@ export class Sqlite3Parser extends Parser {
 										},
 									);
 									if (r.peekIf(TokenType.Comma)) {
-										this.append(node, r.consume());
+										this.appendToken(node, r.consume());
 									} else {
 										break;
 									}
@@ -3462,15 +3461,15 @@ export class Sqlite3Parser extends Parser {
 							}
 						},
 					);
-					this.append(node, r.consume(TokenType.RightParen));
+					this.appendToken(node, r.consume(TokenType.RightParen));
 					if (r.peekIf(Keyword.FILTER)) {
 						apply(
 							this.append(node, new SyntaxNode("FilterClause", {})),
 							(node) => {
-								this.append(node, r.consume());
-								this.append(node, r.consume(TokenType.LeftParen));
+								this.appendToken(node, r.consume());
+								this.appendToken(node, r.consume(TokenType.LeftParen));
 								this.whereClause(node, r);
-								this.append(node, r.consume(TokenType.RightParen));
+								this.appendToken(node, r.consume(TokenType.RightParen));
 							},
 						);
 					}
@@ -3479,11 +3478,11 @@ export class Sqlite3Parser extends Parser {
 						r.peekIf(Keyword.OVER)
 					) {
 						apply(this.append(node, new SyntaxNode("OverClause", {})), (node) => {
-							this.append(node, r.consume());
+							this.appendToken(node, r.consume());
 							if (r.peekIf(TokenType.LeftParen)) {
-								this.append(node, r.consume());
+								this.appendToken(node, r.consume());
 								this.window(node, r);
-								this.append(node, r.consume(TokenType.RightParen));
+								this.appendToken(node, r.consume(TokenType.RightParen));
 							} else {
 								this.identifier(node, r, "WindowName");
 							}
@@ -3511,7 +3510,7 @@ export class Sqlite3Parser extends Parser {
 				return apply(
 					this.append(parent, new SyntaxNode("PositionalBindVariable", {})),
 					(node) => {
-						this.append(node, token);
+						this.appendToken(node, token);
 
 						let value = token.text.substring(1);
 						if (value) {
@@ -3528,7 +3527,7 @@ export class Sqlite3Parser extends Parser {
 				return apply(
 					this.append(parent, new SyntaxNode("NamedBindVariable", {})),
 					(node) => {
-						this.append(node, token);
+						this.appendToken(node, token);
 						node.attribs.value = token.text.substring(1);
 					},
 				);
@@ -3542,16 +3541,16 @@ export class Sqlite3Parser extends Parser {
 		return apply(this.append(parent, new SyntaxNode("SortColumn", {})), (node) => {
 			this.expression(node, r);
 			if (r.peekIf(Keyword.COLLATE)) {
-				this.append(node, r.consume());
+				this.appendToken(node, r.consume());
 				this.identifier(node, r, "CollationName");
 			}
 			if (r.peekIf(Keyword.ASC)) {
 				apply(this.append(node, new SyntaxNode("AscOption", {})), (node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				});
 			} else if (r.peekIf(Keyword.DESC)) {
 				apply(this.append(node, new SyntaxNode("DescOption", {})), (node) => {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				});
 			}
 		});
@@ -3562,7 +3561,7 @@ export class Sqlite3Parser extends Parser {
 			do {
 				this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Comma)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 				} else {
 					break;
 				}
@@ -3576,11 +3575,11 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				const ident1 = this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Dot)) {
-					this.append(node, r.consume());
+					this.appendToken(node, r.consume());
 					ident1.name = "ObjectName";
 					const ident2 = this.identifier(node, r, "ColumnName");
 					if (r.peekIf(TokenType.Dot)) {
-						this.append(node, r.consume());
+						this.appendToken(node, r.consume());
 						ident1.name = "SchemaName";
 						ident2.name = "ObjectName";
 						this.identifier(node, r, "ColumnName");
@@ -3594,7 +3593,7 @@ export class Sqlite3Parser extends Parser {
 		return apply(this.append(parent, new SyntaxNode(name, {})), (node) => {
 			if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
 				const token = r.consume();
-				this.append(node, token);
+				this.appendToken(node, token);
 				node.attribs.value = dequote(token.text);
 			} else {
 				throw r.createParseError();
@@ -3607,7 +3606,7 @@ export class Sqlite3Parser extends Parser {
 			this.append(parent, new SyntaxNode("NumericLiteral", {})),
 			(node) => {
 				const token = r.consume(TokenType.Numeric);
-				this.append(node, token);
+				this.appendToken(node, token);
 				node.attribs.value = token.text.toLowerCase();
 			},
 		);
@@ -3619,11 +3618,11 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				if (r.peekIf({ type: TokenType.Identifier, text: /^"/ })) {
 					const token = r.consume();
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = dequote(token.text);
 				} else {
 					const token = r.consume(TokenType.String);
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = dequote(token.text);
 				}
 			},
@@ -3635,7 +3634,7 @@ export class Sqlite3Parser extends Parser {
 			this.append(parent, new SyntaxNode("BlobLiteral", {})),
 			(node) => {
 				const token = r.consume(TokenType.Blob);
-				this.append(node, token);
+				this.appendToken(node, token);
 				node.attribs.value = token.text
 					.substring(2, token.text.length - 1)
 					.toUpperCase();
@@ -3649,7 +3648,7 @@ export class Sqlite3Parser extends Parser {
 			(node) => {
 				if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
 					const token = r.consume();
-					this.append(node, token);
+					this.appendToken(node, token);
 					node.attribs.value = token.text.toUpperCase();
 				} else {
 					throw r.createParseError();
@@ -3658,48 +3657,43 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private elem(name: string, attrs: { [name: string]: string } = {}) {
-		return new SyntaxNode(name, attrs);
-	}
-
 	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
-		replaceElement(elem, wrapper);
-		appendChild(wrapper, elem);
+		elem.replaceWith(wrapper);
+		wrapper.append(elem);
 		return wrapper;
 	}
 
-	private append(parent: SyntaxNode, child: SyntaxNode | Token) {
-		if (child instanceof Token) {
-			const token = new TokenNode(child.type.name, {
-				...(child.keyword && { value: child.keyword.name }),
-			});
-			appendChild(parent, token);
+	private append(parent: SyntaxNode, child: SyntaxNode) {
+		parent.append(child);
+		return child;
+	}
 
-			for (const skip of child.preskips) {
-				const skipToken = new TokenNode(skip.type.name, {
-					...(skip.keyword && { value: skip.keyword.name }),
-				});
-				appendChild(token, skipToken);
-				if (skip.text) {
-					appendChild(skipToken, new Text(skip.text));
-				}
+	private appendToken(parent: SyntaxNode, child: Token) {
+		const token = new TokenNode(child.type.name, {
+			...(child.keyword && { value: child.keyword.name }),
+		});
+		for (const skip of child.preskips) {
+			const skipToken = new TriviaNode(skip.type.name, {
+				...(skip.keyword && { value: skip.keyword.name }),
+			});
+			if (skip.text) {
+				skipToken.append(skip.text);
 			}
-			if (child.text) {
-				appendChild(token, new Text(child.text));
-			}
-			for (const skip of child.postskips) {
-				const skipToken = new TokenNode(skip.type.name, {
-					...(skip.keyword && { value: skip.keyword.name }),
-				});
-				appendChild(token, skipToken);
-				if (skip.text) {
-					appendChild(skipToken, new Text(skip.text));
-				}
-			}
-			return token;
-		} else {
-			appendChild(parent, child);
-			return child;
+			token.append(skipToken);
 		}
+		if (child.text) {
+			token.append(child.text);
+		}
+		for (const skip of child.postskips) {
+			const skipToken = new TriviaNode(skip.type.name, {
+				...(skip.keyword && { value: skip.keyword.name }),
+			});
+			if (skip.text) {
+				skipToken.append(skip.text);
+			}
+			token.append(skipToken);
+		}
+		parent.append(token);
+		return token;
 	}
 }
