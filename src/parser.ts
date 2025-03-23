@@ -1,12 +1,15 @@
 import { Element as DomHandlerElement, Text as DomHandlerText } from "domhandler";
 import type { Lexer, Token } from "./lexer.js";
 
-export class Element extends DomHandlerElement {
+export class SyntaxNode extends DomHandlerElement {
 
 }
 
+export class TokenNode extends DomHandlerElement {
+}
+
 export class Text extends DomHandlerText {
-	
+
 }
 
 export abstract class Parser {
@@ -25,14 +28,14 @@ export abstract class Parser {
 		return this.parseTokens(tokens);
 	}
 
-	abstract parseTokens(tokens: Token[]): Element;
+	abstract parseTokens(tokens: Token[]): SyntaxNode;
 }
 
 export class AggregateParseError extends Error {
-	node: Element;
+	node: SyntaxNode;
 	errors: Error[];
 
-	constructor(node: Element, errors: Error[], message: string) {
+	constructor(node: SyntaxNode, errors: Error[], message: string) {
 		super(message);
 		this.node = node;
 		this.errors = errors;

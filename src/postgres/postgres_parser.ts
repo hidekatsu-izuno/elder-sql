@@ -6,7 +6,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { Element, Text, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, TokenNode, Text, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { PostgresLexer } from "./postgres_lexer.js";
 
@@ -15,10 +15,10 @@ export class PostgresParser extends Parser {
 		super(options.lexer ?? new PostgresLexer(options), options);
 	}
 
-	parseTokens(tokens: Token[]): Element {
+	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
 
-		const root = new Element("Script", {});
+		const root = new SyntaxNode("Script", {});
 		const errors = [];
 
 		while (r.peek()) {
@@ -57,20 +57,20 @@ export class PostgresParser extends Parser {
 		return root;
 	}
 
-	private explainStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("ExplainStatement", {}));
+	private explainStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.EXPLAIN));
 				if (r.peekIf(TokenType.LeftParen)) {
 					apply(
-						this.append(node, new Element("ExplainOptionList", {})),
+						this.append(node, new SyntaxNode("ExplainOptionList", {})),
 						(node) => {
 							this.append(node, r.consume());
 							do {
 								if (r.peekIf(Keyword.ANALYZE)) {
 									apply(
-										this.append(node, new Element("AnalyzeOption", {})),
+										this.append(node, new SyntaxNode("AnalyzeOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -80,7 +80,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.VERBOSE)) {
 									apply(
-										this.append(node, new Element("VerboseOption", {})),
+										this.append(node, new SyntaxNode("VerboseOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -90,7 +90,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.COSTS)) {
 									apply(
-										this.append(node, new Element("CostsOption", {})),
+										this.append(node, new SyntaxNode("CostsOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -100,7 +100,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.SETTINGS)) {
 									apply(
-										this.append(node, new Element("SettingsOption", {})),
+										this.append(node, new SyntaxNode("SettingsOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -110,7 +110,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.BUFFERS)) {
 									apply(
-										this.append(node, new Element("BuffersOption", {})),
+										this.append(node, new SyntaxNode("BuffersOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -120,7 +120,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.WAL)) {
 									apply(
-										this.append(node, new Element("WalOption", {})),
+										this.append(node, new SyntaxNode("WalOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -130,7 +130,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.TIMING)) {
 									apply(
-										this.append(node, new Element("TimingOption", {})),
+										this.append(node, new SyntaxNode("TimingOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -140,7 +140,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.SUMMARY)) {
 									apply(
-										this.append(node, new Element("SummaryOption", {})),
+										this.append(node, new SyntaxNode("SummaryOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
@@ -150,7 +150,7 @@ export class PostgresParser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.FORMAT)) {
 									apply(
-										this.append(node, new Element("FormatOption", {})),
+										this.append(node, new SyntaxNode("FormatOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											if (
@@ -182,7 +182,7 @@ export class PostgresParser extends Parser {
 				} else {
 					if (r.peekIf(Keyword.ANALYZE)) {
 						apply(
-							this.append(node, new Element("AnalyzeOption", {})),
+							this.append(node, new SyntaxNode("AnalyzeOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 							},
@@ -190,7 +190,7 @@ export class PostgresParser extends Parser {
 					}
 					if (r.peekIf(Keyword.VERBOSE)) {
 						apply(
-							this.append(node, new Element("VerboseOption", {})),
+							this.append(node, new SyntaxNode("VerboseOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 							},
@@ -207,7 +207,7 @@ export class PostgresParser extends Parser {
 		}
 	}
 
-	private statement(parent: Element, r: TokenReader) {
+	private statement(parent: SyntaxNode, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(Keyword.CREATE)) {
 			const mark = r.pos;
@@ -230,9 +230,9 @@ export class PostgresParser extends Parser {
 		return stmt;
 	}
 
-	private unknown(parent: Element, r: TokenReader) {
+	private unknown(parent: SyntaxNode, r: TokenReader) {
 		if (!r.peek().eos) {
-			return apply(this.append(parent, new Element("Unknown", {})), (node) => {
+			return apply(this.append(parent, new SyntaxNode("Unknown", {})), (node) => {
 				while (!r.peek().eos) {
 					this.append(node, r.consume());
 				}
@@ -240,22 +240,22 @@ export class PostgresParser extends Parser {
 		}
 	}
 
-	private command(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("CommandStatement", {}));
+	private command(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("CommandStatement", {}));
 		try {
 			return apply(current, (node) => {
-				apply(this.append(node, new Element("CommandName", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
 					const token = r.consume(TokenType.Command);
 					this.append(node, token);
 					node.attribs.value = token.text;
 				});
 				if (!r.peek(-1).eos) {
 					apply(
-						this.append(node, new Element("CommandArgumentList", {})),
+						this.append(node, new SyntaxNode("CommandArgumentList", {})),
 						(node) => {
 							do {
 								apply(
-									this.append(node, new Element("CommandArgument", {})),
+									this.append(node, new SyntaxNode("CommandArgument", {})),
 									(node) => {
 										const token = r.consume();
 										this.append(node, token);
@@ -275,8 +275,8 @@ export class PostgresParser extends Parser {
 		}
 	}
 
-	private identifier(parent: Element, r: TokenReader, name: string) {
-		return apply(this.append(parent, new Element(name, {})), (node) => {
+	private identifier(parent: SyntaxNode, r: TokenReader, name: string) {
+		return apply(this.append(parent, new SyntaxNode(name, {})), (node) => {
 			if (r.peekIf(TokenType.Identifier)) {
 				const token = r.consume();
 				this.append(node, token);
@@ -287,9 +287,9 @@ export class PostgresParser extends Parser {
 		});
 	}
 
-	private booleanLiteral(parent: Element, r: TokenReader) {
+	private booleanLiteral(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("BooleanLiteral", {})),
+			this.append(parent, new SyntaxNode("BooleanLiteral", {})),
 			(node) => {
 				if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
 					const token = r.consume();
@@ -302,21 +302,21 @@ export class PostgresParser extends Parser {
 		);
 	}
 
-	private wrap(elem: Element, wrapper: Element) {
+	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
 		replaceElement(elem, wrapper);
 		appendChild(wrapper, elem);
 		return wrapper;
 	}
 
-	private append(parent: Element, child: Element | Token) {
+	private append(parent: SyntaxNode, child: SyntaxNode | Token) {
 		if (child instanceof Token) {
-			const token = new Element(child.type.name, {
+			const token = new TokenNode(child.type.name, {
 				...(child.keyword && { value: child.keyword.name }),
 			});
 			appendChild(parent, token);
 
 			for (const skip of child.preskips) {
-				const skipToken = new Element(skip.type.name, {
+				const skipToken = new TokenNode(skip.type.name, {
 					...(skip.keyword && { value: skip.keyword.name }),
 				});
 				appendChild(token, skipToken);
@@ -328,7 +328,7 @@ export class PostgresParser extends Parser {
 				appendChild(token, new Text(child.text));
 			}
 			for (const skip of child.postskips) {
-				const skipToken = new Element(skip.type.name, {
+				const skipToken = new TokenNode(skip.type.name, {
 					...(skip.keyword && { value: skip.keyword.name }),
 				});
 				appendChild(token, skipToken);

@@ -6,7 +6,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { Element, Text, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, TokenNode, Text, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
@@ -18,10 +18,10 @@ export class Sqlite3Parser extends Parser {
 		this.compileOptions = new Set(options.compileOptions || []);
 	}
 
-	parseTokens(tokens: Token[]): Element {
+	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
 
-		const root = new Element("Script", {});
+		const root = new SyntaxNode("Script", {});
 		const errors = [];
 
 		while (r.peek()) {
@@ -60,9 +60,9 @@ export class Sqlite3Parser extends Parser {
 		return root;
 	}
 
-	private unknown(parent: Element, r: TokenReader) {
+	private unknown(parent: SyntaxNode, r: TokenReader) {
 		if (!r.peek().eos) {
-			return apply(this.append(parent, new Element("Unknown", {})), (node) => {
+			return apply(this.append(parent, new SyntaxNode("Unknown", {})), (node) => {
 				while (!r.peek().eos) {
 					this.append(node, r.consume());
 				}
@@ -70,22 +70,22 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private command(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("CommandStatement", {}));
+	private command(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("CommandStatement", {}));
 		try {
 			return apply(current, (node) => {
-				apply(this.append(node, new Element("CommandName", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
 					const token = r.consume(TokenType.Command);
 					this.append(node, token);
 					node.attribs.value = token.text;
 				});
 				if (!r.peek(-1).eos) {
 					apply(
-						this.append(node, new Element("CommandArgumentList", {})),
+						this.append(node, new SyntaxNode("CommandArgumentList", {})),
 						(node) => {
 							do {
 								apply(
-									this.append(node, new Element("CommandArgument", {})),
+									this.append(node, new SyntaxNode("CommandArgument", {})),
 									(node) => {
 										const token = r.consume();
 										this.append(node, token);
@@ -105,14 +105,14 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private explainStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("ExplainStatement", {}));
+	private explainStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.EXPLAIN));
 				if (r.peekIf(Keyword.QUERY)) {
 					apply(
-						this.append(node, new Element("QueryPlanOption", {})),
+						this.append(node, new SyntaxNode("QueryPlanOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.PLAN));
@@ -129,7 +129,7 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private statement(parent: Element, r: TokenReader) {
+	private statement(parent: SyntaxNode, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(Keyword.CREATE)) {
 			const mark = r.pos;
@@ -225,10 +225,10 @@ export class Sqlite3Parser extends Parser {
 		return stmt;
 	}
 
-	private createTableStatement(parent: Element, r: TokenReader) {
+	private createTableStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("CreateTableStatement", {}),
+			new SyntaxNode("CreateTableStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -237,13 +237,13 @@ export class Sqlite3Parser extends Parser {
 				this.append(node, r.consume(Keyword.CREATE));
 				if (r.peekIf({ type: [Keyword.TEMPORARY, Keyword.TEMP] })) {
 					apply(
-						this.append(node, new Element("TemporaryOption", {})),
+						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.VIRTUAL)) {
-					apply(this.append(node, new Element("VirtualOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("VirtualOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 					virtual = true;
@@ -252,7 +252,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfNotExistsOption", {})),
+						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.NOT));
@@ -270,18 +270,18 @@ export class Sqlite3Parser extends Parser {
 
 				if (virtual) {
 					apply(
-						this.append(node, new Element("UsingModuleClause", {})),
+						this.append(node, new SyntaxNode("UsingModuleClause", {})),
 						(node) => {
 							this.append(node, r.consume(Keyword.USING));
 							this.identifier(node, r, "ModuleName");
 							if (r.peekIf(TokenType.LeftParen)) {
 								this.append(node, r.consume());
 								apply(
-									this.append(node, new Element("ModuleArgumentList", {})),
+									this.append(node, new SyntaxNode("ModuleArgumentList", {})),
 									(node) => {
 										do {
 											apply(
-												this.append(node, new Element("ModuleArgument", {})),
+												this.append(node, new SyntaxNode("ModuleArgument", {})),
 												(node) => {
 													do {
 														this.append(node, r.consume());
@@ -308,7 +308,7 @@ export class Sqlite3Parser extends Parser {
 				} else if (r.peekIf(TokenType.LeftParen)) {
 					this.append(node, r.consume());
 					apply(
-						this.append(node, new Element("TableColumnList", {})),
+						this.append(node, new SyntaxNode("TableColumnList", {})),
 						(node) => {
 							let hasTableConstraint = false;
 							do {
@@ -345,7 +345,7 @@ export class Sqlite3Parser extends Parser {
 					while (r.peekIf({ type: [Keyword.WITHOUT, Keyword.STRICT] })) {
 						if (r.peekIf(Keyword.WITHOUT)) {
 							apply(
-								this.append(node, new Element("WithoutRowidOption", {})),
+								this.append(node, new SyntaxNode("WithoutRowidOption", {})),
 								(node) => {
 									this.append(node, r.consume());
 									this.append(node, r.consume(Keyword.ROWID));
@@ -353,7 +353,7 @@ export class Sqlite3Parser extends Parser {
 							);
 						} else if (r.peekIf(Keyword.STRICT)) {
 							apply(
-								this.append(node, new Element("StrictOption", {})),
+								this.append(node, new SyntaxNode("StrictOption", {})),
 								(node) => {
 									this.append(node, r.consume());
 								},
@@ -380,14 +380,14 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private createViewStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("CreateViewStatement", {}));
+	private createViewStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("CreateViewStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.CREATE));
 				if (r.peekIf({ type: [Keyword.TEMPORARY, Keyword.TEMP] })) {
 					apply(
-						this.append(node, new Element("TemporaryOption", {})),
+						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
@@ -397,7 +397,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfNotExistsOption", {})),
+						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.NOT));
@@ -430,17 +430,17 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private createTriggerStatement(parent: Element, r: TokenReader) {
+	private createTriggerStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("CreateTriggerStatement", {}),
+			new SyntaxNode("CreateTriggerStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.CREATE));
 				if (r.peekIf(Keyword.TEMPORARY) || r.peekIf(Keyword.TEMP)) {
 					apply(
-						this.append(node, new Element("TemporaryOption", {})),
+						this.append(node, new SyntaxNode("TemporaryOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
@@ -450,7 +450,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfNotExistsOption", {})),
+						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.NOT));
@@ -468,18 +468,18 @@ export class Sqlite3Parser extends Parser {
 
 				let hasOption = false;
 				if (r.peekIf(Keyword.BEFORE)) {
-					apply(this.append(node, new Element("BeforeOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("BeforeOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 					hasOption = true;
 				} else if (r.peekIf(Keyword.AFTER)) {
-					apply(this.append(node, new Element("AfterOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("AfterOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 					hasOption = true;
 				} else if (r.peekIf(Keyword.INSTEAD)) {
 					apply(
-						this.append(node, new Element("InsteadOfOption", {})),
+						this.append(node, new SyntaxNode("InsteadOfOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.OF));
@@ -489,9 +489,9 @@ export class Sqlite3Parser extends Parser {
 				}
 
 				if (r.peekIf(Keyword.INSERT)) {
-					let current = new Element("InsertOnClause", {});
+					let current = new SyntaxNode("InsertOnClause", {});
 					const last = node.lastChild;
-					if (last instanceof Element && hasOption) {
+					if (last instanceof SyntaxNode && hasOption) {
 						this.wrap(last, current);
 					} else {
 						current = this.append(node, current);
@@ -509,9 +509,9 @@ export class Sqlite3Parser extends Parser {
 						}
 					});
 				} else if (r.peekIf(Keyword.UPDATE)) {
-					let current = new Element("UpdateOnClause", {});
+					let current = new SyntaxNode("UpdateOnClause", {});
 					const last = node.lastChild;
-					if (last instanceof Element && hasOption) {
+					if (last instanceof SyntaxNode && hasOption) {
 						this.wrap(last, current);
 					} else {
 						current = this.append(node, current);
@@ -521,7 +521,7 @@ export class Sqlite3Parser extends Parser {
 						this.append(node, r.consume());
 						if (r.peekIf(Keyword.OF)) {
 							apply(
-								this.append(node, new Element("ColumnList", {})),
+								this.append(node, new SyntaxNode("ColumnList", {})),
 								(node) => {
 									this.append(node, r.consume());
 									do {
@@ -544,9 +544,9 @@ export class Sqlite3Parser extends Parser {
 						}
 					});
 				} else if (r.peekIf(Keyword.DELETE)) {
-					let current = new Element("DeleteOnClause", {});
+					let current = new SyntaxNode("DeleteOnClause", {});
 					const last = node.lastChild;
-					if (last instanceof Element && hasOption) {
+					if (last instanceof SyntaxNode && hasOption) {
 						this.wrap(last, current);
 					} else {
 						current = this.append(node, current);
@@ -568,7 +568,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.FOR)) {
 					apply(
-						this.append(node, new Element("ForEachRowOption", {})),
+						this.append(node, new SyntaxNode("ForEachRowOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.EACH));
@@ -578,15 +578,15 @@ export class Sqlite3Parser extends Parser {
 				}
 
 				if (r.peekIf(Keyword.WHEN)) {
-					apply(this.append(node, new Element("WhenClause", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("WhenClause", {})), (node) => {
 						this.append(node, r.consume());
 						this.expression(node, r);
 					});
 				}
 
-				apply(this.append(node, new Element("BeginStatement", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("BeginStatement", {})), (node) => {
 					this.append(node, r.consume(Keyword.BEGIN));
-					apply(this.append(node, new Element("BeginBlock", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("BeginBlock", {})), (node) => {
 						if (r.peekIf(Keyword.WITH)) {
 							this.withClause(node, r);
 						}
@@ -614,16 +614,16 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private createIndexStatement(parent: Element, r: TokenReader) {
+	private createIndexStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("CreateIndexStatement", {}),
+			new SyntaxNode("CreateIndexStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.CREATE));
 				if (r.peekIf(Keyword.UNIQUE)) {
-					apply(this.append(node, new Element("UniqueOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("UniqueOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 				}
@@ -631,7 +631,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfNotExistsOption", {})),
+						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.NOT));
@@ -647,12 +647,12 @@ export class Sqlite3Parser extends Parser {
 					this.identifier(node, r, "ObjectName");
 				}
 
-				apply(this.append(node, new Element("IndexOnClause", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("IndexOnClause", {})), (node) => {
 					this.append(node, r.consume(Keyword.ON));
 					this.identifier(node, r, "ObjectName");
 					this.append(node, r.consume(TokenType.LeftParen));
 					apply(
-						this.append(node, new Element("SortColumnList", {})),
+						this.append(node, new SyntaxNode("SortColumnList", {})),
 						(node) => {
 							do {
 								this.sortColumn(node, r);
@@ -679,8 +679,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private alterTableStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("AlterTableStatement", {}));
+	private alterTableStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("AlterTableStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.ALTER));
@@ -695,7 +695,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.RENAME, Keyword.TO)) {
 					apply(
-						this.append(node, new Element("RenameToObjectClause", {})),
+						this.append(node, new SyntaxNode("RenameToObjectClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume());
@@ -704,7 +704,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.RENAME)) {
 					apply(
-						this.append(node, new Element("RenameColumnClause", {})),
+						this.append(node, new SyntaxNode("RenameColumnClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
@@ -712,7 +712,7 @@ export class Sqlite3Parser extends Parser {
 							}
 							this.identifier(node, r, "ColumnName");
 							apply(
-								this.append(node, new Element("RenameToColumnClause", {})),
+								this.append(node, new SyntaxNode("RenameToColumnClause", {})),
 								(node) => {
 									this.append(node, r.consume(Keyword.TO));
 									this.identifier(node, r, "ColumnName");
@@ -722,7 +722,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.ADD)) {
 					apply(
-						this.append(node, new Element("AddColumnClause", {})),
+						this.append(node, new SyntaxNode("AddColumnClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
@@ -733,7 +733,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.DROP)) {
 					apply(
-						this.append(node, new Element("DropColumnClause", {})),
+						this.append(node, new SyntaxNode("DropColumnClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.COLUMN)) {
@@ -754,8 +754,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private dropTableStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("DropTableStatement", {}));
+	private dropTableStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("DropTableStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.DROP));
@@ -763,7 +763,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfExistsOption", {})),
+						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.EXISTS));
@@ -786,8 +786,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private dropViewStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("DropViewStatement", {}));
+	private dropViewStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("DropViewStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.DROP));
@@ -795,7 +795,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfExistsOption", {})),
+						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.EXISTS));
@@ -818,10 +818,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private dropTriggerStatement(parent: Element, r: TokenReader) {
+	private dropTriggerStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("DropTriggerStatement", {}),
+			new SyntaxNode("DropTriggerStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -830,7 +830,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.IF)) {
 					apply(
-						this.append(node, new Element("IfExistsOption", {})),
+						this.append(node, new SyntaxNode("IfExistsOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.EXISTS));
@@ -853,15 +853,15 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private dropIndexStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("DropIndexStatement", {}));
+	private dropIndexStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("DropIndexStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.DROP));
 				this.append(node, r.consume(Keyword.INDEX));
 
 				if (r.peekIf(Keyword.IF)) {
-					apply(this.append(node, new Element("IfExists", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("IfExists", {})), (node) => {
 						this.append(node, r.consume());
 						this.append(node, r.consume(Keyword.EXISTS));
 					});
@@ -882,10 +882,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private attachDatabaseStatement(parent: Element, r: TokenReader) {
+	private attachDatabaseStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("AttachDatabaseStatement", {}),
+			new SyntaxNode("AttachDatabaseStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -893,7 +893,7 @@ export class Sqlite3Parser extends Parser {
 				if (r.peekIf(Keyword.DATABASE)) {
 					this.append(node, r.consume());
 				}
-				apply(this.append(node, new Element("Database", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("Database", {})), (node) => {
 					this.expression(node, r);
 				});
 				this.append(node, r.consume(Keyword.AS));
@@ -907,10 +907,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private detachDatabaseStatement(parent: Element, r: TokenReader) {
+	private detachDatabaseStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("DetachDatabaseStatement", {}),
+			new SyntaxNode("DetachDatabaseStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -928,8 +928,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private analyzeStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("AnalyzeStatement", {}));
+	private analyzeStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("AnalyzeStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.ANALYZE));
@@ -949,8 +949,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private reindexStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("ReindexStatement", {}));
+	private reindexStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("ReindexStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.REINDEX));
@@ -972,8 +972,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private vacuumStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("VacuumStatement", {}));
+	private vacuumStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("VacuumStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.VACUUM));
@@ -984,7 +984,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.INTO)) {
 					this.append(node, r.consume());
-					apply(this.append(node, new Element("FileName", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("FileName", {})), (node) => {
 						this.stringLiteral(node, r);
 					});
 				}
@@ -997,8 +997,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private pragmaStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("PragmaStatement", {}));
+	private pragmaStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("PragmaStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.PRAGMA));
@@ -1016,10 +1016,10 @@ export class Sqlite3Parser extends Parser {
 				} else if (r.peekIf(TokenType.LeftParen)) {
 					this.append(node, r.consume());
 					apply(
-						this.append(node, new Element("PragmaArgumentList", {})),
+						this.append(node, new SyntaxNode("PragmaArgumentList", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("PragmaArgument", {})),
+								this.append(node, new SyntaxNode("PragmaArgument", {})),
 								(node) => {
 									this.pragmaValue(node, r);
 								},
@@ -1037,31 +1037,31 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private beginTransactionStatement(parent: Element, r: TokenReader) {
+	private beginTransactionStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("BeginTransactionStatement", {}),
+			new SyntaxNode("BeginTransactionStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.BEGIN));
 				if (r.peekIf(Keyword.DEFERRED)) {
 					apply(
-						this.append(node, new Element("DeferredOption", {})),
+						this.append(node, new SyntaxNode("DeferredOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.IMMEDIATE)) {
 					apply(
-						this.append(node, new Element("ImmediateOption", {})),
+						this.append(node, new SyntaxNode("ImmediateOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.EXCLUSIVE)) {
 					apply(
-						this.append(node, new Element("ExclusiveOption", {})),
+						this.append(node, new SyntaxNode("ExclusiveOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
@@ -1079,8 +1079,8 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private savepointStatement(parent: Element, r: TokenReader) {
-		const current = this.append(parent, new Element("SavepointStatement", {}));
+	private savepointStatement(parent: SyntaxNode, r: TokenReader) {
+		const current = this.append(parent, new SyntaxNode("SavepointStatement", {}));
 		try {
 			return apply(current, (node) => {
 				this.append(node, r.consume(Keyword.SAVEPOINT));
@@ -1094,10 +1094,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private releaseSavepointStatement(parent: Element, r: TokenReader) {
+	private releaseSavepointStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("ReleaseSavepointStatement", {}),
+			new SyntaxNode("ReleaseSavepointStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -1115,10 +1115,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private commitTransactionStatement(parent: Element, r: TokenReader) {
+	private commitTransactionStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("CommitTransactionStatement", {}),
+			new SyntaxNode("CommitTransactionStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -1139,10 +1139,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private rollbackTransactionStatement(parent: Element, r: TokenReader) {
+	private rollbackTransactionStatement(parent: SyntaxNode, r: TokenReader) {
 		const current = this.append(
 			parent,
-			new Element("RollbackTransactionStatement", {}),
+			new SyntaxNode("RollbackTransactionStatement", {}),
 		);
 		try {
 			return apply(current, (node) => {
@@ -1166,10 +1166,10 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private insertStatement(parent: Element, r: TokenReader) {
-		let current = new Element("InsertStatement", {});
+	private insertStatement(parent: SyntaxNode, r: TokenReader) {
+		let current = new SyntaxNode("InsertStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof Element && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.name === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1186,19 +1186,19 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private insertClause(parent: Element, r: TokenReader) {
+	private insertClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("InsertClause", {})),
+			this.append(parent, new SyntaxNode("InsertClause", {})),
 			(node) => {
 				if (r.peekIf(Keyword.REPLACE)) {
-					apply(this.append(node, new Element("ReplaceOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ReplaceOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 				} else {
 					this.append(node, r.consume(Keyword.INSERT));
 					if (r.peekIf(Keyword.OR)) {
 						apply(
-							this.append(node, new Element("OrConflictClause", {})),
+							this.append(node, new SyntaxNode("OrConflictClause", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.conflictAction(node, r);
@@ -1228,7 +1228,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.DEFAULT)) {
 					apply(
-						this.append(node, new Element("DefaultValuesOption", {})),
+						this.append(node, new SyntaxNode("DefaultValuesOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.VALUES));
@@ -1237,11 +1237,11 @@ export class Sqlite3Parser extends Parser {
 				} else {
 					if (r.peekIf(Keyword.VALUES)) {
 						apply(
-							this.append(node, new Element("ValuesClause", {})),
+							this.append(node, new SyntaxNode("ValuesClause", {})),
 							(node) => {
 								this.append(node, r.consume());
 								apply(
-									this.append(node, new Element("ExpressionListGroup", {})),
+									this.append(node, new SyntaxNode("ExpressionListGroup", {})),
 									(node) => {
 										do {
 											this.append(node, r.consume(TokenType.LeftParen));
@@ -1281,16 +1281,16 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private onConflictClause(parent: Element, r: TokenReader) {
+	private onConflictClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("OnConflictClause", {})),
+			this.append(parent, new SyntaxNode("OnConflictClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.ON));
 				this.append(node, r.consume(Keyword.CONFLICT));
 				if (r.peekIf(TokenType.LeftParen)) {
 					this.append(node, r.consume());
 					apply(
-						this.append(node, new Element("SortColumnList", {})),
+						this.append(node, new SyntaxNode("SortColumnList", {})),
 						(node) => {
 							do {
 								this.sortColumn(node, r);
@@ -1310,14 +1310,14 @@ export class Sqlite3Parser extends Parser {
 				this.append(node, r.consume(Keyword.DO));
 				if (r.peekIf(Keyword.NOTHING)) {
 					apply(
-						this.append(node, new Element("DoNothingOption", {})),
+						this.append(node, new SyntaxNode("DoNothingOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 						},
 					);
 				} else if (r.peekIf(Keyword.UPDATE)) {
 					apply(
-						this.append(node, new Element("DoUpdateOption", {})),
+						this.append(node, new SyntaxNode("DoUpdateOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.setClause(node, r);
@@ -1333,10 +1333,10 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private updateStatement(parent: Element, r: TokenReader) {
-		let current = new Element("UpdateStatement", {});
+	private updateStatement(parent: SyntaxNode, r: TokenReader) {
+		let current = new SyntaxNode("UpdateStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof Element && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.name === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1353,9 +1353,9 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private updateClause(parent: Element, r: TokenReader) {
+	private updateClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("UpdateClause", {})),
+			this.append(parent, new SyntaxNode("UpdateClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.UPDATE));
 
@@ -1373,7 +1373,7 @@ export class Sqlite3Parser extends Parser {
 
 				if (r.peekIf(Keyword.INDEXED)) {
 					apply(
-						this.append(node, new Element("IndexedByOption", {})),
+						this.append(node, new SyntaxNode("IndexedByOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.BY));
@@ -1382,7 +1382,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.NOT)) {
 					apply(
-						this.append(node, new Element("NotIndexedOption", {})),
+						this.append(node, new SyntaxNode("NotIndexedOption", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.INDEXED));
@@ -1410,12 +1410,12 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private setClause(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("SetClause", {})), (node) => {
+	private setClause(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("SetClause", {})), (node) => {
 			this.append(node, r.consume(Keyword.SET));
-			apply(this.append(node, new Element("UpdateColumnList", {})), (node) => {
+			apply(this.append(node, new SyntaxNode("UpdateColumnList", {})), (node) => {
 				do {
-					apply(this.append(node, new Element("UpdateColumn", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("UpdateColumn", {})), (node) => {
 						if (r.peekIf(TokenType.LeftParen)) {
 							this.append(node, r.consume());
 							this.columnList(node, r);
@@ -1427,7 +1427,7 @@ export class Sqlite3Parser extends Parser {
 							node,
 							r.consume({ type: TokenType.Operator, text: "=" }),
 						);
-						apply(this.append(node, new Element("ColumnValue", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("ColumnValue", {})), (node) => {
 							this.expression(node, r);
 						});
 					});
@@ -1442,10 +1442,10 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private deleteStatement(parent: Element, r: TokenReader) {
-		let current = new Element("DeleteStatement", {});
+	private deleteStatement(parent: SyntaxNode, r: TokenReader) {
+		let current = new SyntaxNode("DeleteStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof Element && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.name === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1462,9 +1462,9 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private deleteClause(parent: Element, r: TokenReader) {
+	private deleteClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("DeleteClause", {})),
+			this.append(parent, new SyntaxNode("DeleteClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.DELETE));
 				this.append(node, r.consume(Keyword.FROM));
@@ -1486,10 +1486,10 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private selectStatement(parent: Element, r: TokenReader) {
-		let current = new Element("SelectStatement", {});
+	private selectStatement(parent: SyntaxNode, r: TokenReader) {
+		let current = new SyntaxNode("SelectStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof Element && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.name === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1503,12 +1503,12 @@ export class Sqlite3Parser extends Parser {
 				) {
 					if (r.peekIf(Keyword.UNION)) {
 						current = apply(
-							this.wrap(current, new Element("UnionOperation", {})),
+							this.wrap(current, new SyntaxNode("UnionOperation", {})),
 							(node) => {
 								this.append(node, r.consume());
 								if (r.peekIf(Keyword.ALL)) {
 									apply(
-										this.append(node, new Element("AllOption", {})),
+										this.append(node, new SyntaxNode("AllOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 										},
@@ -1519,7 +1519,7 @@ export class Sqlite3Parser extends Parser {
 						);
 					} else if (r.peekIf(Keyword.INTERSECT)) {
 						current = apply(
-							this.wrap(current, new Element("IntersectOperation", {})),
+							this.wrap(current, new SyntaxNode("IntersectOperation", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.selectClause(node, r);
@@ -1527,7 +1527,7 @@ export class Sqlite3Parser extends Parser {
 						);
 					} else if (r.peekIf(Keyword.EXCEPT)) {
 						current = apply(
-							this.wrap(current, new Element("ExceptOperation", {})),
+							this.wrap(current, new SyntaxNode("ExceptOperation", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.selectClause(node, r);
@@ -1553,12 +1553,12 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private selectClause(parent: Element, r: TokenReader) {
+	private selectClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("SelectClause", {})),
+			this.append(parent, new SyntaxNode("SelectClause", {})),
 			(node) => {
 				if (r.peekIf(Keyword.VALUES)) {
-					apply(this.append(node, new Element("ValuesClause", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ValuesClause", {})), (node) => {
 						this.append(node, r.consume(Keyword.VALUES));
 						this.append(node, r.consume(TokenType.LeftParen));
 						this.expressionList(node, r);
@@ -1568,13 +1568,13 @@ export class Sqlite3Parser extends Parser {
 					this.append(node, r.consume(Keyword.SELECT));
 					if (r.peekIf(Keyword.DISTINCT)) {
 						apply(
-							this.append(node, new Element("DistinctOption", {})),
+							this.append(node, new SyntaxNode("DistinctOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 							},
 						);
 					} else if (r.peekIf(Keyword.ALL)) {
-						apply(this.append(node, new Element("AllOption", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("AllOption", {})), (node) => {
 							this.append(node, r.consume());
 						});
 					}
@@ -1603,19 +1603,19 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private withClause(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("WithClause", {})), (node) => {
+	private withClause(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("WithClause", {})), (node) => {
 			this.append(node, r.consume(Keyword.WITH));
 
 			if (r.peekIf(Keyword.RECURSIVE)) {
-				apply(this.append(node, new Element("RecursiveOption", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("RecursiveOption", {})), (node) => {
 					this.append(node, r.consume());
 				});
 			}
 
-			apply(this.append(node, new Element("CommonTableList", {})), (node) => {
+			apply(this.append(node, new SyntaxNode("CommonTableList", {})), (node) => {
 				do {
-					apply(this.append(node, new Element("CommonTable", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("CommonTable", {})), (node) => {
 						this.identifier(node, r, "ObjectName");
 						if (r.peekIf(TokenType.LeftParen)) {
 							this.append(node, r.consume());
@@ -1629,7 +1629,7 @@ export class Sqlite3Parser extends Parser {
 							r.peekIf(Keyword.NOT, Keyword.MATERIALIZED)
 						) {
 							apply(
-								this.append(node, new Element("MaterializedOption", {})),
+								this.append(node, new SyntaxNode("MaterializedOption", {})),
 								(node) => {
 									if (r.peekIf(Keyword.NOT)) {
 										node.name = "NotMaterializedOption";
@@ -1655,15 +1655,15 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private selectColumnList(parent: Element, r: TokenReader) {
+	private selectColumnList(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("SelectColumnList", {})),
+			this.append(parent, new SyntaxNode("SelectColumnList", {})),
 			(node) => {
 				do {
-					apply(this.append(node, new Element("SelectColumn", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("SelectColumn", {})), (node) => {
 						if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
 							apply(
-								this.append(node, new Element("AllColumnsOption", {})),
+								this.append(node, new SyntaxNode("AllColumnsOption", {})),
 								(node) => {
 									this.append(node, r.consume());
 								},
@@ -1676,7 +1676,7 @@ export class Sqlite3Parser extends Parser {
 							)
 						) {
 							apply(
-								this.append(node, new Element("AllColumnsOption", {})),
+								this.append(node, new SyntaxNode("AllColumnsOption", {})),
 								(node) => {
 									this.identifier(node, r, "SchemaName");
 									this.append(node, r.consume());
@@ -1705,10 +1705,10 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private fromClause(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("FromClause", {})), (node) => {
+	private fromClause(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("FromClause", {})), (node) => {
 			this.append(node, r.consume(Keyword.FROM));
-			apply(this.append(node, new Element("FromObjectList", {})), (node) => {
+			apply(this.append(node, new SyntaxNode("FromObjectList", {})), (node) => {
 				let hasJoinClause = false;
 				do {
 					const fromObject = this.fromObject(node, r);
@@ -1740,12 +1740,12 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private fromObject(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("FromObject", {})), (node) => {
+	private fromObject(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("FromObject", {})), (node) => {
 			if (r.peekIf(TokenType.LeftParen)) {
 				this.append(node, r.consume());
 				apply(
-					this.append(node, new Element("SubqueryExpression", {})),
+					this.append(node, new SyntaxNode("SubqueryExpression", {})),
 					(node) => {
 						if (r.peekIf({ type: [Keyword.WITH, Keyword.SELECT] })) {
 							if (r.peekIf(Keyword.WITH)) {
@@ -1759,7 +1759,7 @@ export class Sqlite3Parser extends Parser {
 				);
 				this.append(node, r.consume(TokenType.RightParen));
 			} else {
-				apply(this.append(node, new Element("ObjectReference", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("ObjectReference", {})), (node) => {
 					const ident = this.identifier(node, r, "ObjectName");
 					if (r.peekIf(TokenType.Dot)) {
 						ident.name = "SchemaName";
@@ -1770,11 +1770,11 @@ export class Sqlite3Parser extends Parser {
 						node.name = "FunctionExpression";
 						this.append(node, r.consume());
 						apply(
-							this.append(node, new Element("FunctionArgumentList", {})),
+							this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 							(node) => {
 								while (!r.peekIf(TokenType.RightParen)) {
 									apply(
-										this.append(node, new Element("FunctionArgument", {})),
+										this.append(node, new SyntaxNode("FunctionArgument", {})),
 										(node) => {
 											this.expression(node, r);
 										},
@@ -1801,9 +1801,9 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private joinClause(parent: Element, r: TokenReader) {
+	private joinClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("InnerJoinClause", {})),
+			this.append(parent, new SyntaxNode("InnerJoinClause", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CROSS)) {
 					node.name = "CrossJoinClause";
@@ -1811,7 +1811,7 @@ export class Sqlite3Parser extends Parser {
 				} else {
 					if (r.peekIf(Keyword.NATURAL)) {
 						apply(
-							this.append(node, new Element("NatualOption", {})),
+							this.append(node, new SyntaxNode("NatualOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 							},
@@ -1844,12 +1844,12 @@ export class Sqlite3Parser extends Parser {
 				this.fromObject(node, r);
 
 				if (r.peekIf(Keyword.ON)) {
-					apply(this.append(node, new Element("JoinOnClause", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("JoinOnClause", {})), (node) => {
 						this.append(node, r.consume());
 						this.expression(node, r);
 					});
 				} else if (r.peekIf(Keyword.USING)) {
-					apply(this.append(node, new Element("UsingClause", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("UsingClause", {})), (node) => {
 						this.append(node, r.consume());
 						this.append(node, r.consume(TokenType.LeftParen));
 						this.append(node, r.consume(TokenType.RightParen));
@@ -1859,9 +1859,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private whereClause(parent: Element, r: TokenReader) {
+	private whereClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("WhereClause", {})),
+			this.append(parent, new SyntaxNode("WhereClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.WHERE));
 				this.expression(node, r);
@@ -1869,9 +1869,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private gropuByClause(parent: Element, r: TokenReader) {
+	private gropuByClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("GroupByClause", {})),
+			this.append(parent, new SyntaxNode("GroupByClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.GROUP));
 				this.append(node, r.consume(Keyword.BY));
@@ -1880,9 +1880,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private havingClause(parent: Element, r: TokenReader) {
+	private havingClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("HavingClause", {})),
+			this.append(parent, new SyntaxNode("HavingClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.HAVING));
 				this.expression(node, r);
@@ -1890,9 +1890,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private windowClause(parent: Element, r: TokenReader) {
+	private windowClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("WindowClause", {})),
+			this.append(parent, new SyntaxNode("WindowClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.WINDOW));
 				do {
@@ -1909,8 +1909,8 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private window(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("Window", {})), (node) => {
+	private window(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("Window", {})), (node) => {
 			if (!r.peekIf(Keyword.PARTITION)) {
 				this.identifier(node, r, "BaseWindowName");
 			}
@@ -1920,26 +1920,26 @@ export class Sqlite3Parser extends Parser {
 			if (r.peekIf(Keyword.ORDER)) {
 				this.orderByClause(node, r);
 			}
-			apply(this.append(node, new Element("FrameClause", {})), (node) => {
+			apply(this.append(node, new SyntaxNode("FrameClause", {})), (node) => {
 				if (r.peekIf(Keyword.RANGE)) {
-					apply(this.append(node, new Element("RangeOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("RangeOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 				} else if (r.peekIf(Keyword.ROWS)) {
-					apply(this.append(node, new Element("RowsOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("RowsOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 				} else if (r.peekIf(Keyword.GROUPS)) {
-					apply(this.append(node, new Element("GroupsOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("GroupsOption", {})), (node) => {
 						this.append(node, r.consume());
 					});
 				}
 				if (r.peekIf(Keyword.CURRENT)) {
 					apply(
-						this.append(node, new Element("FrameStartClause", {})),
+						this.append(node, new SyntaxNode("FrameStartClause", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("CurrentRowOption", {})),
+								this.append(node, new SyntaxNode("CurrentRowOption", {})),
 								(node) => {
 									this.append(node, r.consume());
 									this.append(node, r.consume(Keyword.ROW));
@@ -1949,10 +1949,10 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.UNBOUNDED)) {
 					apply(
-						this.append(node, new Element("FrameStartClause", {})),
+						this.append(node, new SyntaxNode("FrameStartClause", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("UnboundedPrecedingOption", {})),
+								this.append(node, new SyntaxNode("UnboundedPrecedingOption", {})),
 								(node) => {
 									this.append(node, r.consume());
 									this.append(node, r.consume(Keyword.PRECEDING));
@@ -1963,12 +1963,12 @@ export class Sqlite3Parser extends Parser {
 				} else if (r.peekIf(Keyword.BETWEEN)) {
 					this.append(node, r.consume());
 					apply(
-						this.append(node, new Element("FrameStartClause", {})),
+						this.append(node, new SyntaxNode("FrameStartClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.CURRENT)) {
 								apply(
-									this.append(node, new Element("CurrentRowOption", {})),
+									this.append(node, new SyntaxNode("CurrentRowOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.ROW));
@@ -1978,7 +1978,7 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(
 										node,
-										new Element("UnboundedPrecedingOption", {}),
+										new SyntaxNode("UnboundedPrecedingOption", {}),
 									),
 									(node) => {
 										this.append(node, r.consume());
@@ -1988,7 +1988,7 @@ export class Sqlite3Parser extends Parser {
 							} else {
 								if (r.peekIf(Keyword.PRECEDING)) {
 									apply(
-										this.append(node, new Element("PrecedingOption", {})),
+										this.append(node, new SyntaxNode("PrecedingOption", {})),
 										(node) => {
 											this.expression(node, r);
 											this.append(node, r.consume());
@@ -1996,7 +1996,7 @@ export class Sqlite3Parser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.FOLLOWING)) {
 									apply(
-										this.append(node, new Element("FollowingOption", {})),
+										this.append(node, new SyntaxNode("FollowingOption", {})),
 										(node) => {
 											this.expression(node, r);
 											this.append(node, r.consume());
@@ -2010,12 +2010,12 @@ export class Sqlite3Parser extends Parser {
 					);
 					this.append(node, r.consume(Keyword.AND));
 					apply(
-						this.append(node, new Element("FrameEndClause", {})),
+						this.append(node, new SyntaxNode("FrameEndClause", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.CURRENT)) {
 								apply(
-									this.append(node, new Element("CurrentRowOption", {})),
+									this.append(node, new SyntaxNode("CurrentRowOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.ROW));
@@ -2025,7 +2025,7 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(
 										node,
-										new Element("UnboundedFollowingOption", {}),
+										new SyntaxNode("UnboundedFollowingOption", {}),
 									),
 									(node) => {
 										this.append(node, r.consume());
@@ -2035,7 +2035,7 @@ export class Sqlite3Parser extends Parser {
 							} else {
 								if (r.peekIf(Keyword.PRECEDING)) {
 									apply(
-										this.append(node, new Element("PrecedingOption", {})),
+										this.append(node, new SyntaxNode("PrecedingOption", {})),
 										(node) => {
 											this.expression(node, r);
 											this.append(node, r.consume());
@@ -2043,7 +2043,7 @@ export class Sqlite3Parser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.FOLLOWING)) {
 									apply(
-										this.append(node, new Element("FollowingOption", {})),
+										this.append(node, new SyntaxNode("FollowingOption", {})),
 										(node) => {
 											this.expression(node, r);
 											this.append(node, r.consume());
@@ -2057,10 +2057,10 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else {
 					apply(
-						this.append(node, new Element("FrameStartClause", {})),
+						this.append(node, new SyntaxNode("FrameStartClause", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("PrecedingOption", {})),
+								this.append(node, new SyntaxNode("PrecedingOption", {})),
 								(node) => {
 									this.expression(node, r);
 									this.append(node, r.consume(Keyword.PRECEDING));
@@ -2071,11 +2071,11 @@ export class Sqlite3Parser extends Parser {
 				}
 			});
 			if (r.peekIf(Keyword.EXCLUDE)) {
-				apply(this.append(node, new Element("ExcludeClause", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("ExcludeClause", {})), (node) => {
 					this.append(node, r.consume());
 					if (r.peekIf(Keyword.NO)) {
 						apply(
-							this.append(node, new Element("NoOthersOption", {})),
+							this.append(node, new SyntaxNode("NoOthersOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.append(node, r.consume(Keyword.OTHERS));
@@ -2083,18 +2083,18 @@ export class Sqlite3Parser extends Parser {
 						);
 					} else if (r.peekIf(Keyword.CURRENT)) {
 						apply(
-							this.append(node, new Element("CurrentRowOption", {})),
+							this.append(node, new SyntaxNode("CurrentRowOption", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.append(node, r.consume(Keyword.ROW));
 							},
 						);
 					} else if (r.peekIf(Keyword.GROUP)) {
-						apply(this.append(node, new Element("GroupOption", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("GroupOption", {})), (node) => {
 							this.append(node, r.consume());
 						});
 					} else if (r.peekIf(Keyword.TIES)) {
-						apply(this.append(node, new Element("TiesOption", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("TiesOption", {})), (node) => {
 							this.append(node, r.consume());
 						});
 					} else {
@@ -2105,9 +2105,9 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private partitionByClause(parent: Element, r: TokenReader) {
+	private partitionByClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("PartitionByClause", {})),
+			this.append(parent, new SyntaxNode("PartitionByClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.PARTITION));
 				this.append(node, r.consume(Keyword.BY));
@@ -2123,9 +2123,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private returningClause(parent: Element, r: TokenReader) {
+	private returningClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("ReturningClause", {})),
+			this.append(parent, new SyntaxNode("ReturningClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.RETURNING));
 				this.selectColumnList(node, r);
@@ -2133,18 +2133,18 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private orderByClause(parent: Element, r: TokenReader) {
+	private orderByClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("OrderByClause", {})),
+			this.append(parent, new SyntaxNode("OrderByClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.ORDER));
 				this.append(node, r.consume(Keyword.BY));
-				apply(this.append(node, new Element("SortColumnList", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("SortColumnList", {})), (node) => {
 					do {
 						apply(this.sortColumn(node, r), (node) => {
 							if (r.peekIf(Keyword.NULLS, Keyword.FIRST)) {
 								apply(
-									this.append(node, new Element("NullsFirstOption", {})),
+									this.append(node, new SyntaxNode("NullsFirstOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume());
@@ -2152,7 +2152,7 @@ export class Sqlite3Parser extends Parser {
 								);
 							} else if (r.peekIf(Keyword.NULLS, Keyword.LAST)) {
 								apply(
-									this.append(node, new Element("NullsLastOption", {})),
+									this.append(node, new SyntaxNode("NullsLastOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume());
@@ -2172,23 +2172,23 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private limitClause(parent: Element, r: TokenReader) {
+	private limitClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("LimitClause", {})),
+			this.append(parent, new SyntaxNode("LimitClause", {})),
 			(node) => {
 				this.append(node, r.consume(Keyword.LIMIT));
-				apply(this.append(node, new Element("LimitOption", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
 					this.expression(node, r);
 				});
 				if (r.peekIf(Keyword.OFFSET)) {
-					apply(this.append(node, new Element("OffsetOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("OffsetOption", {})), (node) => {
 						this.append(node, r.consume());
 						this.expression(node, r);
 					});
 				} else if (r.peekIf(TokenType.Comma)) {
 					node.name = "OffsetOption";
 					this.append(node, r.consume());
-					apply(this.append(node, new Element("LimitOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
 						this.expression(node, r);
 					});
 				}
@@ -2196,9 +2196,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private tableColumn(parent: Element, r: TokenReader) {
+	private tableColumn(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("TableColumn", {})),
+			this.append(parent, new SyntaxNode("TableColumn", {})),
 			(node) => {
 				this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Identifier)) {
@@ -2227,9 +2227,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private columnType(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("ColumnType", {})), (node) => {
-			apply(this.append(node, new Element("TypeName", {})), (node) => {
+	private columnType(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("ColumnType", {})), (node) => {
+			apply(this.append(node, new SyntaxNode("TypeName", {})), (node) => {
 				const token = r.consume();
 				this.append(node, token);
 				node.attribs.value = token.text;
@@ -2241,13 +2241,13 @@ export class Sqlite3Parser extends Parser {
 			});
 			if (r.peekIf(TokenType.LeftParen)) {
 				this.append(node, r.consume());
-				apply(this.append(node, new Element("TypeOptionList", {})), (node) => {
-					apply(this.append(node, new Element("LengthOption", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("TypeOptionList", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("LengthOption", {})), (node) => {
 						this.numericLiteral(node, r);
 					});
 					if (r.peekIf(TokenType.Comma)) {
 						this.append(node, r.consume());
-						apply(this.append(node, new Element("ScaleOption", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("ScaleOption", {})), (node) => {
 							this.numericLiteral(node, r);
 						});
 					}
@@ -2257,9 +2257,9 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private columnConstraint(parent: Element, r: TokenReader) {
+	private columnConstraint(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("ColumnConstraint", {})),
+			this.append(parent, new SyntaxNode("ColumnConstraint", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CONSTRAINT)) {
 					this.append(node, r.consume());
@@ -2267,21 +2267,21 @@ export class Sqlite3Parser extends Parser {
 				}
 				if (r.peekIf(Keyword.PRIMARY)) {
 					apply(
-						this.append(node, new Element("PrimaryKeyConstraint", {})),
+						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.KEY));
 
 							if (r.peekIf(Keyword.ASC)) {
 								apply(
-									this.append(node, new Element("AscOption", {})),
+									this.append(node, new SyntaxNode("AscOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.DESC)) {
 								apply(
-									this.append(node, new Element("DescOption", {})),
+									this.append(node, new SyntaxNode("DescOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
@@ -2289,7 +2289,7 @@ export class Sqlite3Parser extends Parser {
 							}
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2299,7 +2299,7 @@ export class Sqlite3Parser extends Parser {
 							}
 							if (r.peekIf(Keyword.AUTOINCREMENT)) {
 								apply(
-									this.append(node, new Element("AutoincrementOption", {})),
+									this.append(node, new SyntaxNode("AutoincrementOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
@@ -2309,13 +2309,13 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.NOT)) {
 					apply(
-						this.append(node, new Element("NotNullConstraint", {})),
+						this.append(node, new SyntaxNode("NotNullConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.NULL));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2327,12 +2327,12 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.NULL)) {
 					apply(
-						this.append(node, new Element("NullConstraint", {})),
+						this.append(node, new SyntaxNode("NullConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2344,12 +2344,12 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.UNIQUE)) {
 					apply(
-						this.append(node, new Element("UniqueConstraint", {})),
+						this.append(node, new SyntaxNode("UniqueConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2361,7 +2361,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.CHECK)) {
 					apply(
-						this.append(node, new Element("CheckConstraint", {})),
+						this.append(node, new SyntaxNode("CheckConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(TokenType.LeftParen));
@@ -2370,7 +2370,7 @@ export class Sqlite3Parser extends Parser {
 						},
 					);
 				} else if (r.peekIf(Keyword.DEFAULT)) {
-					apply(this.append(node, new Element("DefaultOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("DefaultOption", {})), (node) => {
 						this.append(node, r.consume());
 						if (r.peekIf(TokenType.LeftParen)) {
 							this.append(node, r.consume());
@@ -2381,20 +2381,20 @@ export class Sqlite3Parser extends Parser {
 						}
 					});
 				} else if (r.peekIf(Keyword.COLLATE)) {
-					apply(this.append(node, new Element("CollateOption", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("CollateOption", {})), (node) => {
 						this.append(node, r.consume());
 						this.identifier(node, r, "CollateName");
 					});
 				} else if (r.peekIf(Keyword.REFERENCES)) {
 					apply(
-						this.append(node, new Element("ForeignKeyConstraint", {})),
+						this.append(node, new SyntaxNode("ForeignKeyConstraint", {})),
 						(node) => {
 							this.referencesClause(node, r);
 						},
 					);
 				} else if (r.peekIf(Keyword.GENERATED) || r.peekIf(Keyword.AS)) {
 					apply(
-						this.append(node, new Element("GeneratedColumnOption", {})),
+						this.append(node, new SyntaxNode("GeneratedColumnOption", {})),
 						(node) => {
 							if (r.peekIf(Keyword.GENERATED)) {
 								this.append(node, r.consume());
@@ -2403,7 +2403,7 @@ export class Sqlite3Parser extends Parser {
 							this.append(node, r.consume(Keyword.AS));
 							this.append(node, r.consume(TokenType.LeftParen));
 							apply(
-								this.append(node, new Element("GeneratedColumn", {})),
+								this.append(node, new SyntaxNode("GeneratedColumn", {})),
 								(node) => {
 									this.expression(node, r);
 								},
@@ -2412,14 +2412,14 @@ export class Sqlite3Parser extends Parser {
 
 							if (r.peekIf(Keyword.STORED)) {
 								apply(
-									this.append(node, new Element("StoredOption", {})),
+									this.append(node, new SyntaxNode("StoredOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.VIRTUAL)) {
 								apply(
-									this.append(node, new Element("virtual option", {})),
+									this.append(node, new SyntaxNode("virtual option", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
@@ -2434,9 +2434,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private tableConstraint(parent: Element, r: TokenReader) {
+	private tableConstraint(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("TableConstraint", {})),
+			this.append(parent, new SyntaxNode("TableConstraint", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CONSTRAINT)) {
 					this.append(node, r.consume());
@@ -2444,13 +2444,13 @@ export class Sqlite3Parser extends Parser {
 				}
 				if (r.peekIf(Keyword.PRIMARY)) {
 					apply(
-						this.append(node, new Element("PrimaryKeyConstraint", {})),
+						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.KEY));
 							this.append(node, r.consume(TokenType.LeftParen));
 							apply(
-								this.append(node, new Element("SortColumnList", {})),
+								this.append(node, new SyntaxNode("SortColumnList", {})),
 								(node) => {
 									do {
 										this.sortColumn(node, r);
@@ -2465,7 +2465,7 @@ export class Sqlite3Parser extends Parser {
 							this.append(node, r.consume(TokenType.RightParen));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2477,12 +2477,12 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.UNIQUE)) {
 					apply(
-						this.append(node, new Element("UniqueConstraint", {})),
+						this.append(node, new SyntaxNode("UniqueConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(TokenType.LeftParen));
 							apply(
-								this.append(node, new Element("SortColumnList", {})),
+								this.append(node, new SyntaxNode("SortColumnList", {})),
 								(node) => {
 									do {
 										this.sortColumn(node, r);
@@ -2497,7 +2497,7 @@ export class Sqlite3Parser extends Parser {
 							this.append(node, r.consume(TokenType.RightParen));
 							if (r.peekIf(Keyword.ON)) {
 								apply(
-									this.append(node, new Element("OnConflictClause", {})),
+									this.append(node, new SyntaxNode("OnConflictClause", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume(Keyword.CONFLICT));
@@ -2509,7 +2509,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.CHECK)) {
 					apply(
-						this.append(node, new Element("CheckConstraint", {})),
+						this.append(node, new SyntaxNode("CheckConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(TokenType.LeftParen));
@@ -2519,7 +2519,7 @@ export class Sqlite3Parser extends Parser {
 					);
 				} else if (r.peekIf(Keyword.FOREIGN)) {
 					apply(
-						this.append(node, new Element("ForeignKeyConstraint", {})),
+						this.append(node, new SyntaxNode("ForeignKeyConstraint", {})),
 						(node) => {
 							this.append(node, r.consume());
 							this.append(node, r.consume(Keyword.KEY));
@@ -2536,9 +2536,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private referencesClause(parent: Element, r: TokenReader) {
+	private referencesClause(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("ReferencesClause", {})),
+			this.append(parent, new SyntaxNode("ReferencesClause", {})),
 			(node) => {
 				this.append(node, r.consume());
 				this.identifier(node, r, "ObjectName");
@@ -2554,7 +2554,7 @@ export class Sqlite3Parser extends Parser {
 				) {
 					if (r.peekIf(Keyword.ON)) {
 						apply(
-							this.append(node, new Element("OnUpdateClause", {})),
+							this.append(node, new SyntaxNode("OnUpdateClause", {})),
 							(node) => {
 								this.append(node, r.consume());
 								if (r.peekIf(Keyword.DELETE)) {
@@ -2565,7 +2565,7 @@ export class Sqlite3Parser extends Parser {
 								}
 								if (r.peekIf(Keyword.SET, Keyword.NULL)) {
 									apply(
-										this.append(node, new Element("SetNullOption", {})),
+										this.append(node, new SyntaxNode("SetNullOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											this.append(node, r.consume());
@@ -2573,7 +2573,7 @@ export class Sqlite3Parser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.SET, Keyword.DEFAULT)) {
 									apply(
-										this.append(node, new Element("SetDefaultOption", {})),
+										this.append(node, new SyntaxNode("SetDefaultOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											this.append(node, r.consume());
@@ -2581,21 +2581,21 @@ export class Sqlite3Parser extends Parser {
 									);
 								} else if (r.peekIf(Keyword.CASCADE)) {
 									apply(
-										this.append(node, new Element("CascadeOption", {})),
+										this.append(node, new SyntaxNode("CascadeOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.RESTRICT)) {
 									apply(
-										this.append(node, new Element("RestrictOption", {})),
+										this.append(node, new SyntaxNode("RestrictOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 										},
 									);
 								} else if (r.peekIf(Keyword.NO, Keyword.ACTION)) {
 									apply(
-										this.append(node, new Element("NoActionOption", {})),
+										this.append(node, new SyntaxNode("NoActionOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 											this.append(node, r.consume());
@@ -2607,25 +2607,25 @@ export class Sqlite3Parser extends Parser {
 							},
 						);
 					} else if (r.peekIf(Keyword.MATCH)) {
-						apply(this.append(node, new Element("MatchClause", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("MatchClause", {})), (node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(Keyword.SIMPLE)) {
 								apply(
-									this.append(node, new Element("SimpleOption", {})),
+									this.append(node, new SyntaxNode("SimpleOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.FULL)) {
 								apply(
-									this.append(node, new Element("FullOption", {})),
+									this.append(node, new SyntaxNode("FullOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
 								);
 							} else if (r.peekIf(Keyword.PARTIAL)) {
 								apply(
-									this.append(node, new Element("PartialOption", {})),
+									this.append(node, new SyntaxNode("PartialOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 									},
@@ -2644,7 +2644,7 @@ export class Sqlite3Parser extends Parser {
 					r.peekIf(Keyword.NOT, Keyword.DEFERRABLE)
 				) {
 					apply(
-						this.append(node, new Element("DeferrableOption", {})),
+						this.append(node, new SyntaxNode("DeferrableOption", {})),
 						(node) => {
 							if (r.peekIf(Keyword.NOT)) {
 								node.name = "NotDeferrableOption";
@@ -2654,7 +2654,7 @@ export class Sqlite3Parser extends Parser {
 
 							if (r.peekIf(Keyword.INITIALLY, Keyword.DEFERRED)) {
 								apply(
-									this.append(node, new Element("InitiallyDeferredOption", {})),
+									this.append(node, new SyntaxNode("InitiallyDeferredOption", {})),
 									(node) => {
 										this.append(node, r.consume());
 										this.append(node, r.consume());
@@ -2664,7 +2664,7 @@ export class Sqlite3Parser extends Parser {
 								apply(
 									this.append(
 										node,
-										new Element("InitiallyImmediateOption", {}),
+										new SyntaxNode("InitiallyImmediateOption", {}),
 									),
 									(node) => {
 										this.append(node, r.consume());
@@ -2679,38 +2679,38 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private conflictAction(parent: Element, r: TokenReader) {
+	private conflictAction(parent: SyntaxNode, r: TokenReader) {
 		if (r.peekIf(Keyword.ROLLBACK)) {
 			return apply(
-				this.append(parent, new Element("RollbackOption", {})),
+				this.append(parent, new SyntaxNode("RollbackOption", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.ABORT)) {
 			return apply(
-				this.append(parent, new Element("AbortOption", {})),
+				this.append(parent, new SyntaxNode("AbortOption", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.FAIL)) {
 			return apply(
-				this.append(parent, new Element("FailOption", {})),
+				this.append(parent, new SyntaxNode("FailOption", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.IGNORE)) {
 			return apply(
-				this.append(parent, new Element("IgnoreOption", {})),
+				this.append(parent, new SyntaxNode("IgnoreOption", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
 			);
 		} else if (r.peekIf(Keyword.REPLACE)) {
 			return apply(
-				this.append(parent, new Element("ReplaceOption", {})),
+				this.append(parent, new SyntaxNode("ReplaceOption", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
@@ -2720,14 +2720,14 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private pragmaValue(parent: Element, r: TokenReader) {
+	private pragmaValue(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("PragmaValue", {})),
+			this.append(parent, new SyntaxNode("PragmaValue", {})),
 			(node) => {
 				if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
-					apply(this.append(node, new Element("Expression", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("Expression", {})), (node) => {
 						apply(
-							this.append(node, new Element("UnaryPlusOperation", {})),
+							this.append(node, new SyntaxNode("UnaryPlusOperation", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.numericLiteral(node, r);
@@ -2735,9 +2735,9 @@ export class Sqlite3Parser extends Parser {
 						);
 					});
 				} else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
-					apply(this.append(node, new Element("Expression", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("Expression", {})), (node) => {
 						apply(
-							this.append(node, new Element("UnaryMinusOperation", {})),
+							this.append(node, new SyntaxNode("UnaryMinusOperation", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.numericLiteral(node, r);
@@ -2757,9 +2757,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private expressionList(parent: Element, r: TokenReader) {
+	private expressionList(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("ExpressionList", {})),
+			this.append(parent, new SyntaxNode("ExpressionList", {})),
 			(node) => {
 				do {
 					this.expression(node, r);
@@ -2773,14 +2773,14 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private expression(parent: Element, r: TokenReader, precedence = 0) {
-		let current: Element = parent;
+	private expression(parent: SyntaxNode, r: TokenReader, precedence = 0) {
+		let current: SyntaxNode = parent;
 		if (precedence === 0) {
-			current = this.append(parent, new Element("Expression", {}));
+			current = this.append(parent, new SyntaxNode("Expression", {}));
 		}
 		if (r.peekIf(Keyword.NOT)) {
 			current = apply(
-				this.append(current, new Element("NotOperation", {})),
+				this.append(current, new SyntaxNode("NotOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.expression(node, r, 3);
@@ -2788,7 +2788,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf({ type: TokenType.Operator, text: "~" })) {
 			current = apply(
-				this.append(current, new Element("BitwiseNotOperation", {})),
+				this.append(current, new SyntaxNode("BitwiseNotOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.expression(node, r, 16);
@@ -2796,7 +2796,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf({ type: TokenType.Operator, text: "+" })) {
 			current = apply(
-				this.append(current, new Element("UnaryPlusOperation", {})),
+				this.append(current, new SyntaxNode("UnaryPlusOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.expression(node, r, 16);
@@ -2804,7 +2804,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf({ type: TokenType.Operator, text: "-" })) {
 			current = apply(
-				this.append(current, new Element("UnaryMinusOperation", {})),
+				this.append(current, new SyntaxNode("UnaryMinusOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.expression(node, r, 16);
@@ -2817,7 +2817,7 @@ export class Sqlite3Parser extends Parser {
 		while (!r.peek().eos) {
 			if (precedence < 1 && r.peekIf(Keyword.OR)) {
 				current = apply(
-					this.wrap(current, new Element("OrOperation", {})),
+					this.wrap(current, new SyntaxNode("OrOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 1);
@@ -2825,7 +2825,7 @@ export class Sqlite3Parser extends Parser {
 				);
 			} else if (precedence < 2 && r.peekIf(Keyword.AND)) {
 				current = apply(
-					this.wrap(current, new Element("AndOperation", {})),
+					this.wrap(current, new SyntaxNode("AndOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 2);
@@ -2836,7 +2836,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: ["=", "=="] })
 			) {
 				current = apply(
-					this.wrap(current, new Element("EqualOperation", {})),
+					this.wrap(current, new SyntaxNode("EqualOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 4);
@@ -2847,14 +2847,14 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: ["<>", "!="] })
 			) {
 				current = apply(
-					this.wrap(current, new Element("NotEqualOperation", {})),
+					this.wrap(current, new SyntaxNode("NotEqualOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 4);
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.IS)) {
-				current = apply(this.wrap(current, new Element("Is", {})), (node) => {
+				current = apply(this.wrap(current, new SyntaxNode("Is", {})), (node) => {
 					this.append(node, r.consume());
 					if (r.peekIf(Keyword.NOT)) {
 						this.append(node, r.consume());
@@ -2874,7 +2874,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf(Keyword.NOT, Keyword.BETWEEN)
 			) {
 				current = apply(
-					this.wrap(current, new Element("BetweenOperation", {})),
+					this.wrap(current, new SyntaxNode("BetweenOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -2891,7 +2891,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf(Keyword.NOT, Keyword.IN)
 			) {
 				current = apply(
-					this.wrap(current, new Element("InOperation", {})),
+					this.wrap(current, new SyntaxNode("InOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -2904,7 +2904,7 @@ export class Sqlite3Parser extends Parser {
 							})
 						) {
 							apply(
-								this.append(node, new Element("SubqueryExpression", {})),
+								this.append(node, new SyntaxNode("SubqueryExpression", {})),
 								(node) => {
 									this.append(node, r.consume());
 									if (r.peekIf(Keyword.WITH)) {
@@ -2920,23 +2920,23 @@ export class Sqlite3Parser extends Parser {
 							this.append(node, r.consume(TokenType.RightParen));
 						} else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
 							apply(
-								this.append(node, new Element("FunctionExpression", {})),
+								this.append(node, new SyntaxNode("FunctionExpression", {})),
 								(node) => {
 									apply(
-										this.append(node, new Element("ObjectName", {})),
+										this.append(node, new SyntaxNode("ObjectName", {})),
 										(node) => {
 											this.append(node, r.consume());
 										},
 									);
 									this.append(node, r.consume(TokenType.LeftParen));
 									apply(
-										this.append(node, new Element("FunctionArgumentList", {})),
+										this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 										(node) => {
 											while (!r.peek().eos && !r.peekIf(TokenType.RightParen)) {
 												apply(
 													this.append(
 														node,
-														new Element("FunctionArgument", {}),
+														new SyntaxNode("FunctionArgument", {}),
 													),
 													(node) => {
 														this.expression(node, r);
@@ -2967,7 +2967,7 @@ export class Sqlite3Parser extends Parser {
 				(r.peekIf(Keyword.MATCH) || r.peekIf(Keyword.NOT, Keyword.MATCH))
 			) {
 				current = apply(
-					this.wrap(current, new Element("MatchOperation", {})),
+					this.wrap(current, new SyntaxNode("MatchOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -2982,7 +2982,7 @@ export class Sqlite3Parser extends Parser {
 				(r.peekIf(Keyword.LIKE) || r.peekIf(Keyword.NOT, Keyword.LIKE))
 			) {
 				current = apply(
-					this.wrap(current, new Element("LikeOperation", {})),
+					this.wrap(current, new SyntaxNode("LikeOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -2992,7 +2992,7 @@ export class Sqlite3Parser extends Parser {
 						this.expression(node, r, 4);
 						if (r.peekIf(Keyword.ESCAPE)) {
 							apply(
-								this.append(node, new Element("EscapeOption", {})),
+								this.append(node, new SyntaxNode("EscapeOption", {})),
 								(node) => {
 									this.expression(node, r, 6);
 								},
@@ -3005,7 +3005,7 @@ export class Sqlite3Parser extends Parser {
 				(r.peekIf(Keyword.REGEXP) || r.peekIf(Keyword.NOT, Keyword.REGEXP))
 			) {
 				current = apply(
-					this.wrap(current, new Element("RegexpOperation", {})),
+					this.wrap(current, new SyntaxNode("RegexpOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -3020,7 +3020,7 @@ export class Sqlite3Parser extends Parser {
 				(r.peekIf(Keyword.GLOB) || r.peekIf(Keyword.NOT, Keyword.GLOB))
 			) {
 				current = apply(
-					this.wrap(current, new Element("GlobOperation", {})),
+					this.wrap(current, new SyntaxNode("GlobOperation", {})),
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.append(node, r.consume());
@@ -3032,21 +3032,21 @@ export class Sqlite3Parser extends Parser {
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.ISNULL)) {
 				current = apply(
-					this.wrap(current, new Element("IsNullOperation", {})),
+					this.wrap(current, new SyntaxNode("IsNullOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.NOTNULL)) {
 				current = apply(
-					this.wrap(current, new Element("IsNotNullOperation", {})),
+					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 					},
 				);
 			} else if (precedence < 4 && r.peekIf(Keyword.NOT, Keyword.NULL)) {
 				current = apply(
-					this.wrap(current, new Element("IsNotNullOperation", {})),
+					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.append(node, r.consume());
@@ -3057,7 +3057,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "<" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("LessThanOperation", {})),
+					this.wrap(current, new SyntaxNode("LessThanOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 5);
@@ -3068,7 +3068,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: ">" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("GreaterThanOperation", {})),
+					this.wrap(current, new SyntaxNode("GreaterThanOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 5);
@@ -3079,7 +3079,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "<=" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("LessThanOrEqualOperation", {})),
+					this.wrap(current, new SyntaxNode("LessThanOrEqualOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 5);
@@ -3090,7 +3090,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: ">=" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("GreaterThanOrEqualOperation", {})),
+					this.wrap(current, new SyntaxNode("GreaterThanOrEqualOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 5);
@@ -3101,7 +3101,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "&" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("BitwiseAndOperation", {})),
+					this.wrap(current, new SyntaxNode("BitwiseAndOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 7);
@@ -3112,7 +3112,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "|" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("BitwiseOrOperation", {})),
+					this.wrap(current, new SyntaxNode("BitwiseOrOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 7);
@@ -3123,7 +3123,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "<<" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("BitwiseLeftShiftOperation", {})),
+					this.wrap(current, new SyntaxNode("BitwiseLeftShiftOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 7);
@@ -3134,7 +3134,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: ">>" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("BitwiseRightShiftOperation", {})),
+					this.wrap(current, new SyntaxNode("BitwiseRightShiftOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 7);
@@ -3145,7 +3145,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "+" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("AddOperation", {})),
+					this.wrap(current, new SyntaxNode("AddOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 8);
@@ -3156,7 +3156,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "-" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("SubtractOperation", {})),
+					this.wrap(current, new SyntaxNode("SubtractOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 8);
@@ -3167,7 +3167,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "*" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("MultiplyOperation", {})),
+					this.wrap(current, new SyntaxNode("MultiplyOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 9);
@@ -3178,7 +3178,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "/" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("DivideOperation", {})),
+					this.wrap(current, new SyntaxNode("DivideOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 9);
@@ -3189,7 +3189,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "%" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("ModuloOperation", {})),
+					this.wrap(current, new SyntaxNode("ModuloOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 9);
@@ -3200,7 +3200,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "||" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("ConcatenateOperation", {})),
+					this.wrap(current, new SyntaxNode("ConcatenateOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 10);
@@ -3211,7 +3211,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "->" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("JsonExtractOperation", {})),
+					this.wrap(current, new SyntaxNode("JsonExtractOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 10);
@@ -3222,7 +3222,7 @@ export class Sqlite3Parser extends Parser {
 				r.peekIf({ type: TokenType.Operator, text: "->>" })
 			) {
 				current = apply(
-					this.wrap(current, new Element("JsonExtractValueOperation", {})),
+					this.wrap(current, new SyntaxNode("JsonExtractValueOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.expression(node, r, 10);
@@ -3230,7 +3230,7 @@ export class Sqlite3Parser extends Parser {
 				);
 			} else if (precedence < 11 && r.peekIf(Keyword.COLLATE)) {
 				current = apply(
-					this.wrap(current, new Element("CollateOperation", {})),
+					this.wrap(current, new SyntaxNode("CollateOperation", {})),
 					(node) => {
 						this.append(node, r.consume());
 						this.identifier(node, r, "CollationName");
@@ -3243,10 +3243,10 @@ export class Sqlite3Parser extends Parser {
 		return current;
 	}
 
-	private expressionValue(parent: Element, r: TokenReader) {
+	private expressionValue(parent: SyntaxNode, r: TokenReader) {
 		if (r.peekIf(Keyword.NULL)) {
 			return apply(
-				this.append(parent, new Element("NullLiteral", {})),
+				this.append(parent, new SyntaxNode("NullLiteral", {})),
 				(node) => {
 					this.append(node, r.consume());
 				},
@@ -3263,9 +3263,9 @@ export class Sqlite3Parser extends Parser {
 			})
 		) {
 			return apply(
-				this.append(parent, new Element("FunctionExpression", {})),
+				this.append(parent, new SyntaxNode("FunctionExpression", {})),
 				(node) => {
-					apply(this.append(node, new Element("ObjectName", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						const token = r.consume();
 						this.append(node, token);
 						node.attribs.value = token.text.toUpperCase();
@@ -3274,18 +3274,18 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(Keyword.CASE)) {
 			return apply(
-				this.append(parent, new Element("CaseExpression", {})),
+				this.append(parent, new SyntaxNode("CaseExpression", {})),
 				(node) => {
 					this.append(node, r.consume());
 					if (!r.peekIf(Keyword.WHEN)) {
 						this.expression(node, r);
 					}
 					do {
-						apply(this.append(node, new Element("WhenClause", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("WhenClause", {})), (node) => {
 							this.append(node, r.consume(Keyword.WHEN));
 							this.expression(node, r);
 							apply(
-								this.append(node, new Element("ThenClause", {})),
+								this.append(node, new SyntaxNode("ThenClause", {})),
 								(node) => {
 									this.append(node, r.consume(Keyword.THEN));
 									this.expression(node, r);
@@ -3294,7 +3294,7 @@ export class Sqlite3Parser extends Parser {
 						});
 					} while (r.peekIf(Keyword.WHEN));
 					if (r.peekIf(Keyword.ELSE)) {
-						apply(this.append(node, new Element("ElseClause", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("ElseClause", {})), (node) => {
 							this.append(node, r.consume());
 							this.expression(node, r);
 						});
@@ -3304,19 +3304,19 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(Keyword.CAST)) {
 			return apply(
-				this.append(parent, new Element("FunctionExpression", {})),
+				this.append(parent, new SyntaxNode("FunctionExpression", {})),
 				(node) => {
 					const token = r.consume();
-					apply(this.append(node, new Element("ObjectName", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						node.attribs.value = token.text.toUpperCase();
 						this.append(node, token);
 					});
 					this.append(node, r.consume(TokenType.LeftParen));
 					apply(
-						this.append(node, new Element("FunctionArgumentList", {})),
+						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("FunctionArgument", {})),
+								this.append(node, new SyntaxNode("FunctionArgument", {})),
 								(node) => {
 									this.expression(node, r);
 								},
@@ -3330,26 +3330,26 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(Keyword.RAISE)) {
 			return apply(
-				this.append(parent, new Element("FunctionExpression", {})),
+				this.append(parent, new SyntaxNode("FunctionExpression", {})),
 				(node) => {
 					const token = r.consume();
-					apply(this.append(node, new Element("ObjectName", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						this.append(node, token);
 						node.attribs.value = token.text.toUpperCase();
 					});
 					this.append(node, r.consume(TokenType.LeftParen));
 					apply(
-						this.append(node, new Element("FunctionArgumentList", {})),
+						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
 							apply(
-								this.append(node, new Element("FunctionArgument", {})),
+								this.append(node, new SyntaxNode("FunctionArgument", {})),
 								(node) => {
 									this.conflictAction(node, r);
 								},
 							);
 							this.append(node, r.consume(TokenType.Comma));
 							apply(
-								this.append(node, new Element("FunctionArgument", {})),
+								this.append(node, new SyntaxNode("FunctionArgument", {})),
 								(node) => {
 									this.expression(node, r);
 								},
@@ -3361,7 +3361,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(Keyword.EXISTS)) {
 			return apply(
-				this.append(parent, new Element("ExistsOperation", {})),
+				this.append(parent, new SyntaxNode("ExistsOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.append(node, r.consume(TokenType.LeftParen));
@@ -3371,10 +3371,10 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(TokenType.LeftParen, Keyword.VALUES)) {
 			return apply(
-				this.append(parent, new Element("SubqueryExpression", {})),
+				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
 				(node) => {
 					this.append(node, r.consume());
-					apply(this.append(node, new Element("ValuesClause", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ValuesClause", {})), (node) => {
 						this.append(node, r.consume(Keyword.VALUES));
 						this.append(node, r.consume(TokenType.LeftParen));
 						this.expressionList(node, r);
@@ -3385,7 +3385,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(TokenType.LeftParen, Keyword.SELECT)) {
 			return apply(
-				this.append(parent, new Element("SubqueryExpression", {})),
+				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.selectStatement(node, r);
@@ -3394,7 +3394,7 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(TokenType.LeftParen)) {
 			return apply(
-				this.append(parent, new Element("ParenthesesOperation", {})),
+				this.append(parent, new SyntaxNode("ParenthesesOperation", {})),
 				(node) => {
 					this.append(node, r.consume());
 					this.expression(node, r);
@@ -3415,22 +3415,22 @@ export class Sqlite3Parser extends Parser {
 			);
 		} else if (r.peekIf(TokenType.Identifier, TokenType.LeftParen)) {
 			return apply(
-				this.append(parent, new Element("FunctionExpression", {})),
+				this.append(parent, new SyntaxNode("FunctionExpression", {})),
 				(node) => {
-					apply(this.append(node, new Element("ObjectName", {})), (node) => {
+					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
 						this.append(node, r.consume());
 					});
 
 					this.append(node, r.consume(TokenType.LeftParen));
 					apply(
-						this.append(node, new Element("FunctionArgumentList", {})),
+						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
 						(node) => {
 							if (r.peekIf({ type: TokenType.Operator, text: "*" })) {
 								apply(
-									this.append(node, new Element("FunctionArgument", {})),
+									this.append(node, new SyntaxNode("FunctionArgument", {})),
 									(node) => {
 										apply(
-											this.append(node, new Element("AllColumnsOption", {})),
+											this.append(node, new SyntaxNode("AllColumnsOption", {})),
 											(node) => {
 												this.append(node, r.consume());
 											},
@@ -3440,7 +3440,7 @@ export class Sqlite3Parser extends Parser {
 							} else {
 								if (r.peekIf(Keyword.DISTINCT)) {
 									apply(
-										this.append(node, new Element("DistinctOption", {})),
+										this.append(node, new SyntaxNode("DistinctOption", {})),
 										(node) => {
 											this.append(node, r.consume());
 										},
@@ -3448,7 +3448,7 @@ export class Sqlite3Parser extends Parser {
 								}
 								while (!r.peek().eos) {
 									apply(
-										this.append(node, new Element("Argument", {})),
+										this.append(node, new SyntaxNode("Argument", {})),
 										(node) => {
 											this.expression(node, r);
 										},
@@ -3465,7 +3465,7 @@ export class Sqlite3Parser extends Parser {
 					this.append(node, r.consume(TokenType.RightParen));
 					if (r.peekIf(Keyword.FILTER)) {
 						apply(
-							this.append(node, new Element("FilterClause", {})),
+							this.append(node, new SyntaxNode("FilterClause", {})),
 							(node) => {
 								this.append(node, r.consume());
 								this.append(node, r.consume(TokenType.LeftParen));
@@ -3478,7 +3478,7 @@ export class Sqlite3Parser extends Parser {
 						!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
 						r.peekIf(Keyword.OVER)
 					) {
-						apply(this.append(node, new Element("OverClause", {})), (node) => {
+						apply(this.append(node, new SyntaxNode("OverClause", {})), (node) => {
 							this.append(node, r.consume());
 							if (r.peekIf(TokenType.LeftParen)) {
 								this.append(node, r.consume());
@@ -3509,7 +3509,7 @@ export class Sqlite3Parser extends Parser {
 			const token = r.consume();
 			if (token.text.startsWith("?")) {
 				return apply(
-					this.append(parent, new Element("PositionalBindVariable", {})),
+					this.append(parent, new SyntaxNode("PositionalBindVariable", {})),
 					(node) => {
 						this.append(node, token);
 
@@ -3526,7 +3526,7 @@ export class Sqlite3Parser extends Parser {
 				);
 			} else {
 				return apply(
-					this.append(parent, new Element("NamedBindVariable", {})),
+					this.append(parent, new SyntaxNode("NamedBindVariable", {})),
 					(node) => {
 						this.append(node, token);
 						node.attribs.value = token.text.substring(1);
@@ -3538,27 +3538,27 @@ export class Sqlite3Parser extends Parser {
 		}
 	}
 
-	private sortColumn(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("SortColumn", {})), (node) => {
+	private sortColumn(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("SortColumn", {})), (node) => {
 			this.expression(node, r);
 			if (r.peekIf(Keyword.COLLATE)) {
 				this.append(node, r.consume());
 				this.identifier(node, r, "CollationName");
 			}
 			if (r.peekIf(Keyword.ASC)) {
-				apply(this.append(node, new Element("AscOption", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("AscOption", {})), (node) => {
 					this.append(node, r.consume());
 				});
 			} else if (r.peekIf(Keyword.DESC)) {
-				apply(this.append(node, new Element("DescOption", {})), (node) => {
+				apply(this.append(node, new SyntaxNode("DescOption", {})), (node) => {
 					this.append(node, r.consume());
 				});
 			}
 		});
 	}
 
-	private columnList(parent: Element, r: TokenReader) {
-		return apply(this.append(parent, new Element("ColumnList", {})), (node) => {
+	private columnList(parent: SyntaxNode, r: TokenReader) {
+		return apply(this.append(parent, new SyntaxNode("ColumnList", {})), (node) => {
 			do {
 				this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Comma)) {
@@ -3570,9 +3570,9 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private columnReference(parent: Element, r: TokenReader) {
+	private columnReference(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("ColumnReference", {})),
+			this.append(parent, new SyntaxNode("ColumnReference", {})),
 			(node) => {
 				const ident1 = this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Dot)) {
@@ -3590,8 +3590,8 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private identifier(parent: Element, r: TokenReader, name: string) {
-		return apply(this.append(parent, new Element(name, {})), (node) => {
+	private identifier(parent: SyntaxNode, r: TokenReader, name: string) {
+		return apply(this.append(parent, new SyntaxNode(name, {})), (node) => {
 			if (r.peekIf({ type: [TokenType.Identifier, TokenType.String] })) {
 				const token = r.consume();
 				this.append(node, token);
@@ -3602,9 +3602,9 @@ export class Sqlite3Parser extends Parser {
 		});
 	}
 
-	private numericLiteral(parent: Element, r: TokenReader) {
+	private numericLiteral(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("NumericLiteral", {})),
+			this.append(parent, new SyntaxNode("NumericLiteral", {})),
 			(node) => {
 				const token = r.consume(TokenType.Numeric);
 				this.append(node, token);
@@ -3613,9 +3613,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private stringLiteral(parent: Element, r: TokenReader) {
+	private stringLiteral(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("StringLiteral", {})),
+			this.append(parent, new SyntaxNode("StringLiteral", {})),
 			(node) => {
 				if (r.peekIf({ type: TokenType.Identifier, text: /^"/ })) {
 					const token = r.consume();
@@ -3630,9 +3630,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private blobLiteral(parent: Element, r: TokenReader) {
+	private blobLiteral(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("BlobLiteral", {})),
+			this.append(parent, new SyntaxNode("BlobLiteral", {})),
 			(node) => {
 				const token = r.consume(TokenType.Blob);
 				this.append(node, token);
@@ -3643,9 +3643,9 @@ export class Sqlite3Parser extends Parser {
 		);
 	}
 
-	private booleanLiteral(parent: Element, r: TokenReader) {
+	private booleanLiteral(parent: SyntaxNode, r: TokenReader) {
 		return apply(
-			this.append(parent, new Element("BooleanLiteral", {})),
+			this.append(parent, new SyntaxNode("BooleanLiteral", {})),
 			(node) => {
 				if (r.peekIf({ type: [Keyword.TRUE, Keyword.FALSE] })) {
 					const token = r.consume();
@@ -3659,24 +3659,24 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private elem(name: string, attrs: { [name: string]: string } = {}) {
-		return new Element(name, attrs);
+		return new SyntaxNode(name, attrs);
 	}
 
-	private wrap(elem: Element, wrapper: Element) {
+	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
 		replaceElement(elem, wrapper);
 		appendChild(wrapper, elem);
 		return wrapper;
 	}
 
-	private append(parent: Element, child: Element | Token) {
+	private append(parent: SyntaxNode, child: SyntaxNode | Token) {
 		if (child instanceof Token) {
-			const token = new Element(child.type.name, {
+			const token = new TokenNode(child.type.name, {
 				...(child.keyword && { value: child.keyword.name }),
 			});
 			appendChild(parent, token);
 
 			for (const skip of child.preskips) {
-				const skipToken = new Element(skip.type.name, {
+				const skipToken = new TokenNode(skip.type.name, {
 					...(skip.keyword && { value: skip.keyword.name }),
 				});
 				appendChild(token, skipToken);
@@ -3688,7 +3688,7 @@ export class Sqlite3Parser extends Parser {
 				appendChild(token, new Text(child.text));
 			}
 			for (const skip of child.postskips) {
-				const skipToken = new Element(skip.type.name, {
+				const skipToken = new TokenNode(skip.type.name, {
 					...(skip.keyword && { value: skip.keyword.name }),
 				});
 				appendChild(token, skipToken);
