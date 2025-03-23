@@ -1,5 +1,13 @@
-import type { Element } from "domhandler";
+import { Element as DomHandlerElement, Text as DomHandlerText } from "domhandler";
 import type { Lexer, Token } from "./lexer.js";
+
+export class Element extends DomHandlerElement {
+
+}
+
+export class Text extends DomHandlerText {
+	
+}
 
 export abstract class Parser {
 	lexer: Lexer;

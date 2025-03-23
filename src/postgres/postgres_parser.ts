@@ -1,4 +1,3 @@
-import { Element, Text } from "domhandler";
 import { appendChild, replaceElement } from "domutils";
 import {
 	Keyword,
@@ -7,7 +6,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { AggregateParseError, Parser } from "../parser.js";
+import { Element, Text, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { PostgresLexer } from "./postgres_lexer.js";
 

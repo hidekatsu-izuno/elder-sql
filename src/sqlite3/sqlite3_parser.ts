@@ -1,4 +1,3 @@
-import { Element, Text } from "domhandler";
 import { appendChild, replaceElement } from "domutils";
 import {
 	Keyword,
@@ -7,7 +6,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { AggregateParseError, Parser } from "../parser.js";
+import { Element, Text, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
@@ -3657,6 +3656,10 @@ export class Sqlite3Parser extends Parser {
 				}
 			},
 		);
+	}
+
+	private elem(name: string, attrs: { [name: string]: string } = {}) {
+		return new Element(name, attrs);
 	}
 
 	private wrap(elem: Element, wrapper: Element) {
