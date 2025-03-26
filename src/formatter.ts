@@ -29,12 +29,10 @@ export declare type FormatterOptions = {
 
 export abstract class Formatter {
 	parser: Parser;
-	private patterns = new Array<
-		FormatPattern & {
-			selecter: any;
-		}
-	>();
+	private patterns = new Array<FormatPattern>();
 	options: FormatterOptions;
+
+	private cache: Record<string, ReturnType<typeof compile<Node, Element>>> = {};
 
 	constructor(
 		parser: Parser,
@@ -42,12 +40,7 @@ export abstract class Formatter {
 		options: FormatterOptions = {},
 	) {
 		this.parser = parser;
-		for (const pattern of patterns) {
-			this.patterns.push({
-				...pattern,
-				selecter: compile<Node, Element>(pattern.pattern, { xmlMode: true }),
-			});
-		}
+		this.patterns = patterns;
 		this.options = options;
 	}
 
@@ -75,10 +68,15 @@ export abstract class Formatter {
 	private formatElement(node: Element, out: FormatWriter) {
 		let before: FormatActionType | FormatActionType[] | undefined;
 		let after: FormatActionType | FormatActionType[] | undefined;
-		for (const pattern of this.patterns) {
-			if (pattern.selecter(node)) {
-				before = pattern.before;
-				after = pattern.after;
+		for (const item of this.patterns) {
+			let query = this.cache[item.pattern];
+			if (!query) {
+				query = compile<Node, Element>(item.pattern, { xmlMode: true });
+				this.cache[item.pattern] = query;
+			}
+			if (query(node)) {
+				before = item.before;
+				after = item.after;
 				break;
 			}
 		}
