@@ -92,10 +92,10 @@ export abstract class Formatter {
 				out.control(before);
 			}
 		}
-		if (node.name === "LineComment") {
+		if (node.attribs.type === "LineComment") {
 			out.write(textContent(node), true);
 			out.control("softbreak");
-		} else if (node.name === "BlockComment" || node.name === "HintComment") {
+		} else if (node.attribs.type === "BlockComment" || node.attribs.type === "HintComment") {
 			const segments = textContent(node).split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
 				if (i > 0) {
@@ -103,16 +103,15 @@ export abstract class Formatter {
 				}
 				out.write(segments[i], true);
 			}
-		} else if (node.name === "WhiteSpace" || node.name === "LineBreak") {
+		} else if (node.attribs.type === "WhiteSpace" || node.attribs.type === "LineBreak") {
 			// no handle
-		} else if (node.name === "EoF") {
+		} else if (node.attribs.type === "EoF") {
 			out.write("", false);
-		} else if (node.name === "Unknown") {
+		} else if (node.attribs.type === "Unknown") {
 			out.write(this.concatNode(node, out).trim(), false);
 			out.control("break");
 		} else {
-			for (let i = 0; i < node.childNodes.length; i++) {
-				const child = node.childNodes[i];
+			for (const child of node.children) {
 				if (child instanceof Element) {
 					this.formatElement(child, out);
 				} else if (child instanceof Text) {
@@ -133,10 +132,9 @@ export abstract class Formatter {
 
 	private concatNode(node: Element, out: FormatWriter) {
 		let text = "";
-		for (let i = 0; i < node.childNodes.length; i++) {
-			const child = node.childNodes[i];
+		for (const child of node.children) {
 			if (child instanceof Element) {
-				if (child.name === "LineBreak") {
+				if (child.attribs.type === "LineBreak") {
 					text += out.eol;
 				} else {
 					text += this.concatNode(child, out);

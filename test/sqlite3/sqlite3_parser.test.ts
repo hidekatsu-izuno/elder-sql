@@ -53,7 +53,7 @@ describe("test sqlite3 parser", () => {
 		}
 
 		writeDebugFile(
-			`test/dump/sqlite3/parser/${target}.js.txt`,
+			`test/dump/sqlite3/parser/${target}.ts`,
 			toJSScript(node),
 		);
 

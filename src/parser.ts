@@ -1,40 +1,42 @@
 import { Element, Text } from "domhandler";
-import { appendChild, replaceElement } from "domutils";
+import { appendChild, replaceElement, textContent } from "domutils";
 import type { Lexer, Token } from "./lexer.js";
 
-export class SyntaxNode extends Element {
-	append(child: SyntaxNode | TokenNode | TriviaNode) {
-		appendChild(this, child);
-	}
-
-	replaceWith(replacement: SyntaxNode) {
-		replaceElement(this, replacement);
-	}
-}
-
-export class TokenNode extends Element {
-	constructor(name: string, attribs: { [name: string]: string }) {
-		super(name, attribs);
-		
-	}
-
-	append(child: string | TriviaNode) {
-		if (child instanceof TriviaNode) {
+export abstract class SyntaxElement extends Element {
+	append(child: Element | string) {
+		if (child instanceof Element) {
 			appendChild(this, child);
 		} else {
 			appendChild(this, new Text(child));
 		}
+		return this;
+	}
+
+	replaceWith(replacement: Element) {
+		replaceElement(this, replacement);
+		return this;
+	}
+
+	textContent() {
+		return textContent(this);
 	}
 }
 
-export class TriviaNode extends Element {
-	constructor(name: string, attribs: { [name: string]: string }) {
-		super(name, attribs);
-		
+export class SyntaxNode extends SyntaxElement {
+	constructor(type: string, attribs: { [name: string]: string } = {}) {
+		super("node", { ...attribs, type });
 	}
+}
 
-	append(text: string) {
-		appendChild(this, new Text(text));
+export class SyntaxToken extends SyntaxElement {
+	constructor(type: string, attribs: { [name: string]: string } = {}) {
+		super("token", { ...attribs, type });
+	}
+}
+
+export class SyntaxTrivia extends SyntaxElement {
+	constructor(type: string, attribs: { [name: string]: string } = {}) {
+		super("trivia", { ...attribs, type });
 	}
 }
 

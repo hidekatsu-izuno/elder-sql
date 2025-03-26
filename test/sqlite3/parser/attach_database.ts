@@ -1,269 +1,269 @@
-import { Element, Text } from "domhandler";
+import { Element, Text } from "domhandler"
 
-export default new Element("Script", {}, [
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Identifier", { value: "DATABASE" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("DATABASE"),
-		]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("StringLiteral", { value: ":memory:" }, [
-					new Element("String", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("':memory:'"),
-					]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "mem_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("mem_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Identifier", { value: "DATABASE" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("DATABASE"),
-		]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("StringLiteral", { value: "new_database.db" }, [
-					new Element("String", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("'new_database.db'"),
-					]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "new_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("new_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Identifier", { value: "DATABASE" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("DATABASE"),
-		]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("FunctionExpression", {}, [
-					new Element("ObjectName", {}, [
-						new Element("Identifier", { value: "CONCAT" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("CONCAT"),
-						]),
-					]),
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("FunctionArgumentList", {}, [
-						new Element("Argument", {}, [
-							new Element("Expression", {}, [
-								new Element("StringLiteral", { value: "new_database" }, [
-									new Element("String", {}, [new Text("'new_database'")]),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Argument", {}, [
-							new Element("Expression", {}, [
-								new Element("StringLiteral", { value: ".db" }, [
-									new Element("String", {}, [
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-										new Text("'.db'"),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "new_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("new_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Identifier", { value: "DATABASE" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("DATABASE"),
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-		]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("ParenthesesOperation", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("Expression", {}, [
-						new Element("ConcatenateOperation", {}, [
-							new Element("ConcatenateOperation", {}, [
-								new Element("StringLiteral", { value: "database_" }, [
-									new Element("String", {}, [
-										new Text("'database_'"),
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-									]),
-								]),
-								new Element("Operator", {}, [new Text("||")]),
-								new Element("FunctionExpression", {}, [
-									new Element("ObjectName", {}, [
-										new Element("Identifier", { value: "STRFTIME" }, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("strftime"),
-										]),
-									]),
-									new Element("LeftParen", {}, [new Text("(")]),
-									new Element("FunctionArgumentList", {}, [
-										new Element("Argument", {}, [
-											new Element("Expression", {}, [
-												new Element("StringLiteral", { value: "%Y%m%d" }, [
-													new Element("String", {}, [new Text("'%Y%m%d'")]),
-												]),
-											]),
-										]),
-										new Element("Comma", {}, [new Text(",")]),
-										new Element("Argument", {}, [
-											new Element("Expression", {}, [
-												new Element("StringLiteral", { value: "now" }, [
-													new Element("String", {}, [
-														new Element("WhiteSpace", {}, [new Text(" ")]),
-														new Text("'now'"),
-													]),
-												]),
-											]),
-										]),
-									]),
-									new Element("RightParen", {}, [
-										new Text(")"),
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-									]),
-								]),
-							]),
-							new Element("Operator", {}, [new Text("||")]),
-							new Element("StringLiteral", { value: ".db" }, [
-								new Element("String", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("'.db'"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "new_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("new_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("StringLiteral", { value: "new_database.db" }, [
-					new Element("String", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("'new_database.db'"),
-					]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "new_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("new_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("AttachDatabaseStatement", {}, [
-		new Element("Identifier", { value: "ATTACH" }, [new Text("ATTACH")]),
-		new Element("Database", {}, [
-			new Element("Expression", {}, [
-				new Element("ConcatenateOperation", {}, [
-					new Element("StringLiteral", { value: "database_" }, [
-						new Element("String", {}, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("'database_'"),
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-						]),
-					]),
-					new Element("Operator", {}, [new Text("||")]),
-					new Element("StringLiteral", { value: ".db" }, [
-						new Element("String", {}, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("'.db'"),
-						]),
-					]),
-				]),
-			]),
-		]),
-		new Element("Reserved", { value: "AS" }, [
-			new Element("WhiteSpace", {}, [new Text(" ")]),
-			new Text("AS"),
-		]),
-		new Element("SchemaName", { value: "new_db" }, [
-			new Element("Identifier", {}, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("new_db"),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("EoF", {}),
-]);
+export default new Element("node", {"type":"Script"}, [
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("DATABASE"),
+    ]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"StringLiteral","value":":memory:"}, [
+          new Element("token", {"type":"String"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("':memory:'"),
+          ]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"mem_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("mem_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("DATABASE"),
+    ]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"StringLiteral","value":"new_database.db"}, [
+          new Element("token", {"type":"String"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("'new_database.db'"),
+          ]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"new_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("new_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("DATABASE"),
+    ]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"FunctionExpression"}, [
+          new Element("node", {"type":"ObjectName"}, [
+            new Element("token", {"value":"CONCAT","type":"Identifier"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("CONCAT"),
+            ]),
+          ]),
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"FunctionArgumentList"}, [
+            new Element("node", {"type":"Argument"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"StringLiteral","value":"new_database"}, [
+                  new Element("token", {"type":"String"}, [new Text("'new_database'")]),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Argument"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"StringLiteral","value":".db"}, [
+                  new Element("token", {"type":"String"}, [
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                    new Text("'.db'"),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"new_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("new_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("DATABASE"),
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+    ]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"ParenthesesOperation"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"Expression"}, [
+            new Element("node", {"type":"ConcatenateOperation"}, [
+              new Element("node", {"type":"ConcatenateOperation"}, [
+                new Element("node", {"type":"StringLiteral","value":"database_"}, [
+                  new Element("token", {"type":"String"}, [
+                    new Text("'database_'"),
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  ]),
+                ]),
+                new Element("token", {"type":"Operator"}, [new Text("||")]),
+                new Element("node", {"type":"FunctionExpression"}, [
+                  new Element("node", {"type":"ObjectName"}, [
+                    new Element("token", {"value":"STRFTIME","type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("strftime"),
+                    ]),
+                  ]),
+                  new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+                  new Element("node", {"type":"FunctionArgumentList"}, [
+                    new Element("node", {"type":"Argument"}, [
+                      new Element("node", {"type":"Expression"}, [
+                        new Element("node", {"type":"StringLiteral","value":"%Y%m%d"}, [
+                          new Element("token", {"type":"String"}, [new Text("'%Y%m%d'")]),
+                        ]),
+                      ]),
+                    ]),
+                    new Element("token", {"type":"Comma"}, [new Text(",")]),
+                    new Element("node", {"type":"Argument"}, [
+                      new Element("node", {"type":"Expression"}, [
+                        new Element("node", {"type":"StringLiteral","value":"now"}, [
+                          new Element("token", {"type":"String"}, [
+                            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                            new Text("'now'"),
+                          ]),
+                        ]),
+                      ]),
+                    ]),
+                  ]),
+                  new Element("token", {"type":"RightParen"}, [
+                    new Text(")"),
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  ]),
+                ]),
+              ]),
+              new Element("token", {"type":"Operator"}, [new Text("||")]),
+              new Element("node", {"type":"StringLiteral","value":".db"}, [
+                new Element("token", {"type":"String"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("'.db'"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"new_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("new_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"StringLiteral","value":"new_database.db"}, [
+          new Element("token", {"type":"String"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("'new_database.db'"),
+          ]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"new_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("new_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"AttachDatabaseStatement"}, [
+    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("node", {"type":"Database"}, [
+      new Element("node", {"type":"Expression"}, [
+        new Element("node", {"type":"ConcatenateOperation"}, [
+          new Element("node", {"type":"StringLiteral","value":"database_"}, [
+            new Element("token", {"type":"String"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("'database_'"),
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            ]),
+          ]),
+          new Element("token", {"type":"Operator"}, [new Text("||")]),
+          new Element("node", {"type":"StringLiteral","value":".db"}, [
+            new Element("token", {"type":"String"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("'.db'"),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+    new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+      new Text("AS"),
+    ]),
+    new Element("node", {"type":"SchemaName","value":"new_db"}, [
+      new Element("token", {"type":"Identifier"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("new_db"),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("token", {"type":"EoF"}),
+])

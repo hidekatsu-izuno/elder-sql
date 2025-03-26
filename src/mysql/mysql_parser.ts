@@ -5,7 +5,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { SyntaxNode, TokenNode, TriviaNode, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, SyntaxToken, SyntaxTrivia, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { MysqlLexer } from "./mysql_lexer.js";
 
@@ -160,11 +160,11 @@ export class OracleParser extends Parser {
 	}
 
 	private appendToken(parent: SyntaxNode, child: Token) {
-		const token = new TokenNode(child.type.name, {
+		const token = new SyntaxToken(child.type.name, {
 			...(child.keyword && { value: child.keyword.name }),
 		});
 		for (const skip of child.preskips) {
-			const skipToken = new TriviaNode(skip.type.name, {
+			const skipToken = new SyntaxTrivia(skip.type.name, {
 				...(skip.keyword && { value: skip.keyword.name }),
 			});
 			if (skip.text) {
@@ -176,7 +176,7 @@ export class OracleParser extends Parser {
 			token.append(child.text);
 		}
 		for (const skip of child.postskips) {
-			const skipToken = new TriviaNode(skip.type.name, {
+			const skipToken = new SyntaxTrivia(skip.type.name, {
 				...(skip.keyword && { value: skip.keyword.name }),
 			});
 			if (skip.text) {

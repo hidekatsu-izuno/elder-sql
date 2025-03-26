@@ -5,7 +5,7 @@ import {
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { SyntaxNode, TokenNode, TriviaNode, AggregateParseError, Parser } from "../parser.js";
+import { SyntaxNode, SyntaxToken, SyntaxTrivia, AggregateParseError, Parser } from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
@@ -1168,7 +1168,7 @@ export class Sqlite3Parser extends Parser {
 	private insertStatement(parent: SyntaxNode, r: TokenReader) {
 		let current = new SyntaxNode("InsertStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1209,7 +1209,7 @@ export class Sqlite3Parser extends Parser {
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
-					ident.name = "SchemaName";
+					ident.attribs.type = "SchemaName";
 					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
@@ -1335,7 +1335,7 @@ export class Sqlite3Parser extends Parser {
 	private updateStatement(parent: SyntaxNode, r: TokenReader) {
 		let current = new SyntaxNode("UpdateStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1360,7 +1360,7 @@ export class Sqlite3Parser extends Parser {
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
-					ident.name = "SchemaName";
+					ident.attribs.type = "SchemaName";
 					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
@@ -1444,7 +1444,7 @@ export class Sqlite3Parser extends Parser {
 	private deleteStatement(parent: SyntaxNode, r: TokenReader) {
 		let current = new SyntaxNode("DeleteStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1470,7 +1470,7 @@ export class Sqlite3Parser extends Parser {
 
 				const ident = this.identifier(node, r, "ObjectName");
 				if (r.peekIf(TokenType.Dot)) {
-					ident.name = "SchemaName";
+					ident.attribs.type = "SchemaName";
 					this.appendToken(node, r.consume());
 					this.identifier(node, r, "ObjectName");
 				}
@@ -1488,7 +1488,7 @@ export class Sqlite3Parser extends Parser {
 	private selectStatement(parent: SyntaxNode, r: TokenReader) {
 		let current = new SyntaxNode("SelectStatement", {});
 		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.name === "WithClause") {
+		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
 			this.wrap(last, current);
 		} else {
 			current = this.append(parent, current);
@@ -1631,7 +1631,7 @@ export class Sqlite3Parser extends Parser {
 								this.append(node, new SyntaxNode("MaterializedOption", {})),
 								(node) => {
 									if (r.peekIf(Keyword.NOT)) {
-										node.name = "NotMaterializedOption";
+										node.attribs.type = "NotMaterializedOption";
 										this.appendToken(node, r.consume());
 									}
 									this.appendToken(node, r.consume());
@@ -1761,12 +1761,12 @@ export class Sqlite3Parser extends Parser {
 				apply(this.append(node, new SyntaxNode("ObjectReference", {})), (node) => {
 					const ident = this.identifier(node, r, "ObjectName");
 					if (r.peekIf(TokenType.Dot)) {
-						ident.name = "SchemaName";
+						ident.attribs.type = "SchemaName";
 						this.appendToken(node, r.consume());
 						this.identifier(node, r, "ObjectName");
 					}
 					if (r.peekIf(TokenType.LeftParen)) {
-						node.name = "FunctionExpression";
+						node.attribs.type = "FunctionExpression";
 						this.appendToken(node, r.consume());
 						apply(
 							this.append(node, new SyntaxNode("FunctionArgumentList", {})),
@@ -1805,7 +1805,7 @@ export class Sqlite3Parser extends Parser {
 			this.append(parent, new SyntaxNode("InnerJoinClause", {})),
 			(node) => {
 				if (r.peekIf(Keyword.CROSS)) {
-					node.name = "CrossJoinClause";
+					node.attribs.type = "CrossJoinClause";
 					this.appendToken(node, r.consume());
 				} else {
 					if (r.peekIf(Keyword.NATURAL)) {
@@ -1817,19 +1817,19 @@ export class Sqlite3Parser extends Parser {
 						);
 					}
 					if (r.peekIf(Keyword.LEFT)) {
-						node.name = "LeftOuterJoinClause";
+						node.attribs.type = "LeftOuterJoinClause";
 						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
 							this.appendToken(node, r.consume());
 						}
 					} else if (r.peekIf(Keyword.RIGHT)) {
-						node.name = "RightOuterJoinClause";
+						node.attribs.type = "RightOuterJoinClause";
 						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
 							this.appendToken(node, r.consume());
 						}
 					} else if (r.peekIf(Keyword.FULL)) {
-						node.name = "FullOuterJoinClause";
+						node.attribs.type = "FullOuterJoinClause";
 						this.appendToken(node, r.consume());
 						if (r.peekIf(Keyword.OUTER)) {
 							this.appendToken(node, r.consume());
@@ -2185,7 +2185,7 @@ export class Sqlite3Parser extends Parser {
 						this.expression(node, r);
 					});
 				} else if (r.peekIf(TokenType.Comma)) {
-					node.name = "OffsetOption";
+					node.attribs.type = "OffsetOption";
 					this.appendToken(node, r.consume());
 					apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
 						this.expression(node, r);
@@ -2557,7 +2557,7 @@ export class Sqlite3Parser extends Parser {
 							(node) => {
 								this.appendToken(node, r.consume());
 								if (r.peekIf(Keyword.DELETE)) {
-									node.name = "OnDeleteClause";
+									node.attribs.type = "OnDeleteClause";
 									this.appendToken(node, r.consume());
 								} else {
 									this.appendToken(node, r.consume(Keyword.UPDATE));
@@ -2646,7 +2646,7 @@ export class Sqlite3Parser extends Parser {
 						this.append(node, new SyntaxNode("DeferrableOption", {})),
 						(node) => {
 							if (r.peekIf(Keyword.NOT)) {
-								node.name = "NotDeferrableOption";
+								node.attribs.type = "NotDeferrableOption";
 								this.appendToken(node, r.consume());
 							}
 							this.appendToken(node, r.consume());
@@ -2857,14 +2857,14 @@ export class Sqlite3Parser extends Parser {
 					this.appendToken(node, r.consume());
 					if (r.peekIf(Keyword.NOT)) {
 						this.appendToken(node, r.consume());
-						node.name += "Not";
+						node.attribs.type += "Not";
 					}
 					if (r.peekIf(Keyword.DISTINCT)) {
 						this.appendToken(node, r.consume());
 						this.appendToken(node, r.consume(Keyword.FROM));
-						node.name += "DistinctFromOperation";
+						node.attribs.type += "DistinctFromOperation";
 					} else {
-						node.name += "Operation";
+						node.attribs.type += "Operation";
 					}
 					this.expression(node, r, 4);
 				});
@@ -2877,7 +2877,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
@@ -2894,7 +2894,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						if (
@@ -2970,7 +2970,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
@@ -2985,7 +2985,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
@@ -3008,7 +3008,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
@@ -3023,7 +3023,7 @@ export class Sqlite3Parser extends Parser {
 					(node) => {
 						if (r.peekIf(Keyword.NOT)) {
 							this.appendToken(node, r.consume());
-							node.name = `Not${node.name}`;
+							node.attribs.type = `Not${node.attribs.type}`;
 						}
 						this.appendToken(node, r.consume());
 						this.expression(node, r, 4);
@@ -3398,7 +3398,7 @@ export class Sqlite3Parser extends Parser {
 					this.appendToken(node, r.consume());
 					this.expression(node, r);
 					if (r.peekIf(TokenType.Comma)) {
-						node.name = "ExpressionList";
+						node.attribs.type = "ExpressionList";
 						this.appendToken(node, r.consume());
 						do {
 							this.expression(node, r);
@@ -3576,12 +3576,12 @@ export class Sqlite3Parser extends Parser {
 				const ident1 = this.identifier(node, r, "ColumnName");
 				if (r.peekIf(TokenType.Dot)) {
 					this.appendToken(node, r.consume());
-					ident1.name = "ObjectName";
+					ident1.attribs.type = "ObjectName";
 					const ident2 = this.identifier(node, r, "ColumnName");
 					if (r.peekIf(TokenType.Dot)) {
 						this.appendToken(node, r.consume());
-						ident1.name = "SchemaName";
-						ident2.name = "ObjectName";
+						ident1.attribs.type = "SchemaName";
+						ident2.attribs.type = "ObjectName";
 						this.identifier(node, r, "ColumnName");
 					}
 				}
@@ -3669,11 +3669,11 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private appendToken(parent: SyntaxNode, child: Token) {
-		const token = new TokenNode(child.type.name, {
+		const token = new SyntaxToken(child.type.name, {
 			...(child.keyword && { value: child.keyword.name }),
 		});
 		for (const skip of child.preskips) {
-			const skipToken = new TriviaNode(skip.type.name, {
+			const skipToken = new SyntaxTrivia(skip.type.name, {
 				...(skip.keyword && { value: skip.keyword.name }),
 			});
 			if (skip.text) {
@@ -3685,7 +3685,7 @@ export class Sqlite3Parser extends Parser {
 			token.append(child.text);
 		}
 		for (const skip of child.postskips) {
-			const skipToken = new TriviaNode(skip.type.name, {
+			const skipToken = new SyntaxTrivia(skip.type.name, {
 				...(skip.keyword && { value: skip.keyword.name }),
 			});
 			if (skip.text) {

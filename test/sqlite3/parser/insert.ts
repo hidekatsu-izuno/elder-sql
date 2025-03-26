@@ -1,1181 +1,1177 @@
-import { Element, Text } from "domhandler";
+import { Element, Text } from "domhandler"
 
-export default new Element("Script", {}, [
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample"),
-				]),
-			]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("String", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("'2'"),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("NullLiteral", {}, [
-								new Element("Reserved", { value: "NULL" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("NULL"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("OrConflictClause", {}, [
-				new Element("Reserved", { value: "OR" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("OR"),
-				]),
-				new Element("AbortOption", {}, [
-					new Element("Identifier", { value: "ABORT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("ABORT"),
-					]),
-				]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Text("sample"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-			]),
-			new Element("LeftParen", {}, [new Text("(")]),
-			new Element("ColumnList", {}, [
-				new Element("ColumnName", { value: "a" }, [
-					new Element("Identifier", {}, [new Text("a")]),
-				]),
-			]),
-			new Element("RightParen", {}, [new Text(")")]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("OrConflictClause", {}, [
-				new Element("Reserved", { value: "OR" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("OR"),
-				]),
-				new Element("FailOption", {}, [
-					new Element("Identifier", { value: "FAIL" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("FAIL"),
-					]),
-				]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample"),
-				]),
-			]),
-			new Element("Reserved", { value: "AS" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("AS"),
-			]),
-			new Element("ObjectAlias", { value: "sample2" }, [
-				new Element("Identifier", {}, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample2"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-			]),
-			new Element("LeftParen", {}, [new Text("(")]),
-			new Element("ColumnList", {}, [
-				new Element("ColumnName", { value: "a" }, [
-					new Element("Identifier", {}, [new Text("a")]),
-				]),
-				new Element("Comma", {}, [new Text(",")]),
-				new Element("ColumnName", { value: "b" }, [
-					new Element("Identifier", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("b"),
-					]),
-				]),
-			]),
-			new Element("RightParen", {}, [new Text(")")]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("Identifier", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text('"2"'),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("OrConflictClause", {}, [
-				new Element("Reserved", { value: "OR" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("OR"),
-				]),
-				new Element("IgnoreOption", {}, [
-					new Element("Identifier", { value: "IGNORE" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("IGNORE"),
-					]),
-				]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("Reserved", { value: "AS" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("AS"),
-			]),
-			new Element("ObjectAlias", { value: "sample2" }, [
-				new Element("Identifier", {}, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample2"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-			]),
-			new Element("LeftParen", {}, [new Text("(")]),
-			new Element("ColumnList", {}, [
-				new Element("ColumnName", { value: "a" }, [
-					new Element("Identifier", {}, [new Text("a")]),
-				]),
-				new Element("Comma", {}, [new Text(",")]),
-				new Element("ColumnName", { value: "b" }, [
-					new Element("Identifier", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("b"),
-					]),
-				]),
-				new Element("Comma", {}, [new Text(",")]),
-				new Element("ColumnName", { value: "c" }, [
-					new Element("Identifier", {}, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("c"),
-					]),
-				]),
-			]),
-			new Element("RightParen", {}, [new Text(")")]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("Identifier", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text('"2"'),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("BooleanLiteral", { value: "TRUE" }, [
-								new Element("Identifier", { value: "TRUE" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("TRUE"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-					new Element("Comma", {}, [
-						new Text(","),
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-					]),
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("String", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("'2'"),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("BooleanLiteral", { value: "FALSE" }, [
-								new Element("Identifier", { value: "FALSE" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("FALSE"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("OrConflictClause", {}, [
-				new Element("Reserved", { value: "OR" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("OR"),
-				]),
-				new Element("ReplaceOption", {}, [
-					new Element("Identifier", { value: "REPLACE" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("REPLACE"),
-					]),
-				]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample"),
-				]),
-			]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("Identifier", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text('"2"'),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("NullLiteral", {}, [
-								new Element("Reserved", { value: "NULL" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("NULL"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-					new Element("Comma", {}, [
-						new Text(","),
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-					]),
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("String", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("'2'"),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("BooleanLiteral", { value: "TRUE" }, [
-								new Element("Identifier", { value: "TRUE" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("TRUE"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-					new Element("Comma", {}, [
-						new Text(","),
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-					]),
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("Identifier", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text('"2"'),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("BooleanLiteral", { value: "FALSE" }, [
-								new Element("Identifier", { value: "FALSE" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("FALSE"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("OrConflictClause", {}, [
-				new Element("Reserved", { value: "OR" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("OR"),
-				]),
-				new Element("RollbackOption", {}, [
-					new Element("Identifier", { value: "ROLLBACK" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("ROLLBACK"),
-					]),
-				]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("SelectStatement", {}, [
-				new Element("SelectClause", {}, [
-					new Element("Reserved", { value: "SELECT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("SELECT"),
-					]),
-					new Element("SelectColumnList", {}, [
-						new Element("SelectColumn", {}, [
-							new Element("Expression", {}, [
-								new Element("NumericLiteral", { value: "1" }, [
-									new Element("Numeric", {}, [
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-										new Text("1"),
-									]),
-								]),
-							]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample"),
-				]),
-			]),
-			new Element("DefaultValuesOption", {}, [
-				new Element("Reserved", { value: "DEFAULT" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("DEFAULT"),
-				]),
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("SelectStatement", {}, [
-				new Element("SelectClause", {}, [
-					new Element("Reserved", { value: "SELECT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("SELECT"),
-					]),
-					new Element("SelectColumnList", {}, [
-						new Element("SelectColumn", {}, [
-							new Element("Expression", {}, [
-								new Element("NumericLiteral", { value: "1" }, [
-									new Element("Numeric", {}, [
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-										new Text("1"),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("FromClause", {}, [
-						new Element("Reserved", { value: "FROM" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("FROM"),
-						]),
-						new Element("FromObjectList", {}, [
-							new Element("FromObject", {}, [
-								new Element("ObjectReference", {}, [
-									new Element("ObjectName", { value: "sample2" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("sample2"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("ReplaceOption", {}, [
-				new Element("Identifier", { value: "REPLACE" }, [new Text("REPLACE")]),
-			]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Text("sample"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-			]),
-			new Element("LeftParen", {}, [new Text("(")]),
-			new Element("ColumnList", {}, [
-				new Element("ColumnName", { value: "a" }, [
-					new Element("Identifier", {}, [new Text("a")]),
-				]),
-			]),
-			new Element("RightParen", {}, [new Text(")")]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("WithClause", {}, [
-			new Element("Identifier", { value: "WITH" }, [new Text("WITH")]),
-			new Element("CommonTableList", {}, [
-				new Element("CommonTable", {}, [
-					new Element("ObjectName", { value: "X" }, [
-						new Element("Identifier", {}, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("X"),
-						]),
-					]),
-					new Element("Reserved", { value: "AS" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("AS"),
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-					]),
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("SelectStatement", {}, [
-						new Element("SelectClause", {}, [
-							new Element("Reserved", { value: "SELECT" }, [
-								new Text("SELECT"),
-							]),
-							new Element("SelectColumnList", {}, [
-								new Element("SelectColumn", {}, [
-									new Element("Expression", {}, [
-										new Element("NumericLiteral", { value: "1" }, [
-											new Element("Numeric", {}, [
-												new Element("WhiteSpace", {}, [new Text(" ")]),
-												new Text("1"),
-											]),
-										]),
-									]),
-									new Element("Reserved", { value: "AS" }, [
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-										new Text("AS"),
-									]),
-									new Element("ColumnAlias", { value: "Y" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("Y"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [
-						new Text(")"),
-						new Element("LineBreak", {}, [new Text("\n")]),
-					]),
-				]),
-			]),
-		]),
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("SelectStatement", {}, [
-				new Element("SelectClause", {}, [
-					new Element("Reserved", { value: "SELECT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("SELECT"),
-					]),
-					new Element("SelectColumnList", {}, [
-						new Element("SelectColumn", {}, [
-							new Element("Expression", {}, [
-								new Element("ColumnReference", {}, [
-									new Element("ColumnName", { value: "Y" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("Y"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("FromClause", {}, [
-						new Element("Reserved", { value: "FROM" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("FROM"),
-						]),
-						new Element("FromObjectList", {}, [
-							new Element("FromObject", {}, [
-								new Element("ObjectReference", {}, [
-									new Element("ObjectName", { value: "X" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("X"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("SelectStatement", {}, [
-				new Element("WithClause", {}, [
-					new Element("Identifier", { value: "WITH" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("WITH"),
-					]),
-					new Element("CommonTableList", {}, [
-						new Element("CommonTable", {}, [
-							new Element("ObjectName", { value: "X" }, [
-								new Element("Identifier", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("X"),
-								]),
-							]),
-							new Element("Reserved", { value: "AS" }, [
-								new Element("WhiteSpace", {}, [new Text(" ")]),
-								new Text("AS"),
-								new Element("WhiteSpace", {}, [new Text(" ")]),
-							]),
-							new Element("LeftParen", {}, [new Text("(")]),
-							new Element("SelectStatement", {}, [
-								new Element("SelectClause", {}, [
-									new Element("Reserved", { value: "SELECT" }, [
-										new Text("SELECT"),
-									]),
-									new Element("SelectColumnList", {}, [
-										new Element("SelectColumn", {}, [
-											new Element("Expression", {}, [
-												new Element("NumericLiteral", { value: "1" }, [
-													new Element("Numeric", {}, [
-														new Element("WhiteSpace", {}, [new Text(" ")]),
-														new Text("1"),
-													]),
-												]),
-											]),
-											new Element("Reserved", { value: "AS" }, [
-												new Element("WhiteSpace", {}, [new Text(" ")]),
-												new Text("AS"),
-											]),
-											new Element("ColumnAlias", { value: "Y" }, [
-												new Element("Identifier", {}, [
-													new Element("WhiteSpace", {}, [new Text(" ")]),
-													new Text("Y"),
-												]),
-											]),
-										]),
-									]),
-								]),
-							]),
-							new Element("RightParen", {}, [new Text(")")]),
-						]),
-					]),
-				]),
-				new Element("SelectClause", {}, [
-					new Element("Reserved", { value: "SELECT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("SELECT"),
-					]),
-					new Element("SelectColumnList", {}, [
-						new Element("SelectColumn", {}, [
-							new Element("Expression", {}, [
-								new Element("ColumnReference", {}, [
-									new Element("ColumnName", { value: "Y" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("Y"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("FromClause", {}, [
-						new Element("Reserved", { value: "FROM" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("FROM"),
-						]),
-						new Element("FromObjectList", {}, [
-							new Element("FromObject", {}, [
-								new Element("ObjectReference", {}, [
-									new Element("ObjectName", { value: "X" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("X"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("ValuesClause", {}, [
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("ExpressionListGroup", {}, [
-					new Element("LeftParen", {}, [new Text("(")]),
-					new Element("ExpressionList", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [new Text("1")]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("StringLiteral", { value: "2" }, [
-								new Element("String", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("'2'"),
-								]),
-							]),
-						]),
-						new Element("Comma", {}, [new Text(",")]),
-						new Element("Expression", {}, [
-							new Element("NullLiteral", {}, [
-								new Element("Reserved", { value: "NULL" }, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("NULL"),
-								]),
-							]),
-						]),
-					]),
-					new Element("RightParen", {}, [new Text(")")]),
-				]),
-			]),
-			new Element("ReturningClause", {}, [
-				new Element("Reserved", { value: "RETURNING" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("RETURNING"),
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-				]),
-				new Element("SelectColumnList", {}, [
-					new Element("SelectColumn", {}, [
-						new Element("AllColumnsOption", {}, [
-							new Element("Operator", {}, [new Text("*")]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("SchemaName", { value: "main" }, [
-				new Element("Identifier", { value: "MAIN" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("main"),
-				]),
-			]),
-			new Element("Dot", {}, [new Text(".")]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [new Text("sample")]),
-			]),
-			new Element("SelectStatement", {}, [
-				new Element("SelectClause", {}, [
-					new Element("Reserved", { value: "SELECT" }, [
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-						new Text("SELECT"),
-					]),
-					new Element("SelectColumnList", {}, [
-						new Element("SelectColumn", {}, [
-							new Element("Expression", {}, [
-								new Element("ColumnReference", {}, [
-									new Element("ColumnName", { value: "Y" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("Y"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("FromClause", {}, [
-						new Element("Reserved", { value: "FROM" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("FROM"),
-						]),
-						new Element("FromObjectList", {}, [
-							new Element("FromObject", {}, [
-								new Element("ObjectReference", {}, [
-									new Element("ObjectName", { value: "X" }, [
-										new Element("Identifier", {}, [
-											new Element("WhiteSpace", {}, [new Text(" ")]),
-											new Text("X"),
-										]),
-									]),
-								]),
-							]),
-						]),
-					]),
-				]),
-			]),
-			new Element("ReturningClause", {}, [
-				new Element("Reserved", { value: "RETURNING" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("RETURNING"),
-				]),
-				new Element("SelectColumnList", {}, [
-					new Element("SelectColumn", {}, [
-						new Element("Expression", {}, [
-							new Element("ColumnReference", {}, [
-								new Element("ColumnName", { value: "Y" }, [
-									new Element("Identifier", {}, [
-										new Element("WhiteSpace", {}, [new Text(" ")]),
-										new Text("Y"),
-									]),
-								]),
-							]),
-						]),
-					]),
-					new Element("Comma", {}, [new Text(",")]),
-					new Element("SelectColumn", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("1"),
-								]),
-							]),
-						]),
-						new Element("Reserved", { value: "AS" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("AS"),
-						]),
-						new Element("ColumnAlias", { value: "Z" }, [
-							new Element("Identifier", {}, [
-								new Element("WhiteSpace", {}, [new Text(" ")]),
-								new Text("Z"),
-							]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("InsertStatement", {}, [
-		new Element("InsertClause", {}, [
-			new Element("Reserved", { value: "INSERT" }, [new Text("INSERT")]),
-			new Element("Reserved", { value: "INTO" }, [
-				new Element("WhiteSpace", {}, [new Text(" ")]),
-				new Text("INTO"),
-			]),
-			new Element("ObjectName", { value: "sample" }, [
-				new Element("Identifier", { value: "SAMPLE" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("sample"),
-				]),
-			]),
-			new Element("DefaultValuesOption", {}, [
-				new Element("Reserved", { value: "DEFAULT" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("DEFAULT"),
-				]),
-				new Element("Reserved", { value: "VALUES" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("VALUES"),
-				]),
-			]),
-			new Element("ReturningClause", {}, [
-				new Element("Reserved", { value: "RETURNING" }, [
-					new Element("WhiteSpace", {}, [new Text(" ")]),
-					new Text("RETURNING"),
-				]),
-				new Element("SelectColumnList", {}, [
-					new Element("SelectColumn", {}, [
-						new Element("Expression", {}, [
-							new Element("NumericLiteral", { value: "1" }, [
-								new Element("Numeric", {}, [
-									new Element("WhiteSpace", {}, [new Text(" ")]),
-									new Text("1"),
-								]),
-							]),
-						]),
-						new Element("Reserved", { value: "AS" }, [
-							new Element("WhiteSpace", {}, [new Text(" ")]),
-							new Text("AS"),
-						]),
-						new Element("ColumnAlias", { value: "Z" }, [
-							new Element("Identifier", {}, [
-								new Element("WhiteSpace", {}, [new Text(" ")]),
-								new Text("Z"),
-							]),
-						]),
-					]),
-					new Element("Comma", {}, [
-						new Text(","),
-						new Element("WhiteSpace", {}, [new Text(" ")]),
-					]),
-					new Element("SelectColumn", {}, [
-						new Element("AllColumnsOption", {}, [
-							new Element("Operator", {}, [new Text("*")]),
-						]),
-					]),
-				]),
-			]),
-		]),
-	]),
-	new Element("SemiColon", {}, [
-		new Text(";"),
-		new Element("LineBreak", {}, [new Text("\n")]),
-	]),
-	new Element("EoF", {}),
-]);
+export default new Element("node", {"type":"Script"}, [
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample"),
+        ]),
+      ]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"String"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NullLiteral"}, [
+                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("NULL"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("node", {"type":"OrConflictClause"}, [
+        new Element("token", {"value":"OR","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("OR"),
+        ]),
+        new Element("node", {"type":"AbortOption"}, [
+          new Element("token", {"value":"ABORT","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("ABORT"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Text("sample"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+      ]),
+      new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+      new Element("node", {"type":"ColumnList"}, [
+        new Element("node", {"type":"ColumnName","value":"a"}, [
+          new Element("token", {"type":"Identifier"}, [new Text("a")]),
+        ]),
+      ]),
+      new Element("token", {"type":"RightParen"}, [new Text(")")]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("node", {"type":"OrConflictClause"}, [
+        new Element("token", {"value":"OR","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("OR"),
+        ]),
+        new Element("node", {"type":"FailOption"}, [
+          new Element("token", {"value":"FAIL","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("FAIL"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample"),
+        ]),
+      ]),
+      new Element("token", {"value":"AS","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("AS"),
+      ]),
+      new Element("node", {"type":"ObjectAlias","value":"sample2"}, [
+        new Element("token", {"type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample2"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+      ]),
+      new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+      new Element("node", {"type":"ColumnList"}, [
+        new Element("node", {"type":"ColumnName","value":"a"}, [
+          new Element("token", {"type":"Identifier"}, [new Text("a")]),
+        ]),
+        new Element("token", {"type":"Comma"}, [new Text(",")]),
+        new Element("node", {"type":"ColumnName","value":"b"}, [
+          new Element("token", {"type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("b"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"type":"RightParen"}, [new Text(")")]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("\"2\""),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("node", {"type":"OrConflictClause"}, [
+        new Element("token", {"value":"OR","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("OR"),
+        ]),
+        new Element("node", {"type":"IgnoreOption"}, [
+          new Element("token", {"value":"IGNORE","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("IGNORE"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("token", {"value":"AS","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("AS"),
+      ]),
+      new Element("node", {"type":"ObjectAlias","value":"sample2"}, [
+        new Element("token", {"type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample2"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+      ]),
+      new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+      new Element("node", {"type":"ColumnList"}, [
+        new Element("node", {"type":"ColumnName","value":"a"}, [
+          new Element("token", {"type":"Identifier"}, [new Text("a")]),
+        ]),
+        new Element("token", {"type":"Comma"}, [new Text(",")]),
+        new Element("node", {"type":"ColumnName","value":"b"}, [
+          new Element("token", {"type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("b"),
+          ]),
+        ]),
+        new Element("token", {"type":"Comma"}, [new Text(",")]),
+        new Element("node", {"type":"ColumnName","value":"c"}, [
+          new Element("token", {"type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("c"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"type":"RightParen"}, [new Text(")")]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("\"2\""),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"BooleanLiteral","value":"TRUE"}, [
+                new Element("token", {"value":"TRUE","type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("TRUE"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+          new Element("token", {"type":"Comma"}, [
+            new Text(","),
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          ]),
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"String"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"BooleanLiteral","value":"FALSE"}, [
+                new Element("token", {"value":"FALSE","type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("FALSE"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("node", {"type":"OrConflictClause"}, [
+        new Element("token", {"value":"OR","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("OR"),
+        ]),
+        new Element("node", {"type":"ReplaceOption"}, [
+          new Element("token", {"value":"REPLACE","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("REPLACE"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample"),
+        ]),
+      ]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("\"2\""),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NullLiteral"}, [
+                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("NULL"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+          new Element("token", {"type":"Comma"}, [
+            new Text(","),
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          ]),
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"String"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"BooleanLiteral","value":"TRUE"}, [
+                new Element("token", {"value":"TRUE","type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("TRUE"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+          new Element("token", {"type":"Comma"}, [
+            new Text(","),
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          ]),
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("\"2\""),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"BooleanLiteral","value":"FALSE"}, [
+                new Element("token", {"value":"FALSE","type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("FALSE"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("node", {"type":"OrConflictClause"}, [
+        new Element("token", {"value":"OR","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("OR"),
+        ]),
+        new Element("node", {"type":"RollbackOption"}, [
+          new Element("token", {"value":"ROLLBACK","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("ROLLBACK"),
+          ]),
+        ]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"SelectStatement"}, [
+        new Element("node", {"type":"SelectClause"}, [
+          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("SELECT"),
+          ]),
+          new Element("node", {"type":"SelectColumnList"}, [
+            new Element("node", {"type":"SelectColumn"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                  new Element("token", {"type":"Numeric"}, [
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                    new Text("1"),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample"),
+        ]),
+      ]),
+      new Element("node", {"type":"DefaultValuesOption"}, [
+        new Element("token", {"value":"DEFAULT","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("DEFAULT"),
+        ]),
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"SelectStatement"}, [
+        new Element("node", {"type":"SelectClause"}, [
+          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("SELECT"),
+          ]),
+          new Element("node", {"type":"SelectColumnList"}, [
+            new Element("node", {"type":"SelectColumn"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                  new Element("token", {"type":"Numeric"}, [
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                    new Text("1"),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("node", {"type":"FromClause"}, [
+            new Element("token", {"value":"FROM","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("FROM"),
+            ]),
+            new Element("node", {"type":"FromObjectList"}, [
+              new Element("node", {"type":"FromObject"}, [
+                new Element("node", {"type":"ObjectReference"}, [
+                  new Element("node", {"type":"ObjectName","value":"sample2"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("sample2"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("node", {"type":"ReplaceOption"}, [
+        new Element("token", {"value":"REPLACE","type":"Identifier"}, [new Text("REPLACE")]),
+      ]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Text("sample"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+      ]),
+      new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+      new Element("node", {"type":"ColumnList"}, [
+        new Element("node", {"type":"ColumnName","value":"a"}, [
+          new Element("token", {"type":"Identifier"}, [new Text("a")]),
+        ]),
+      ]),
+      new Element("token", {"type":"RightParen"}, [new Text(")")]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"WithClause"}, [
+      new Element("token", {"value":"WITH","type":"Identifier"}, [new Text("WITH")]),
+      new Element("node", {"type":"CommonTableList"}, [
+        new Element("node", {"type":"CommonTable"}, [
+          new Element("node", {"type":"ObjectName","value":"X"}, [
+            new Element("token", {"type":"Identifier"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("X"),
+            ]),
+          ]),
+          new Element("token", {"value":"AS","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("AS"),
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          ]),
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"SelectStatement"}, [
+            new Element("node", {"type":"SelectClause"}, [
+              new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+              new Element("node", {"type":"SelectColumnList"}, [
+                new Element("node", {"type":"SelectColumn"}, [
+                  new Element("node", {"type":"Expression"}, [
+                    new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                      new Element("token", {"type":"Numeric"}, [
+                        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                        new Text("1"),
+                      ]),
+                    ]),
+                  ]),
+                  new Element("token", {"value":"AS","type":"Reserved"}, [
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                    new Text("AS"),
+                  ]),
+                  new Element("node", {"type":"ColumnAlias","value":"Y"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("Y"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [
+            new Text(")"),
+            new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+          ]),
+        ]),
+      ]),
+    ]),
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"SelectStatement"}, [
+        new Element("node", {"type":"SelectClause"}, [
+          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("SELECT"),
+          ]),
+          new Element("node", {"type":"SelectColumnList"}, [
+            new Element("node", {"type":"SelectColumn"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"ColumnReference"}, [
+                  new Element("node", {"type":"ColumnName","value":"Y"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("Y"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("node", {"type":"FromClause"}, [
+            new Element("token", {"value":"FROM","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("FROM"),
+            ]),
+            new Element("node", {"type":"FromObjectList"}, [
+              new Element("node", {"type":"FromObject"}, [
+                new Element("node", {"type":"ObjectReference"}, [
+                  new Element("node", {"type":"ObjectName","value":"X"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("X"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"SelectStatement"}, [
+        new Element("node", {"type":"WithClause"}, [
+          new Element("token", {"value":"WITH","type":"Identifier"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("WITH"),
+          ]),
+          new Element("node", {"type":"CommonTableList"}, [
+            new Element("node", {"type":"CommonTable"}, [
+              new Element("node", {"type":"ObjectName","value":"X"}, [
+                new Element("token", {"type":"Identifier"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("X"),
+                ]),
+              ]),
+              new Element("token", {"value":"AS","type":"Reserved"}, [
+                new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                new Text("AS"),
+                new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              ]),
+              new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+              new Element("node", {"type":"SelectStatement"}, [
+                new Element("node", {"type":"SelectClause"}, [
+                  new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+                  new Element("node", {"type":"SelectColumnList"}, [
+                    new Element("node", {"type":"SelectColumn"}, [
+                      new Element("node", {"type":"Expression"}, [
+                        new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                          new Element("token", {"type":"Numeric"}, [
+                            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                            new Text("1"),
+                          ]),
+                        ]),
+                      ]),
+                      new Element("token", {"value":"AS","type":"Reserved"}, [
+                        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                        new Text("AS"),
+                      ]),
+                      new Element("node", {"type":"ColumnAlias","value":"Y"}, [
+                        new Element("token", {"type":"Identifier"}, [
+                          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                          new Text("Y"),
+                        ]),
+                      ]),
+                    ]),
+                  ]),
+                ]),
+              ]),
+              new Element("token", {"type":"RightParen"}, [new Text(")")]),
+            ]),
+          ]),
+        ]),
+        new Element("node", {"type":"SelectClause"}, [
+          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("SELECT"),
+          ]),
+          new Element("node", {"type":"SelectColumnList"}, [
+            new Element("node", {"type":"SelectColumn"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"ColumnReference"}, [
+                  new Element("node", {"type":"ColumnName","value":"Y"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("Y"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("node", {"type":"FromClause"}, [
+            new Element("token", {"value":"FROM","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("FROM"),
+            ]),
+            new Element("node", {"type":"FromObjectList"}, [
+              new Element("node", {"type":"FromObject"}, [
+                new Element("node", {"type":"ObjectReference"}, [
+                  new Element("node", {"type":"ObjectName","value":"X"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("X"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"ValuesClause"}, [
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"ExpressionListGroup"}, [
+          new Element("token", {"type":"LeftParen"}, [new Text("(")]),
+          new Element("node", {"type":"ExpressionList"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [new Text("1")]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"StringLiteral","value":"2"}, [
+                new Element("token", {"type":"String"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("'2'"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"type":"Comma"}, [new Text(",")]),
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NullLiteral"}, [
+                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("NULL"),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"RightParen"}, [new Text(")")]),
+        ]),
+      ]),
+      new Element("node", {"type":"ReturningClause"}, [
+        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("RETURNING"),
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        ]),
+        new Element("node", {"type":"SelectColumnList"}, [
+          new Element("node", {"type":"SelectColumn"}, [
+            new Element("node", {"type":"AllColumnsOption"}, [
+              new Element("token", {"type":"Operator"}, [new Text("*")]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"SchemaName","value":"main"}, [
+        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("main"),
+        ]),
+      ]),
+      new Element("token", {"type":"Dot"}, [new Text(".")]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+      ]),
+      new Element("node", {"type":"SelectStatement"}, [
+        new Element("node", {"type":"SelectClause"}, [
+          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+            new Text("SELECT"),
+          ]),
+          new Element("node", {"type":"SelectColumnList"}, [
+            new Element("node", {"type":"SelectColumn"}, [
+              new Element("node", {"type":"Expression"}, [
+                new Element("node", {"type":"ColumnReference"}, [
+                  new Element("node", {"type":"ColumnName","value":"Y"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("Y"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("node", {"type":"FromClause"}, [
+            new Element("token", {"value":"FROM","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("FROM"),
+            ]),
+            new Element("node", {"type":"FromObjectList"}, [
+              new Element("node", {"type":"FromObject"}, [
+                new Element("node", {"type":"ObjectReference"}, [
+                  new Element("node", {"type":"ObjectName","value":"X"}, [
+                    new Element("token", {"type":"Identifier"}, [
+                      new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                      new Text("X"),
+                    ]),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+      new Element("node", {"type":"ReturningClause"}, [
+        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("RETURNING"),
+        ]),
+        new Element("node", {"type":"SelectColumnList"}, [
+          new Element("node", {"type":"SelectColumn"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"ColumnReference"}, [
+                new Element("node", {"type":"ColumnName","value":"Y"}, [
+                  new Element("token", {"type":"Identifier"}, [
+                    new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                    new Text("Y"),
+                  ]),
+                ]),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"Comma"}, [new Text(",")]),
+          new Element("node", {"type":"SelectColumn"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("1"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"value":"AS","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("AS"),
+            ]),
+            new Element("node", {"type":"ColumnAlias","value":"Z"}, [
+              new Element("token", {"type":"Identifier"}, [
+                new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                new Text("Z"),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("node", {"type":"InsertStatement"}, [
+    new Element("node", {"type":"InsertClause"}, [
+      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"value":"INTO","type":"Reserved"}, [
+        new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+        new Text("INTO"),
+      ]),
+      new Element("node", {"type":"ObjectName","value":"sample"}, [
+        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("sample"),
+        ]),
+      ]),
+      new Element("node", {"type":"DefaultValuesOption"}, [
+        new Element("token", {"value":"DEFAULT","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("DEFAULT"),
+        ]),
+        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("VALUES"),
+        ]),
+      ]),
+      new Element("node", {"type":"ReturningClause"}, [
+        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+          new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          new Text("RETURNING"),
+        ]),
+        new Element("node", {"type":"SelectColumnList"}, [
+          new Element("node", {"type":"SelectColumn"}, [
+            new Element("node", {"type":"Expression"}, [
+              new Element("node", {"type":"NumericLiteral","value":"1"}, [
+                new Element("token", {"type":"Numeric"}, [
+                  new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                  new Text("1"),
+                ]),
+              ]),
+            ]),
+            new Element("token", {"value":"AS","type":"Reserved"}, [
+              new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+              new Text("AS"),
+            ]),
+            new Element("node", {"type":"ColumnAlias","value":"Z"}, [
+              new Element("token", {"type":"Identifier"}, [
+                new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+                new Text("Z"),
+              ]),
+            ]),
+          ]),
+          new Element("token", {"type":"Comma"}, [
+            new Text(","),
+            new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
+          ]),
+          new Element("node", {"type":"SelectColumn"}, [
+            new Element("node", {"type":"AllColumnsOption"}, [
+              new Element("token", {"type":"Operator"}, [new Text("*")]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+  new Element("token", {"type":"SemiColon"}, [
+    new Text(";"),
+    new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
+  ]),
+  new Element("token", {"type":"EoF"}),
+])
