@@ -111,10 +111,10 @@ export class Sqlite3Lexer extends Lexer {
 		super(
 			"sqlite3",
 			[
-				{ type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-				{ type: TokenType.LineComment, re: /--.*/y },
-				{ type: TokenType.LineBreak, re: /\n|\r\n?/y },
-				{ type: TokenType.WhiteSpace, re: /[ \t\f]+/y },
+				{ type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+				{ type: TokenType.LineComment, re: /--.*/y, skip: true },
+				{ type: TokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: TokenType.WhiteSpace, re: /[ \t\f]+/y, skip: true },
 				{
 					type: TokenType.Delimiter,
 					re: /(?<=^|[\r\n])([/]|GO)[ \t\f]*(\n|\r\n?|$)/iy,

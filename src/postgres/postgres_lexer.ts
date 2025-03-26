@@ -150,11 +150,15 @@ export class PostgresLexer extends Lexer {
 		super(
 			"postgres",
 			[
-				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-				{ type: TokenType.BlockComment, re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy },
-				{ type: TokenType.LineComment, re: /--.*/y },
-				{ type: TokenType.LineBreak, re: /\n|\r\n?/y },
-				{ type: TokenType.WhiteSpace, re: /[ \t]+/y },
+				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+				{
+					type: TokenType.BlockComment,
+					re: /\/\*(?:(?!\/\*|\*\/).)*\*\//sy,
+					skip: true,
+				},
+				{ type: TokenType.LineComment, re: /--.*/y, skip: true },
+				{ type: TokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: TokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
 				{
 					type: TokenType.Command,
 					re: (state) =>

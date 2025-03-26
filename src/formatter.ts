@@ -93,7 +93,10 @@ export abstract class Formatter {
 		if (node.attribs.type === "LineComment") {
 			out.write(textContent(node), true);
 			out.control("softbreak");
-		} else if (node.attribs.type === "BlockComment" || node.attribs.type === "HintComment") {
+		} else if (
+			node.attribs.type === "BlockComment" ||
+			node.attribs.type === "HintComment"
+		) {
 			const segments = textContent(node).split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
 				if (i > 0) {
@@ -101,7 +104,10 @@ export abstract class Formatter {
 				}
 				out.write(segments[i], true);
 			}
-		} else if (node.attribs.type === "WhiteSpace" || node.attribs.type === "LineBreak") {
+		} else if (
+			node.attribs.type === "WhiteSpace" ||
+			node.attribs.type === "LineBreak"
+		) {
 			// no handle
 		} else if (node.attribs.type === "EoF") {
 			out.write("", false);

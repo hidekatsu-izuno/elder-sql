@@ -1,11 +1,17 @@
 import {
 	Keyword,
 	ParseError,
-	Token,
+	type Token,
 	TokenReader,
 	TokenType,
 } from "../lexer.js";
-import { SyntaxNode, SyntaxToken, SyntaxTrivia, AggregateParseError, Parser } from "../parser.js";
+import {
+	AggregateParseError,
+	Parser,
+	SyntaxNode,
+	SyntaxToken,
+	SyntaxTrivia,
+} from "../parser.js";
 import { apply, dequote } from "../utils.js";
 import { OracleLexer } from "./oracle_lexer.js";
 
@@ -105,11 +111,14 @@ export class OracleParser extends Parser {
 
 	private unknown(parent: SyntaxNode, r: TokenReader) {
 		if (!r.peek().eos) {
-			return apply(this.append(parent, new SyntaxNode("Unknown", {})), (node) => {
-				while (!r.peek().eos) {
-					this.appendToken(node, r.consume());
-				}
-			});
+			return apply(
+				this.append(parent, new SyntaxNode("Unknown", {})),
+				(node) => {
+					while (!r.peek().eos) {
+						this.appendToken(node, r.consume());
+					}
+				},
+			);
 		}
 	}
 

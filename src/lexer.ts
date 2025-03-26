@@ -1,14 +1,11 @@
 export class TokenType {
 	static EoF = new TokenType("EoF", { separator: true });
 	static Reserved = new TokenType("Reserved");
-	static WhiteSpace = new TokenType("WhiteSpace", { skip: true });
-	static LineComment = new TokenType("LineComment", { skip: true });
-	static BlockComment = new TokenType("BlockComment", { skip: true });
-	static HintComment = new TokenType("HintComment", { skip: true });
-	static LineBreak = new TokenType("LineBreak", {
-		skip: true,
-		separator: true,
-	});
+	static WhiteSpace = new TokenType("WhiteSpace");
+	static LineComment = new TokenType("LineComment");
+	static BlockComment = new TokenType("BlockComment");
+	static HintComment = new TokenType("HintComment");
+	static LineBreak = new TokenType("LineBreak", { separator: true });
 	static Command = new TokenType("Command");
 	static Delimiter = new TokenType("Delimiter", { separator: true });
 	static SemiColon = new TokenType("SemiColon", { separator: true });
@@ -32,18 +29,15 @@ export class TokenType {
 	static Error = new TokenType("Error", { separator: true });
 
 	name: string;
-	skip: boolean;
 	separator: boolean;
 
 	constructor(
 		name: string,
 		options?: {
-			skip?: boolean;
 			separator?: boolean;
 		},
 	) {
 		this.name = name;
-		this.skip = !!options?.skip;
 		this.separator = !!options?.separator;
 	}
 
@@ -205,6 +199,7 @@ export class Token {
 export declare type TokenPattern = {
 	type: TokenType;
 	re: RegExp | ((state: Record<string, any>) => RegExp | false);
+	skip?: boolean;
 	onMatch?: (state: Record<string, any>, token: Token) => Token[] | void;
 	onUnmatch?: (state: Record<string, any>) => void;
 };
@@ -306,7 +301,7 @@ export abstract class Lexer {
 				newTokens[0].preskips = [];
 			}
 			for (const newToken of newTokens || [token]) {
-				if (newToken.type.skip) {
+				if (!newTokens && pattern.skip) {
 					if (this.options.skipTokenStrategy !== "ignore") {
 						skips.push(newToken);
 					}
@@ -322,7 +317,7 @@ export abstract class Lexer {
 					}
 				}
 
-				if (!newToken.type.skip) {
+				if (!(!newTokens && pattern.skip)) {
 					if (skips.length > 0) {
 						newToken.preskips.push(...skips);
 						skips = [];

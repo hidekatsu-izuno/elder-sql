@@ -263,13 +263,14 @@ export class OracleLexer extends Lexer {
 		super(
 			"oracle",
 			[
-				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
-				{ type: TokenType.BlockComment, re: /\/\*.*?\*\//sy },
-				{ type: TokenType.LineComment, re: /--.*/y },
-				{ type: TokenType.LineBreak, re: /\n|\r\n?/y },
+				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
+				{ type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+				{ type: TokenType.LineComment, re: /--.*/y, skip: true },
+				{ type: TokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
 				{
 					type: TokenType.WhiteSpace,
 					re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y,
+					skip: true,
 				},
 				{
 					type: TokenType.Delimiter,

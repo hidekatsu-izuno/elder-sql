@@ -314,15 +314,16 @@ export class MysqlLexer extends Lexer {
 		super(
 			"mysql",
 			[
-				{ type: TokenType.LineBreak, re: /\n|\r\n?/y },
-				{ type: TokenType.WhiteSpace, re: /[ \t\v\f]+/y },
-				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy },
+				{ type: TokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: TokenType.WhiteSpace, re: /[ \t\v\f]+/y, skip: true },
+				{ type: TokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
 				{
 					type: TokenType.BlockComment,
 					re: /\/\*.*?\*\//sy,
+					skip: true,
 					onMatch: (state, token) => this.onMatchBlockComment(state, token),
 				},
-				{ type: TokenType.LineComment, re: /(#|--[ \t\v\f]).*/y },
+				{ type: TokenType.LineComment, re: /(#|--[ \t\v\f]).*/y, skip: true },
 				{
 					type: TokenType.Delimiter,
 					re: () => this.reDelimiterPattern,

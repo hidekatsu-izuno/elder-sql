@@ -35,7 +35,8 @@ export class Sqlite3Formatter extends Formatter {
 					before: "softbreak",
 				},
 				{
-					pattern: "[type=TableConstraint] :is([type=SortColumnList], [type=ColumnList])",
+					pattern:
+						"[type=TableConstraint] :is([type=SortColumnList], [type=ColumnList])",
 					before: "nospace",
 					after: "nospace",
 				},
@@ -137,7 +138,8 @@ export class Sqlite3Formatter extends Formatter {
 				},
 				{ pattern: "[type=ColumnConstraint]", after: "softbreak" },
 				{
-					pattern: ":is([type=UnaryPlusOperation], [type=UnaryMinusOperation]) > [type=Operator]",
+					pattern:
+						":is([type=UnaryPlusOperation], [type=UnaryMinusOperation]) > [type=Operator]",
 					after: "nospace",
 				},
 				{ pattern: "[type=Dot]", before: "nospace", after: "nospace" },
