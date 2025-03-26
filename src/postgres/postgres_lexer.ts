@@ -255,7 +255,7 @@ export class PostgresLexer extends Lexer {
 					location,
 				});
 
-				if (newToken.type.skip) {
+				if (type === TokenType.WhiteSpace || type === TokenType.LineBreak) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;
