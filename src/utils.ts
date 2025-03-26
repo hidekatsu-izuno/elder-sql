@@ -163,32 +163,3 @@ export function isJSExpression(text: string) {
 	const result = parseExpressionAt(text, 0, acornOption);
 	return result.end === text.length;
 }
-
-export function findElementFirst(
-	elem: Element,
-	...names: string[]
-): Element | undefined {
-	for (const child of elem.childNodes) {
-		if (child instanceof Element && child.tagName === names[0]) {
-			const result =
-				names.length > 1 ? findElementFirst(child, ...names.slice(1)) : child;
-			if (result) {
-				return result;
-			}
-		}
-	}
-}
-
-export function findElementAll(elem: Element, ...names: string[]) {
-	const results = new Array<Element>();
-	for (const child of elem.childNodes) {
-		if (child instanceof Element && child.tagName === names[0]) {
-			if (names.length > 1) {
-				results.push(...findElementAll(child, ...names.slice(1)));
-			} else {
-				results.push(child);
-			}
-		}
-	}
-	return results;
-}

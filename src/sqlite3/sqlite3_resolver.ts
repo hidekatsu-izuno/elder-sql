@@ -6,7 +6,6 @@ import {
 	Resolver,
 	type ResolverOptions,
 } from "../resolver.js";
-import { findElementAll, findElementFirst } from "../utils.js";
 import { Sqlite3Parser } from "./sqlite3_parser.js";
 
 export class Sqlite3Resolver extends Resolver {
@@ -16,11 +15,11 @@ export class Sqlite3Resolver extends Resolver {
 
 	protected extractNode(statement: Element) {
 		let fo: FromObject | undefined;
-		if (statement.name === "SelectStatement") {
+		if (statement.attribs.type === "SelectStatement") {
 			fo = this.extractSelectStatement(statement);
-		} else if (statement.name === "InsertStatement") {
-		} else if (statement.name === "UpdateStatement") {
-		} else if (statement.name === "DeleteStatement") {
+		} else if (statement.attribs.type === "InsertStatement") {
+		} else if (statement.attribs.type === "UpdateStatement") {
+		} else if (statement.attribs.type === "DeleteStatement") {
 		}
 		return fo;
 	}
@@ -147,4 +146,33 @@ export class Sqlite3Resolver extends Resolver {
 		}
 		const expr = findElementFirst(elem, "Expression");
 	}
+}
+
+function findElementFirst(
+	elem: Element,
+	...names: string[]
+): Element | undefined {
+	for (const child of elem.childNodes) {
+		if (child instanceof Element && child.tagName === names[0]) {
+			const result =
+				names.length > 1 ? findElementFirst(child, ...names.slice(1)) : child;
+			if (result) {
+				return result;
+			}
+		}
+	}
+}
+
+function findElementAll(elem: Element, ...names: string[]) {
+	const results = new Array<Element>();
+	for (const child of elem.childNodes) {
+		if (child instanceof Element && child.tagName === names[0]) {
+			if (names.length > 1) {
+				results.push(...findElementAll(child, ...names.slice(1)));
+			} else {
+				results.push(child);
+			}
+		}
+	}
+	return results;
 }
