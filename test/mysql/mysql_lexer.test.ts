@@ -10,16 +10,16 @@ describe("test mysql lexer", () => {
 			path.join(__dirname, "scripts", `${target}.sql`),
 			"utf8",
 		);
-		const expected = (await import(`./lexer/${target}.ts`)).default;
 		const tokens = new MysqlLexer({
 			version: "5.7.0",
 		}).lex(script);
 
 		writeDebugFile(
-			`test/dump/mysql/lexer/${target}.js.txt`,
+			`test/dump/mysql/lexer/${target}.ts`,
 			toJSScript(tokens),
 		);
 
+		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));
 	});
 });

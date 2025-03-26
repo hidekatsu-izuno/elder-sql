@@ -29,10 +29,9 @@ export function toJSScript(target: Element | Token | (Element | Token)[]) {
 	if (target instanceof Element) {
 		imports += 'import { Element, Text } from "domhandler"\n';
 	} else {
-		imports +=
-			'import { SourceLocation, Token, TokenType, Keyword } from "../../../src/lexer"\n';
+		imports += 'import { SourceLocation, Token } from "../../../src/lexer"\n';
+		imports +='import { SqlTokenType, SqlKeyword } from "../../../src/sql"\n';
 	}
-
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
 
@@ -77,7 +76,7 @@ export function toJSString(
 		}
 	} else {
 		text += `${" ".repeat(space * 2)}new Token(`;
-		text += `TokenType.${target.type.name}`;
+		text += `SqlTokenType.${target.type.name}`;
 		text += `, ${JSON.stringify(target.text)}`;
 		if (
 			target.keyword ||
@@ -88,7 +87,7 @@ export function toJSString(
 			text += ", { ";
 			const elems = new Array<string>();
 			if (target.keyword) {
-				elems.push(`keyword: Keyword.${target.keyword.name}`);
+				elems.push(`keyword: SqlKeyword.${target.keyword.name}`);
 			}
 			if (target.eos) {
 				elems.push(`eos: ${target.eos}`);

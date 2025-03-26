@@ -38,14 +38,14 @@ describe("test sqlite3 lexer", () => {
 			path.join(__dirname, "scripts", `${target}.sql`),
 			"utf8",
 		);
-		const expected = (await import(`./lexer/${target}.ts`)).default;
 		const tokens = new Sqlite3Lexer().lex(script);
 
 		writeDebugFile(
-			`test/dump/sqlite3/lexer/${target}.js.txt`,
+			`test/dump/sqlite3/lexer/${target}.ts`,
 			toJSScript(tokens),
 		);
 
+		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));
 	});
 });

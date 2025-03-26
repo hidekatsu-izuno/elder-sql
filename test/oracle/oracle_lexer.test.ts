@@ -10,14 +10,14 @@ describe("test oracle lexer", () => {
 			path.join(__dirname, "scripts", `${target}.sql`),
 			"utf8",
 		);
-		const expected = (await import(`./lexer/${target}.ts`)).default;
 		const tokens = new OracleLexer().lex(script);
 
 		writeDebugFile(
-			`test/dump/oracle/lexer/${target}.js.txt`,
+			`test/dump/oracle/lexer/${target}.ts`,
 			toJSScript(tokens),
 		);
 
+		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));
 	});
 });

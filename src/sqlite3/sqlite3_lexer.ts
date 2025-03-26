@@ -1,90 +1,90 @@
+import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
 	Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
 	Token,
-	TokenType,
 } from "../lexer.js";
 
 const ObjectStartSet = new Set<Keyword>([
-	Keyword.TABLE,
-	Keyword.VIEW,
-	Keyword.TRIGGER,
-	Keyword.INDEX,
+	SqlKeyword.TABLE,
+	SqlKeyword.VIEW,
+	SqlKeyword.TRIGGER,
+	SqlKeyword.INDEX,
 ]);
 
 const ReservedSet = new Set<Keyword>([
-	Keyword.ADD,
-	Keyword.ALL,
-	Keyword.ALTER,
-	Keyword.AND,
-	Keyword.AS,
-	Keyword.AUTOINCREMENT,
-	Keyword.BETWEEN,
-	Keyword.CASE,
-	Keyword.CHECK,
-	Keyword.COLLATE,
-	Keyword.COMMIT,
-	Keyword.CONSTRAINT,
-	Keyword.CREATE,
-	Keyword.CROSS,
-	Keyword.CURRENT_DATE,
-	Keyword.CURRENT_TIME,
-	Keyword.CURRENT_TIMESTAMP,
-	Keyword.DEFAULT,
-	Keyword.DEFERRABLE,
-	Keyword.DELETE,
-	Keyword.DISTINCT,
-	Keyword.ELSE,
-	Keyword.ESCAPE,
-	Keyword.EXISTS,
-	Keyword.FILTER,
-	Keyword.FOREIGN,
-	Keyword.FROM,
-	Keyword.GLOB,
-	Keyword.GROUP,
-	Keyword.HAVING,
-	Keyword.IN,
-	Keyword.INDEX,
-	Keyword.INDEXED,
-	Keyword.INNER,
-	Keyword.INSERT,
-	Keyword.INTO,
-	Keyword.IS,
-	Keyword.ISNULL,
-	Keyword.JOIN,
-	Keyword.LEFT,
-	Keyword.LIMIT,
-	Keyword.NATURAL,
-	Keyword.NOT,
-	Keyword.NOTHING,
-	Keyword.NOTNULL,
-	Keyword.NULL,
-	Keyword.ON,
-	Keyword.OR,
-	Keyword.ORDER,
-	Keyword.PRIMARY,
-	Keyword.OUTER,
-	Keyword.OVER,
-	Keyword.REFERENCES,
-	Keyword.REGEXP,
-	Keyword.RETURNING,
-	Keyword.RIGHT,
-	Keyword.SELECT,
-	Keyword.SET,
-	Keyword.TABLE,
-	Keyword.TEMPORARY,
-	Keyword.THEN,
-	Keyword.TO,
-	Keyword.TRANSACTION,
-	Keyword.UNIQUE,
-	Keyword.UPDATE,
-	Keyword.USING,
-	Keyword.VALUES,
-	Keyword.WHEN,
-	Keyword.WHERE,
-	Keyword.WINDOW,
+	SqlKeyword.ADD,
+	SqlKeyword.ALL,
+	SqlKeyword.ALTER,
+	SqlKeyword.AND,
+	SqlKeyword.AS,
+	SqlKeyword.AUTOINCREMENT,
+	SqlKeyword.BETWEEN,
+	SqlKeyword.CASE,
+	SqlKeyword.CHECK,
+	SqlKeyword.COLLATE,
+	SqlKeyword.COMMIT,
+	SqlKeyword.CONSTRAINT,
+	SqlKeyword.CREATE,
+	SqlKeyword.CROSS,
+	SqlKeyword.CURRENT_DATE,
+	SqlKeyword.CURRENT_TIME,
+	SqlKeyword.CURRENT_TIMESTAMP,
+	SqlKeyword.DEFAULT,
+	SqlKeyword.DEFERRABLE,
+	SqlKeyword.DELETE,
+	SqlKeyword.DISTINCT,
+	SqlKeyword.ELSE,
+	SqlKeyword.ESCAPE,
+	SqlKeyword.EXISTS,
+	SqlKeyword.FILTER,
+	SqlKeyword.FOREIGN,
+	SqlKeyword.FROM,
+	SqlKeyword.GLOB,
+	SqlKeyword.GROUP,
+	SqlKeyword.HAVING,
+	SqlKeyword.IN,
+	SqlKeyword.INDEX,
+	SqlKeyword.INDEXED,
+	SqlKeyword.INNER,
+	SqlKeyword.INSERT,
+	SqlKeyword.INTO,
+	SqlKeyword.IS,
+	SqlKeyword.ISNULL,
+	SqlKeyword.JOIN,
+	SqlKeyword.LEFT,
+	SqlKeyword.LIMIT,
+	SqlKeyword.NATURAL,
+	SqlKeyword.NOT,
+	SqlKeyword.NOTHING,
+	SqlKeyword.NOTNULL,
+	SqlKeyword.NULL,
+	SqlKeyword.ON,
+	SqlKeyword.OR,
+	SqlKeyword.ORDER,
+	SqlKeyword.PRIMARY,
+	SqlKeyword.OUTER,
+	SqlKeyword.OVER,
+	SqlKeyword.REFERENCES,
+	SqlKeyword.REGEXP,
+	SqlKeyword.RETURNING,
+	SqlKeyword.RIGHT,
+	SqlKeyword.SELECT,
+	SqlKeyword.SET,
+	SqlKeyword.TABLE,
+	SqlKeyword.TEMPORARY,
+	SqlKeyword.THEN,
+	SqlKeyword.TO,
+	SqlKeyword.TRANSACTION,
+	SqlKeyword.UNIQUE,
+	SqlKeyword.UPDATE,
+	SqlKeyword.USING,
+	SqlKeyword.VALUES,
+	SqlKeyword.WHEN,
+	SqlKeyword.WHERE,
+	SqlKeyword.WINDOW,
 ]);
 
 const Mode = {
@@ -111,17 +111,17 @@ export class Sqlite3Lexer extends Lexer {
 		super(
 			"sqlite3",
 			[
-				{ type: TokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
-				{ type: TokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: TokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
-				{ type: TokenType.WhiteSpace, re: /[ \t\f]+/y, skip: true },
+				{ type: SqlTokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
+				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
+				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: SqlTokenType.WhiteSpace, re: /[ \t\f]+/y, skip: true },
 				{
-					type: TokenType.Delimiter,
+					type: SqlTokenType.Delimiter,
 					re: /(?<=^|[\r\n])([/]|GO)[ \t\f]*(\n|\r\n?|$)/iy,
 					onMatch: (state, token) => this.onMatchDelimiter(state, token),
 				},
 				{
-					type: TokenType.Command,
+					type: SqlTokenType.Command,
 					re: (state) =>
 						state.mode === Mode.INITIAL
 							? /(?<=^|[\r\n])\..+(\n|\r\n?|$)/y
@@ -130,66 +130,66 @@ export class Sqlite3Lexer extends Lexer {
 					onUnmatch: (state) => this.onUnmatchCommand(state),
 				},
 				{
-					type: TokenType.SemiColon,
+					type: SqlTokenType.SemiColon,
 					re: /;/y,
 					onMatch: (state, token) => this.onMatchSemiColon(state, token),
 				},
-				{ type: TokenType.LeftBrace, re: /\{/y },
-				{ type: TokenType.RightBrace, re: /\}/y },
-				{ type: TokenType.LeftParen, re: /\(/y },
-				{ type: TokenType.RightParen, re: /\)/y },
-				{ type: TokenType.Comma, re: /,/y },
+				{ type: SqlTokenType.LeftBrace, re: /\{/y },
+				{ type: SqlTokenType.RightBrace, re: /\}/y },
+				{ type: SqlTokenType.LeftParen, re: /\(/y },
+				{ type: SqlTokenType.RightParen, re: /\)/y },
+				{ type: SqlTokenType.Comma, re: /,/y },
 				{
-					type: TokenType.Numeric,
+					type: SqlTokenType.Numeric,
 					re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
 				},
-				{ type: TokenType.Dot, re: /\./y },
-				{ type: TokenType.Blob, re: /[Xx]'([^']|'')*'/y },
-				{ type: TokenType.String, re: /'([^']|'')*'/y },
+				{ type: SqlTokenType.Dot, re: /\./y },
+				{ type: SqlTokenType.Blob, re: /[Xx]'([^']|'')*'/y },
+				{ type: SqlTokenType.String, re: /'([^']|'')*'/y },
 				{
-					type: TokenType.Identifier,
+					type: SqlTokenType.Identifier,
 					re: /("([^"]|"")*"|`([^`]|``)*`|\[[^\]]*\])/y,
 				},
-				{ type: TokenType.BindVariable, re: /\?([1-9][0-9]*)?/y },
+				{ type: SqlTokenType.BindVariable, re: /\?([1-9][0-9]*)?/y },
 				{
-					type: TokenType.BindVariable,
+					type: SqlTokenType.BindVariable,
 					re: /[$@:#][a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 				},
 				{
-					type: TokenType.Operator,
+					type: SqlTokenType.Operator,
 					re: /\|\||<<|>>|<>|->>?|[=<>!]=?|[~&|*/%+-]/y,
 				},
 				{
-					type: TokenType.Identifier,
+					type: SqlTokenType.Identifier,
 					re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 					onMatch: (state, token) => this.onMatchIdentifier(state, token),
 				},
-				{ type: TokenType.Error, re: /./y },
+				{ type: SqlTokenType.Error, re: /./y },
 			],
 			options,
 		);
 
 		const compileOptions = new Set(options.compileOptions || []);
 		if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
-			this.reserved.add(Keyword.ALWAYS);
-			this.reserved.add(Keyword.GENERATED);
+			this.reserved.add(SqlKeyword.ALWAYS);
+			this.reserved.add(SqlKeyword.GENERATED);
 		}
 		if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
-			this.reserved.add(Keyword.CURRENT);
-			this.reserved.add(Keyword.EXCLUDE);
-			this.reserved.add(Keyword.FOLLOWING);
-			this.reserved.add(Keyword.GROUPS);
-			this.reserved.add(Keyword.OTHERS);
-			this.reserved.add(Keyword.PARTITION);
-			this.reserved.add(Keyword.PRECEDING);
-			this.reserved.add(Keyword.RANGE);
-			this.reserved.add(Keyword.TIES);
-			this.reserved.add(Keyword.UNBOUNDED);
+			this.reserved.add(SqlKeyword.CURRENT);
+			this.reserved.add(SqlKeyword.EXCLUDE);
+			this.reserved.add(SqlKeyword.FOLLOWING);
+			this.reserved.add(SqlKeyword.GROUPS);
+			this.reserved.add(SqlKeyword.OTHERS);
+			this.reserved.add(SqlKeyword.PARTITION);
+			this.reserved.add(SqlKeyword.PRECEDING);
+			this.reserved.add(SqlKeyword.RANGE);
+			this.reserved.add(SqlKeyword.TIES);
+			this.reserved.add(SqlKeyword.UNBOUNDED);
 		}
 		if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
-			this.reserved.add(Keyword.EXCEPT);
-			this.reserved.add(Keyword.INTERSECT);
-			this.reserved.add(Keyword.UNION);
+			this.reserved.add(SqlKeyword.EXCEPT);
+			this.reserved.add(SqlKeyword.INTERSECT);
+			this.reserved.add(SqlKeyword.UNION);
 		}
 	}
 
@@ -222,7 +222,7 @@ export class Sqlite3Lexer extends Lexer {
 			}
 			if (m[2]) {
 				token.postskips.push(
-					new Token(TokenType.WhiteSpace, m[2], {
+					new Token(SqlTokenType.WhiteSpace, m[2], {
 						location,
 					}),
 				);
@@ -237,7 +237,7 @@ export class Sqlite3Lexer extends Lexer {
 			}
 			if (m[3]) {
 				token.postskips.push(
-					new Token(TokenType.LineBreak, m[3], {
+					new Token(SqlTokenType.LineBreak, m[3], {
 						location,
 					}),
 				);
@@ -259,14 +259,14 @@ export class Sqlite3Lexer extends Lexer {
 			const m = re.exec(token.text);
 			if (m) {
 				const type = m[1]
-					? TokenType.LineBreak
+					? SqlTokenType.LineBreak
 					: m[2]
-						? TokenType.WhiteSpace
+						? SqlTokenType.WhiteSpace
 						: m[3]
-							? TokenType.String
+							? SqlTokenType.String
 							: pos === 0
-								? TokenType.Command
-								: TokenType.Identifier;
+								? SqlTokenType.Command
+								: SqlTokenType.Identifier;
 
 				if (token.location) {
 					location = new SourceLocation(
@@ -281,7 +281,7 @@ export class Sqlite3Lexer extends Lexer {
 					location,
 				});
 
-				if (type === TokenType.WhiteSpace || type === TokenType.LineBreak) {
+				if (type === SqlTokenType.WhiteSpace || type === SqlTokenType.LineBreak) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;
@@ -319,15 +319,15 @@ export class Sqlite3Lexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = Keyword.for(token.text);
+		const keyword = SqlKeyword.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
 			if (this.isReserved(keyword)) {
-				token.type = TokenType.Reserved;
+				token.type = SqlTokenType.Reserved;
 			}
 
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === Keyword.CREATE) {
+				if (keyword === SqlKeyword.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
@@ -336,20 +336,20 @@ export class Sqlite3Lexer extends Lexer {
 				state.mode === Mode.SQL_OBJECT_DEF &&
 				Sqlite3Lexer.isObjectStart(keyword)
 			) {
-				if (keyword === Keyword.TRIGGER) {
+				if (keyword === SqlKeyword.TRIGGER) {
 					state.mode = Mode.SQL_PROC_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (state.mode === Mode.SQL_PROC_DEF) {
-				if (keyword === Keyword.BEGIN) {
+				if (keyword === SqlKeyword.BEGIN) {
 					state.mode = Mode.SQL_PROC_BODY;
 					state.stack = [{ isSentenceStart: true, type: keyword }];
 				}
 			} else if (state.mode === Mode.SQL_PROC_BODY) {
 				const ctx = state.stack[state.stack.length - 1];
 				if (ctx.isSentenceStart) {
-					if (keyword === Keyword.END) {
+					if (keyword === SqlKeyword.END) {
 						state.stack.pop();
 						if (state.stack.length === 0) {
 							state.mode = Mode.SQL_PART;

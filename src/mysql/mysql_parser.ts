@@ -1,9 +1,8 @@
+import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
-	Keyword,
 	ParseError,
 	type Token,
 	TokenReader,
-	TokenType,
 } from "../lexer.js";
 import {
 	AggregateParseError,
@@ -30,13 +29,13 @@ export class OracleParser extends Parser {
 			try {
 				if (
 					r.peekIf({
-						type: [TokenType.SemiColon, TokenType.Delimiter, TokenType.EoF],
+						type: [SqlTokenType.SemiColon, SqlTokenType.Delimiter, SqlTokenType.EoF],
 					})
 				) {
 					this.appendToken(root, r.consume());
-				} else if (r.peekIf(TokenType.Command)) {
+				} else if (r.peekIf(SqlTokenType.Command)) {
 					this.command(root, r);
-				} else if (r.peekIf(Keyword.EXPLAIN)) {
+				} else if (r.peekIf(SqlKeyword.EXPLAIN)) {
 					this.explainStatement(root, r);
 				} else {
 					this.statement(root, r);
@@ -66,13 +65,13 @@ export class OracleParser extends Parser {
 		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
 		try {
 			return apply(current, (node) => {
-				this.appendToken(node, r.consume(Keyword.EXPLAIN));
-				if (r.peekIf(Keyword.QUERY)) {
+				this.appendToken(node, r.consume(SqlKeyword.EXPLAIN));
+				if (r.peekIf(SqlKeyword.QUERY)) {
 					apply(
 						this.append(node, new SyntaxNode("QueryPlanOption", {})),
 						(node) => {
 							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(Keyword.PLAN));
+							this.appendToken(node, r.consume(SqlKeyword.PLAN));
 						},
 					);
 				}
@@ -88,16 +87,16 @@ export class OracleParser extends Parser {
 
 	private statement(parent: SyntaxNode, r: TokenReader) {
 		let stmt: unknown;
-		if (r.peekIf(Keyword.CREATE)) {
+		if (r.peekIf(SqlKeyword.CREATE)) {
 			const mark = r.pos;
 			r.consume();
 			while (!r.peek().eos && !MysqlLexer.isObjectStart(r.peek().keyword)) {
 				r.consume();
 			}
-		} else if (r.peekIf(Keyword.ALTER)) {
+		} else if (r.peekIf(SqlKeyword.ALTER)) {
 			const mark = r.pos;
 			r.consume();
-		} else if (r.peekIf(Keyword.DROP)) {
+		} else if (r.peekIf(SqlKeyword.DROP)) {
 			const mark = r.pos;
 			r.consume();
 		} else {
@@ -127,7 +126,7 @@ export class OracleParser extends Parser {
 		try {
 			return apply(current, (node) => {
 				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
-					const token = r.consume(TokenType.Command);
+					const token = r.consume(SqlTokenType.Command);
 					this.appendToken(node, token);
 					node.attribs.value = token.text;
 				});

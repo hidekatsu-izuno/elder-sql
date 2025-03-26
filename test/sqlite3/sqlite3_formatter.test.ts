@@ -44,7 +44,7 @@ describe("test sqlite3 formatter", () => {
 		);
 		const formatted = new Sqlite3Formatter().format(script);
 
-		writeDebugFile(`test/dump/sqlite3/formatter/${target}.sql.txt`, formatted);
+		writeDebugFile(`test/dump/sqlite3/formatter/${target}.sql`, formatted);
 
 		expect(formatted).toStrictEqual(expected);
 	});

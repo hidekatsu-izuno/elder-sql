@@ -12,14 +12,14 @@ describe("test postgres lexer", () => {
 				path.join(__dirname, "scripts", `${target}.sql`),
 				"utf8",
 			);
-			const expected = (await import(`./lexer/${target}.ts`)).default;
 			const tokens = new PostgresLexer().lex(script);
 
 			writeDebugFile(
-				`test/dump/postgres/lexer/${target}.js.txt`,
+				`test/dump/postgres/lexer/${target}.ts`,
 				toJSScript(tokens),
 			);
 
+			const expected = (await import(`./lexer/${target}.ts`)).default;
 			expect(toJSString(tokens)).toStrictEqual(toJSString(expected));
 		},
 	);

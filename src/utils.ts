@@ -1,6 +1,5 @@
 import type { Options } from "acorn";
 import { parseExpressionAt } from "acorn";
-import { Element } from "domhandler";
 
 const acornOption: Options = {
 	ecmaVersion: "latest",
