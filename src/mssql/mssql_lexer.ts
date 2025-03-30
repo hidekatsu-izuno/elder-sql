@@ -317,7 +317,7 @@ export class MssqlLexer extends Lexer {
 					onMatch: (state, token) => this.onMatchBlockComment(state, token),
 				},
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
 				{
 					type: SqlTokenType.WhiteSpace,
 					skip: true,
@@ -326,6 +326,7 @@ export class MssqlLexer extends Lexer {
 				{
 					type: SqlTokenType.Delimiter,
 					re: /(?<=^|[\r\n])[ \t]*GO[ \t]*(\n|\r\n?|$)/iy,
+					separator: true,
 					onMatch: (state, token) => this.onMatchDelimiter(state, token),
 				},
 				{
@@ -340,13 +341,14 @@ export class MssqlLexer extends Lexer {
 				{
 					type: SqlTokenType.SemiColon,
 					re: /;/y,
+					separator: true,
 					onMatch: (state, token) => this.onMatchSemiColon(state, token),
 				},
-				{ type: SqlTokenType.LeftBrace, re: /\{/y },
-				{ type: SqlTokenType.RightBrace, re: /\}/y },
-				{ type: SqlTokenType.LeftParen, re: /\(/y },
-				{ type: SqlTokenType.RightParen, re: /\)/y },
-				{ type: SqlTokenType.Comma, re: /,/y },
+				{ type: SqlTokenType.LeftBrace, re: /\{/y, separator: true },
+				{ type: SqlTokenType.RightBrace, re: /\}/y, separator: true },
+				{ type: SqlTokenType.LeftParen, re: /\(/y, separator: true },
+				{ type: SqlTokenType.RightParen, re: /\)/y, separator: true },
+				{ type: SqlTokenType.Comma, re: /,/y, separator: true },
 				{
 					type: SqlTokenType.Label,
 					re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*:/y,
@@ -356,7 +358,7 @@ export class MssqlLexer extends Lexer {
 					type: SqlTokenType.Numeric,
 					re: /([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
 				},
-				{ type: SqlTokenType.Dot, re: /\./y },
+				{ type: SqlTokenType.Dot, re: /\./y, separator: true },
 				{ type: SqlTokenType.String, re: /[Nn]?'([^']|'')*'/y },
 				{ type: SqlTokenType.Identifier, re: /("([^"]|"")*"|\[[^\]]*\])/y },
 				{ type: SqlTokenType.BindVariable, re: /\?/y },
@@ -371,13 +373,13 @@ export class MssqlLexer extends Lexer {
 				{
 					type: SqlTokenType.Operator,
 					re: /\|\||<<|>>|<>|::|[=<>!*/%^&|+-]=?|![<>]|[~]/y,
+					separator: true,
 				},
 				{
 					type: SqlTokenType.Identifier,
 					re: /(@@)?[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 					onMatch: (state, token) => this.onMatchIdentifier(state, token),
 				},
-				{ type: SqlTokenType.Error, re: /./y },
 			],
 			options,
 		);

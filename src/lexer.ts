@@ -1,18 +1,12 @@
 export class TokenType {
-	static EoF = new TokenType("EoF", { separator: true });
-	static Error = new TokenType("Error", { separator: true });
+	static Reserved = new TokenType("Reserved");
+	static EoF = new TokenType("EoF");
+	static Error = new TokenType("Error");
 
 	name: string;
-	separator: boolean;
 
-	constructor(
-		name: string,
-		options?: {
-			separator?: boolean;
-		},
-	) {
+	constructor(name: string) {
 		this.name = name;
-		this.separator = !!options?.separator;
 	}
 
 	toString() {
@@ -85,6 +79,8 @@ export class Token {
 	text: string;
 	keyword?: Keyword;
 	eos: boolean;
+	skip: boolean;
+	separator: boolean;
 	preskips: Token[];
 	postskips: Token[];
 	location?: SourceLocation;
@@ -95,6 +91,8 @@ export class Token {
 		options?: {
 			keyword?: Keyword;
 			eos?: boolean;
+			skip?: boolean;
+			separator?: boolean;
 			preskips?: Token[];
 			postskips?: Token[];
 			location?: SourceLocation;
@@ -104,6 +102,8 @@ export class Token {
 		this.text = text;
 		this.keyword = options?.keyword;
 		this.eos = !!options?.eos;
+		this.skip = !!options?.skip;
+		this.separator = !!options?.separator;
 		this.preskips = options?.preskips ?? [];
 		this.postskips = options?.postskips ?? [];
 		this.location = options?.location;
@@ -162,6 +162,7 @@ export declare type TokenPattern = {
 	type: TokenType;
 	re: RegExp | ((state: Record<string, any>) => RegExp | false);
 	skip?: boolean;
+	separator?: boolean;
 	onMatch?: (state: Record<string, any>, token: Token) => Token[] | void;
 	onUnmatch?: (state: Record<string, any>) => void;
 };
@@ -182,7 +183,10 @@ export abstract class Lexer {
 		options: LexerOptions = {},
 	) {
 		this.name = name;
-		this.patterns = patterns;
+		this.patterns = [
+			...patterns,
+			{ type: TokenType.Error, re: /./y, separator: true },
+		];
 		this.options = options;
 		if (!options.skipTokenStrategy) {
 			options.skipTokenStrategy = "adaptive";
@@ -251,6 +255,8 @@ export abstract class Lexer {
 			}
 
 			const token = new Token(pattern.type, text, {
+				skip: pattern.skip,
+				separator: pattern.separator,
 				location,
 			});
 			const newTokens = pattern.onMatch?.(state, token);
@@ -259,14 +265,14 @@ export abstract class Lexer {
 				newTokens[0].preskips = [];
 			}
 			for (const newToken of newTokens || [token]) {
-				if (!newTokens && pattern.skip) {
+				if (newToken.skip) {
 					if (this.options.skipTokenStrategy !== "ignore") {
 						skips.push(newToken);
 					}
 				}
 
 				if (this.options.skipTokenStrategy === "adaptive") {
-					if (newToken.type.separator) {
+					if (newToken.separator) {
 						const last = tokens[tokens.length - 1];
 						if (last && last.postskips.length === 0 && skips.length > 0) {
 							last.postskips.push(...skips);
@@ -275,7 +281,7 @@ export abstract class Lexer {
 					}
 				}
 
-				if (!(!newTokens && pattern.skip)) {
+				if (!newToken.skip) {
 					if (skips.length > 0) {
 						newToken.preskips.push(...skips);
 						skips = [];

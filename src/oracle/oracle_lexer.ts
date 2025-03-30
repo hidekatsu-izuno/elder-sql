@@ -266,7 +266,7 @@ export class OracleLexer extends Lexer {
 				{ type: SqlTokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
 				{ type: SqlTokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
 				{
 					type: SqlTokenType.WhiteSpace,
 					re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y,
@@ -275,6 +275,7 @@ export class OracleLexer extends Lexer {
 				{
 					type: SqlTokenType.Delimiter,
 					re: /(?<=^|[\r\n])[ \t]*([./]|R(UN)?)[ \t]*(\n|\r\n?|$)/iy,
+					separator: true,
 					onMatch: (state, token) => this.onMatchDelimiter(state, token),
 				},
 				{
@@ -286,14 +287,15 @@ export class OracleLexer extends Lexer {
 				{
 					type: SqlTokenType.SemiColon,
 					re: /;/y,
+					separator: true,
 					onMatch: (state, token) => this.onMatchSemiColon(state, token),
 				},
-				{ type: SqlTokenType.LeftBrace, re: /\{/y },
-				{ type: SqlTokenType.RightBrace, re: /\}/y },
-				{ type: SqlTokenType.Operator, re: /[（(][＋+][）)]|\.\./y },
-				{ type: SqlTokenType.LeftParen, re: /[（(]/y },
-				{ type: SqlTokenType.RightParen, re: /[）)]/y },
-				{ type: SqlTokenType.Comma, re: /[，,]/y },
+				{ type: SqlTokenType.LeftBrace, re: /\{/y, separator: true },
+				{ type: SqlTokenType.RightBrace, re: /\}/y, separator: true },
+				{ type: SqlTokenType.Operator, re: /[（(][＋+][）)]|\.\./y, separator: true },
+				{ type: SqlTokenType.LeftParen, re: /[（(]/y, separator: true },
+				{ type: SqlTokenType.RightParen, re: /[）)]/y, separator: true },
+				{ type: SqlTokenType.Comma, re: /[，,]/y, separator: true },
 				{
 					type: SqlTokenType.Label,
 					re: /<<[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*>>/y,
@@ -302,7 +304,7 @@ export class OracleLexer extends Lexer {
 					type: SqlTokenType.Numeric,
 					re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
 				},
-				{ type: SqlTokenType.Dot, re: /[．.]/y },
+				{ type: SqlTokenType.Dot, re: /[．.]/y, separator: true },
 				{ type: SqlTokenType.String, re: /[ＮｎNn]?'([^']|'')*'/y },
 				{
 					type: SqlTokenType.String,
@@ -316,6 +318,7 @@ export class OracleLexer extends Lexer {
 				},
 				{
 					type: SqlTokenType.Operator,
+					separator: true,
 					re: /｜｜|\|\||＜＞|<>|[＝＜＞！＾：=<>!^:][＝=]?|[％～＆｜＊／＋－%~&|*/+-]/y,
 				},
 				{
@@ -323,7 +326,6 @@ export class OracleLexer extends Lexer {
 					re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 					onMatch: (state, token) => this.onMatchIdentifier(state, token),
 				},
-				{ type: SqlTokenType.Error, re: /./y },
 			],
 			options,
 		);

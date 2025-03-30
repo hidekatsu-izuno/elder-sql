@@ -314,7 +314,7 @@ export class MysqlLexer extends Lexer {
 		super(
 			"mysql",
 			[
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true },
+				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
 				{ type: SqlTokenType.WhiteSpace, re: /[ \t\v\f]+/y, skip: true },
 				{ type: SqlTokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
 				{
@@ -331,6 +331,7 @@ export class MysqlLexer extends Lexer {
 				{
 					type: SqlTokenType.Delimiter,
 					re: () => this.reDelimiterPattern,
+					separator: true,
 					onMatch: (state, token) => this.onMatchDelimiter(state, token),
 				},
 				{
@@ -340,11 +341,11 @@ export class MysqlLexer extends Lexer {
 					onMatch: (state, token) => this.onMatchCommand(state, token),
 					onUnmatch: (state) => this.onUnmatchCommand(state),
 				},
-				{ type: SqlTokenType.LeftBrace, re: /\{/y },
-				{ type: SqlTokenType.RightBrace, re: /\}/y },
-				{ type: SqlTokenType.LeftParen, re: /\(/y },
-				{ type: SqlTokenType.RightParen, re: /\)/y },
-				{ type: SqlTokenType.Comma, re: /,/y },
+				{ type: SqlTokenType.LeftBrace, re: /\{/y, separator: true },
+				{ type: SqlTokenType.RightBrace, re: /\}/y, separator: true },
+				{ type: SqlTokenType.LeftParen, re: /\(/y, separator: true },
+				{ type: SqlTokenType.RightParen, re: /\)/y, separator: true },
+				{ type: SqlTokenType.Comma, re: /,/y, separator: true },
 				{
 					type: SqlTokenType.Label,
 					re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*:/y,
@@ -354,7 +355,7 @@ export class MysqlLexer extends Lexer {
 					re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
 				},
 				{ type: SqlTokenType.Size, re: /(0|[1-9][0-9]*)[KMG]/iy },
-				{ type: SqlTokenType.Dot, re: /\./y },
+				{ type: SqlTokenType.Dot, re: /\./y, separator: true },
 				{
 					type: SqlTokenType.String,
 					re: /([bBnN]|_[a-zA-Z]+)?('([^']|'')*'|"([^"]|"")*")/y,
@@ -378,7 +379,6 @@ export class MysqlLexer extends Lexer {
 					re: /[a-zA-Z_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 					onMatch: (state, token) => this.onMatchIdentifier(state, token),
 				},
-				{ type: SqlTokenType.Error, re: /./y },
 			],
 			options,
 		);
