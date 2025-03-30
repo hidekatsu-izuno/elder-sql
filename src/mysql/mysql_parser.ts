@@ -1,9 +1,4 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
-import {
-	ParseError,
-	type Token,
-	TokenReader,
-} from "../lexer.js";
+import { ParseError, type Token, TokenReader } from "../lexer.js";
 import {
 	AggregateParseError,
 	Parser,
@@ -11,6 +6,7 @@ import {
 	SyntaxToken,
 	SyntaxTrivia,
 } from "../parser.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 import { apply, dequote } from "../utils.js";
 import { MysqlLexer } from "./mysql_lexer.js";
 
@@ -29,7 +25,11 @@ export class OracleParser extends Parser {
 			try {
 				if (
 					r.peekIf({
-						type: [SqlTokenType.SemiColon, SqlTokenType.Delimiter, SqlTokenType.EoF],
+						type: [
+							SqlTokenType.SemiColon,
+							SqlTokenType.Delimiter,
+							SqlTokenType.EoF,
+						],
 					})
 				) {
 					this.appendToken(root, r.consume());

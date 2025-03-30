@@ -14,10 +14,7 @@ describe("test mysql lexer", () => {
 			version: "5.7.0",
 		}).lex(script);
 
-		writeDebugFile(
-			`test/dump/mysql/lexer/${target}.ts`,
-			toJSScript(tokens),
-		);
+		writeDebugFile(`test/dump/mysql/lexer/${target}.ts`, toJSScript(tokens));
 
 		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));

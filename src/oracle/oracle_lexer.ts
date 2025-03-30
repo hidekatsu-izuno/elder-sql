@@ -1,11 +1,11 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
-	Keyword,
+	type Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
 	Token,
 } from "../lexer.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 
 export const ReservedSet = new Set<Keyword>([
 	SqlKeyword.ACCESS,
@@ -441,7 +441,10 @@ export class OracleLexer extends Lexer {
 					location,
 				});
 
-				if (type === SqlTokenType.WhiteSpace || type === SqlTokenType.LineBreak) {
+				if (
+					type === SqlTokenType.WhiteSpace ||
+					type === SqlTokenType.LineBreak
+				) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;
@@ -480,7 +483,10 @@ export class OracleLexer extends Lexer {
 			if (state.mode === Mode.SQL_START) {
 				if (keyword === SqlKeyword.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
-				} else if (keyword === SqlKeyword.DECLARE || keyword === SqlKeyword.BEGIN) {
+				} else if (
+					keyword === SqlKeyword.DECLARE ||
+					keyword === SqlKeyword.BEGIN
+				) {
 					state.mode = Mode.SQL_PROC;
 				} else {
 					state.mode = Mode.SQL_PART;

@@ -1,9 +1,4 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
-import {
-	ParseError,
-	type Token,
-	TokenReader,
-} from "../lexer.js";
+import { ParseError, type Token, TokenReader } from "../lexer.js";
 import {
 	AggregateParseError,
 	Parser,
@@ -11,6 +6,7 @@ import {
 	SyntaxToken,
 	SyntaxTrivia,
 } from "../parser.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 import { apply, dequote } from "../utils.js";
 import { PostgresLexer } from "./postgres_lexer.js";
 
@@ -29,7 +25,11 @@ export class PostgresParser extends Parser {
 			try {
 				if (
 					r.peekIf({
-						type: [SqlTokenType.SemiColon, SqlTokenType.Delimiter, SqlTokenType.EoF],
+						type: [
+							SqlTokenType.SemiColon,
+							SqlTokenType.Delimiter,
+							SqlTokenType.EoF,
+						],
 					})
 				) {
 					this.appendToken(root, r.consume());
@@ -77,7 +77,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("AnalyzeOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -87,7 +89,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("VerboseOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -97,7 +101,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("CostsOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -107,7 +113,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("SettingsOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -117,7 +125,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("BuffersOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -127,7 +137,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("WalOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -137,7 +149,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("TimingOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},
@@ -147,7 +161,9 @@ export class PostgresParser extends Parser {
 										this.append(node, new SyntaxNode("SummaryOption", {})),
 										(node) => {
 											this.appendToken(node, r.consume());
-											if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+											if (
+												r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })
+											) {
 												this.booleanLiteral(node, r);
 											}
 										},

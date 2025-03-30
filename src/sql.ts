@@ -1,4 +1,4 @@
-import { Keyword, TokenType } from "./lexer.js"
+import { Keyword, TokenType } from "./lexer.js";
 
 export class SqlTokenType extends TokenType {
 	static Reserved = new TokenType("Reserved");
@@ -27,7 +27,7 @@ export class SqlTokenType extends TokenType {
 	static BindVariable = new TokenType("BindVariable");
 	static Variable = new TokenType("Variable");
 	static Identifier = new TokenType("Identifier");
-};
+}
 
 export class SqlKeyword extends Keyword {
 	static ABBREV = new Keyword("ABBREV");
@@ -2233,10 +2233,10 @@ export class SqlKeyword extends Keyword {
 	static _ROWID_ = new Keyword("_ROWID_");
 
 	static for(name: string) {
-		const keyword = SqlKeyword[name.toUpperCase() as keyof Keyword] as any;
+		const keyword = (SqlKeyword as any)[name.toUpperCase()];
 		if (keyword instanceof Keyword) {
 			return keyword;
 		}
 		return undefined;
 	}
-};
+}

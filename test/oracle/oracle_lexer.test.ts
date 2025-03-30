@@ -12,10 +12,7 @@ describe("test oracle lexer", () => {
 		);
 		const tokens = new OracleLexer().lex(script);
 
-		writeDebugFile(
-			`test/dump/oracle/lexer/${target}.ts`,
-			toJSScript(tokens),
-		);
+		writeDebugFile(`test/dump/oracle/lexer/${target}.ts`, toJSScript(tokens));
 
 		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));

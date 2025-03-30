@@ -1,12 +1,12 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
-	Keyword,
+	type Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
 	Token,
 	TokenType,
 } from "../lexer.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 
 const ObjectStartSet = new Set<Keyword>([
 	SqlKeyword.ACCESS,
@@ -260,7 +260,10 @@ export class PostgresLexer extends Lexer {
 					location,
 				});
 
-				if (type === SqlTokenType.WhiteSpace || type === SqlTokenType.LineBreak) {
+				if (
+					type === SqlTokenType.WhiteSpace ||
+					type === SqlTokenType.LineBreak
+				) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;
@@ -307,7 +310,10 @@ export class PostgresLexer extends Lexer {
 			if (state.mode === Mode.SQL_START) {
 				if (keyword === SqlKeyword.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
-				} else if (keyword === SqlKeyword.DECLARE || keyword === SqlKeyword.BEGIN) {
+				} else if (
+					keyword === SqlKeyword.DECLARE ||
+					keyword === SqlKeyword.BEGIN
+				) {
 					state.mode = Mode.SQL_PROC_BODY;
 					state.stack = [{ isSentenceStart: true, type: keyword }];
 				} else {
@@ -317,7 +323,10 @@ export class PostgresLexer extends Lexer {
 				state.mode === Mode.SQL_OBJECT_DEF &&
 				PostgresLexer.isObjectStart(keyword)
 			) {
-				if (keyword === SqlKeyword.FUNCTION || keyword === SqlKeyword.PROCEDURE) {
+				if (
+					keyword === SqlKeyword.FUNCTION ||
+					keyword === SqlKeyword.PROCEDURE
+				) {
 					state.mode = Mode.SQL_PROC_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;

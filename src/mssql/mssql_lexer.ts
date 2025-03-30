@@ -1,10 +1,10 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
-	Keyword,
+	type Keyword,
 	Lexer,
 	type LexerOptions,
 	type Token,
 } from "../lexer.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 
 const ReservedSet = new Set<Keyword>([
 	SqlKeyword.ADD,

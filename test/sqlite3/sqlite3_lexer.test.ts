@@ -40,10 +40,7 @@ describe("test sqlite3 lexer", () => {
 		);
 		const tokens = new Sqlite3Lexer().lex(script);
 
-		writeDebugFile(
-			`test/dump/sqlite3/lexer/${target}.ts`,
-			toJSScript(tokens),
-		);
+		writeDebugFile(`test/dump/sqlite3/lexer/${target}.ts`, toJSScript(tokens));
 
 		const expected = (await import(`./lexer/${target}.ts`)).default;
 		expect(toJSString(tokens)).toStrictEqual(toJSString(expected));

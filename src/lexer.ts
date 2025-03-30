@@ -370,7 +370,13 @@ export class TokenReader {
 		return this.tokens[this.pos + pos];
 	}
 
-	peekIf(...conditions: (Keyword | TokenType | TokenQuery & { optional?: boolean })[]) {
+	peekIf(
+		...conditions: (
+			| Keyword
+			| TokenType
+			| (TokenQuery & { optional?: boolean })
+		)[]
+	) {
 		if (conditions.length === 0) {
 			throw new RangeError("conditions must be at least one.");
 		}
@@ -383,7 +389,7 @@ export class TokenReader {
 			}
 
 			const token = this.peek(pos);
-			if (token && token.is(condition)) {
+			if (token?.is(condition)) {
 				pos++;
 			} else if (!("optional" in condition && condition.optional)) {
 				return false;
@@ -427,14 +433,14 @@ export class TokenReader {
 			for (let i = start; i <= end; i++) {
 				line += this.tokens[i].toString();
 			}
-			message = `Unexpected token: ${line.replace(/\r?\n/g, "\u21B5")}\u261C`;
+			message = `Unexpected token: ${token.text}\n${line.replace(/\r?\n/g, "\u21B5\n")}\u261C`;
 		}
 
 		if (lineNumber == null) {
 			lineNumber = 1;
 			for (let i = 0; i < this.pos; i++) {
 				const token = this.tokens[i];
-				lineNumber += (token.text.match(/\r?\n/g)?.length || 0);
+				lineNumber += token.text.match(/\r?\n/g)?.length || 0;
 			}
 		}
 

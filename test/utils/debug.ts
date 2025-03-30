@@ -30,7 +30,7 @@ export function toJSScript(target: Element | Token | (Element | Token)[]) {
 		imports += 'import { Element, Text } from "domhandler"\n';
 	} else {
 		imports += 'import { SourceLocation, Token } from "../../../src/lexer"\n';
-		imports +='import { SqlTokenType, SqlKeyword } from "../../../src/sql"\n';
+		imports += 'import { SqlTokenType, SqlKeyword } from "../../../src/sql"\n';
 	}
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
@@ -58,8 +58,13 @@ export function toJSString(
 	} else if (target instanceof Element) {
 		text += `${" ".repeat(space * 2)}new Element(${JSON.stringify(target.name)}, `;
 		text += JSON.stringify(target.attribs || {}, (_, v) => {
-			if (!(v instanceof Array || v === null) && typeof v == "object") {
-				return Object.keys(v).sort().reduce((r, k) => { r[k] = v[k]; return r }, {});
+			if (!Array.isArray(v) && v !== null && typeof v === "object") {
+				return Object.keys(v)
+					.sort()
+					.reduce((r, k) => {
+						r[k] = v[k];
+						return r;
+					}, {});
 			} else {
 				return v;
 			}

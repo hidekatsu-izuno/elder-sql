@@ -1,11 +1,11 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
 import {
-	Keyword,
+	type Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
 	Token,
 } from "../lexer.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 
 const ObjectStartSet = new Set<Keyword>([
 	SqlKeyword.TABLE,
@@ -281,7 +281,10 @@ export class Sqlite3Lexer extends Lexer {
 					location,
 				});
 
-				if (type === SqlTokenType.WhiteSpace || type === SqlTokenType.LineBreak) {
+				if (
+					type === SqlTokenType.WhiteSpace ||
+					type === SqlTokenType.LineBreak
+				) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;

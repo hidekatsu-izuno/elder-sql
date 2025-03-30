@@ -1,10 +1,10 @@
-import { SqlTokenType, SqlKeyword } from "./sql.js"
-import { TokenType, type Lexer, type Token } from "./lexer.js";
+import { type Lexer, type Token, TokenType } from "./lexer.js";
 import { TokenReader } from "./lexer.js";
 import { MssqlLexer } from "./mssql/mssql_lexer.js";
 import { MysqlLexer } from "./mysql/mysql_lexer.js";
 import { OracleLexer } from "./oracle/oracle_lexer.js";
 import { PostgresLexer } from "./postgres/postgres_lexer.js";
+import { SqlKeyword, SqlTokenType } from "./sql.js";
 import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.js";
 import { isJSExpression, isJSIdentifier } from "./utils.js";
 

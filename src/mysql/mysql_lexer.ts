@@ -1,11 +1,11 @@
-import { SqlTokenType, SqlKeyword } from "../sql.js"
 import semver from "semver";
 import {
-	Keyword,
+	type Keyword,
 	Lexer,
 	type LexerOptions,
 	type Token,
 } from "../lexer.js";
+import { SqlKeyword, SqlTokenType } from "../sql.js";
 import { escapeRegExp } from "../utils.js";
 
 const ReservedSet = new Set<Keyword>([
@@ -323,7 +323,11 @@ export class MysqlLexer extends Lexer {
 					skip: true,
 					onMatch: (state, token) => this.onMatchBlockComment(state, token),
 				},
-				{ type: SqlTokenType.LineComment, re: /(#|--[ \t\v\f]).*/y, skip: true },
+				{
+					type: SqlTokenType.LineComment,
+					re: /(#|--[ \t\v\f]).*/y,
+					skip: true,
+				},
 				{
 					type: SqlTokenType.Delimiter,
 					re: () => this.reDelimiterPattern,
