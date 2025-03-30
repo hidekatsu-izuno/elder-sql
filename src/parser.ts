@@ -33,24 +33,16 @@ export class AggregateParseError extends Error {
 }
 
 export class CstBuilder {
-	private _root: Element;
-	private _current: Element;
+	root: Element;
+	current: Element;
 
 	constructor(type: string, value?: string | number | boolean) {
 		const elem = new Element("node", {
 			type,
 			...(value != null ? { value: value.toString() } : {}),
 		});
-		this._root = elem;
-		this._current = this._root;
-	}
-
-	get root() {
-		return this._root;
-	}
-
-	get current() {
-		return this._current;
+		this.root = elem;
+		this.current = this.root;
 	}
 
 	start(type: string, value?: string | number | boolean) {
@@ -58,24 +50,34 @@ export class CstBuilder {
 			type,
 			...(value != null ? { value: value.toString() } : {}),
 		});
-		appendChild(this._current, elem);
-		this._current = elem;
-		return this._current;
+		appendChild(this.current, elem);
+		this.current = elem;
+		return this.current;
 	}
 
-	type(type: string) {
-		this._current.attribs.type = type;
-		return this._current.attribs.type;
+	type(type: string, context?: Element) {
+		if (context) {
+			context.attribs.type = type;
+			return context.attribs.type;
+		} else {
+			this.current.attribs.type = type;
+			return this.current.attribs.type;		
+		}
 	}
 
-	value(value: string | number | boolean) {
-		this._current.attribs.value = value.toString();
-		return this._current.attribs.value;
+	value(value: string | number | boolean, context?: Element) {
+		if (context) {
+			context.attribs.value = value.toString();
+			return context.attribs.value;	
+		} else {
+			this.current.attribs.value = value.toString();
+			return this.current.attribs.value;	
+		}
 	}
 
-	append(elem: Element) {
-		appendChild(this._current, elem);
-		return elem;
+	append(child: Element) {
+		appendChild(this.current, child);
+		return child;
 	}
 
 	token(token: Token) {
@@ -106,19 +108,19 @@ export class CstBuilder {
 			}
 			appendChild(elem, skipToken);
 		}
-		if (!this._current) {
+		if (!this.current) {
 			throw new Error("Parent node is required.");
 		}
-		appendChild(this._current, elem);
+		appendChild(this.current, elem);
 		return token;
 	}
 
 	end() {
-		if (!(this._current.parent instanceof Element)) {
-			throw new Error(`Parent node is required: ${this._current}`);
+		if (this.current.parent instanceof Element) {
+			const current = this.current;
+			this.current = this.current.parent;
+			return current;
 		}
-		const current = this._current;
-		this._current = this._current.parent;
-		return current;
+		return this.root;
 	}
 }

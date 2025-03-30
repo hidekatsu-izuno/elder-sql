@@ -243,7 +243,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -363,7 +363,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -402,7 +402,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -430,7 +430,7 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume(SqlKeyword.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
+					b.type("SchemaName", ident);
 					b.token(r.consume());
 					this.identifier(b, r, "ObjectName");
 				}
@@ -457,7 +457,7 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume(SqlKeyword.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
+					b.type("SchemaName", ident);
 					b.token(r.consume());
 					this.identifier(b, r, "ObjectName");
 				}
@@ -471,7 +471,7 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume(SqlKeyword.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
+					b.type("SchemaName", ident);
 					b.token(r.consume());
 					this.identifier(b, r, "ObjectName");
 				}
@@ -544,7 +544,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -583,7 +583,7 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume(SqlKeyword.TABLE));
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -646,7 +646,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -674,7 +674,7 @@ export class Sqlite3Parser extends Parser {
 
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -702,7 +702,7 @@ export class Sqlite3Parser extends Parser {
 
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -730,7 +730,7 @@ export class Sqlite3Parser extends Parser {
 
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -789,7 +789,7 @@ export class Sqlite3Parser extends Parser {
 
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
@@ -809,7 +809,7 @@ export class Sqlite3Parser extends Parser {
 			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
+					b.type("SchemaName", ident);
 					b.token(r.consume());
 					this.identifier(b, r, "ObjectName");
 				}
@@ -854,7 +854,7 @@ export class Sqlite3Parser extends Parser {
 
 			const ident = this.identifier(b, r, "PragmaName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "PragmaName");
 			}
@@ -1018,7 +1018,7 @@ export class Sqlite3Parser extends Parser {
 
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
-			ident.attribs.type = "SchemaName";
+			b.type("SchemaName", ident);
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectName");
 		}
@@ -1147,7 +1147,7 @@ export class Sqlite3Parser extends Parser {
 
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
-			ident.attribs.type = "SchemaName";
+			b.type("SchemaName", ident);
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectName");
 		}
@@ -1244,7 +1244,7 @@ export class Sqlite3Parser extends Parser {
 		b.token(r.consume(SqlKeyword.FROM));
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
-			ident.attribs.type = "SchemaName";
+			b.type("SchemaName", ident);
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectName");
 		}
@@ -1503,7 +1503,7 @@ export class Sqlite3Parser extends Parser {
 			const node = b.start("ObjectReference");
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
-				ident.attribs.type = "SchemaName";
+				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
