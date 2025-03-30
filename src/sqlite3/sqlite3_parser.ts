@@ -1572,37 +1572,51 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private joinClause(b: CstBuilder, r: TokenReader) {
-		const node = b.start("InnerJoinClause")
-
 		if (r.peekIf(SqlKeyword.CROSS)) {
-			node.attribs.type = "CrossJoinClause"
+			b.start("CrossJoinClause")
 			b.token(r.consume())
 		} else {
+			let option
 			if (r.peekIf(SqlKeyword.NATURAL)) {
 				b.start("NatualOption")
 				b.token(r.consume())
-				b.end()
+				option = b.end()
 			}
 			if (r.peekIf(SqlKeyword.LEFT)) {
-				node.attribs.type = "LeftOuterJoinClause"
+				b.start("LeftOuterJoinClause")
+				if (option) {
+					b.append(option)
+				}
 				b.token(r.consume())
 				if (r.peekIf(SqlKeyword.OUTER)) {
 					b.token(r.consume())
 				}
 			} else if (r.peekIf(SqlKeyword.RIGHT)) {
-				node.attribs.type = "RightOuterJoinClause"
+				b.start("RightOuterJoinClause")
+				if (option) {
+					b.append(option)
+				}
 				b.token(r.consume())
 				if (r.peekIf(SqlKeyword.OUTER)) {
 					b.token(r.consume())
 				}
 			} else if (r.peekIf(SqlKeyword.FULL)) {
-				node.attribs.type = "FullOuterJoinClause"
+				b.start("FullOuterJoinClause")
+				if (option) {
+					b.append(option)
+				}
 				b.token(r.consume())
 				if (r.peekIf(SqlKeyword.OUTER)) {
 					b.token(r.consume())
 				}
-			} else if (r.peekIf(SqlKeyword.INNER)) {
-				b.token(r.consume())
+			} else {
+				b.start("InnerJoinClause")
+				if (option) {
+					b.append(option)
+				}
+				if (r.peekIf(SqlKeyword.INNER)) {
+					b.token(r.consume())
+				}
 			}
 		}
 		b.token(r.consume(SqlKeyword.JOIN))
@@ -1862,22 +1876,30 @@ export class Sqlite3Parser extends Parser {
 
 	private limitClause(b: CstBuilder, r: TokenReader) {
 		b.start("LimitClause")
-
 		b.token(r.consume(SqlKeyword.LIMIT))
-		const node = b.start("LimitOption")
-		this.expression(b, r)
-		b.end()
+		const node = this.expression(b, r)
 		if (r.peekIf(SqlKeyword.OFFSET)) {
+			b.start("LimitOption")
+			b.append(node)
+			b.end()
+
 			b.start("OffsetOption")
 			b.token(r.consume())
 			this.expression(b, r)
 			b.end()
-		} else if (r.peekIf(SqlTokenType.Comma)) {
-			node.attribs.type = "OffsetOption"
+		} else if (r.peekIf(SqlTokenType.Comma)) {				
+			b.start("OffsetOption")
+			b.append(node)
+			b.end()
+
 			b.token(r.consume())
 
 			b.start("LimitOption")
 			this.expression(b, r)
+			b.end()
+		} else {
+			b.start("LimitOption")
+			b.append(node)
 			b.end()
 		}
 		return b.end()
@@ -2745,9 +2767,9 @@ export class Sqlite3Parser extends Parser {
 			}
 		}
 		if (precedence === 0) {
-			b.end();
+			return b.end();
 		}
-		return b.current;
+		return current;
 	}
 
 	private expressionValue(b: CstBuilder, r: TokenReader) {
