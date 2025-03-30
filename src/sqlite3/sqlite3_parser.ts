@@ -20,13 +20,11 @@ export class Sqlite3Parser extends Parser {
 		while (r.peek()) {
 			try {
 				if (
-					r.peekIf({
-						type: [
-							SqlTokenType.SemiColon,
-							SqlTokenType.Delimiter,
-							SqlTokenType.EoF,
-						],
-					})
+					r.peekIf([
+						SqlTokenType.SemiColon,
+						SqlTokenType.Delimiter,
+						SqlTokenType.EoF,
+					])
 				) {
 					b.token(r.consume());
 				} else if (r.peekIf(SqlTokenType.Command)) {
@@ -192,7 +190,7 @@ export class Sqlite3Parser extends Parser {
 			stmt = this.savepointStatement(b, r);
 		} else if (r.peekIf(SqlKeyword.RELEASE)) {
 			stmt = this.releaseSavepointStatement(b, r);
-		} else if (r.peekIf({ type: [SqlKeyword.COMMIT, SqlKeyword.END] })) {
+		} else if (r.peekIf([SqlKeyword.COMMIT, SqlKeyword.END])) {
 			stmt = this.commitTransactionStatement(b, r);
 		} else if (r.peekIf(SqlKeyword.ROLLBACK)) {
 			stmt = this.rollbackTransactionStatement(b, r);
@@ -201,13 +199,13 @@ export class Sqlite3Parser extends Parser {
 			if (r.peekIf(SqlKeyword.WITH)) {
 				withClause = this.withClause(b, r);
 			}
-			if (r.peekIf({ type: [SqlKeyword.INSERT, SqlKeyword.REPLACE] })) {
+			if (r.peekIf([SqlKeyword.INSERT, SqlKeyword.REPLACE])) {
 				stmt = this.insertStatement(b, r, withClause);
 			} else if (r.peekIf(SqlKeyword.UPDATE)) {
 				stmt = this.updateStatement(b, r, withClause);
 			} else if (r.peekIf(SqlKeyword.DELETE)) {
 				stmt = this.deleteStatement(b, r, withClause);
-			} else if (r.peekIf({ type: [SqlKeyword.SELECT, SqlKeyword.VALUES] })) {
+			} else if (r.peekIf([SqlKeyword.SELECT, SqlKeyword.VALUES])) {
 				stmt = this.selectStatement(b, r, withClause);
 			}
 		}
@@ -223,7 +221,7 @@ export class Sqlite3Parser extends Parser {
 		try {
 			b.token(r.consume(SqlKeyword.CREATE));
 			let virtual = false;
-			if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
+			if (r.peekIf([SqlKeyword.TEMPORARY, SqlKeyword.TEMP])) {
 				b.start("TemporaryOption");
 				b.token(r.consume());
 				b.end();
@@ -260,9 +258,7 @@ export class Sqlite3Parser extends Parser {
 							b.token(r.consume());
 						} while (
 							!r.peek().eos &&
-							!r.peekIf({
-								type: [SqlTokenType.RightParen, SqlTokenType.Comma],
-							})
+							!r.peekIf([SqlTokenType.RightParen, SqlTokenType.Comma])
 						);
 						b.end();
 
@@ -284,14 +280,12 @@ export class Sqlite3Parser extends Parser {
 					do {
 						if (!hasTableConstraint) {
 							if (
-								r.peekIf({
-									type: [
-										SqlKeyword.CONSTRAINT,
-										SqlKeyword.UNIQUE,
-										SqlKeyword.CHECK,
-										SqlKeyword.FOREIGN,
-									],
-								}) ||
+								r.peekIf([
+									SqlKeyword.CONSTRAINT,
+									SqlKeyword.UNIQUE,
+									SqlKeyword.CHECK,
+									SqlKeyword.FOREIGN,
+								]) ||
 								r.peekIf(SqlKeyword.PRIMARY, SqlKeyword.KEY)
 							) {
 								hasTableConstraint = true;
@@ -312,7 +306,7 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume(SqlTokenType.RightParen));
 
-				while (r.peekIf({ type: [SqlKeyword.WITHOUT, SqlKeyword.STRICT] })) {
+				while (r.peekIf([SqlKeyword.WITHOUT, SqlKeyword.STRICT])) {
 					if (r.peekIf(SqlKeyword.WITHOUT)) {
 						b.start("WithoutRowidOption");
 						b.token(r.consume());
@@ -348,7 +342,7 @@ export class Sqlite3Parser extends Parser {
 		const stmt = b.start("CreateViewStatement");
 		try {
 			b.token(r.consume(SqlKeyword.CREATE));
-			if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
+			if (r.peekIf([SqlKeyword.TEMPORARY, SqlKeyword.TEMP])) {
 				b.start("TemporaryOption");
 				b.token(r.consume());
 				b.end();
@@ -500,7 +494,7 @@ export class Sqlite3Parser extends Parser {
 				if (r.peekIf(SqlKeyword.WITH)) {
 					withClause = this.withClause(b, r);
 				}
-				if (r.peekIf(SqlKeyword.INSERT) || r.peekIf(SqlKeyword.REPLACE)) {
+				if (r.peekIf([SqlKeyword.INSERT, SqlKeyword.REPLACE])) {
 					this.insertStatement(b, r, withClause);
 				} else if (r.peekIf(SqlKeyword.UPDATE)) {
 					this.updateStatement(b, r, withClause);
@@ -806,7 +800,7 @@ export class Sqlite3Parser extends Parser {
 		const stmt = b.start("ReindexStatement");
 		try {
 			b.token(r.consume(SqlKeyword.REINDEX));
-			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+			if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
 					b.type("SchemaName", ident);
@@ -828,7 +822,7 @@ export class Sqlite3Parser extends Parser {
 		try {
 			b.token(r.consume(SqlKeyword.VACUUM));
 
-			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+			if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 				this.identifier(b, r, "SchemaName");
 			}
 
@@ -859,7 +853,9 @@ export class Sqlite3Parser extends Parser {
 				this.identifier(b, r, "PragmaName");
 			}
 
-			if (r.peekIf({ type: SqlTokenType.Operator, text: "=" })) {
+			if (
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("="))
+			) {
 				b.token(r.consume());
 				this.pragmaValue(b, r);
 			} else if (r.peekIf(SqlTokenType.LeftParen)) {
@@ -1204,7 +1200,9 @@ export class Sqlite3Parser extends Parser {
 			} else {
 				this.identifier(b, r, "ColumnName");
 			}
-			b.token(r.consume({ type: SqlTokenType.Operator, text: "=" }));
+			b.token(
+				r.consume((token) => token.is(SqlTokenType.Operator) && token.is("=")),
+			);
 			b.start("ColumnValue");
 			this.expression(b, r);
 			b.end();
@@ -1408,15 +1406,17 @@ export class Sqlite3Parser extends Parser {
 
 		do {
 			b.start("SelectColumn");
-			if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
+			if (
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("*"))
+			) {
 				b.start("AllColumnsOption");
 				b.token(r.consume());
 				b.end();
 			} else if (
 				r.peekIf(
-					{ type: [SqlTokenType.Identifier, SqlTokenType.String] },
+					[SqlTokenType.Identifier, SqlTokenType.String],
 					SqlTokenType.Dot,
-					{ type: SqlTokenType.Operator, text: "*" },
+					(token) => token.is(SqlTokenType.Operator) && token.is("*"),
 				)
 			) {
 				b.start("AllColumnsOption");
@@ -1429,9 +1429,7 @@ export class Sqlite3Parser extends Parser {
 				if (r.peekIf(SqlKeyword.AS)) {
 					b.token(r.consume());
 					this.identifier(b, r, "ColumnAlias");
-				} else if (
-					r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
-				) {
+				} else if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 					this.identifier(b, r, "ColumnAlias");
 				}
 			}
@@ -1455,17 +1453,15 @@ export class Sqlite3Parser extends Parser {
 			do {
 				this.fromObject(b, r);
 				while (
-					r.peekIf({
-						type: [
-							SqlKeyword.NATURAL,
-							SqlKeyword.JOIN,
-							SqlKeyword.CROSS,
-							SqlKeyword.INNER,
-							SqlKeyword.LEFT,
-							SqlKeyword.RIGHT,
-							SqlKeyword.FULL,
-						],
-					})
+					r.peekIf([
+						SqlKeyword.NATURAL,
+						SqlKeyword.JOIN,
+						SqlKeyword.CROSS,
+						SqlKeyword.INNER,
+						SqlKeyword.LEFT,
+						SqlKeyword.RIGHT,
+						SqlKeyword.FULL,
+					])
 				) {
 					hasJoinClause = true;
 					this.joinClause(b, r);
@@ -1488,7 +1484,7 @@ export class Sqlite3Parser extends Parser {
 		if (r.peekIf(SqlTokenType.LeftParen)) {
 			b.token(r.consume());
 			b.start("SubqueryExpression");
-			if (r.peekIf({ type: [SqlKeyword.WITH, SqlKeyword.SELECT] })) {
+			if (r.peekIf([SqlKeyword.WITH, SqlKeyword.SELECT])) {
 				let withClause: ReturnType<typeof this.withClause> | undefined;
 				if (r.peekIf(SqlKeyword.WITH)) {
 					withClause = this.withClause(b, r);
@@ -1873,20 +1869,18 @@ export class Sqlite3Parser extends Parser {
 		}
 
 		while (
-			r.peekIf({
-				type: [
-					SqlKeyword.CONSTRAINT,
-					SqlKeyword.PRIMARY,
-					SqlKeyword.NOT,
-					SqlKeyword.UNIQUE,
-					SqlKeyword.CHECK,
-					SqlKeyword.DEFAULT,
-					SqlKeyword.COLLATE,
-					SqlKeyword.REFERENCES,
-				],
-			}) ||
+			r.peekIf([
+				SqlKeyword.CONSTRAINT,
+				SqlKeyword.PRIMARY,
+				SqlKeyword.NOT,
+				SqlKeyword.UNIQUE,
+				SqlKeyword.CHECK,
+				SqlKeyword.DEFAULT,
+				SqlKeyword.COLLATE,
+				SqlKeyword.REFERENCES,
+			]) ||
 			(!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS") &&
-				r.peekIf({ type: [SqlKeyword.GENERATED, SqlKeyword.AS] }))
+				r.peekIf([SqlKeyword.GENERATED, SqlKeyword.AS]))
 		) {
 			this.columnConstraint(b, r);
 		}
@@ -2022,7 +2016,7 @@ export class Sqlite3Parser extends Parser {
 			b.start("ForeignKeyConstraint");
 			this.referencesClause(b, r);
 			b.end();
-		} else if (r.peekIf(SqlKeyword.GENERATED) || r.peekIf(SqlKeyword.AS)) {
+		} else if (r.peekIf([SqlKeyword.GENERATED, SqlKeyword.AS])) {
 			b.start("GeneratedColumnOption");
 			if (r.peekIf(SqlKeyword.GENERATED)) {
 				b.token(r.consume());
@@ -2144,10 +2138,7 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume(SqlTokenType.RightParen));
 		}
 
-		while (
-			!r.peek().eos &&
-			r.peekIf({ type: [SqlKeyword.ON, SqlKeyword.MATCH] })
-		) {
+		while (!r.peek().eos && r.peekIf([SqlKeyword.ON, SqlKeyword.MATCH])) {
 			if (r.peekIf(SqlKeyword.ON)) {
 				const token = r.consume();
 				if (r.peekIf(SqlKeyword.DELETE)) {
@@ -2211,8 +2202,7 @@ export class Sqlite3Parser extends Parser {
 		}
 
 		if (
-			r.peekIf(SqlKeyword.DEFERRABLE) ||
-			r.peekIf(SqlKeyword.NOT, SqlKeyword.DEFERRABLE)
+			r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.DEFERRABLE)
 		) {
 			if (r.peekIf(SqlKeyword.NOT)) {
 				b.start("NotDeferrableOption");
@@ -2266,14 +2256,16 @@ export class Sqlite3Parser extends Parser {
 
 	private pragmaValue(b: CstBuilder, r: TokenReader) {
 		b.start("PragmaValue");
-		if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
+		if (r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("+"))) {
 			b.start("Expression");
 			b.start("UnaryPlusOperation");
 			b.token(r.consume());
 			this.numericLiteral(b, r);
 			b.end();
 			b.end();
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
+		} else if (
+			r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("-"))
+		) {
 			b.start("Expression");
 			b.start("UnaryMinusOperation");
 			b.token(r.consume());
@@ -2315,17 +2307,23 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume());
 			this.expression(b, r, 3);
 			current = b.end();
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "~" })) {
+		} else if (
+			r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("~"))
+		) {
 			b.start("BitwiseNotOperation");
 			b.token(r.consume());
 			this.expression(b, r, 16);
 			current = b.end();
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
+		} else if (
+			r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("+"))
+		) {
 			b.start("UnaryPlusOperation");
 			b.token(r.consume());
 			this.expression(b, r, 16);
 			current = b.end();
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
+		} else if (
+			r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("-"))
+		) {
 			b.start("UnaryMinusOperation");
 			b.token(r.consume());
 			this.expression(b, r, 16);
@@ -2349,7 +2347,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: ["=", "=="] })
+				r.peekIf(
+					(token) => token.is(SqlTokenType.Operator) && token.is(["=", "=="]),
+				)
 			) {
 				b.start("EqualOperation");
 				b.append(current);
@@ -2358,7 +2358,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: ["<>", "!="] })
+				r.peekIf(
+					(token) => token.is(SqlTokenType.Operator) && token.is(["<>", "!="]),
+				)
 			) {
 				b.start("NotEqualOperation");
 				b.append(current);
@@ -2393,8 +2395,8 @@ export class Sqlite3Parser extends Parser {
 				this.expression(b, r, 4);
 				current = b.end();
 			} else if (
-				(precedence < 4 && r.peekIf(SqlKeyword.BETWEEN)) ||
-				r.peekIf(SqlKeyword.NOT, SqlKeyword.BETWEEN)
+				precedence < 4 &&
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.BETWEEN)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotBetweenOperation");
@@ -2411,7 +2413,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				(r.peekIf(SqlKeyword.IN) || r.peekIf(SqlKeyword.NOT, SqlKeyword.IN))
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.IN)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotInOperation");
@@ -2423,9 +2425,7 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume());
 				if (
-					r.peekIf(SqlTokenType.LeftParen, {
-						type: [SqlKeyword.WITH, SqlKeyword.SELECT],
-					})
+					r.peekIf(SqlTokenType.LeftParen, [SqlKeyword.WITH, SqlKeyword.SELECT])
 				) {
 					b.start("SubqueryExpression");
 					b.token(r.consume());
@@ -2462,9 +2462,7 @@ export class Sqlite3Parser extends Parser {
 					b.token(r.consume(SqlTokenType.RightParen));
 
 					b.end();
-				} else if (
-					r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
-				) {
+				} else if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 					this.columnReference(b, r);
 				} else {
 					throw r.createParseError();
@@ -2472,8 +2470,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				(r.peekIf(SqlKeyword.MATCH) ||
-					r.peekIf(SqlKeyword.NOT, SqlKeyword.MATCH))
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.MATCH)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotMatchOperation");
@@ -2488,7 +2485,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				(r.peekIf(SqlKeyword.LIKE) || r.peekIf(SqlKeyword.NOT, SqlKeyword.LIKE))
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.LIKE)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotLikeOperation");
@@ -2509,8 +2506,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				(r.peekIf(SqlKeyword.REGEXP) ||
-					r.peekIf(SqlKeyword.NOT, SqlKeyword.REGEXP))
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.REGEXP)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotRegexpOperation");
@@ -2525,7 +2521,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				(r.peekIf(SqlKeyword.GLOB) || r.peekIf(SqlKeyword.NOT, SqlKeyword.GLOB))
+				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.GLOB)
 			) {
 				if (r.peekIf(SqlKeyword.NOT)) {
 					b.start("NotGlobOperation");
@@ -2557,7 +2553,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 5 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "<" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("<"))
 			) {
 				b.start("LessThanOperation");
 				b.append(current);
@@ -2566,7 +2562,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 5 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: ">" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is(">"))
 			) {
 				b.start("GreaterThanOperation");
 				b.append(current);
@@ -2575,7 +2571,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 5 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "<=" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("<="))
 			) {
 				b.start("LessThanOrEqualOperation");
 				b.append(current);
@@ -2584,7 +2580,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 5 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: ">=" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is(">="))
 			) {
 				b.start("GreaterThanOrEqualOperation");
 				b.append(current);
@@ -2593,7 +2589,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 7 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "&" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("&"))
 			) {
 				b.start("BitwiseAndOperation");
 				b.append(current);
@@ -2602,7 +2598,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 7 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "|" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("|"))
 			) {
 				b.start("BitwiseOrOperation");
 				b.append(current);
@@ -2611,7 +2607,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 7 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "<<" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("<<"))
 			) {
 				b.start("BitwiseLeftShiftOperation");
 				b.append(current);
@@ -2620,7 +2616,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 7 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: ">>" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is(">>"))
 			) {
 				b.start("BitwiseRightShiftOperation");
 				b.append(current);
@@ -2629,7 +2625,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 8 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "+" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("+"))
 			) {
 				b.start("AddOperation");
 				b.append(current);
@@ -2638,7 +2634,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 8 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "-" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("-"))
 			) {
 				b.start("SubtractOperation");
 				b.append(current);
@@ -2647,7 +2643,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 9 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "*" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("*"))
 			) {
 				b.start("MultiplyOperation");
 				b.append(current);
@@ -2656,7 +2652,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 9 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "/" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("/"))
 			) {
 				b.start("DivideOperation");
 				b.append(current);
@@ -2665,7 +2661,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 9 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "%" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("%"))
 			) {
 				b.start("ModuloOperation");
 				b.append(current);
@@ -2674,7 +2670,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 10 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "||" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("||"))
 			) {
 				b.start("ConcatenateOperation");
 				b.append(current);
@@ -2683,7 +2679,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 10 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "->" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("->"))
 			) {
 				b.start("JsonExtractOperation");
 				b.append(current);
@@ -2692,7 +2688,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 10 &&
-				r.peekIf({ type: SqlTokenType.Operator, text: "->>" })
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("->>"))
 			) {
 				b.start("JsonExtractValueOperation");
 				b.append(current);
@@ -2720,16 +2716,14 @@ export class Sqlite3Parser extends Parser {
 			b.start("NullLiteral");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+		} else if (r.peekIf([SqlKeyword.TRUE, SqlKeyword.FALSE])) {
 			return this.booleanLiteral(b, r);
 		} else if (
-			r.peekIf({
-				type: [
-					SqlKeyword.CURRENT_DATE,
-					SqlKeyword.CURRENT_TIME,
-					SqlKeyword.CURRENT_TIMESTAMP,
-				],
-			})
+			r.peekIf([
+				SqlKeyword.CURRENT_DATE,
+				SqlKeyword.CURRENT_TIME,
+				SqlKeyword.CURRENT_TIMESTAMP,
+			])
 		) {
 			b.start("FunctionExpression");
 			b.start("ObjectName");
@@ -2843,7 +2837,9 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 			b.token(r.consume(SqlTokenType.LeftParen));
 			b.start("FunctionArgumentList");
-			if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
+			if (
+				r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("*"))
+			) {
 				b.start("FunctionArgument");
 				b.start("AllColumnsOption");
 				b.token(r.consume());
@@ -2896,7 +2892,7 @@ export class Sqlite3Parser extends Parser {
 			return this.numericLiteral(b, r);
 		} else if (
 			r.peekIf(SqlTokenType.String) ||
-			r.peekIf({ type: SqlTokenType.Identifier, text: /^"/ })
+			r.peekIf((token) => token.is(SqlTokenType.Identifier) && token.is(/^"/))
 		) {
 			return this.stringLiteral(b, r);
 		} else if (r.peekIf(SqlTokenType.Blob)) {
@@ -2983,7 +2979,7 @@ export class Sqlite3Parser extends Parser {
 
 	private identifier(b: CstBuilder, r: TokenReader, name: string) {
 		b.start(name);
-		if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+		if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 			b.value(dequote(b.token(r.consume()).text));
 		} else {
 			throw r.createParseError();
@@ -2999,8 +2995,10 @@ export class Sqlite3Parser extends Parser {
 
 	private stringLiteral(b: CstBuilder, r: TokenReader) {
 		b.start("StringLiteral");
-		if (r.peekIf({ type: SqlTokenType.Identifier, text: /^"/ })) {
-			b.value(dequote(b.token(r.consume()).text)); //TODO
+		if (
+			r.peekIf((token) => token.is(SqlTokenType.Identifier) && token.is(/^"/))
+		) {
+			b.value(dequote(b.token(r.consume()).text));
 		} else {
 			b.value(dequote(b.token(r.consume(SqlTokenType.String)).text));
 		}
@@ -3017,7 +3015,7 @@ export class Sqlite3Parser extends Parser {
 
 	private booleanLiteral(b: CstBuilder, r: TokenReader) {
 		b.start("BooleanLiteral");
-		if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+		if (r.peekIf([SqlKeyword.TRUE, SqlKeyword.FALSE])) {
 			b.value(b.token(r.consume()).text.toUpperCase());
 		} else {
 			throw r.createParseError();

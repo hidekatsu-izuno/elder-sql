@@ -72,11 +72,13 @@ export class SourceLocation {
 	}
 }
 
-export declare type TokenQuery = {
-	type?: TokenType | Keyword | (TokenType | Keyword)[];
-	text?: string | string[] | RegExp;
-	match?: (token: Token) => boolean;
-};
+export declare type TokenQuery =
+	| TokenType
+	| Keyword
+	| string
+	| RegExp
+	| ((token: Token) => boolean)
+	| TokenQuery[];
 
 export class Token {
 	type: TokenType;
@@ -107,53 +109,27 @@ export class Token {
 		this.location = options?.location;
 	}
 
-	is(condition: TokenType | Keyword | TokenQuery) {
-		if ("name" in condition) {
-			if (condition === this.keyword || condition === this.type) {
-				return true;
+	is(query: TokenQuery) {
+		if (Array.isArray(query)) {
+			for (const item of query) {
+				if (this.is(item)) {
+					return true;
+				}
 			}
+			return false;
+		} else if (query instanceof Keyword) {
+			return this.keyword === query;
+		} else if (query instanceof TokenType) {
+			return this.type === query;
+		} else if (typeof query === "string") {
+			return this.text === query;
+		} else if (query instanceof RegExp) {
+			return query.test(this.text);
+		} else if (typeof query === "function") {
+			return !!query(this);
 		} else {
-			let result = true;
-			if (result && condition.type) {
-				if (Array.isArray(condition.type)) {
-					if (
-						!condition.type.some(
-							(type) => type === this.keyword || type === this.type,
-						)
-					) {
-						result = false;
-					}
-				} else {
-					if (condition.type !== this.keyword && condition.type !== this.type) {
-						result = false;
-					}
-				}
-			}
-			if (result && condition.text) {
-				if (Array.isArray(condition.text)) {
-					if (!condition.text.some((text) => text === this.text)) {
-						result = false;
-					}
-				} else if (condition.text instanceof RegExp) {
-					if (!condition.text.test(this.text)) {
-						result = false;
-					}
-				} else {
-					if (condition.text !== this.text) {
-						result = false;
-					}
-				}
-			}
-			if (result && condition.match) {
-				if (!condition.match(this)) {
-					result = false;
-				}
-			}
-			if (result) {
-				return true;
-			}
+			throw new Error(`Invalid query: ${query}`);
 		}
-		return false;
 	}
 
 	clone() {
@@ -224,10 +200,6 @@ export abstract class Lexer {
 		const state = {};
 		this.initState(state);
 		return this.sublex(state, input, new SourceLocation(pos, 1, 0, source));
-	}
-
-	isReserved(keyword?: Keyword) {
-		return false;
 	}
 
 	protected initState(state: Record<string, any>) {}
@@ -371,39 +343,38 @@ export class TokenReader {
 	}
 
 	peekIf(
-		...conditions: (
-			| Keyword
-			| TokenType
-			| (TokenQuery & { optional?: boolean })
-		)[]
+		...queries: (TokenQuery | { query: TokenQuery; optional: boolean })[]
 	) {
-		if (conditions.length === 0) {
+		if (queries.length === 0) {
 			throw new RangeError("conditions must be at least one.");
 		}
 
 		let pos = 0;
-		for (let i = 0; i < conditions.length; i++) {
-			const condition = conditions[i];
-			if (!condition) {
+		for (const query of queries) {
+			if (!query) {
 				throw new RangeError("condition must not be empty.");
 			}
 
 			const token = this.peek(pos);
-			if (token?.is(condition)) {
+			if (typeof query === "object" && query != null && "query" in query) {
+				if (token?.is(query.query)) {
+					pos++;
+				}
+			} else if (token?.is(query)) {
 				pos++;
-			} else if (!("optional" in condition && condition.optional)) {
+			} else {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	consume(condition?: Keyword | TokenType | TokenQuery) {
+	consume(condition?: TokenQuery) {
 		const token = this.peek();
 		if (token == null) {
 			throw this.createParseError();
 		}
-		if (condition && !token.is(condition)) {
+		if (condition != null && !token.is(condition)) {
 			throw this.createParseError();
 		}
 		this.pos++;

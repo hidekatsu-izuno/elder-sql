@@ -61,17 +61,17 @@ export class CstBuilder {
 			return context.attribs.type;
 		} else {
 			this.current.attribs.type = type;
-			return this.current.attribs.type;		
+			return this.current.attribs.type;
 		}
 	}
 
 	value(value: string | number | boolean, context?: Element) {
 		if (context) {
 			context.attribs.value = value.toString();
-			return context.attribs.value;	
+			return context.attribs.value;
 		} else {
 			this.current.attribs.value = value.toString();
-			return this.current.attribs.value;	
+			return this.current.attribs.value;
 		}
 	}
 
