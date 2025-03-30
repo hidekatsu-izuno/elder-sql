@@ -1915,10 +1915,11 @@ export class Sqlite3Parser extends Parser {
 		b.start("ColumnType")
 
 		const node = b.start("TypeName")
-		b.value(b.token(r.consume()).text)
+		let text = b.token(r.consume()).text
 		while (r.peekIf(SqlTokenType.Identifier)) {
-			b.value(`${node.attribs.value} ${b.token(r.consume()).text}`)
+			text += ` ${b.token(r.consume()).text}`
 		}
+		b.value(text)
 		b.end()
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {
@@ -2176,12 +2177,14 @@ export class Sqlite3Parser extends Parser {
 			r.peekIf({ type: [SqlKeyword.ON, SqlKeyword.MATCH] })
 		) {
 			if (r.peekIf(SqlKeyword.ON)) {
-				const node = b.start("OnUpdateClause")
-				b.token(r.consume())
+				const token = r.consume()
 				if (r.peekIf(SqlKeyword.DELETE)) {
-					node.attribs.type = "OnDeleteClause"
+					b.start("OnDeleteClause")
+					b.token(token)
 					b.token(r.consume())
 				} else {
+					b.start("OnUpdateClause")
+					b.token(token)
 					b.token(r.consume(SqlKeyword.UPDATE))
 				}
 				if (r.peekIf(SqlKeyword.SET, SqlKeyword.NULL)) {
@@ -2395,31 +2398,42 @@ export class Sqlite3Parser extends Parser {
 				this.expression(b, r, 4)
 				current = b.end()
 			} else if (precedence < 4 && r.peekIf(SqlKeyword.IS)) {
-				const node = b.start("Is")
-				b.append(current)
-				b.token(r.consume())
-				if (r.peekIf(SqlKeyword.NOT)) {
+				const token = r.consume();
+				if (r.peekIf(SqlKeyword.NOT, SqlKeyword.DISTINCT)) {
+					b.start("IsNotDistinctFromOperation")
+					b.append(current)
+					b.token(token)
 					b.token(r.consume())
-					node.attribs.type += "Not"
-				}
-				if (r.peekIf(SqlKeyword.DISTINCT)) {
 					b.token(r.consume())
 					b.token(r.consume(SqlKeyword.FROM))
-					node.attribs.type += "DistinctFromOperation"
+				} else if (r.peekIf(SqlKeyword.DISTINCT)) {
+					b.start("IsDistinctFromOperation")
+					b.append(current)
+					b.token(token)
+					b.token(r.consume())
+					b.token(r.consume(SqlKeyword.FROM))
+				} else if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("IsNotOperation")
+					b.append(current)
+					b.token(token)
+					b.token(r.consume())
 				} else {
-					node.attribs.type += "Operation"
+					b.start("IsOperation")
+					b.append(current)
+					b.token(token)
 				}
 				this.expression(b, r, 4)
 				current = b.end()
 			} else if (
-				(precedence < 4 && r.peekIf(SqlKeyword.BETWEEN)) ||
-				r.peekIf(SqlKeyword.NOT, SqlKeyword.BETWEEN)
+				precedence < 4 && (r.peekIf(SqlKeyword.BETWEEN)) || r.peekIf(SqlKeyword.NOT, SqlKeyword.BETWEEN)
 			) {
-				const node = b.start("BetweenOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotBetweenOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("BetweenOperation")
+					b.append(current)
 				}
 				b.token(r.consume())
 				this.expression(b, r, 4)
@@ -2427,14 +2441,16 @@ export class Sqlite3Parser extends Parser {
 				this.expression(b, r, 4)
 				current = b.end()
 			} else if (
-				(precedence < 4 && r.peekIf(SqlKeyword.IN)) ||
-				r.peekIf(SqlKeyword.NOT, SqlKeyword.IN)
+				precedence < 4 && (r.peekIf(SqlKeyword.IN) ||
+				r.peekIf(SqlKeyword.NOT, SqlKeyword.IN))
 			) {
-				const node = b.start("InOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotInOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("InOperation")
+					b.append(current)
 				}
 				b.token(r.consume())
 				if (
@@ -2494,11 +2510,13 @@ export class Sqlite3Parser extends Parser {
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.MATCH) || r.peekIf(SqlKeyword.NOT, SqlKeyword.MATCH))
 			) {
-				const node = b.start("MatchOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotMatchOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("MatchOperation")
+					b.append(current)
 				}
 				b.token(r.consume())
 				this.expression(b, r, 4)
@@ -2507,11 +2525,13 @@ export class Sqlite3Parser extends Parser {
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.LIKE) || r.peekIf(SqlKeyword.NOT, SqlKeyword.LIKE))
 			) {
-				const node = b.start("LikeOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotLikeOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("LikeOperation")
+					b.append(current)
 				}
 				b.token(r.consume())
 				this.expression(b, r, 4)
@@ -2527,11 +2547,13 @@ export class Sqlite3Parser extends Parser {
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.REGEXP) || r.peekIf(SqlKeyword.NOT, SqlKeyword.REGEXP))
 			) {
-				const node = b.start("RegexpOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotRegexpOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("RegexpOperation")
+					b.append(current)
 				}
 				b.token(r.consume())
 				this.expression(b, r, 4)
@@ -2540,11 +2562,14 @@ export class Sqlite3Parser extends Parser {
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.GLOB) || r.peekIf(SqlKeyword.NOT, SqlKeyword.GLOB))
 			) {
-				const node = b.start("GlobOperation")
-				b.append(current)
 				if (r.peekIf(SqlKeyword.NOT)) {
+					b.start("NotGlobOperation")
+					b.append(current)
 					b.token(r.consume())
-					node.attribs.type = `Not${node.attribs.type}`
+				} else {
+					b.start("GlobOperation")
+					b.append(current)
+					b.token(r.consume())
 				}
 				b.token(r.consume())
 				this.expression(b, r, 4)
