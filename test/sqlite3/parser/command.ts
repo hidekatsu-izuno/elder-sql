@@ -21,7 +21,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"SelectStatement"}, [
     new Element("node", {"type":"SelectClause"}, [
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("select")]),
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("select")]),
       new Element("node", {"type":"SelectColumnList"}, [
         new Element("node", {"type":"SelectColumn"}, [
           new Element("node", {"type":"Expression"}, [
@@ -42,7 +42,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"SelectStatement"}, [
     new Element("node", {"type":"SelectClause"}, [
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("select")]),
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("select")]),
       new Element("node", {"type":"SelectColumnList"}, [
         new Element("node", {"type":"SelectColumn"}, [
           new Element("node", {"type":"Expression"}, [
@@ -65,13 +65,13 @@ export default new Element("node", {"type":"Script"}, [
                 ]),
                 new Element("token", {"type":"Dot"}, [new Text(".")]),
                 new Element("node", {"type":"ColumnName","value":"print"}, [
-                  new Element("token", {"value":"PRINT","type":"Identifier"}, [new Text("print")]),
+                  new Element("token", {"type":"Identifier","value":"PRINT"}, [new Text("print")]),
                 ]),
               ]),
             ]),
           ]),
           new Element("node", {"type":"ColumnAlias","value":"test"}, [
-            new Element("token", {"value":"TEST","type":"Identifier"}, [
+            new Element("token", {"type":"Identifier","value":"TEST"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("test"),
               new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
@@ -87,7 +87,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"SelectStatement"}, [
     new Element("node", {"type":"SelectClause"}, [
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [
         new Element("trivia", {"type":"BlockComment"}, [new Text("/*.print*/")]),
         new Element("trivia", {"type":"WhiteSpace"}, [new Text("   ")]),
         new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
@@ -115,7 +115,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"SelectStatement"}, [
     new Element("node", {"type":"SelectClause"}, [
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [
         new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
         new Text("select"),
       ]),

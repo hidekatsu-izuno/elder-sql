@@ -60,22 +60,22 @@ export class CstBuilder {
 		});
 		appendChild(this._current, elem);
 		this._current = elem;
-		return this;
+		return this._current;
 	}
 
-	wrapWith(type: string, value?: string | number | boolean) {
-		const elem = new Element("node", {
-			type,
-			...(value != null ? { value: value.toString() } : {}),
-		});
-		replaceElement(this._current, elem);
-		appendChild(elem, this._current);
-		this._current = elem;
-		return this;
+	type(type: string) {
+		this._current.attribs.type = type;
+		return this._current.attribs.type;
 	}
 
 	value(value: string | number | boolean) {
-		this.current.attribs.value = value.toString();
+		this._current.attribs.value = value.toString();
+		return this._current.attribs.value;
+	}
+
+	append(elem: Element) {
+		appendChild(this._current, elem);
+		return elem;
 	}
 
 	token(token: Token) {
@@ -85,11 +85,11 @@ export class CstBuilder {
 		});
 		for (const skip of token.preskips) {
 			const skipToken = new Element("trivia", {
-				type: token.type.name,
-				...(token.keyword != null ? { value: token.keyword.name } : {}),
+				type: skip.type.name,
+				...(skip.keyword != null ? { value: skip.keyword.name } : {}),
 			});
 			if (skip.text) {
-				appendChild(elem, new Text(token.text));
+				appendChild(skipToken, new Text(skip.text));
 			}
 			appendChild(elem, skipToken);
 		}
@@ -98,11 +98,11 @@ export class CstBuilder {
 		}
 		for (const skip of token.postskips) {
 			const skipToken = new Element("trivia", {
-				type: token.type.name,
-				...(token.keyword != null ? { value: token.keyword.name } : {}),
+				type: skip.type.name,
+				...(skip.keyword != null ? { value: skip.keyword.name } : {}),
 			});
 			if (skip.text) {
-				appendChild(elem, new Text(token.text));
+				appendChild(skipToken, new Text(skip.text));
 			}
 			appendChild(elem, skipToken);
 		}
@@ -117,7 +117,8 @@ export class CstBuilder {
 		if (!(this._current.parent instanceof Element)) {
 			throw new Error(`Parent node is required: ${this._current}`);
 		}
+		const current = this._current;
 		this._current = this._current.parent;
-		return this;
+		return current;
 	}
 }

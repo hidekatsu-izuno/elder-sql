@@ -2,8 +2,8 @@ import { Element, Text } from "domhandler"
 
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"DropViewStatement"}, [
-    new Element("token", {"value":"DROP","type":"Identifier"}, [new Text("DROP")]),
-    new Element("token", {"value":"VIEW","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"DROP"}, [new Text("DROP")]),
+    new Element("token", {"type":"Identifier","value":"VIEW"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("VIEW"),
     ]),
@@ -19,13 +19,13 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"DropViewStatement"}, [
-    new Element("token", {"value":"DROP","type":"Identifier"}, [new Text("DROP")]),
-    new Element("token", {"value":"VIEW","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"DROP"}, [new Text("DROP")]),
+    new Element("token", {"type":"Identifier","value":"VIEW"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("VIEW"),
     ]),
-    new Element("SchemaName", {"type":"ObjectName","value":"main"}, [
-      new Element("token", {"value":"MAIN","type":"Identifier"}, [
+    new Element("node", {"type":"SchemaName","value":"main"}, [
+      new Element("token", {"type":"Identifier","value":"MAIN"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("main"),
       ]),
@@ -40,23 +40,23 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"DropViewStatement"}, [
-    new Element("token", {"value":"DROP","type":"Identifier"}, [new Text("DROP")]),
-    new Element("token", {"value":"VIEW","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"DROP"}, [new Text("DROP")]),
+    new Element("token", {"type":"Identifier","value":"VIEW"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("VIEW"),
     ]),
     new Element("node", {"type":"IfExistsOption"}, [
-      new Element("token", {"value":"IF","type":"Identifier"}, [
+      new Element("token", {"type":"Identifier","value":"IF"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("IF"),
       ]),
-      new Element("token", {"value":"EXISTS","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"EXISTS"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("EXISTS"),
       ]),
     ]),
-    new Element("SchemaName", {"type":"ObjectName","value":"main"}, [
-      new Element("token", {"value":"MAIN","type":"Identifier"}, [
+    new Element("node", {"type":"SchemaName","value":"main"}, [
+      new Element("token", {"type":"Identifier","value":"MAIN"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("main"),
       ]),

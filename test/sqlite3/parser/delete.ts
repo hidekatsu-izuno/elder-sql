@@ -3,13 +3,13 @@ import { Element, Text } from "domhandler"
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"DeleteStatement"}, [
     new Element("node", {"type":"DeleteClause"}, [
-      new Element("token", {"value":"DELETE","type":"Reserved"}, [new Text("DELETE")]),
-      new Element("token", {"value":"FROM","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"DELETE"}, [new Text("DELETE")]),
+      new Element("token", {"type":"Reserved","value":"FROM"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("FROM"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
@@ -22,20 +22,20 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"DeleteStatement"}, [
     new Element("node", {"type":"DeleteClause"}, [
-      new Element("token", {"value":"DELETE","type":"Reserved"}, [new Text("DELETE")]),
-      new Element("token", {"value":"FROM","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"DELETE"}, [new Text("DELETE")]),
+      new Element("token", {"type":"Reserved","value":"FROM"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("FROM"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
     ]),
   ]),
@@ -45,7 +45,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"DeleteStatement"}, [
     new Element("node", {"type":"WithClause"}, [
-      new Element("token", {"value":"WITH","type":"Identifier"}, [new Text("WITH")]),
+      new Element("token", {"type":"Identifier","value":"WITH"}, [new Text("WITH")]),
       new Element("node", {"type":"CommonTableList"}, [
         new Element("node", {"type":"CommonTable"}, [
           new Element("node", {"type":"ObjectName","value":"X"}, [
@@ -54,7 +54,7 @@ export default new Element("node", {"type":"Script"}, [
               new Text("X"),
             ]),
           ]),
-          new Element("token", {"value":"AS","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"AS"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("AS"),
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -62,7 +62,7 @@ export default new Element("node", {"type":"Script"}, [
           new Element("token", {"type":"LeftParen"}, [new Text("(")]),
           new Element("node", {"type":"SelectStatement"}, [
             new Element("node", {"type":"SelectClause"}, [
-              new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+              new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
               new Element("node", {"type":"SelectColumnList"}, [
                 new Element("node", {"type":"SelectColumn"}, [
                   new Element("node", {"type":"Expression"}, [
@@ -73,7 +73,7 @@ export default new Element("node", {"type":"Script"}, [
                       ]),
                     ]),
                   ]),
-                  new Element("token", {"value":"AS","type":"Reserved"}, [
+                  new Element("token", {"type":"Reserved","value":"AS"}, [
                     new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                     new Text("AS"),
                   ]),
@@ -92,26 +92,26 @@ export default new Element("node", {"type":"Script"}, [
       ]),
     ]),
     new Element("node", {"type":"DeleteClause"}, [
-      new Element("token", {"value":"DELETE","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"DELETE"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("DELETE"),
       ]),
-      new Element("token", {"value":"FROM","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"FROM"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("FROM"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"WhereClause"}, [
-        new Element("token", {"value":"WHERE","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"WHERE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("WHERE"),
         ]),
@@ -134,7 +134,7 @@ export default new Element("node", {"type":"Script"}, [
               new Element("token", {"type":"LeftParen"}, [new Text("(")]),
               new Element("node", {"type":"SelectStatement"}, [
                 new Element("node", {"type":"SelectClause"}, [
-                  new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+                  new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
                   new Element("node", {"type":"SelectColumnList"}, [
                     new Element("node", {"type":"SelectColumn"}, [
                       new Element("node", {"type":"Expression"}, [
@@ -150,7 +150,7 @@ export default new Element("node", {"type":"Script"}, [
                     ]),
                   ]),
                   new Element("node", {"type":"FromClause"}, [
-                    new Element("token", {"value":"FROM","type":"Reserved"}, [
+                    new Element("token", {"type":"Reserved","value":"FROM"}, [
                       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                       new Text("FROM"),
                     ]),
@@ -182,23 +182,23 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"DeleteStatement"}, [
     new Element("node", {"type":"DeleteClause"}, [
-      new Element("token", {"value":"DELETE","type":"Reserved"}, [new Text("DELETE")]),
-      new Element("token", {"value":"FROM","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"DELETE"}, [new Text("DELETE")]),
+      new Element("token", {"type":"Reserved","value":"FROM"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("FROM"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"WhereClause"}, [
-        new Element("token", {"value":"WHERE","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"WHERE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("WHERE"),
         ]),
@@ -222,7 +222,7 @@ export default new Element("node", {"type":"Script"}, [
                 ]),
               ]),
             ]),
-            new Element("token", {"value":"AND","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"AND"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("AND"),
             ]),
@@ -248,7 +248,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
       new Element("node", {"type":"ReturningClause"}, [
-        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"RETURNING"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("RETURNING"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),

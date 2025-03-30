@@ -57,7 +57,13 @@ export function toJSString(
 		text += `\n${" ".repeat(space * 2)}]`;
 	} else if (target instanceof Element) {
 		text += `${" ".repeat(space * 2)}new Element(${JSON.stringify(target.name)}, `;
-		text += JSON.stringify(target.attribs || {});
+		text += JSON.stringify(target.attribs || {}, (_, v) => {
+			if (!(v instanceof Array || v === null) && typeof v == "object") {
+				return Object.keys(v).sort().reduce((r, k) => { r[k] = v[k]; return r }, {});
+			} else {
+				return v;
+			}
+		});
 		if (target.children.length === 1 && target.children[0] instanceof Text) {
 			text += `, [new Text(${JSON.stringify(target.children[0].data)})])`;
 		} else if (target.children.length > 0) {

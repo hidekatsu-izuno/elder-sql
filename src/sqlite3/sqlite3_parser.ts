@@ -3,31 +3,29 @@ import {
 	ParseError,
 	type Token,
 	TokenReader,
-} from "../lexer.js";
+} from "../lexer.js"
 import {
 	AggregateParseError,
+	CstBuilder,
 	Parser,
-	SyntaxNode,
-	SyntaxToken,
-	SyntaxTrivia,
-} from "../parser.js";
-import { apply, dequote } from "../utils.js";
-import { Sqlite3Lexer } from "./sqlite3_lexer.js";
+} from "../parser.js"
+import { dequote } from "../utils.js"
+import { Sqlite3Lexer } from "./sqlite3_lexer.js"
+import { Element } from "domhandler"
 
 export class Sqlite3Parser extends Parser {
-	compileOptions: Set<string>;
+	compileOptions: Set<string>
 
 	constructor(options: Record<string, any> = {}) {
-		super(options.lexer ?? new Sqlite3Lexer(options), options);
-		this.compileOptions = new Set(options.compileOptions || []);
+		super(options.lexer ?? new Sqlite3Lexer(options), options)
+		this.compileOptions = new Set(options.compileOptions || [])
 	}
 
 	parseTokens(tokens: Token[]) {
-		const r = new TokenReader(tokens);
+		const r = new TokenReader(tokens)
 
-		const root = new SyntaxNode("Script", {});
-		const errors = [];
-
+		const b = new CstBuilder("Script")
+		const errors = []
 		while (r.peek()) {
 			try {
 				if (
@@ -35,3387 +33,2705 @@ export class Sqlite3Parser extends Parser {
 						type: [SqlTokenType.SemiColon, SqlTokenType.Delimiter, SqlTokenType.EoF],
 					})
 				) {
-					this.appendToken(root, r.consume());
+					b.token(r.consume())
 				} else if (r.peekIf(SqlTokenType.Command)) {
-					this.command(root, r);
+					this.command(b, r)
 				} else if (r.peekIf(SqlKeyword.EXPLAIN)) {
-					this.explainStatement(root, r);
+					this.explainStatement(b, r)
 				} else {
-					this.statement(root, r);
+					this.statement(b, r)
 				}
 			} catch (err) {
 				if (err instanceof ParseError) {
-					this.unknown(root, r);
-					errors.push(err);
+					this.unknown(b, r)
+					errors.push(err)
 				} else {
-					throw err;
+					throw err
 				}
 			}
 		}
 
 		if (errors.length) {
 			throw new AggregateParseError(
-				root,
+				b.root,
 				errors,
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
-			);
+			)
 		}
 
-		return root;
+		return b.root
 	}
 
-	private unknown(parent: SyntaxNode, r: TokenReader) {
+	private unknown(b: CstBuilder, r: TokenReader, base?: Element) {
+		if (base) {
+			while (b.current !== base) {
+				b.end()
+			}
+		}
+		let node
 		if (!r.peek().eos) {
-			return apply(
-				this.append(parent, new SyntaxNode("Unknown", {})),
-				(node) => {
-					while (!r.peek().eos) {
-						this.appendToken(node, r.consume());
-					}
-				},
-			);
+			b.start("Unknown")
+			while (!r.peek().eos) {
+				b.token(r.consume())
+			}
+			node = b.end()		
 		}
+		if (base?.parent) {
+			while (b.current !== base.parent) {
+				b.end()
+			}
+		}
+		return node
 	}
 
-	private command(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("CommandStatement", {}));
+	private command(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CommandStatement")
 		try {
-			return apply(current, (node) => {
-				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
-					const token = r.consume(SqlTokenType.Command);
-					this.appendToken(node, token);
-					node.attribs.value = token.text;
-				});
-				if (!r.peek(-1).eos) {
-					apply(
-						this.append(node, new SyntaxNode("CommandArgumentList", {})),
-						(node) => {
-							do {
-								apply(
-									this.append(node, new SyntaxNode("CommandArgument", {})),
-									(node) => {
-										const token = r.consume();
-										this.appendToken(node, token);
-										node.attribs.value = dequote(token.text);
-									},
-								);
-							} while (!r.peek(-1).eos);
-						},
-					);
-				}
-			});
+			b.start("CommandName")
+			b.value(b.token(r.consume(SqlTokenType.Command)).text)
+			b.end()
+			if (!r.peek(-1).eos) {
+				b.start("CommandArgumentList")
+				do {
+					b.start("CommandArgument")
+					b.value(b.token(r.consume()).text)
+					b.end()
+				} while (!r.peek(-1).eos)
+				b.end()
+			}
 		} catch (err) {
 			if (err instanceof ParseError) {
-				this.unknown(current, r);
+				this.unknown(b, r, stmt)
 			}
-			throw err;
+			throw err
 		}
+		return b.end()
 	}
 
-	private explainStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
+	private explainStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("ExplainStatement")
 		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.EXPLAIN));
-				if (r.peekIf(SqlKeyword.QUERY)) {
-					apply(
-						this.append(node, new SyntaxNode("QueryPlanOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.PLAN));
-						},
-					);
-				}
-				this.statement(node, r);
-			});
+			b.token(r.consume(SqlKeyword.EXPLAIN))
+			if (r.peekIf(SqlKeyword.QUERY)) {
+				b.start("QueryPlanOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.PLAN))
+				b.end()
+			}
+			this.statement(b, r)
 		} catch (err) {
 			if (err instanceof ParseError) {
-				this.unknown(current, r);
+				this.unknown(b, r, stmt)
 			}
-			throw err;
+			throw err
 		}
+		return b.end()
 	}
 
-	private statement(parent: SyntaxNode, r: TokenReader) {
-		let stmt: unknown;
+	private statement(b: CstBuilder, r: TokenReader) {
+		let stmt: Element | undefined
 		if (r.peekIf(SqlKeyword.CREATE)) {
-			const mark = r.pos;
-			r.consume();
+			const mark = r.pos
+			r.consume()
 			while (!r.peek().eos && !Sqlite3Lexer.isObjectStart(r.peek().keyword)) {
-				r.consume();
+				r.consume()
 			}
 
 			if (r.peekIf(SqlKeyword.TABLE)) {
-				r.pos = mark;
-				stmt = this.createTableStatement(parent, r);
+				r.pos = mark
+				stmt = this.createTableStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.VIEW)) {
-				r.pos = mark;
-				stmt = this.createViewStatement(parent, r);
+				r.pos = mark
+				stmt = this.createViewStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.TRIGGER)) {
-				r.pos = mark;
-				stmt = this.createTriggerStatement(parent, r);
+				r.pos = mark
+				stmt = this.createTriggerStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.INDEX)) {
-				r.pos = mark;
-				stmt = this.createIndexStatement(parent, r);
+				r.pos = mark
+				stmt = this.createIndexStatement(b, r)
 			} else {
-				r.pos = mark;
+				r.pos = mark
 			}
 		} else if (r.peekIf(SqlKeyword.ALTER)) {
-			const mark = r.pos;
-			r.consume();
+			const mark = r.pos
+			r.consume()
 
 			if (r.peekIf(SqlKeyword.TABLE)) {
-				r.pos = mark;
-				stmt = this.alterTableStatement(parent, r);
+				r.pos = mark
+				stmt = this.alterTableStatement(b, r)
 			} else {
-				r.pos = mark;
+				r.pos = mark
 			}
 		} else if (r.peekIf(SqlKeyword.DROP)) {
-			const mark = r.pos;
-			r.consume();
+			const mark = r.pos
+			r.consume()
 
 			if (r.peekIf(SqlKeyword.TABLE)) {
-				r.pos = mark;
-				stmt = this.dropTableStatement(parent, r);
+				r.pos = mark
+				stmt = this.dropTableStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.VIEW)) {
-				r.pos = mark;
-				stmt = this.dropViewStatement(parent, r);
+				r.pos = mark
+				stmt = this.dropViewStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.TRIGGER)) {
-				r.pos = mark;
-				stmt = this.dropTriggerStatement(parent, r);
+				r.pos = mark
+				stmt = this.dropTriggerStatement(b, r)
 			} else if (r.peekIf(SqlKeyword.INDEX)) {
-				r.pos = mark;
-				stmt = this.dropIndexStatement(parent, r);
+				r.pos = mark
+				stmt = this.dropIndexStatement(b, r)
 			} else {
-				r.pos = mark;
+				r.pos = mark
 			}
 		} else if (r.peekIf(SqlKeyword.ATTACH)) {
-			stmt = this.attachDatabaseStatement(parent, r);
+			stmt = this.attachDatabaseStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.DETACH)) {
-			stmt = this.detachDatabaseStatement(parent, r);
+			stmt = this.detachDatabaseStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.ANALYZE)) {
-			stmt = this.analyzeStatement(parent, r);
+			stmt = this.analyzeStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.REINDEX)) {
-			stmt = this.reindexStatement(parent, r);
+			stmt = this.reindexStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.VACUUM)) {
-			stmt = this.vacuumStatement(parent, r);
+			stmt = this.vacuumStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.PRAGMA)) {
-			stmt = this.pragmaStatement(parent, r);
+			stmt = this.pragmaStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.BEGIN)) {
-			stmt = this.beginTransactionStatement(parent, r);
+			stmt = this.beginTransactionStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.SAVEPOINT)) {
-			stmt = this.savepointStatement(parent, r);
+			stmt = this.savepointStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.RELEASE)) {
-			stmt = this.releaseSavepointStatement(parent, r);
+			stmt = this.releaseSavepointStatement(b, r)
 		} else if (r.peekIf({ type: [SqlKeyword.COMMIT, SqlKeyword.END] })) {
-			stmt = this.commitTransactionStatement(parent, r);
+			stmt = this.commitTransactionStatement(b, r)
 		} else if (r.peekIf(SqlKeyword.ROLLBACK)) {
-			stmt = this.rollbackTransactionStatement(parent, r);
+			stmt = this.rollbackTransactionStatement(b, r)
 		} else {
+			let withClause;
 			if (r.peekIf(SqlKeyword.WITH)) {
-				this.withClause(parent, r);
+				withClause = this.withClause(b, r)
 			}
 			if (r.peekIf({ type: [SqlKeyword.INSERT, SqlKeyword.REPLACE] })) {
-				stmt = this.insertStatement(parent, r);
+				stmt = this.insertStatement(b, r, withClause)
 			} else if (r.peekIf(SqlKeyword.UPDATE)) {
-				stmt = this.updateStatement(parent, r);
+				stmt = this.updateStatement(b, r, withClause)
 			} else if (r.peekIf(SqlKeyword.DELETE)) {
-				stmt = this.deleteStatement(parent, r);
+				stmt = this.deleteStatement(b, r, withClause)
 			} else if (r.peekIf({ type: [SqlKeyword.SELECT, SqlKeyword.VALUES] })) {
-				stmt = this.selectStatement(parent, r);
+				stmt = this.selectStatement(b, r, withClause)
 			}
 		}
 
 		if (!stmt) {
-			throw r.createParseError();
+			throw r.createParseError()
 		}
-		return stmt;
+		return stmt
 	}
 
-	private createTableStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("CreateTableStatement", {}),
-		);
+	private createTableStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CreateTableStatement")
 		try {
-			return apply(current, (node) => {
-				let virtual = false;
-
-				this.appendToken(node, r.consume(SqlKeyword.CREATE));
-				if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
-					apply(
-						this.append(node, new SyntaxNode("TemporaryOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
-					apply(
-						this.append(node, new SyntaxNode("VirtualOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-					virtual = true;
-				}
-				this.appendToken(node, r.consume(SqlKeyword.TABLE));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.NOT));
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (virtual) {
-					apply(
-						this.append(node, new SyntaxNode("UsingModuleClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume(SqlKeyword.USING));
-							this.identifier(node, r, "ModuleName");
-							if (r.peekIf(SqlTokenType.LeftParen)) {
-								this.appendToken(node, r.consume());
-								apply(
-									this.append(node, new SyntaxNode("ModuleArgumentList", {})),
-									(node) => {
-										do {
-											apply(
-												this.append(node, new SyntaxNode("ModuleArgument", {})),
-												(node) => {
-													do {
-														this.appendToken(node, r.consume());
-													} while (
-														!r.peek().eos &&
-														!r.peekIf({
-															type: [SqlTokenType.RightParen, SqlTokenType.Comma],
-														})
-													);
-												},
-											);
-											if (r.peekIf(SqlTokenType.Comma)) {
-												this.appendToken(node, r.consume());
-											} else {
-												break;
-											}
-										} while (!r.peek().eos);
-									},
-								);
-								this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							}
-						},
-					);
-				} else if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("TableColumnList", {})),
-						(node) => {
-							let hasTableConstraint = false;
+			b.token(r.consume(SqlKeyword.CREATE))
+			let virtual = false
+			if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
+				b.start("TemporaryOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
+				b.start("VirtualOption")
+				b.token(r.consume())
+				b.end()
+				virtual = true
+			}
+			b.token(r.consume(SqlKeyword.TABLE))
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfNotExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.NOT))
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			if (virtual) {
+				b.start("UsingModuleClause")
+				b.token(r.consume(SqlKeyword.USING))
+				this.identifier(b, r, "ModuleName")
+				if (r.peekIf(SqlTokenType.LeftParen)) {
+					b.token(r.consume())
+					{
+						b.start("ModuleArgumentList")
+						do {
+							b.start("ModuleArgument")
 							do {
-								if (!hasTableConstraint) {
-									if (
-										r.peekIf({
-											type: [
-												SqlKeyword.CONSTRAINT,
-												SqlKeyword.UNIQUE,
-												SqlKeyword.CHECK,
-												SqlKeyword.FOREIGN,
-											],
-										}) ||
-										r.peekIf(SqlKeyword.PRIMARY, SqlKeyword.KEY)
-									) {
-										hasTableConstraint = true;
-									} else {
-										this.tableColumn(node, r);
-									}
-								}
-								if (hasTableConstraint) {
-									this.tableConstraint(node, r);
-								}
-								if (r.peekIf(SqlTokenType.Comma)) {
-									this.appendToken(node, r.consume());
-								} else {
-									break;
-								}
-							} while (!r.peek().eos);
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-
-					while (r.peekIf({ type: [SqlKeyword.WITHOUT, SqlKeyword.STRICT] })) {
-						if (r.peekIf(SqlKeyword.WITHOUT)) {
-							apply(
-								this.append(node, new SyntaxNode("WithoutRowidOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									this.appendToken(node, r.consume(SqlKeyword.ROWID));
-								},
-							);
-						} else if (r.peekIf(SqlKeyword.STRICT)) {
-							apply(
-								this.append(node, new SyntaxNode("StrictOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-								},
-							);
-						}
-						if (r.peekIf(SqlTokenType.Comma)) {
-							this.appendToken(node, r.consume());
-						} else {
-							break;
-						}
-					}
-				} else if (r.peekIf(SqlKeyword.AS)) {
-					this.appendToken(node, r.consume());
-					this.selectStatement(node, r);
-				} else {
-					throw r.createParseError();
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private createViewStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("CreateViewStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.CREATE));
-				if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
-					apply(
-						this.append(node, new SyntaxNode("TemporaryOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-				this.appendToken(node, r.consume(SqlKeyword.VIEW));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.NOT));
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					this.columnList(node, r);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				}
-
-				this.appendToken(node, r.consume(SqlKeyword.AS));
-				this.selectStatement(node, r);
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private createTriggerStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("CreateTriggerStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.CREATE));
-				if (r.peekIf(SqlKeyword.TEMPORARY) || r.peekIf(SqlKeyword.TEMP)) {
-					apply(
-						this.append(node, new SyntaxNode("TemporaryOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-				this.appendToken(node, r.consume(SqlKeyword.TRIGGER));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.NOT));
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				let hasOption = false;
-				if (r.peekIf(SqlKeyword.BEFORE)) {
-					apply(
-						this.append(node, new SyntaxNode("BeforeOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-					hasOption = true;
-				} else if (r.peekIf(SqlKeyword.AFTER)) {
-					apply(
-						this.append(node, new SyntaxNode("AfterOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-					hasOption = true;
-				} else if (r.peekIf(SqlKeyword.INSTEAD)) {
-					apply(
-						this.append(node, new SyntaxNode("InsteadOfOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.OF));
-						},
-					);
-					hasOption = true;
-				}
-
-				if (r.peekIf(SqlKeyword.INSERT)) {
-					let current = new SyntaxNode("InsertOnClause", {});
-					const last = node.lastChild;
-					if (last instanceof SyntaxNode && hasOption) {
-						this.wrap(last, current);
-					} else {
-						current = this.append(node, current);
-					}
-
-					apply(current, (node) => {
-						this.appendToken(node, r.consume());
-						this.appendToken(node, r.consume(SqlKeyword.ON));
-
-						const ident = this.identifier(node, r, "ObjectName");
-						if (r.peekIf(SqlTokenType.Dot)) {
-							ident.name = "SchemaName";
-							this.appendToken(node, r.consume());
-							this.identifier(node, r, "ObjectName");
-						}
-					});
-				} else if (r.peekIf(SqlKeyword.UPDATE)) {
-					let current = new SyntaxNode("UpdateOnClause", {});
-					const last = node.lastChild;
-					if (last instanceof SyntaxNode && hasOption) {
-						this.wrap(last, current);
-					} else {
-						current = this.append(node, current);
-					}
-
-					apply(current, (node) => {
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.OF)) {
-							apply(
-								this.append(node, new SyntaxNode("ColumnList", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									do {
-										this.identifier(node, r, "ColumnName");
-										if (r.peekIf(SqlTokenType.Comma)) {
-											this.appendToken(node, r.consume());
-										} else {
-											break;
-										}
-									} while (!r.peek().eos);
-								},
-							);
-							this.appendToken(node, r.consume(SqlKeyword.ON));
-							const ident = this.identifier(node, r, "ObjectName");
-							if (r.peekIf(SqlTokenType.Dot)) {
-								ident.name = "SchemaName";
-								this.appendToken(node, r.consume());
-								this.identifier(node, r, "ObjectName");
+								b.token(r.consume())
+							} while (
+								!r.peek().eos &&
+								!r.peekIf({
+									type: [SqlTokenType.RightParen, SqlTokenType.Comma],
+								})
+							)
+							b.end()
+	
+							if (r.peekIf(SqlTokenType.Comma)) {
+								b.token(r.consume())
+							} else {
+								break
 							}
-						}
-					});
-				} else if (r.peekIf(SqlKeyword.DELETE)) {
-					let current = new SyntaxNode("DeleteOnClause", {});
-					const last = node.lastChild;
-					if (last instanceof SyntaxNode && hasOption) {
-						this.wrap(last, current);
-					} else {
-						current = this.append(node, current);
+						} while (!r.peek().eos)
+						b.end()	
 					}
-
-					apply(current, (node) => {
-						this.appendToken(node, r.consume());
-						this.appendToken(node, r.consume(SqlKeyword.ON));
-						const ident = this.identifier(node, r, "ObjectName");
-						if (r.peekIf(SqlTokenType.Dot)) {
-							ident.name = "SchemaName";
-							this.appendToken(node, r.consume());
-							this.identifier(node, r, "ObjectName");
-						}
-					});
-				} else {
-					throw r.createParseError();
+					b.token(r.consume(SqlTokenType.RightParen))
 				}
-
-				if (r.peekIf(SqlKeyword.FOR)) {
-					apply(
-						this.append(node, new SyntaxNode("ForEachRowOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.EACH));
-							this.appendToken(node, r.consume(SqlKeyword.ROW));
-						},
-					);
-				}
-
-				if (r.peekIf(SqlKeyword.WHEN)) {
-					apply(this.append(node, new SyntaxNode("WhenClause", {})), (node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r);
-					});
-				}
-
-				apply(
-					this.append(node, new SyntaxNode("BeginStatement", {})),
-					(node) => {
-						this.appendToken(node, r.consume(SqlKeyword.BEGIN));
-						apply(
-							this.append(node, new SyntaxNode("BeginBlock", {})),
-							(node) => {
-								if (r.peekIf(SqlKeyword.WITH)) {
-									this.withClause(node, r);
-								}
-								if (r.peekIf(SqlKeyword.INSERT) || r.peekIf(SqlKeyword.REPLACE)) {
-									this.insertStatement(node, r);
-								} else if (r.peekIf(SqlKeyword.UPDATE)) {
-									this.updateStatement(node, r);
-								} else if (r.peekIf(SqlKeyword.DELETE)) {
-									this.deleteStatement(node, r);
-								} else if (r.peekIf(SqlKeyword.SELECT)) {
-									this.selectStatement(node, r);
-								} else {
-									throw r.createParseError();
-								}
-								this.appendToken(node, r.consume(SqlTokenType.SemiColon));
-							},
-						);
-						this.appendToken(node, r.consume(SqlKeyword.END));
-					},
-				);
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private createIndexStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("CreateIndexStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.CREATE));
-				if (r.peekIf(SqlKeyword.UNIQUE)) {
-					apply(
-						this.append(node, new SyntaxNode("UniqueOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-				this.appendToken(node, r.consume(SqlKeyword.INDEX));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfNotExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.NOT));
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				apply(
-					this.append(node, new SyntaxNode("IndexOnClause", {})),
-					(node) => {
-						this.appendToken(node, r.consume(SqlKeyword.ON));
-						this.identifier(node, r, "ObjectName");
-						this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-						apply(
-							this.append(node, new SyntaxNode("SortColumnList", {})),
-							(node) => {
-								do {
-									this.sortColumn(node, r);
-									if (r.peekIf(SqlTokenType.Comma)) {
-										this.appendToken(node, r.consume());
-									} else {
-										break;
-									}
-								} while (!r.peek().eos);
-							},
-						);
-						this.appendToken(node, r.consume(SqlTokenType.RightParen));
-					},
-				);
-
-				if (r.peekIf(SqlKeyword.WHERE)) {
-					this.whereClause(node, r);
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private alterTableStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("AlterTableStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ALTER));
-				this.appendToken(node, r.consume(SqlKeyword.TABLE));
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (r.peekIf(SqlKeyword.RENAME, SqlKeyword.TO)) {
-					apply(
-						this.append(node, new SyntaxNode("RenameToObjectClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume());
-							this.identifier(node, r, "ObjectName");
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.RENAME)) {
-					apply(
-						this.append(node, new SyntaxNode("RenameColumnClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.COLUMN)) {
-								this.appendToken(node, r.consume());
-							}
-							this.identifier(node, r, "ColumnName");
-							apply(
-								this.append(node, new SyntaxNode("RenameToColumnClause", {})),
-								(node) => {
-									this.appendToken(node, r.consume(SqlKeyword.TO));
-									this.identifier(node, r, "ColumnName");
-								},
-							);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.ADD)) {
-					apply(
-						this.append(node, new SyntaxNode("AddColumnClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.COLUMN)) {
-								this.appendToken(node, r.consume());
-							}
-							this.tableColumn(node, r);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.DROP)) {
-					apply(
-						this.append(node, new SyntaxNode("DropColumnClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.COLUMN)) {
-								this.appendToken(node, r.consume());
-							}
-							this.identifier(node, r, "ColumnName");
-						},
-					);
-				} else {
-					throw r.createParseError();
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private dropTableStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("DropTableStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DROP));
-				this.appendToken(node, r.consume(SqlKeyword.TABLE));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private dropViewStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("DropViewStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DROP));
-				this.appendToken(node, r.consume(SqlKeyword.VIEW));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private dropTriggerStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("DropTriggerStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DROP));
-				this.appendToken(node, r.consume(SqlKeyword.TRIGGER));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(
-						this.append(node, new SyntaxNode("IfExistsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-						},
-					);
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private dropIndexStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("DropIndexStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DROP));
-				this.appendToken(node, r.consume(SqlKeyword.INDEX));
-
-				if (r.peekIf(SqlKeyword.IF)) {
-					apply(this.append(node, new SyntaxNode("IfExists", {})), (node) => {
-						this.appendToken(node, r.consume());
-						this.appendToken(node, r.consume(SqlKeyword.EXISTS));
-					});
-				}
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private attachDatabaseStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("AttachDatabaseStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ATTACH));
-				if (r.peekIf(SqlKeyword.DATABASE)) {
-					this.appendToken(node, r.consume());
-				}
-				apply(this.append(node, new SyntaxNode("Database", {})), (node) => {
-					this.expression(node, r);
-				});
-				this.appendToken(node, r.consume(SqlKeyword.AS));
-				this.identifier(node, r, "SchemaName");
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private detachDatabaseStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("DetachDatabaseStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DETACH));
-				if (r.peekIf(SqlKeyword.DATABASE)) {
-					this.appendToken(node, r.consume());
-				}
-				this.identifier(node, r, "SchemaName");
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private analyzeStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("AnalyzeStatement", {}));
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ANALYZE));
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private reindexStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("ReindexStatement", {}));
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.REINDEX));
-
-				if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
-					const ident = this.identifier(node, r, "ObjectName");
-					if (r.peekIf(SqlTokenType.Dot)) {
-						ident.name = "SchemaName";
-						this.appendToken(node, r.consume());
-						this.identifier(node, r, "ObjectName");
-					}
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private vacuumStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("VacuumStatement", {}));
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.VACUUM));
-
-				if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
-					this.identifier(node, r, "SchemaName");
-				}
-
-				if (r.peekIf(SqlKeyword.INTO)) {
-					this.appendToken(node, r.consume());
-					apply(this.append(node, new SyntaxNode("FileName", {})), (node) => {
-						this.stringLiteral(node, r);
-					});
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private pragmaStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("PragmaStatement", {}));
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.PRAGMA));
-
-				const ident = this.identifier(node, r, "PragmaName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.name = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "PragmaName");
-				}
-
-				if (r.peekIf({ type: SqlTokenType.Operator, text: "=" })) {
-					this.appendToken(node, r.consume());
-					this.pragmaValue(node, r);
-				} else if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("PragmaArgumentList", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("PragmaArgument", {})),
-								(node) => {
-									this.pragmaValue(node, r);
-								},
-							);
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private beginTransactionStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("BeginTransactionStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.BEGIN));
-				if (r.peekIf(SqlKeyword.DEFERRED)) {
-					apply(
-						this.append(node, new SyntaxNode("DeferredOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.IMMEDIATE)) {
-					apply(
-						this.append(node, new SyntaxNode("ImmediateOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.EXCLUSIVE)) {
-					apply(
-						this.append(node, new SyntaxNode("ExclusiveOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-				if (r.peekIf(SqlKeyword.TRANSACTION)) {
-					this.appendToken(node, r.consume());
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private savepointStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("SavepointStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.SAVEPOINT));
-				this.identifier(node, r, "SavepointName");
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private releaseSavepointStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("ReleaseSavepointStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.RELEASE));
-				if (r.peekIf(SqlKeyword.SAVEPOINT)) {
-					this.appendToken(node, r.consume());
-				}
-				this.identifier(node, r, "SavepointName");
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private commitTransactionStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("CommitTransactionStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				if (r.peekIf(SqlKeyword.END)) {
-					this.appendToken(node, r.consume());
-				} else {
-					this.appendToken(node, r.consume(SqlKeyword.COMMIT));
-				}
-				if (r.peekIf(SqlKeyword.TRANSACTION)) {
-					this.appendToken(node, r.consume());
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private rollbackTransactionStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(
-			parent,
-			new SyntaxNode("RollbackTransactionStatement", {}),
-		);
-		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ROLLBACK));
-				if (r.peekIf(SqlKeyword.TRANSACTION)) {
-					this.appendToken(node, r.consume());
-				}
-				if (r.peekIf(SqlKeyword.TO)) {
-					this.appendToken(node, r.consume());
-					if (r.peekIf(SqlKeyword.SAVEPOINT)) {
-						this.appendToken(node, r.consume());
-					}
-					this.identifier(node, r, "SavepointName");
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private insertStatement(parent: SyntaxNode, r: TokenReader) {
-		let current = new SyntaxNode("InsertStatement", {});
-		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
-			this.wrap(last, current);
-		} else {
-			current = this.append(parent, current);
-		}
-		try {
-			return apply(current, (node) => {
-				this.insertClause(node, r);
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private insertClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("InsertClause", {})),
-			(node) => {
-				if (r.peekIf(SqlKeyword.REPLACE)) {
-					apply(
-						this.append(node, new SyntaxNode("ReplaceOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else {
-					this.appendToken(node, r.consume(SqlKeyword.INSERT));
-					if (r.peekIf(SqlKeyword.OR)) {
-						apply(
-							this.append(node, new SyntaxNode("OrConflictClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.conflictAction(node, r);
-							},
-						);
-					}
-				}
-				this.appendToken(node, r.consume(SqlKeyword.INTO));
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (r.peekIf(SqlKeyword.AS)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectAlias");
-				}
-
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					this.columnList(node, r);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				}
-
-				if (r.peekIf(SqlKeyword.DEFAULT)) {
-					apply(
-						this.append(node, new SyntaxNode("DefaultValuesOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.VALUES));
-						},
-					);
-				} else {
-					if (r.peekIf(SqlKeyword.VALUES)) {
-						apply(
-							this.append(node, new SyntaxNode("ValuesClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								apply(
-									this.append(node, new SyntaxNode("ExpressionListGroup", {})),
-									(node) => {
-										do {
-											this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-											const current = this.expressionList(node, r);
-											this.appendToken(node, r.consume(SqlTokenType.RightParen));
-
-											if (r.peekIf(SqlTokenType.Comma)) {
-												this.appendToken(node, r.consume());
-											} else {
-												break;
-											}
-										} while (!r.peek().eos);
-									},
-								);
-							},
-						);
-					} else {
-						if (r.peekIf(SqlKeyword.WITH)) {
-							this.withClause(node, r);
-						}
-						this.selectStatement(node, r);
-					}
-
+				b.end()
+			} else if (r.peekIf(SqlTokenType.LeftParen)) {
+				b.token(r.consume())
+				{
+					b.start("TableColumnList")
+					let hasTableConstraint = false
 					do {
-						if (r.peekIf(SqlKeyword.ON)) {
-							this.onConflictClause(node, r);
-						} else {
-							break;
-						}
-					} while (!r.peek().eos);
-				}
-
-				if (r.peekIf(SqlKeyword.RETURNING)) {
-					this.returningClause(node, r);
-				}
-			},
-		);
-	}
-
-	private onConflictClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("OnConflictClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ON));
-				this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("SortColumnList", {})),
-						(node) => {
-							do {
-								this.sortColumn(node, r);
-								if (r.peekIf(SqlTokenType.Comma)) {
-									this.appendToken(node, r.consume());
-								} else {
-									break;
-								}
-							} while (!r.peek().eos);
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-					if (r.peekIf(SqlKeyword.WHERE)) {
-						this.whereClause(node, r);
-					}
-				}
-				this.appendToken(node, r.consume(SqlKeyword.DO));
-				if (r.peekIf(SqlKeyword.NOTHING)) {
-					apply(
-						this.append(node, new SyntaxNode("DoNothingOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.UPDATE)) {
-					apply(
-						this.append(node, new SyntaxNode("DoUpdateOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.setClause(node, r);
-							if (r.peekIf(SqlKeyword.WHERE)) {
-								this.whereClause(node, r);
-							}
-						},
-					);
-				} else {
-					throw r.createParseError();
-				}
-			},
-		);
-	}
-
-	private updateStatement(parent: SyntaxNode, r: TokenReader) {
-		let current = new SyntaxNode("UpdateStatement", {});
-		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
-			this.wrap(last, current);
-		} else {
-			current = this.append(parent, current);
-		}
-		try {
-			return apply(current, (node) => {
-				this.updateClause(node, r);
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private updateClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("UpdateClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.UPDATE));
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (r.peekIf(SqlKeyword.AS)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectAlias");
-				}
-
-				if (r.peekIf(SqlKeyword.INDEXED)) {
-					apply(
-						this.append(node, new SyntaxNode("IndexedByOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.BY));
-							this.identifier(node, r, "ObjectName");
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.NOT)) {
-					apply(
-						this.append(node, new SyntaxNode("NotIndexedOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.INDEXED));
-						},
-					);
-				}
-
-				this.setClause(node, r);
-				if (r.peekIf(SqlKeyword.FROM)) {
-					this.fromClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.WHERE)) {
-					this.whereClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.RETURNING)) {
-					this.returningClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.ORDER)) {
-					this.orderByClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.LIMIT)) {
-					this.limitClause(node, r);
-				}
-			},
-		);
-	}
-
-	private setClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("SetClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.SET));
-				apply(
-					this.append(node, new SyntaxNode("UpdateColumnList", {})),
-					(node) => {
-						do {
-							apply(
-								this.append(node, new SyntaxNode("UpdateColumn", {})),
-								(node) => {
-									if (r.peekIf(SqlTokenType.LeftParen)) {
-										this.appendToken(node, r.consume());
-										this.columnList(node, r);
-										this.appendToken(node, r.consume(SqlTokenType.RightParen));
-									} else {
-										this.identifier(node, r, "ColumnName");
-									}
-									this.appendToken(
-										node,
-										r.consume({ type: SqlTokenType.Operator, text: "=" }),
-									);
-									apply(
-										this.append(node, new SyntaxNode("ColumnValue", {})),
-										(node) => {
-											this.expression(node, r);
-										},
-									);
-								},
-							);
-
-							if (r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
-							} else {
-								break;
-							}
-						} while (!r.peek().eos);
-					},
-				);
-			},
-		);
-	}
-
-	private deleteStatement(parent: SyntaxNode, r: TokenReader) {
-		let current = new SyntaxNode("DeleteStatement", {});
-		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
-			this.wrap(last, current);
-		} else {
-			current = this.append(parent, current);
-		}
-		try {
-			return apply(current, (node) => {
-				this.deleteClause(node, r);
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private deleteClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("DeleteClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.DELETE));
-				this.appendToken(node, r.consume(SqlKeyword.FROM));
-
-				const ident = this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					ident.attribs.type = "SchemaName";
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectName");
-				}
-
-				if (r.peekIf(SqlKeyword.WHERE)) {
-					this.whereClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.RETURNING)) {
-					this.returningClause(node, r);
-				}
-			},
-		);
-	}
-
-	private selectStatement(parent: SyntaxNode, r: TokenReader) {
-		let current = new SyntaxNode("SelectStatement", {});
-		const last = parent.lastChild;
-		if (last instanceof SyntaxNode && last.attribs.type === "WithClause") {
-			this.wrap(last, current);
-		} else {
-			current = this.append(parent, current);
-		}
-		try {
-			return apply(current, (node) => {
-				let current = this.selectClause(node, r);
-				while (
-					!this.compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT") &&
-					!r.peek().eos
-				) {
-					if (r.peekIf(SqlKeyword.UNION)) {
-						current = apply(
-							this.wrap(current, new SyntaxNode("UnionOperation", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								if (r.peekIf(SqlKeyword.ALL)) {
-									apply(
-										this.append(node, new SyntaxNode("AllOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								}
-								this.selectClause(node, r);
-							},
-						);
-					} else if (r.peekIf(SqlKeyword.INTERSECT)) {
-						current = apply(
-							this.wrap(current, new SyntaxNode("IntersectOperation", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.selectClause(node, r);
-							},
-						);
-					} else if (r.peekIf(SqlKeyword.EXCEPT)) {
-						current = apply(
-							this.wrap(current, new SyntaxNode("ExceptOperation", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.selectClause(node, r);
-							},
-						);
-					} else {
-						break;
-					}
-				}
-
-				if (r.peekIf(SqlKeyword.ORDER)) {
-					this.orderByClause(node, r);
-				}
-				if (r.peekIf(SqlKeyword.LIMIT)) {
-					this.limitClause(node, r);
-				}
-			});
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(current, r);
-			}
-			throw err;
-		}
-	}
-
-	private selectClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("SelectClause", {})),
-			(node) => {
-				if (r.peekIf(SqlKeyword.VALUES)) {
-					apply(
-						this.append(node, new SyntaxNode("ValuesClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume(SqlKeyword.VALUES));
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.expressionList(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						},
-					);
-				} else {
-					this.appendToken(node, r.consume(SqlKeyword.SELECT));
-					if (r.peekIf(SqlKeyword.DISTINCT)) {
-						apply(
-							this.append(node, new SyntaxNode("DistinctOption", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-							},
-						);
-					} else if (r.peekIf(SqlKeyword.ALL)) {
-						apply(
-							this.append(node, new SyntaxNode("AllOption", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-							},
-						);
-					}
-					this.selectColumnList(node, r);
-
-					if (r.peekIf(SqlKeyword.FROM)) {
-						this.fromClause(node, r);
-					}
-					if (r.peekIf(SqlKeyword.WHERE)) {
-						this.whereClause(node, r);
-					}
-					if (r.peekIf(SqlKeyword.GROUP)) {
-						this.gropuByClause(node, r);
-					}
-					if (r.peekIf(SqlKeyword.HAVING)) {
-						this.havingClause(node, r);
-					}
-					if (
-						!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
-						r.peekIf(SqlKeyword.WINDOW)
-					) {
-						this.windowClause(node, r);
-					}
-				}
-			},
-		);
-	}
-
-	private withClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("WithClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.WITH));
-
-				if (r.peekIf(SqlKeyword.RECURSIVE)) {
-					apply(
-						this.append(node, new SyntaxNode("RecursiveOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-
-				apply(
-					this.append(node, new SyntaxNode("CommonTableList", {})),
-					(node) => {
-						do {
-							apply(
-								this.append(node, new SyntaxNode("CommonTable", {})),
-								(node) => {
-									this.identifier(node, r, "ObjectName");
-									if (r.peekIf(SqlTokenType.LeftParen)) {
-										this.appendToken(node, r.consume());
-										this.columnList(node, r);
-										this.appendToken(node, r.consume(SqlTokenType.RightParen));
-									}
-									this.appendToken(node, r.consume(SqlKeyword.AS));
-
-									if (
-										r.peekIf(SqlKeyword.MATERIALIZED) ||
-										r.peekIf(SqlKeyword.NOT, SqlKeyword.MATERIALIZED)
-									) {
-										apply(
-											this.append(
-												node,
-												new SyntaxNode("MaterializedOption", {}),
-											),
-											(node) => {
-												if (r.peekIf(SqlKeyword.NOT)) {
-													node.attribs.type = "NotMaterializedOption";
-													this.appendToken(node, r.consume());
-												}
-												this.appendToken(node, r.consume());
-											},
-										);
-									}
-
-									this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-									this.selectStatement(node, r);
-									this.appendToken(node, r.consume(SqlTokenType.RightParen));
-								},
-							);
-
-							if (r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
-							} else {
-								break;
-							}
-						} while (!r.peek().eos);
-					},
-				);
-			},
-		);
-	}
-
-	private selectColumnList(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("SelectColumnList", {})),
-			(node) => {
-				do {
-					apply(
-						this.append(node, new SyntaxNode("SelectColumn", {})),
-						(node) => {
-							if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
-								apply(
-									this.append(node, new SyntaxNode("AllColumnsOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							} else if (
-								r.peekIf(
-									{ type: [SqlTokenType.Identifier, SqlTokenType.String] },
-									SqlTokenType.Dot,
-									{ type: SqlTokenType.Operator, text: "*" },
-								)
-							) {
-								apply(
-									this.append(node, new SyntaxNode("AllColumnsOption", {})),
-									(node) => {
-										this.identifier(node, r, "SchemaName");
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume());
-									},
-								);
-							} else {
-								this.expression(node, r);
-								if (r.peekIf(SqlKeyword.AS)) {
-									this.appendToken(node, r.consume());
-									this.identifier(node, r, "ColumnAlias");
-								} else if (
-									r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
-								) {
-									this.identifier(node, r, "ColumnAlias");
-								}
-							}
-						},
-					);
-					if (r.peekIf(SqlTokenType.Comma)) {
-						this.appendToken(node, r.consume());
-					} else {
-						break;
-					}
-				} while (!r.peek().eos);
-			},
-		);
-	}
-
-	private fromClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("FromClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.FROM));
-				apply(
-					this.append(node, new SyntaxNode("FromObjectList", {})),
-					(node) => {
-						let hasJoinClause = false;
-						do {
-							const fromObject = this.fromObject(node, r);
-
-							while (
+						if (!hasTableConstraint) {
+							if (
 								r.peekIf({
 									type: [
-										SqlKeyword.NATURAL,
-										SqlKeyword.JOIN,
-										SqlKeyword.CROSS,
-										SqlKeyword.INNER,
-										SqlKeyword.LEFT,
-										SqlKeyword.RIGHT,
-										SqlKeyword.FULL,
+										SqlKeyword.CONSTRAINT,
+										SqlKeyword.UNIQUE,
+										SqlKeyword.CHECK,
+										SqlKeyword.FOREIGN,
 									],
-								})
+								}) ||
+								r.peekIf(SqlKeyword.PRIMARY, SqlKeyword.KEY)
 							) {
-								hasJoinClause = true;
-								this.joinClause(fromObject, r);
-							}
-
-							if (!hasJoinClause && r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
+								hasTableConstraint = true
 							} else {
-								break;
+								this.tableColumn(b, r)
 							}
-						} while (!r.peek().eos);
-					},
-				);
-			},
-		);
-	}
-
-	private fromObject(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("FromObject", {})),
-			(node) => {
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("SubqueryExpression", {})),
-						(node) => {
-							if (r.peekIf({ type: [SqlKeyword.WITH, SqlKeyword.SELECT] })) {
-								if (r.peekIf(SqlKeyword.WITH)) {
-									this.withClause(node, r);
-								}
-								this.selectStatement(node, r);
-							} else {
-								this.fromClause(node, r);
-							}
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				} else {
-					apply(
-						this.append(node, new SyntaxNode("ObjectReference", {})),
-						(node) => {
-							const ident = this.identifier(node, r, "ObjectName");
-							if (r.peekIf(SqlTokenType.Dot)) {
-								ident.attribs.type = "SchemaName";
-								this.appendToken(node, r.consume());
-								this.identifier(node, r, "ObjectName");
-							}
-							if (r.peekIf(SqlTokenType.LeftParen)) {
-								node.attribs.type = "FunctionExpression";
-								this.appendToken(node, r.consume());
-								apply(
-									this.append(node, new SyntaxNode("FunctionArgumentList", {})),
-									(node) => {
-										while (!r.peekIf(SqlTokenType.RightParen)) {
-											apply(
-												this.append(
-													node,
-													new SyntaxNode("FunctionArgument", {}),
-												),
-												(node) => {
-													this.expression(node, r);
-												},
-											);
-											if (r.peekIf(SqlTokenType.Comma)) {
-												this.appendToken(node, r.consume());
-											} else {
-												break;
-											}
-										}
-									},
-								);
-								this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							}
-						},
-					);
-				}
-
-				if (r.peekIf(SqlKeyword.AS)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ObjectAlias");
-				} else if (r.peekIf(SqlTokenType.Identifier)) {
-					this.identifier(node, r, "ObjectAlias");
-				}
-			},
-		);
-	}
-
-	private joinClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("InnerJoinClause", {})),
-			(node) => {
-				if (r.peekIf(SqlKeyword.CROSS)) {
-					node.attribs.type = "CrossJoinClause";
-					this.appendToken(node, r.consume());
-				} else {
-					if (r.peekIf(SqlKeyword.NATURAL)) {
-						apply(
-							this.append(node, new SyntaxNode("NatualOption", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-							},
-						);
-					}
-					if (r.peekIf(SqlKeyword.LEFT)) {
-						node.attribs.type = "LeftOuterJoinClause";
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.OUTER)) {
-							this.appendToken(node, r.consume());
 						}
-					} else if (r.peekIf(SqlKeyword.RIGHT)) {
-						node.attribs.type = "RightOuterJoinClause";
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.OUTER)) {
-							this.appendToken(node, r.consume());
+						if (hasTableConstraint) {
+							this.tableConstraint(b, r)
 						}
-					} else if (r.peekIf(SqlKeyword.FULL)) {
-						node.attribs.type = "FullOuterJoinClause";
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.OUTER)) {
-							this.appendToken(node, r.consume());
-						}
-					} else if (r.peekIf(SqlKeyword.INNER)) {
-						this.appendToken(node, r.consume());
-					}
-				}
-				this.appendToken(node, r.consume(SqlKeyword.JOIN));
-
-				this.fromObject(node, r);
-
-				if (r.peekIf(SqlKeyword.ON)) {
-					apply(
-						this.append(node, new SyntaxNode("JoinOnClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.expression(node, r);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.USING)) {
-					apply(
-						this.append(node, new SyntaxNode("UsingClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						},
-					);
-				}
-			},
-		);
-	}
-
-	private whereClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("WhereClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.WHERE));
-				this.expression(node, r);
-			},
-		);
-	}
-
-	private gropuByClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("GroupByClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.GROUP));
-				this.appendToken(node, r.consume(SqlKeyword.BY));
-				this.expressionList(node, r);
-			},
-		);
-	}
-
-	private havingClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("HavingClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.HAVING));
-				this.expression(node, r);
-			},
-		);
-	}
-
-	private windowClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("WindowClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.WINDOW));
-				do {
-					this.identifier(node, r, "WindowName");
-					this.appendToken(node, r.consume(SqlKeyword.AS));
-					this.window(node, r);
-					if (r.peekIf(SqlTokenType.Comma)) {
-						this.appendToken(node, r.consume());
-					} else {
-						break;
-					}
-				} while (!r.peek().eos);
-			},
-		);
-	}
-
-	private window(parent: SyntaxNode, r: TokenReader) {
-		return apply(this.append(parent, new SyntaxNode("Window", {})), (node) => {
-			if (!r.peekIf(SqlKeyword.PARTITION)) {
-				this.identifier(node, r, "BaseWindowName");
-			}
-			if (r.peekIf(SqlKeyword.PARTITION)) {
-				this.partitionByClause(node, r);
-			}
-			if (r.peekIf(SqlKeyword.ORDER)) {
-				this.orderByClause(node, r);
-			}
-			apply(this.append(node, new SyntaxNode("FrameClause", {})), (node) => {
-				if (r.peekIf(SqlKeyword.RANGE)) {
-					apply(
-						this.append(node, new SyntaxNode("RangeOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.ROWS)) {
-					apply(this.append(node, new SyntaxNode("RowsOption", {})), (node) => {
-						this.appendToken(node, r.consume());
-					});
-				} else if (r.peekIf(SqlKeyword.GROUPS)) {
-					apply(
-						this.append(node, new SyntaxNode("GroupsOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-						},
-					);
-				}
-				if (r.peekIf(SqlKeyword.CURRENT)) {
-					apply(
-						this.append(node, new SyntaxNode("FrameStartClause", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("CurrentRowOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									this.appendToken(node, r.consume(SqlKeyword.ROW));
-								},
-							);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
-					apply(
-						this.append(node, new SyntaxNode("FrameStartClause", {})),
-						(node) => {
-							apply(
-								this.append(
-									node,
-									new SyntaxNode("UnboundedPrecedingOption", {}),
-								),
-								(node) => {
-									this.appendToken(node, r.consume());
-									this.appendToken(node, r.consume(SqlKeyword.PRECEDING));
-								},
-							);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.BETWEEN)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("FrameStartClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.CURRENT)) {
-								apply(
-									this.append(node, new SyntaxNode("CurrentRowOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.ROW));
-									},
-								);
-							} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
-								apply(
-									this.append(
-										node,
-										new SyntaxNode("UnboundedPrecedingOption", {}),
-									),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.PRECEDING));
-									},
-								);
-							} else {
-								if (r.peekIf(SqlKeyword.PRECEDING)) {
-									apply(
-										this.append(node, new SyntaxNode("PrecedingOption", {})),
-										(node) => {
-											this.expression(node, r);
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
-									apply(
-										this.append(node, new SyntaxNode("FollowingOption", {})),
-										(node) => {
-											this.expression(node, r);
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else {
-									throw r.createParseError();
-								}
-							}
-						},
-					);
-					this.appendToken(node, r.consume(SqlKeyword.AND));
-					apply(
-						this.append(node, new SyntaxNode("FrameEndClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.CURRENT)) {
-								apply(
-									this.append(node, new SyntaxNode("CurrentRowOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.ROW));
-									},
-								);
-							} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
-								apply(
-									this.append(
-										node,
-										new SyntaxNode("UnboundedFollowingOption", {}),
-									),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.FOLLOWING));
-									},
-								);
-							} else {
-								if (r.peekIf(SqlKeyword.PRECEDING)) {
-									apply(
-										this.append(node, new SyntaxNode("PrecedingOption", {})),
-										(node) => {
-											this.expression(node, r);
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
-									apply(
-										this.append(node, new SyntaxNode("FollowingOption", {})),
-										(node) => {
-											this.expression(node, r);
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else {
-									throw r.createParseError();
-								}
-							}
-						},
-					);
-				} else {
-					apply(
-						this.append(node, new SyntaxNode("FrameStartClause", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("PrecedingOption", {})),
-								(node) => {
-									this.expression(node, r);
-									this.appendToken(node, r.consume(SqlKeyword.PRECEDING));
-								},
-							);
-						},
-					);
-				}
-			});
-			if (r.peekIf(SqlKeyword.EXCLUDE)) {
-				apply(
-					this.append(node, new SyntaxNode("ExcludeClause", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.NO)) {
-							apply(
-								this.append(node, new SyntaxNode("NoOthersOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									this.appendToken(node, r.consume(SqlKeyword.OTHERS));
-								},
-							);
-						} else if (r.peekIf(SqlKeyword.CURRENT)) {
-							apply(
-								this.append(node, new SyntaxNode("CurrentRowOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									this.appendToken(node, r.consume(SqlKeyword.ROW));
-								},
-							);
-						} else if (r.peekIf(SqlKeyword.GROUP)) {
-							apply(
-								this.append(node, new SyntaxNode("GroupOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-								},
-							);
-						} else if (r.peekIf(SqlKeyword.TIES)) {
-							apply(
-								this.append(node, new SyntaxNode("TiesOption", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-								},
-							);
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
 						} else {
-							throw r.createParseError();
+							break
 						}
-					},
-				);
-			}
-		});
-	}
+					} while (!r.peek().eos)
+					b.end()	
+				}
+				b.token(r.consume(SqlTokenType.RightParen))
 
-	private partitionByClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("PartitionByClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.PARTITION));
-				this.appendToken(node, r.consume(SqlKeyword.BY));
-				do {
-					this.expression(node, r);
-					if (r.peekIf(SqlTokenType.Comma)) {
-						this.appendToken(node, r.consume());
-					} else {
-						break;
+				while (r.peekIf({ type: [SqlKeyword.WITHOUT, SqlKeyword.STRICT] })) {
+					if (r.peekIf(SqlKeyword.WITHOUT)) {
+						b.start("WithoutRowidOption")
+						b.token(r.consume())
+						b.token(r.consume(SqlKeyword.ROWID))
+						b.end()
+					} else if (r.peekIf(SqlKeyword.STRICT)) {
+						b.start("StrictOption")
+						b.token(r.consume())
+						b.end()
 					}
-				} while (!r.peek().eos);
-			},
-		);
-	}
-
-	private returningClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ReturningClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.RETURNING));
-				this.selectColumnList(node, r);
-			},
-		);
-	}
-
-	private orderByClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("OrderByClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.ORDER));
-				this.appendToken(node, r.consume(SqlKeyword.BY));
-				apply(
-					this.append(node, new SyntaxNode("SortColumnList", {})),
-					(node) => {
-						do {
-							apply(this.sortColumn(node, r), (node) => {
-								if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.FIRST)) {
-									apply(
-										this.append(node, new SyntaxNode("NullsFirstOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.LAST)) {
-									apply(
-										this.append(node, new SyntaxNode("NullsLastOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-											this.appendToken(node, r.consume());
-										},
-									);
-								}
-							});
-
-							if (r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
-							} else {
-								break;
-							}
-						} while (!r.peek().eos);
-					},
-				);
-			},
-		);
-	}
-
-	private limitClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("LimitClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume(SqlKeyword.LIMIT));
-				apply(this.append(node, new SyntaxNode("LimitOption", {})), (node) => {
-					this.expression(node, r);
-				});
-				if (r.peekIf(SqlKeyword.OFFSET)) {
-					apply(
-						this.append(node, new SyntaxNode("OffsetOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.expression(node, r);
-						},
-					);
-				} else if (r.peekIf(SqlTokenType.Comma)) {
-					node.attribs.type = "OffsetOption";
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("LimitOption", {})),
-						(node) => {
-							this.expression(node, r);
-						},
-					);
+					if (r.peekIf(SqlTokenType.Comma)) {
+						b.token(r.consume())
+					} else {
+						break
+					}
 				}
-			},
-		);
+			} else if (r.peekIf(SqlKeyword.AS)) {
+				b.token(r.consume())
+				this.selectStatement(b, r)
+			} else {
+				throw r.createParseError()
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
 	}
 
-	private tableColumn(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("TableColumn", {})),
-			(node) => {
-				this.identifier(node, r, "ColumnName");
-				if (r.peekIf(SqlTokenType.Identifier)) {
-					this.columnType(node, r);
+	private createViewStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CreateViewStatement")
+		try {
+			b.token(r.consume(SqlKeyword.CREATE))
+			if (r.peekIf({ type: [SqlKeyword.TEMPORARY, SqlKeyword.TEMP] })) {
+				b.start("TemporaryOption")
+				b.token(r.consume())
+				b.end()
+			}
+			b.token(r.consume(SqlKeyword.VIEW))
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfNotExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.NOT))
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			if (r.peekIf(SqlTokenType.LeftParen)) {
+				b.token(r.consume())
+				this.columnList(b, r)
+				b.token(r.consume(SqlTokenType.RightParen))
+			}
+			b.token(r.consume(SqlKeyword.AS))
+			this.selectStatement(b, r)
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private createTriggerStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CreateTriggerStatement")
+		try {
+			b.token(r.consume(SqlKeyword.CREATE))
+			if (r.peekIf(SqlKeyword.TEMPORARY) || r.peekIf(SqlKeyword.TEMP)) {
+				b.start("TemporaryOption")
+				b.token(r.consume())
+				b.end()
+			}
+			b.token(r.consume(SqlKeyword.TRIGGER))
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfNotExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.NOT))
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			let option;
+			if (r.peekIf(SqlKeyword.BEFORE)) {
+				b.start("BeforeOption")
+				b.token(r.consume())
+				option = b.end()
+			} else if (r.peekIf(SqlKeyword.AFTER)) {
+				option = b.start("AfterOption")
+				b.token(r.consume())
+				option = b.end()
+			} else if (r.peekIf(SqlKeyword.INSTEAD)) {
+				option = b.start("InsteadOfOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.OF))
+				option = b.end()
+			}
+			if (r.peekIf(SqlKeyword.INSERT)) {
+				b.start("InsertOnClause")
+				if (option) {
+					b.append(option);
+				}
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ON))
+				const ident = this.identifier(b, r, "ObjectName")
+				if (r.peekIf(SqlTokenType.Dot)) {
+					ident.attribs.type = "SchemaName"
+					b.token(r.consume())
+					this.identifier(b, r, "ObjectName")
+				}
+				b.end()
+			} else if (r.peekIf(SqlKeyword.UPDATE)) {
+				b.start("UpdateOnClause")
+				if (option) {
+					b.append(option);
+				}
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.OF)) {
+					b.start("ColumnList")
+					b.token(r.consume())
+					do {
+						this.identifier(b, r, "ColumnName")
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
+						} else {
+							break
+						}
+					} while (!r.peek().eos)
+					b.end()
+				}
+				b.token(r.consume(SqlKeyword.ON))
+				const ident = this.identifier(b, r, "ObjectName")
+				if (r.peekIf(SqlTokenType.Dot)) {
+					ident.attribs.type = "SchemaName"
+					b.token(r.consume())
+					this.identifier(b, r, "ObjectName")
+				}
+				b.end()
+			} else if (r.peekIf(SqlKeyword.DELETE)) {
+				b.start("DeleteOnClause")
+				if (option) {
+					b.append(option);
+				}
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ON))
+				const ident = this.identifier(b, r, "ObjectName")
+				if (r.peekIf(SqlTokenType.Dot)) {
+					ident.attribs.type = "SchemaName"
+					b.token(r.consume())
+					this.identifier(b, r, "ObjectName")
+				}
+				b.end()
+			} else {
+				throw r.createParseError()
+			}
+			if (r.peekIf(SqlKeyword.FOR)) {
+				b.start("ForEachRowOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.EACH))
+				b.token(r.consume(SqlKeyword.ROW))
+				b.end()
+			}
+			if (r.peekIf(SqlKeyword.WHEN)) {
+				b.start("WhenClause")
+				b.token(r.consume())
+				this.expression(b, r)
+				b.end()
+			}
+			{
+				b.start("BeginStatement")
+				b.token(r.consume(SqlKeyword.BEGIN))
+				{
+					b.start("BeginBlock")
+					let withClause
+					if (r.peekIf(SqlKeyword.WITH)) {
+						withClause = this.withClause(b, r)
+					}
+					if (r.peekIf(SqlKeyword.INSERT) || r.peekIf(SqlKeyword.REPLACE)) {
+						this.insertStatement(b, r, withClause)
+					} else if (r.peekIf(SqlKeyword.UPDATE)) {
+						this.updateStatement(b, r, withClause)
+					} else if (r.peekIf(SqlKeyword.DELETE)) {
+						this.deleteStatement(b, r, withClause)
+					} else if (r.peekIf(SqlKeyword.SELECT)) {
+						this.selectStatement(b, r, withClause)
+					} else {
+						throw r.createParseError()
+					}
+					b.token(r.consume(SqlTokenType.SemiColon))
+					b.end()
+				}
+				b.token(r.consume(SqlKeyword.END))
+				b.end()	
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private createIndexStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CreateIndexStatement");
+		try {
+			b.token(r.consume(SqlKeyword.CREATE))
+			if (r.peekIf(SqlKeyword.UNIQUE)) {
+				b.start("UniqueOption")
+				b.token(r.consume())
+				b.end()
+			}
+			b.token(r.consume(SqlKeyword.INDEX))
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfNotExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.NOT))
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			{
+				b.start("IndexOnClause")
+				b.token(r.consume(SqlKeyword.ON))
+				this.identifier(b, r, "ObjectName")
+				b.token(r.consume(SqlTokenType.LeftParen))
+				{
+					b.start("SortColumnList")
+					do {
+						this.sortColumn(b, r)
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
+						} else {
+							break
+						}
+					} while (!r.peek().eos)
+					b.end()	
+				}
+				b.token(r.consume(SqlTokenType.RightParen))
+				b.end()	
+			}
+			if (r.peekIf(SqlKeyword.WHERE)) {
+				this.whereClause(b, r)
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private alterTableStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("AlterTableStatement");
+		try {
+			b.token(r.consume(SqlKeyword.ALTER))
+			b.token(r.consume(SqlKeyword.TABLE))
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			if (r.peekIf(SqlKeyword.RENAME, SqlKeyword.TO)) {
+				b.start("RenameToObjectClause")
+				b.token(r.consume())
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+				b.end()
+			} else if (r.peekIf(SqlKeyword.RENAME)) {
+				b.start("RenameColumnClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.COLUMN)) {
+					b.token(r.consume())
+				}
+				this.identifier(b, r, "ColumnName")
+				{
+					b.start("RenameToColumnClause")
+					b.token(r.consume(SqlKeyword.TO))
+					this.identifier(b, r, "ColumnName")
+					b.end()	
+				}
+				b.end()
+			} else if (r.peekIf(SqlKeyword.ADD)) {
+				b.start("AddColumnClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.COLUMN)) {
+					b.token(r.consume())
+				}
+				this.tableColumn(b, r)
+				b.end()
+			} else if (r.peekIf(SqlKeyword.DROP)) {
+				b.start("DropColumnClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.COLUMN)) {
+					b.token(r.consume())
+				}
+				this.identifier(b, r, "ColumnName")
+				b.end()
+			} else {
+				throw r.createParseError()
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private dropTableStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("DropTableStatement")
+		try {
+			b.token(r.consume(SqlKeyword.DROP))
+			b.token(r.consume(SqlKeyword.TABLE))
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private dropViewStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("DropViewStatement")
+		try {
+			b.token(r.consume(SqlKeyword.DROP))
+			b.token(r.consume(SqlKeyword.VIEW))
+
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private dropTriggerStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("DropTriggerStatement")
+		try {
+			b.token(r.consume(SqlKeyword.DROP))
+			b.token(r.consume(SqlKeyword.TRIGGER))
+
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfExistsOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private dropIndexStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("DropIndexStatement")
+		try {
+			b.token(r.consume(SqlKeyword.DROP))
+			b.token(r.consume(SqlKeyword.INDEX))
+
+			if (r.peekIf(SqlKeyword.IF)) {
+				b.start("IfExists")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.EXISTS))
+				b.end()
+			}
+
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private attachDatabaseStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("AttachDatabaseStatement")
+		try {
+			b.token(r.consume(SqlKeyword.ATTACH))
+			if (r.peekIf(SqlKeyword.DATABASE)) {
+				b.token(r.consume())
+			}
+			{
+				b.start("Database")
+				this.expression(b, r)
+				b.end()	
+			}
+			b.token(r.consume(SqlKeyword.AS))
+			this.identifier(b, r, "SchemaName")
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private detachDatabaseStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("DetachDatabaseStatement")
+		try {
+			b.token(r.consume(SqlKeyword.DETACH))
+			if (r.peekIf(SqlKeyword.DATABASE)) {
+				b.token(r.consume())
+			}
+
+			this.identifier(b, r, "SchemaName")			
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private analyzeStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("AnalyzeStatement")
+		try {
+			b.token(r.consume(SqlKeyword.ANALYZE))
+
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private reindexStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("ReindexStatement")
+		try {
+			b.token(r.consume(SqlKeyword.REINDEX))
+			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+				const ident = this.identifier(b, r, "ObjectName")
+				if (r.peekIf(SqlTokenType.Dot)) {
+					ident.attribs.type = "SchemaName"
+					b.token(r.consume())
+					this.identifier(b, r, "ObjectName")
+				}
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private vacuumStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("VacuumStatement")
+		try {
+			b.token(r.consume(SqlKeyword.VACUUM))
+
+			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+				this.identifier(b, r, "SchemaName")
+			}
+
+			if (r.peekIf(SqlKeyword.INTO)) {
+				b.token(r.consume())
+				b.start("FileName")
+				this.stringLiteral(b, r)
+				b.end()
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private pragmaStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("PragmaStatement")
+		try {
+			b.token(r.consume(SqlKeyword.PRAGMA))
+
+			const ident = this.identifier(b, r, "PragmaName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "PragmaName")
+			}
+
+			if (r.peekIf({ type: SqlTokenType.Operator, text: "=" })) {
+				b.token(r.consume())
+				this.pragmaValue(b, r)
+			} else if (r.peekIf(SqlTokenType.LeftParen)) {
+				b.token(r.consume())
+				b.start("PragmaArgumentList")
+				{
+					b.start("PragmaArgument")
+					this.pragmaValue(b, r)
+					b.end()	
+				}
+				b.end()
+				b.token(r.consume(SqlTokenType.RightParen))
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private beginTransactionStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("BeginTransactionStatement")
+		try {
+			b.token(r.consume(SqlKeyword.BEGIN))
+			if (r.peekIf(SqlKeyword.DEFERRED)) {
+				b.start("DeferredOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.IMMEDIATE)) {
+				b.start("ImmediateOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.EXCLUSIVE)) {
+				b.start("ExclusiveOption")
+				b.token(r.consume())
+				b.end()
+			}
+			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+				b.token(r.consume())
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private savepointStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("SavepointStatement")
+		try {
+			b.token(r.consume(SqlKeyword.SAVEPOINT))
+			this.identifier(b, r, "SavepointName")
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private releaseSavepointStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("ReleaseSavepointStatement")
+		try {
+			b.token(r.consume(SqlKeyword.RELEASE))
+			if (r.peekIf(SqlKeyword.SAVEPOINT)) {
+				b.token(r.consume())
+			}
+			this.identifier(b, r, "SavepointName")
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private commitTransactionStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CommitTransactionStatement")
+		try {
+			if (r.peekIf(SqlKeyword.END)) {
+				b.token(r.consume())
+			} else {
+				b.token(r.consume(SqlKeyword.COMMIT))
+			}
+			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+				b.token(r.consume())
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private rollbackTransactionStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("RollbackTransactionStatement")
+		try {
+			b.token(r.consume(SqlKeyword.ROLLBACK))
+			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+				b.token(r.consume())
+			}
+			if (r.peekIf(SqlKeyword.TO)) {
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.SAVEPOINT)) {
+					b.token(r.consume())
+				}
+				this.identifier(b, r, "SavepointName")
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private insertStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("InsertStatement")
+		try {
+			if (withClause) {
+				b.append(withClause)
+			}
+			this.insertClause(b, r)
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private insertClause(b: CstBuilder, r: TokenReader) {
+		b.start("InsertClause")
+		if (r.peekIf(SqlKeyword.REPLACE)) {
+			b.start("ReplaceOption")
+			b.token(r.consume())
+			b.end()
+		} else {
+			b.token(r.consume(SqlKeyword.INSERT))
+			if (r.peekIf(SqlKeyword.OR)) {
+				b.start("OrConflictClause")
+				b.token(r.consume())
+				this.conflictAction(b, r)
+				b.end()
+			}
+		}
+		b.token(r.consume(SqlKeyword.INTO))
+
+		const ident = this.identifier(b, r, "ObjectName")
+		if (r.peekIf(SqlTokenType.Dot)) {
+			ident.attribs.type = "SchemaName"
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectName")
+		}
+
+		if (r.peekIf(SqlKeyword.AS)) {
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectAlias")
+		}
+
+		if (r.peekIf(SqlTokenType.LeftParen)) {
+			b.token(r.consume())
+			this.columnList(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+		}
+
+		if (r.peekIf(SqlKeyword.DEFAULT)) {
+			b.start("DefaultValuesOption")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.VALUES))
+			b.end()
+		} else {
+			if (r.peekIf(SqlKeyword.VALUES)) {
+				b.start("ValuesClause")
+				b.token(r.consume())
+
+				{
+					b.start("ExpressionListGroup")
+					do {
+						b.token(r.consume(SqlTokenType.LeftParen))
+						const current = this.expressionList(b, r)
+						b.token(r.consume(SqlTokenType.RightParen))
+	
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
+						} else {
+							break
+						}
+					} while (!r.peek().eos)
+					b.end()	
 				}
 
+				b.end()
+			} else {
+				let withClause;
+				if (r.peekIf(SqlKeyword.WITH)) {
+					withClause = this.withClause(b, r)
+				}
+				this.selectStatement(b, r, withClause)
+			}
+
+			do {
+				if (r.peekIf(SqlKeyword.ON)) {
+					this.onConflictClause(b, r)
+				} else {
+					break
+				}
+			} while (!r.peek().eos)
+		}
+
+		if (r.peekIf(SqlKeyword.RETURNING)) {
+			this.returningClause(b, r)
+		}
+
+		return b.end()
+	}
+
+	private onConflictClause(b: CstBuilder, r: TokenReader) {
+		b.start("OnConflictClause")
+		b.token(r.consume(SqlKeyword.ON))
+		b.token(r.consume(SqlKeyword.CONFLICT))
+
+		if (r.peekIf(SqlTokenType.LeftParen)) {
+			b.token(r.consume())
+
+			b.start("SortColumnList")
+			do {
+				this.sortColumn(b, r)
+				if (r.peekIf(SqlTokenType.Comma)) {
+					b.token(r.consume())
+				} else {
+					break
+				}
+			} while (!r.peek().eos)
+			b.end()
+
+			b.token(r.consume(SqlTokenType.RightParen))
+			if (r.peekIf(SqlKeyword.WHERE)) {
+				this.whereClause(b, r)
+			}
+		}
+		b.token(r.consume(SqlKeyword.DO))
+		if (r.peekIf(SqlKeyword.NOTHING)) {
+			b.start("DoNothingOption")
+			b.token(r.consume())
+			b.end()
+		} else if (r.peekIf(SqlKeyword.UPDATE)) {
+			b.start("DoUpdateOption")
+			b.token(r.consume())
+			this.setClause(b, r)
+			if (r.peekIf(SqlKeyword.WHERE)) {
+				this.whereClause(b, r)
+			}
+			b.end()
+		} else {
+			throw r.createParseError()
+		}
+		return b.end()
+	}
+
+	private updateStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("UpdateStatement")
+		try {
+			if (withClause) {
+				b.append(withClause)
+			}
+			this.updateClause(b, r)
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private updateClause(b: CstBuilder, r: TokenReader) {
+		b.start("UpdateClause")
+		b.token(r.consume(SqlKeyword.UPDATE))
+
+		const ident = this.identifier(b, r, "ObjectName")
+		if (r.peekIf(SqlTokenType.Dot)) {
+			ident.attribs.type = "SchemaName"
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectName")
+		}
+
+		if (r.peekIf(SqlKeyword.AS)) {
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectAlias")
+		}
+
+		if (r.peekIf(SqlKeyword.INDEXED)) {
+			b.start("IndexedByOption")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.BY))
+			this.identifier(b, r, "ObjectName")
+			b.end()
+		} else if (r.peekIf(SqlKeyword.NOT)) {
+			b.start("NotIndexedOption")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.INDEXED))
+			b.end()
+		}
+
+		this.setClause(b, r)
+		if (r.peekIf(SqlKeyword.FROM)) {
+			this.fromClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.WHERE)) {
+			this.whereClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.RETURNING)) {
+			this.returningClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.ORDER)) {
+			this.orderByClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.LIMIT)) {
+			this.limitClause(b, r)
+		}
+
+		return b.end()
+	}
+
+	private setClause(b: CstBuilder, r: TokenReader) {
+		b.start("SetClause")
+		b.token(r.consume(SqlKeyword.SET))
+
+		{
+			b.start("UpdateColumnList")
+			do {
+				b.start("UpdateColumn")
+	
+				if (r.peekIf(SqlTokenType.LeftParen)) {
+					b.token(r.consume())
+					this.columnList(b, r)
+					b.token(r.consume(SqlTokenType.RightParen))
+				} else {
+					this.identifier(b, r, "ColumnName")
+				}
+				b.token(r.consume({ type: SqlTokenType.Operator, text: "=" }))
+
+				{
+					b.start("ColumnValue")
+					this.expression(b, r)
+					b.end()	
+				}
+
+				b.end()
+	
+				if (r.peekIf(SqlTokenType.Comma)) {
+					b.token(r.consume())
+				} else {
+					break
+				}
+			} while (!r.peek().eos)
+			b.end()	
+		}
+
+		return b.end()
+	}
+
+	private deleteStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("DeleteStatement")
+		try {
+			if (withClause) {
+				b.append(withClause)
+			}
+			this.deleteClause(b, r)
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private deleteClause(b: CstBuilder, r: TokenReader) {
+		b.start("DeleteClause")
+		b.token(r.consume(SqlKeyword.DELETE))
+		b.token(r.consume(SqlKeyword.FROM))
+		const ident = this.identifier(b, r, "ObjectName")
+		if (r.peekIf(SqlTokenType.Dot)) {
+			ident.attribs.type = "SchemaName"
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectName")
+		}
+		if (r.peekIf(SqlKeyword.WHERE)) {
+			this.whereClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.RETURNING)) {
+			this.returningClause(b, r)
+		}
+		return b.end()
+	}
+
+	private selectStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("SelectStatement")
+		try {
+			if (withClause) {
+				b.append(withClause)
+			}
+			let current = this.selectClause(b, r)
+			while (
+				!this.compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT") &&
+				!r.peek().eos
+			) {
+				if (r.peekIf(SqlKeyword.UNION)) {
+					b.start("UnionOperation")
+					b.append(current)
+					b.token(r.consume())
+					if (r.peekIf(SqlKeyword.ALL)) {
+						b.start("AllOption")
+						b.token(r.consume())
+						b.end()
+					}
+					this.selectClause(b, r)
+					current = b.end()
+				} else if (r.peekIf(SqlKeyword.INTERSECT)) {
+					b.start("IntersectOperation")
+					b.append(current)
+					b.token(r.consume())
+					this.selectClause(b, r)
+					current = b.end()
+				} else if (r.peekIf(SqlKeyword.EXCEPT)) {
+					b.start("ExceptOperation")
+					b.append(current)
+					b.token(r.consume())
+					this.selectClause(b, r)
+					current = b.end()
+				} else {
+					break
+				}
+			}
+
+			if (r.peekIf(SqlKeyword.ORDER)) {
+				this.orderByClause(b, r)
+			}
+			if (r.peekIf(SqlKeyword.LIMIT)) {
+				this.limitClause(b, r)
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt)
+			}
+			throw err
+		}
+		return b.end()
+	}
+
+	private selectClause(b: CstBuilder, r: TokenReader) {
+		b.start("SelectClause")
+
+		if (r.peekIf(SqlKeyword.VALUES)) {
+			b.start("ValuesClause")
+			b.token(r.consume(SqlKeyword.VALUES))
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.expressionList(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			b.end()
+		} else {
+			b.token(r.consume(SqlKeyword.SELECT))
+			if (r.peekIf(SqlKeyword.DISTINCT)) {
+				b.start("DistinctOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.ALL)) {
+				b.start("AllOption")
+				b.token(r.consume())
+				b.end()
+			}
+			this.selectColumnList(b, r)
+
+			if (r.peekIf(SqlKeyword.FROM)) {
+				this.fromClause(b, r)
+			}
+			if (r.peekIf(SqlKeyword.WHERE)) {
+				this.whereClause(b, r)
+			}
+			if (r.peekIf(SqlKeyword.GROUP)) {
+				this.gropuByClause(b, r)
+			}
+			if (r.peekIf(SqlKeyword.HAVING)) {
+				this.havingClause(b, r)
+			}
+			if (
+				!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
+				r.peekIf(SqlKeyword.WINDOW)
+			) {
+				this.windowClause(b, r)
+			}
+		}
+		return b.end()
+	}
+
+	private withClause(b: CstBuilder, r: TokenReader) {
+		b.start("WithClause")
+		b.token(r.consume(SqlKeyword.WITH))
+
+		if (r.peekIf(SqlKeyword.RECURSIVE)) {
+			b.start("RecursiveOption")
+			b.token(r.consume())
+			b.end()
+		}
+
+		b.start("CommonTableList")
+		do {
+			b.start("CommonTable")
+			this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.LeftParen)) {
+				b.token(r.consume())
+				this.columnList(b, r)
+				b.token(r.consume(SqlTokenType.RightParen))
+			}
+			b.token(r.consume(SqlKeyword.AS))
+
+			if (r.peekIf(SqlKeyword.MATERIALIZED)) {
+				const option = b.start("MaterializedOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.NOT, SqlKeyword.MATERIALIZED)) {
+				const option = b.start("NotMaterializedOption")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			}
+
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.selectStatement(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			b.end()
+
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		b.end()
+		return b.end()
+	}
+
+	private selectColumnList(b: CstBuilder, r: TokenReader) {
+		b.start("SelectColumnList")
+
+		do {
+			b.start("SelectColumn")
+			if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
+				b.start("AllColumnsOption")
+				b.token(r.consume())
+				b.end()
+			} else if (
+				r.peekIf(
+					{ type: [SqlTokenType.Identifier, SqlTokenType.String] },
+					SqlTokenType.Dot,
+					{ type: SqlTokenType.Operator, text: "*" },
+				)
+			) {
+				b.start("AllColumnsOption")
+				this.identifier(b, r, "SchemaName")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			} else {
+				this.expression(b, r)
+				if (r.peekIf(SqlKeyword.AS)) {
+					b.token(r.consume())
+					this.identifier(b, r, "ColumnAlias")
+				} else if (
+					r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
+				) {
+					this.identifier(b, r, "ColumnAlias")
+				}
+			}
+			b.end()
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		return b.end()
+	}
+
+	private fromClause(b: CstBuilder, r: TokenReader) {
+		b.start("FromClause")
+		b.token(r.consume(SqlKeyword.FROM))
+		{
+			b.start("FromObjectList")
+
+			let hasJoinClause = false
+			do {
+				this.fromObject(b, r)
 				while (
 					r.peekIf({
 						type: [
-							SqlKeyword.CONSTRAINT,
-							SqlKeyword.PRIMARY,
-							SqlKeyword.NOT,
-							SqlKeyword.UNIQUE,
-							SqlKeyword.CHECK,
-							SqlKeyword.DEFAULT,
-							SqlKeyword.COLLATE,
-							SqlKeyword.REFERENCES,
+							SqlKeyword.NATURAL,
+							SqlKeyword.JOIN,
+							SqlKeyword.CROSS,
+							SqlKeyword.INNER,
+							SqlKeyword.LEFT,
+							SqlKeyword.RIGHT,
+							SqlKeyword.FULL,
 						],
-					}) ||
-					(!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS") &&
-						r.peekIf({ type: [SqlKeyword.GENERATED, SqlKeyword.AS] }))
+					})
 				) {
-					this.columnConstraint(node, r);
+					hasJoinClause = true
+					this.joinClause(b, r)
 				}
-			},
-		);
-	}
-
-	private columnType(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ColumnType", {})),
-			(node) => {
-				apply(this.append(node, new SyntaxNode("TypeName", {})), (node) => {
-					const token = r.consume();
-					this.appendToken(node, token);
-					node.attribs.value = token.text;
-					while (r.peekIf(SqlTokenType.Identifier)) {
-						const token = r.consume();
-						this.appendToken(node, token);
-						node.attribs.value = `${node.attribs.value} ${token.text}`;
-					}
-				});
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("TypeOptionList", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("LengthOption", {})),
-								(node) => {
-									this.numericLiteral(node, r);
-								},
-							);
-							if (r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
-								apply(
-									this.append(node, new SyntaxNode("ScaleOption", {})),
-									(node) => {
-										this.numericLiteral(node, r);
-									},
-								);
-							}
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				}
-			},
-		);
-	}
-
-	private columnConstraint(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ColumnConstraint", {})),
-			(node) => {
-				if (r.peekIf(SqlKeyword.CONSTRAINT)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ConstraintName");
-				}
-				if (r.peekIf(SqlKeyword.PRIMARY)) {
-					apply(
-						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.KEY));
-
-							if (r.peekIf(SqlKeyword.ASC)) {
-								apply(
-									this.append(node, new SyntaxNode("AscOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							} else if (r.peekIf(SqlKeyword.DESC)) {
-								apply(
-									this.append(node, new SyntaxNode("DescOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							}
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-							if (r.peekIf(SqlKeyword.AUTOINCREMENT)) {
-								apply(
-									this.append(node, new SyntaxNode("AutoincrementOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.NOT)) {
-					apply(
-						this.append(node, new SyntaxNode("NotNullConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.NULL));
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.NULL)) {
-					apply(
-						this.append(node, new SyntaxNode("NullConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.UNIQUE)) {
-					apply(
-						this.append(node, new SyntaxNode("UniqueConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.CHECK)) {
-					apply(
-						this.append(node, new SyntaxNode("CheckConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.expression(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.DEFAULT)) {
-					apply(
-						this.append(node, new SyntaxNode("DefaultOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							if (r.peekIf(SqlTokenType.LeftParen)) {
-								this.appendToken(node, r.consume());
-								this.expression(node, r);
-								this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							} else {
-								this.expression(node, r);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.COLLATE)) {
-					apply(
-						this.append(node, new SyntaxNode("CollateOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.identifier(node, r, "CollateName");
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.REFERENCES)) {
-					apply(
-						this.append(node, new SyntaxNode("ForeignKeyConstraint", {})),
-						(node) => {
-							this.referencesClause(node, r);
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.GENERATED) || r.peekIf(SqlKeyword.AS)) {
-					apply(
-						this.append(node, new SyntaxNode("GeneratedColumnOption", {})),
-						(node) => {
-							if (r.peekIf(SqlKeyword.GENERATED)) {
-								this.appendToken(node, r.consume());
-								this.appendToken(node, r.consume(SqlKeyword.ALWAYS));
-							}
-							this.appendToken(node, r.consume(SqlKeyword.AS));
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							apply(
-								this.append(node, new SyntaxNode("GeneratedColumn", {})),
-								(node) => {
-									this.expression(node, r);
-								},
-							);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-
-							if (r.peekIf(SqlKeyword.STORED)) {
-								apply(
-									this.append(node, new SyntaxNode("StoredOption", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
-								apply(
-									this.append(node, new SyntaxNode("virtual option", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-									},
-								);
-							}
-						},
-					);
+	
+				if (!hasJoinClause && r.peekIf(SqlTokenType.Comma)) {
+					b.token(r.consume())
 				} else {
-					throw r.createParseError();
+					break
 				}
-			},
-		);
-	}
-
-	private tableConstraint(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("TableConstraint", {})),
-			(node) => {
-				if (r.peekIf(SqlKeyword.CONSTRAINT)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "ConstraintName");
-				}
-				if (r.peekIf(SqlKeyword.PRIMARY)) {
-					apply(
-						this.append(node, new SyntaxNode("PrimaryKeyConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.KEY));
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							apply(
-								this.append(node, new SyntaxNode("SortColumnList", {})),
-								(node) => {
-									do {
-										this.sortColumn(node, r);
-										if (r.peekIf(SqlTokenType.Comma)) {
-											this.appendToken(node, r.consume());
-										} else {
-											break;
-										}
-									} while (!r.peek().eos);
-								},
-							);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.UNIQUE)) {
-					apply(
-						this.append(node, new SyntaxNode("UniqueConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							apply(
-								this.append(node, new SyntaxNode("SortColumnList", {})),
-								(node) => {
-									do {
-										this.sortColumn(node, r);
-										if (r.peekIf(SqlTokenType.Comma)) {
-											this.appendToken(node, r.consume());
-										} else {
-											break;
-										}
-									} while (!r.peek().eos);
-								},
-							);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							if (r.peekIf(SqlKeyword.ON)) {
-								apply(
-									this.append(node, new SyntaxNode("OnConflictClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume(SqlKeyword.CONFLICT));
-										this.conflictAction(node, r);
-									},
-								);
-							}
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.CHECK)) {
-					apply(
-						this.append(node, new SyntaxNode("CheckConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.expression(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						},
-					);
-				} else if (r.peekIf(SqlKeyword.FOREIGN)) {
-					apply(
-						this.append(node, new SyntaxNode("ForeignKeyConstraint", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.KEY));
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.columnList(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							this.referencesClause(node, r);
-						},
-					);
-				} else {
-					throw r.createParseError();
-				}
-			},
-		);
-	}
-
-	private referencesClause(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ReferencesClause", {})),
-			(node) => {
-				this.appendToken(node, r.consume());
-				this.identifier(node, r, "ObjectName");
-				if (r.peekIf(SqlTokenType.LeftParen)) {
-					this.appendToken(node, r.consume());
-					this.columnList(node, r);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				}
-
-				while (
-					!r.peek().eos &&
-					r.peekIf({ type: [SqlKeyword.ON, SqlKeyword.MATCH] })
-				) {
-					if (r.peekIf(SqlKeyword.ON)) {
-						apply(
-							this.append(node, new SyntaxNode("OnUpdateClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								if (r.peekIf(SqlKeyword.DELETE)) {
-									node.attribs.type = "OnDeleteClause";
-									this.appendToken(node, r.consume());
-								} else {
-									this.appendToken(node, r.consume(SqlKeyword.UPDATE));
-								}
-								if (r.peekIf(SqlKeyword.SET, SqlKeyword.NULL)) {
-									apply(
-										this.append(node, new SyntaxNode("SetNullOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.SET, SqlKeyword.DEFAULT)) {
-									apply(
-										this.append(node, new SyntaxNode("SetDefaultOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.CASCADE)) {
-									apply(
-										this.append(node, new SyntaxNode("CascadeOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.RESTRICT)) {
-									apply(
-										this.append(node, new SyntaxNode("RestrictOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.NO, SqlKeyword.ACTION)) {
-									apply(
-										this.append(node, new SyntaxNode("NoActionOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else {
-									throw r.createParseError();
-								}
-							},
-						);
-					} else if (r.peekIf(SqlKeyword.MATCH)) {
-						apply(
-							this.append(node, new SyntaxNode("MatchClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								if (r.peekIf(SqlKeyword.SIMPLE)) {
-									apply(
-										this.append(node, new SyntaxNode("SimpleOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.FULL)) {
-									apply(
-										this.append(node, new SyntaxNode("FullOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else if (r.peekIf(SqlKeyword.PARTIAL)) {
-									apply(
-										this.append(node, new SyntaxNode("PartialOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								} else {
-									throw r.createParseError();
-								}
-							},
-						);
-					} else {
-						throw r.createParseError();
-					}
-				}
-
-				if (
-					r.peekIf(SqlKeyword.DEFERRABLE) ||
-					r.peekIf(SqlKeyword.NOT, SqlKeyword.DEFERRABLE)
-				) {
-					apply(
-						this.append(node, new SyntaxNode("DeferrableOption", {})),
-						(node) => {
-							if (r.peekIf(SqlKeyword.NOT)) {
-								node.attribs.type = "NotDeferrableOption";
-								this.appendToken(node, r.consume());
-							}
-							this.appendToken(node, r.consume());
-
-							if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.DEFERRED)) {
-								apply(
-									this.append(
-										node,
-										new SyntaxNode("InitiallyDeferredOption", {}),
-									),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume());
-									},
-								);
-							} else if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.IMMEDIATE)) {
-								apply(
-									this.append(
-										node,
-										new SyntaxNode("InitiallyImmediateOption", {}),
-									),
-									(node) => {
-										this.appendToken(node, r.consume());
-										this.appendToken(node, r.consume());
-									},
-								);
-							}
-						},
-					);
-				}
-			},
-		);
-	}
-
-	private conflictAction(parent: SyntaxNode, r: TokenReader) {
-		if (r.peekIf(SqlKeyword.ROLLBACK)) {
-			return apply(
-				this.append(parent, new SyntaxNode("RollbackOption", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.ABORT)) {
-			return apply(
-				this.append(parent, new SyntaxNode("AbortOption", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.FAIL)) {
-			return apply(
-				this.append(parent, new SyntaxNode("FailOption", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.IGNORE)) {
-			return apply(
-				this.append(parent, new SyntaxNode("IgnoreOption", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.REPLACE)) {
-			return apply(
-				this.append(parent, new SyntaxNode("ReplaceOption", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
-		} else {
-			throw r.createParseError();
+			} while (!r.peek().eos)
+			b.end()	
 		}
+		return b.end()
 	}
 
-	private pragmaValue(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("PragmaValue", {})),
-			(node) => {
-				if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
-					apply(this.append(node, new SyntaxNode("Expression", {})), (node) => {
-						apply(
-							this.append(node, new SyntaxNode("UnaryPlusOperation", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.numericLiteral(node, r);
-							},
-						);
-					});
-				} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
-					apply(this.append(node, new SyntaxNode("Expression", {})), (node) => {
-						apply(
-							this.append(node, new SyntaxNode("UnaryMinusOperation", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.numericLiteral(node, r);
-							},
-						);
-					});
-				} else if (r.peekIf(SqlTokenType.Numeric)) {
-					this.numericLiteral(node, r);
-				} else if (r.peekIf(SqlTokenType.String)) {
-					this.stringLiteral(node, r);
-				} else if (r.peekIf(SqlTokenType.Identifier)) {
-					this.identifier(node, r, "PragmaLiteral");
+	private fromObject(b: CstBuilder, r: TokenReader) {
+		b.start("FromObject")
+
+		if (r.peekIf(SqlTokenType.LeftParen)) {
+			b.token(r.consume())
+			{
+				b.start("SubqueryExpression")
+				if (r.peekIf({ type: [SqlKeyword.WITH, SqlKeyword.SELECT] })) {
+					let withClause;
+					if (r.peekIf(SqlKeyword.WITH)) {
+						withClause = this.withClause(b, r)
+					}
+					this.selectStatement(b, r, withClause)
 				} else {
-					throw r.createParseError();
+					this.fromClause(b, r)
 				}
-			},
-		);
+				b.end()	
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+		} else {
+			const node = b.start("ObjectReference")
+			const ident = this.identifier(b, r, "ObjectName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				ident.attribs.type = "SchemaName"
+				b.token(r.consume())
+				this.identifier(b, r, "ObjectName")
+			}
+			if (r.peekIf(SqlTokenType.LeftParen)) {
+				node.attribs.type = "FunctionExpression"
+				b.token(r.consume())
+				{
+					b.start("FunctionArgumentList")
+					while (!r.peekIf(SqlTokenType.RightParen)) {
+						b.start("FunctionArgument")
+						this.expression(b, r)
+						b.end()
+	
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
+						} else {
+							break
+						}
+					}
+					b.end()
+				}
+				b.token(r.consume(SqlTokenType.RightParen))
+			}
+			b.end()
+		}
+
+		if (r.peekIf(SqlKeyword.AS)) {
+			b.token(r.consume())
+			this.identifier(b, r, "ObjectAlias")
+		} else if (r.peekIf(SqlTokenType.Identifier)) {
+			this.identifier(b, r, "ObjectAlias")
+		}
+		return b.end()
 	}
 
-	private expressionList(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ExpressionList", {})),
-			(node) => {
+	private joinClause(b: CstBuilder, r: TokenReader) {
+		const node = b.start("InnerJoinClause")
+
+		if (r.peekIf(SqlKeyword.CROSS)) {
+			node.attribs.type = "CrossJoinClause"
+			b.token(r.consume())
+		} else {
+			if (r.peekIf(SqlKeyword.NATURAL)) {
+				b.start("NatualOption")
+				b.token(r.consume())
+				b.end()
+			}
+			if (r.peekIf(SqlKeyword.LEFT)) {
+				node.attribs.type = "LeftOuterJoinClause"
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.OUTER)) {
+					b.token(r.consume())
+				}
+			} else if (r.peekIf(SqlKeyword.RIGHT)) {
+				node.attribs.type = "RightOuterJoinClause"
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.OUTER)) {
+					b.token(r.consume())
+				}
+			} else if (r.peekIf(SqlKeyword.FULL)) {
+				node.attribs.type = "FullOuterJoinClause"
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.OUTER)) {
+					b.token(r.consume())
+				}
+			} else if (r.peekIf(SqlKeyword.INNER)) {
+				b.token(r.consume())
+			}
+		}
+		b.token(r.consume(SqlKeyword.JOIN))
+
+		this.fromObject(b, r)
+
+		if (r.peekIf(SqlKeyword.ON)) {
+			b.start("JoinOnClause")
+			b.token(r.consume())
+			this.expression(b, r)
+			b.end()
+		} else if (r.peekIf(SqlKeyword.USING)) {
+			b.start("UsingClause")
+			b.token(r.consume())
+			b.token(r.consume(SqlTokenType.LeftParen))
+			b.token(r.consume(SqlTokenType.RightParen))
+			b.end()
+		}
+
+		return b.end()
+	}
+
+	private whereClause(b: CstBuilder, r: TokenReader) {
+		b.start("WhereClause")
+		b.token(r.consume(SqlKeyword.WHERE))
+		this.expression(b, r)
+		return b.end()
+	}
+
+	private gropuByClause(b: CstBuilder, r: TokenReader) {
+		b.start("GroupByClause")
+		b.token(r.consume(SqlKeyword.GROUP))
+		b.token(r.consume(SqlKeyword.BY))
+		this.expressionList(b, r)
+		return b.end()
+	}
+
+	private havingClause(b: CstBuilder, r: TokenReader) {
+		b.start("HavingClause")
+		b.token(r.consume(SqlKeyword.HAVING))
+		this.expression(b, r)
+		return b.end()
+	}
+
+	private windowClause(b: CstBuilder, r: TokenReader) {
+		b.start("WindowClause")
+		b.token(r.consume(SqlKeyword.WINDOW))
+		do {
+			this.identifier(b, r, "WindowName")
+			b.token(r.consume(SqlKeyword.AS))
+			this.window(b, r)
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		return b.end()
+	}
+
+	private window(b: CstBuilder, r: TokenReader) {
+		b.start("Window")
+		if (!r.peekIf(SqlKeyword.PARTITION)) {
+			this.identifier(b, r, "BaseWindowName")
+		}
+		if (r.peekIf(SqlKeyword.PARTITION)) {
+			this.partitionByClause(b, r)
+		}
+		if (r.peekIf(SqlKeyword.ORDER)) {
+			this.orderByClause(b, r)
+		}
+		b.start("FrameClause")
+		if (r.peekIf(SqlKeyword.RANGE)) {
+			b.start("RangeOption")
+			b.token(r.consume())
+			b.end()
+		} else if (r.peekIf(SqlKeyword.ROWS)) {
+			b.start("RowsOption")
+			b.token(r.consume())
+			b.end()
+		} else if (r.peekIf(SqlKeyword.GROUPS)) {
+			b.start("GroupsOption")
+			b.token(r.consume())
+			b.end()
+		}
+		if (r.peekIf(SqlKeyword.CURRENT)) {
+			b.start("FrameStartClause")
+			{
+				b.start("CurrentRowOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ROW))
+				b.end()
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+			b.start("FrameStartClause")
+			{
+				b.start("UnboundedPrecedingOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.PRECEDING))
+				b.end()	
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.BETWEEN)) {
+			b.token(r.consume())
+
+			b.start("FrameStartClause")
+			b.token(r.consume())
+			if (r.peekIf(SqlKeyword.CURRENT)) {
+				b.start("CurrentRowOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ROW))
+				b.end()
+			} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+				b.start("UnboundedPrecedingOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.PRECEDING))
+				b.end()
+			} else {
+				if (r.peekIf(SqlKeyword.PRECEDING)) {
+					b.start("PrecedingOption")
+					this.expression(b, r)
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
+					b.start("FollowingOption")
+					this.expression(b, r)
+					b.token(r.consume())
+					b.end()
+				} else {
+					throw r.createParseError()
+				}
+			}
+			b.end()
+			b.token(r.consume(SqlKeyword.AND))
+
+			b.start("FrameEndClause")
+
+			b.token(r.consume())
+			if (r.peekIf(SqlKeyword.CURRENT)) {
+				b.start("CurrentRowOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ROW))
+				b.end()
+			} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+				b.start("UnboundedFollowingOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.FOLLOWING))
+				b.end()
+			} else {
+				if (r.peekIf(SqlKeyword.PRECEDING)) {
+					b.start("PrecedingOption")
+					this.expression(b, r)
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
+					b.start("FollowingOption")
+					this.expression(b, r)
+					b.token(r.consume())
+					b.end()
+				} else {
+					throw r.createParseError()
+				}
+			}
+			b.end()
+		} else {
+			b.start("FrameStartClause")
+			{
+				b.start("PrecedingOption")
+				this.expression(b, r)
+				b.token(r.consume(SqlKeyword.PRECEDING))
+				b.end()	
+			}
+			b.end()
+		}
+		b.end()
+		if (r.peekIf(SqlKeyword.EXCLUDE)) {
+			b.start("ExcludeClause")
+			b.token(r.consume())
+			if (r.peekIf(SqlKeyword.NO)) {
+				b.start("NoOthersOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.OTHERS))
+				b.end()
+			} else if (r.peekIf(SqlKeyword.CURRENT)) {
+				b.start("CurrentRowOption")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ROW))
+				b.end()
+			} else if (r.peekIf(SqlKeyword.GROUP)) {
+				b.start("GroupOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.TIES)) {
+				b.start("TiesOption")
+				b.token(r.consume())
+				b.end()
+			} else {
+				throw r.createParseError()
+			}
+			b.end()
+		}
+		return b.end()
+	}
+
+	private partitionByClause(b: CstBuilder, r: TokenReader) {
+		b.start("PartitionByClause")
+		b.token(r.consume(SqlKeyword.PARTITION))
+		b.token(r.consume(SqlKeyword.BY))
+		do {
+			this.expression(b, r)
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		return b.end()
+	}
+
+	private returningClause(b: CstBuilder, r: TokenReader) {
+		b.start("ReturningClause")
+		b.token(r.consume(SqlKeyword.RETURNING))
+		this.selectColumnList(b, r)
+		return b.end()
+	}
+
+	private orderByClause(b: CstBuilder, r: TokenReader) {
+		b.start("OrderByClause")
+		b.token(r.consume(SqlKeyword.ORDER))
+		b.token(r.consume(SqlKeyword.BY))
+
+		b.start("SortColumnList")
+		do {
+			this.sortColumn(b, r)
+			if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.FIRST)) {
+				b.start("NullsFirstOption")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.LAST)) {
+				b.start("NullsLastOption")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			}
+
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		b.end()
+		return b.end()
+	}
+
+	private limitClause(b: CstBuilder, r: TokenReader) {
+		b.start("LimitClause")
+
+		b.token(r.consume(SqlKeyword.LIMIT))
+		const node = b.start("LimitOption")
+		this.expression(b, r)
+		b.end()
+		if (r.peekIf(SqlKeyword.OFFSET)) {
+			b.start("OffsetOption")
+			b.token(r.consume())
+			this.expression(b, r)
+			b.end()
+		} else if (r.peekIf(SqlTokenType.Comma)) {
+			node.attribs.type = "OffsetOption"
+			b.token(r.consume())
+
+			b.start("LimitOption")
+			this.expression(b, r)
+			b.end()
+		}
+		return b.end()
+	}
+
+	private tableColumn(b: CstBuilder, r: TokenReader) {
+		b.start("TableColumn")
+		this.identifier(b, r, "ColumnName")
+		if (r.peekIf(SqlTokenType.Identifier)) {
+			this.columnType(b, r)
+		}
+
+		while (
+			r.peekIf({
+				type: [
+					SqlKeyword.CONSTRAINT,
+					SqlKeyword.PRIMARY,
+					SqlKeyword.NOT,
+					SqlKeyword.UNIQUE,
+					SqlKeyword.CHECK,
+					SqlKeyword.DEFAULT,
+					SqlKeyword.COLLATE,
+					SqlKeyword.REFERENCES,
+				],
+			}) ||
+			(!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS") &&
+				r.peekIf({ type: [SqlKeyword.GENERATED, SqlKeyword.AS] }))
+		) {
+			this.columnConstraint(b, r)
+		}
+		return b.end()
+	}
+
+	private columnType(b: CstBuilder, r: TokenReader) {
+		b.start("ColumnType")
+
+		const node = b.start("TypeName")
+		b.value(b.token(r.consume()).text)
+		while (r.peekIf(SqlTokenType.Identifier)) {
+			b.value(`${node.attribs.value} ${b.token(r.consume()).text}`)
+		}
+		b.end()
+
+		if (r.peekIf(SqlTokenType.LeftParen)) {
+			b.token(r.consume())
+
+			b.start("TypeOptionList")
+			{
+				b.start("LengthOption")
+				this.numericLiteral(b, r)
+				b.end()
+			}
+
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+
+				b.start("ScaleOption")
+				this.numericLiteral(b, r)
+				b.end()
+			}
+
+			b.end()
+			b.token(r.consume(SqlTokenType.RightParen))
+		}
+		return b.end()
+	}
+
+	private columnConstraint(b: CstBuilder, r: TokenReader) {
+		b.start("ColumnConstraint")
+		if (r.peekIf(SqlKeyword.CONSTRAINT)) {
+			b.token(r.consume())
+			this.identifier(b, r, "ConstraintName")
+		}
+		if (r.peekIf(SqlKeyword.PRIMARY)) {
+			b.start("PrimaryKeyConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.KEY))
+
+			if (r.peekIf(SqlKeyword.ASC)) {
+				b.start("AscOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.DESC)) {
+				b.start("DescOption")
+				b.token(r.consume())
+				b.end()
+			}
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+			if (r.peekIf(SqlKeyword.AUTOINCREMENT)) {
+				b.start("AutoincrementOption")
+				b.token(r.consume())
+				b.end()
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.NOT)) {
+			b.start("NotNullConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.NULL))
+
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+
+			b.end()
+		} else if (r.peekIf(SqlKeyword.NULL)) {
+			b.start("NullConstraint")
+			b.token(r.consume())
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.UNIQUE)) {
+			b.start("UniqueConstraint")
+			b.token(r.consume())
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.CHECK)) {
+			b.start("CheckConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.expression(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			b.end()
+		} else if (r.peekIf(SqlKeyword.DEFAULT)) {
+			b.start("DefaultOption")
+			b.token(r.consume())
+			if (r.peekIf(SqlTokenType.LeftParen)) {
+				b.token(r.consume())
+				this.expression(b, r)
+				b.token(r.consume(SqlTokenType.RightParen))
+			} else {
+				this.expression(b, r)
+			}
+			b.end()
+		} else if (r.peekIf(SqlKeyword.COLLATE)) {
+			b.start("CollateOption")
+			b.token(r.consume())
+			this.identifier(b, r, "CollateName")
+			b.end()
+		} else if (r.peekIf(SqlKeyword.REFERENCES)) {
+			b.start("ForeignKeyConstraint")
+			this.referencesClause(b, r)
+			b.end()
+		} else if (r.peekIf(SqlKeyword.GENERATED) || r.peekIf(SqlKeyword.AS)) {
+			b.start("GeneratedColumnOption")
+			if (r.peekIf(SqlKeyword.GENERATED)) {
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.ALWAYS))
+			}
+			b.token(r.consume(SqlKeyword.AS))
+			b.token(r.consume(SqlTokenType.LeftParen))
+
+			{
+				b.start("GeneratedColumn")
+				this.expression(b, r)
+				b.end()
+			}
+
+			b.token(r.consume(SqlTokenType.RightParen))
+
+			if (r.peekIf(SqlKeyword.STORED)) {
+				b.start("StoredOption")
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
+				b.start("virtual option")
+				b.token(r.consume())
+				b.end()
+			}
+
+			b.end()
+		} else {
+			throw r.createParseError()
+		}
+		return b.end()
+	}
+
+	private tableConstraint(b: CstBuilder, r: TokenReader) {
+		b.start("TableConstraint")
+		if (r.peekIf(SqlKeyword.CONSTRAINT)) {
+			b.token(r.consume())
+			this.identifier(b, r, "ConstraintName")
+		}
+		if (r.peekIf(SqlKeyword.PRIMARY)) {
+			b.start("PrimaryKeyConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.KEY))
+			b.token(r.consume(SqlTokenType.LeftParen))
+
+			{
+				b.start("SortColumnList")
 				do {
-					this.expression(node, r);
+					this.sortColumn(b, r)
 					if (r.peekIf(SqlTokenType.Comma)) {
-						this.appendToken(node, r.consume());
+						b.token(r.consume())
 					} else {
-						break;
+						break
 					}
-				} while (!r.peek().eos);
-			},
-		);
+				} while (!r.peek().eos)
+				b.end()	
+			}
+
+			b.token(r.consume(SqlTokenType.RightParen))
+
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+
+			b.end()
+		} else if (r.peekIf(SqlKeyword.UNIQUE)) {
+			b.start("UniqueConstraint")
+			b.token(r.consume())
+
+			b.token(r.consume(SqlTokenType.LeftParen))
+			{
+				b.start("SortColumnList")
+				do {
+					this.sortColumn(b, r)
+					if (r.peekIf(SqlTokenType.Comma)) {
+						b.token(r.consume())
+					} else {
+						break
+					}
+				} while (!r.peek().eos)
+				b.end()	
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+
+			if (r.peekIf(SqlKeyword.ON)) {
+				b.start("OnConflictClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlKeyword.CONFLICT))
+				this.conflictAction(b, r)
+				b.end()
+			}
+
+			b.end()
+		} else if (r.peekIf(SqlKeyword.CHECK)) {
+			b.start("CheckConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.expression(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			b.end()
+		} else if (r.peekIf(SqlKeyword.FOREIGN)) {
+			b.start("ForeignKeyConstraint")
+			b.token(r.consume())
+			b.token(r.consume(SqlKeyword.KEY))
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.columnList(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			this.referencesClause(b, r)
+			b.end()
+		} else {
+			throw r.createParseError()
+		}
+		return b.end()
 	}
 
-	private expression(parent: SyntaxNode, r: TokenReader, precedence = 0) {
-		let current: SyntaxNode = parent;
-		if (precedence === 0) {
-			current = this.append(parent, new SyntaxNode("Expression", {}));
+	private referencesClause(b: CstBuilder, r: TokenReader) {
+		b.start("ReferencesClause")
+		b.token(r.consume())
+		this.identifier(b, r, "ObjectName")
+		if (r.peekIf(SqlTokenType.LeftParen)) {
+			b.token(r.consume())
+			this.columnList(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
 		}
-		if (r.peekIf(SqlKeyword.NOT)) {
-			current = apply(
-				this.append(current, new SyntaxNode("NotOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.expression(node, r, 3);
-				},
-			);
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "~" })) {
-			current = apply(
-				this.append(current, new SyntaxNode("BitwiseNotOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.expression(node, r, 16);
-				},
-			);
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
-			current = apply(
-				this.append(current, new SyntaxNode("UnaryPlusOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.expression(node, r, 16);
-				},
-			);
-		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
-			current = apply(
-				this.append(current, new SyntaxNode("UnaryMinusOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.expression(node, r, 16);
-				},
-			);
+
+		while (
+			!r.peek().eos &&
+			r.peekIf({ type: [SqlKeyword.ON, SqlKeyword.MATCH] })
+		) {
+			if (r.peekIf(SqlKeyword.ON)) {
+				const node = b.start("OnUpdateClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.DELETE)) {
+					node.attribs.type = "OnDeleteClause"
+					b.token(r.consume())
+				} else {
+					b.token(r.consume(SqlKeyword.UPDATE))
+				}
+				if (r.peekIf(SqlKeyword.SET, SqlKeyword.NULL)) {
+					b.start("SetNullOption")
+					b.token(r.consume())
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.SET, SqlKeyword.DEFAULT)) {
+					b.start("SetDefaultOption")
+					b.token(r.consume())
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.CASCADE)) {
+					b.start("CascadeOption")
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.RESTRICT)) {
+					b.start("RestrictOption")
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.NO, SqlKeyword.ACTION)) {
+					b.start("NoActionOption")
+					b.token(r.consume())
+					b.token(r.consume())
+					b.end()
+				} else {
+					throw r.createParseError()
+				}
+				b.end()
+			} else if (r.peekIf(SqlKeyword.MATCH)) {
+				b.start("MatchClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.SIMPLE)) {
+					b.start("SimpleOption")
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.FULL)) {
+					b.start("FullOption")
+					b.token(r.consume())
+					b.end()
+				} else if (r.peekIf(SqlKeyword.PARTIAL)) {
+					b.start("PartialOption")
+					b.token(r.consume())
+					b.end()
+				} else {
+					throw r.createParseError()
+				}
+				b.end()
+			} else {
+				throw r.createParseError()
+			}
+		}
+
+		if (
+			r.peekIf(SqlKeyword.DEFERRABLE) ||
+			r.peekIf(SqlKeyword.NOT, SqlKeyword.DEFERRABLE)
+		) {
+			if (r.peekIf(SqlKeyword.NOT)) {
+				b.start("NotDeferrableOption")
+				b.token(r.consume())
+			} else {
+				b.start("DeferrableOption")
+			}
+			b.token(r.consume())
+
+			if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.DEFERRED)) {
+				b.start("InitiallyDeferredOption")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			} else if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.IMMEDIATE)) {
+				b.start("InitiallyImmediateOption")
+				b.token(r.consume())
+				b.token(r.consume())
+				b.end()
+			}
+			b.end()
+		}
+		return b.end()
+	}
+
+	private conflictAction(b: CstBuilder, r: TokenReader) {
+		if (r.peekIf(SqlKeyword.ROLLBACK)) {
+			b.start("RollbackOption")
+			b.token(r.consume())
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.ABORT)) {
+			b.start("AbortOption")
+			b.token(r.consume())
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.FAIL)) {
+			b.start("FailOption")
+			b.token(r.consume())
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.IGNORE)) {
+			b.start("IgnoreOption")
+			b.token(r.consume())
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.REPLACE)) {
+			b.start("ReplaceOption")
+			b.token(r.consume())
+			return b.end()
 		} else {
-			current = this.expressionValue(current, r);
+			throw r.createParseError()
+		}
+	}
+
+	private pragmaValue(b: CstBuilder, r: TokenReader) {
+		b.start("PragmaValue")
+		if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
+			b.start("Expression")
+			{
+				b.start("UnaryPlusOperation")
+				b.token(r.consume())
+				this.numericLiteral(b, r)
+				b.end()	
+			}
+			b.end()
+		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
+			b.start("Expression")
+			{
+				b.start("UnaryMinusOperation")
+				b.token(r.consume())
+				this.numericLiteral(b, r)
+				b.end()	
+			}
+			b.end()
+		} else if (r.peekIf(SqlTokenType.Numeric)) {
+			this.numericLiteral(b, r)
+		} else if (r.peekIf(SqlTokenType.String)) {
+			this.stringLiteral(b, r)
+		} else if (r.peekIf(SqlTokenType.Identifier)) {
+			this.identifier(b, r, "PragmaLiteral")
+		} else {
+			throw r.createParseError()
+		}
+		return b.end()
+	}
+
+	private expressionList(b: CstBuilder, r: TokenReader) {
+		b.start("ExpressionList")
+		do {
+			this.expression(b, r)
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
+			} else {
+				break
+			}
+		} while (!r.peek().eos)
+		return b.end()
+	}
+
+	private expression(b: CstBuilder, r: TokenReader, precedence = 0) {
+		if (precedence === 0) {
+			b.start("Expression")
+		}
+		let current
+		if (r.peekIf(SqlKeyword.NOT)) {
+			b.start("NotOperation")
+			b.token(r.consume())
+			this.expression(b, r, 3)
+			current = b.end()
+		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "~" })) {
+			b.start("BitwiseNotOperation")
+			b.token(r.consume())
+			this.expression(b, r, 16)
+			current = b.end()
+		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "+" })) {
+			b.start("UnaryPlusOperation")
+			b.token(r.consume())
+			this.expression(b, r, 16)
+			current = b.end()
+		} else if (r.peekIf({ type: SqlTokenType.Operator, text: "-" })) {
+			b.start("UnaryMinusOperation")
+			b.token(r.consume())
+			this.expression(b, r, 16)
+			current = b.end()
+		} else {
+			current = this.expressionValue(b, r)
 		}
 
 		while (!r.peek().eos) {
 			if (precedence < 1 && r.peekIf(SqlKeyword.OR)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("OrOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 1);
-					},
-				);
+				b.start("OrOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 1)
+				current = b.end()
 			} else if (precedence < 2 && r.peekIf(SqlKeyword.AND)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("AndOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 2);
-					},
-				);
+				b.start("AndOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 2)
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: ["=", "=="] })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("EqualOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-					},
-				);
+				b.start("EqualOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: ["<>", "!="] })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("NotEqualOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-					},
-				);
+				b.start("NotEqualOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (precedence < 4 && r.peekIf(SqlKeyword.IS)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("Is", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type += "Not";
-						}
-						if (r.peekIf(SqlKeyword.DISTINCT)) {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.FROM));
-							node.attribs.type += "DistinctFromOperation";
-						} else {
-							node.attribs.type += "Operation";
-						}
-						this.expression(node, r, 4);
-					},
-				);
+				const node = b.start("Is")
+				b.append(current)
+				b.token(r.consume())
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type += "Not"
+				}
+				if (r.peekIf(SqlKeyword.DISTINCT)) {
+					b.token(r.consume())
+					b.token(r.consume(SqlKeyword.FROM))
+					node.attribs.type += "DistinctFromOperation"
+				} else {
+					node.attribs.type += "Operation"
+				}
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (
 				(precedence < 4 && r.peekIf(SqlKeyword.BETWEEN)) ||
 				r.peekIf(SqlKeyword.NOT, SqlKeyword.BETWEEN)
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("BetweenOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
-						}
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-						this.appendToken(node, r.consume(SqlKeyword.AND));
-						this.expression(node, r, 4);
-					},
-				);
+				const node = b.start("BetweenOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				b.token(r.consume(SqlKeyword.AND))
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (
 				(precedence < 4 && r.peekIf(SqlKeyword.IN)) ||
 				r.peekIf(SqlKeyword.NOT, SqlKeyword.IN)
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("InOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
+				const node = b.start("InOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				if (
+					r.peekIf(SqlTokenType.LeftParen, {
+						type: [SqlKeyword.WITH, SqlKeyword.SELECT],
+					})
+				) {
+					b.start("SubqueryExpression")
+					b.token(r.consume())
+					let withClause
+					if (r.peekIf(SqlKeyword.WITH)) {
+						withClause = this.withClause(b, r)
+					}
+					this.selectStatement(b, r, withClause)
+					b.token(r.consume(SqlTokenType.RightParen))
+					b.end()
+				} else if (r.peekIf(SqlTokenType.LeftParen)) {
+					b.token(r.consume())
+					this.expressionList(b, r)
+					b.token(r.consume(SqlTokenType.RightParen))
+				} else if (r.peekIf(SqlTokenType.Identifier, SqlTokenType.LeftParen)) {
+					b.start("FunctionExpression")
+
+					{
+						b.start("ObjectName")
+						b.token(r.consume())
+						b.end()
+					}
+					
+					b.token(r.consume(SqlTokenType.LeftParen))
+					{
+						b.start("FunctionArgumentList")
+						while (!r.peek().eos && !r.peekIf(SqlTokenType.RightParen)) {
+							b.start("FunctionArgument")
+							this.expression(b, r)
+							b.end()
+							if (r.peekIf(SqlTokenType.Comma)) {
+								b.token(r.consume())
+							} else {
+								break
+							}
 						}
-						this.appendToken(node, r.consume());
-						if (
-							r.peekIf(SqlTokenType.LeftParen, {
-								type: [SqlKeyword.WITH, SqlKeyword.SELECT],
-							})
-						) {
-							apply(
-								this.append(node, new SyntaxNode("SubqueryExpression", {})),
-								(node) => {
-									this.appendToken(node, r.consume());
-									if (r.peekIf(SqlKeyword.WITH)) {
-										this.withClause(node, r);
-									}
-									this.selectStatement(node, r);
-									this.appendToken(node, r.consume(SqlTokenType.RightParen));
-								},
-							);
-						} else if (r.peekIf(SqlTokenType.LeftParen)) {
-							this.appendToken(node, r.consume());
-							this.expressionList(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						} else if (r.peekIf(SqlTokenType.Identifier, SqlTokenType.LeftParen)) {
-							apply(
-								this.append(node, new SyntaxNode("FunctionExpression", {})),
-								(node) => {
-									apply(
-										this.append(node, new SyntaxNode("ObjectName", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-									this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-									apply(
-										this.append(
-											node,
-											new SyntaxNode("FunctionArgumentList", {}),
-										),
-										(node) => {
-											while (!r.peek().eos && !r.peekIf(SqlTokenType.RightParen)) {
-												apply(
-													this.append(
-														node,
-														new SyntaxNode("FunctionArgument", {}),
-													),
-													(node) => {
-														this.expression(node, r);
-													},
-												);
-												if (r.peekIf(SqlTokenType.Comma)) {
-													this.appendToken(node, r.consume());
-												} else {
-													break;
-												}
-											}
-										},
-									);
-									this.appendToken(node, r.consume(SqlTokenType.RightParen));
-								},
-							);
-						} else if (
-							r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
-						) {
-							this.columnReference(node, r);
-						} else {
-							throw r.createParseError();
-						}
-					},
-				);
+						b.end()	
+					}
+					b.token(r.consume(SqlTokenType.RightParen))
+					
+					b.end()
+				} else if (
+					r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })
+				) {
+					this.columnReference(b, r)
+				} else {
+					throw r.createParseError()
+				}
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.MATCH) || r.peekIf(SqlKeyword.NOT, SqlKeyword.MATCH))
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("MatchOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
-						}
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-					},
-				);
+				const node = b.start("MatchOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.LIKE) || r.peekIf(SqlKeyword.NOT, SqlKeyword.LIKE))
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("LikeOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
-						}
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-						if (r.peekIf(SqlKeyword.ESCAPE)) {
-							apply(
-								this.append(node, new SyntaxNode("EscapeOption", {})),
-								(node) => {
-									this.expression(node, r, 6);
-								},
-							);
-						}
-					},
-				);
+				const node = b.start("LikeOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				if (r.peekIf(SqlKeyword.ESCAPE)) {
+
+					b.start("EscapeOption")
+
+					this.expression(b, r, 6)
+					b.end()
+				}
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.REGEXP) || r.peekIf(SqlKeyword.NOT, SqlKeyword.REGEXP))
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("RegexpOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
-						}
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-					},
-				);
+				const node = b.start("RegexpOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (
 				precedence < 4 &&
 				(r.peekIf(SqlKeyword.GLOB) || r.peekIf(SqlKeyword.NOT, SqlKeyword.GLOB))
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("GlobOperation", {})),
-					(node) => {
-						if (r.peekIf(SqlKeyword.NOT)) {
-							this.appendToken(node, r.consume());
-							node.attribs.type = `Not${node.attribs.type}`;
-						}
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 4);
-					},
-				);
+				const node = b.start("GlobOperation")
+				b.append(current)
+				if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume())
+					node.attribs.type = `Not${node.attribs.type}`
+				}
+				b.token(r.consume())
+				this.expression(b, r, 4)
+				current = b.end()
 			} else if (precedence < 4 && r.peekIf(SqlKeyword.ISNULL)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("IsNullOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-					},
-				);
+				b.start("IsNullOperation")
+				b.append(current)
+				b.token(r.consume())
+				current = b.end()
 			} else if (precedence < 4 && r.peekIf(SqlKeyword.NOTNULL)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-					},
-				);
+				b.start("IsNotNullOperation")
+				b.append(current)
+				b.token(r.consume())
+				current = b.end()
 			} else if (precedence < 4 && r.peekIf(SqlKeyword.NOT, SqlKeyword.NULL)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("IsNotNullOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.appendToken(node, r.consume());
-					},
-				);
+				b.start("IsNotNullOperation")
+				b.append(current)
+				b.token(r.consume())
+				b.token(r.consume())
+				current = b.end()
 			} else if (
 				precedence < 5 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "<" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("LessThanOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 5);
-					},
-				);
+				b.start("LessThanOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 5)
+				current = b.end()
 			} else if (
 				precedence < 5 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: ">" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("GreaterThanOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 5);
-					},
-				);
+				b.start("GreaterThanOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 5)
+				current = b.end()
 			} else if (
 				precedence < 5 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "<=" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("LessThanOrEqualOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 5);
-					},
-				);
+				b.start("LessThanOrEqualOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 5)
+				current = b.end()
 			} else if (
 				precedence < 5 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: ">=" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("GreaterThanOrEqualOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 5);
-					},
-				);
+				b.start("GreaterThanOrEqualOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 5)
+				current = b.end()
 			} else if (
 				precedence < 7 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "&" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("BitwiseAndOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 7);
-					},
-				);
+				b.start("BitwiseAndOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 7)
+				current = b.end()
 			} else if (
 				precedence < 7 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "|" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("BitwiseOrOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 7);
-					},
-				);
+				b.start("BitwiseOrOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 7)
+				current = b.end()
 			} else if (
 				precedence < 7 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "<<" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("BitwiseLeftShiftOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 7);
-					},
-				);
+				b.start("BitwiseLeftShiftOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 7)
+				current = b.end()
 			} else if (
 				precedence < 7 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: ">>" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("BitwiseRightShiftOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 7);
-					},
-				);
+				b.start("BitwiseRightShiftOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 7)
+				current = b.end()
 			} else if (
 				precedence < 8 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "+" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("AddOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 8);
-					},
-				);
+				b.start("AddOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 8)
+				current = b.end()
 			} else if (
 				precedence < 8 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "-" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("SubtractOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 8);
-					},
-				);
+				b.start("SubtractOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 8)
+				current = b.end()
 			} else if (
 				precedence < 9 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "*" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("MultiplyOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 9);
-					},
-				);
+				b.start("MultiplyOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 9)
+				current = b.end()
 			} else if (
 				precedence < 9 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "/" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("DivideOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 9);
-					},
-				);
+				b.start("DivideOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 9)
+				current = b.end()
 			} else if (
 				precedence < 9 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "%" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("ModuloOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 9);
-					},
-				);
+				b.start("ModuloOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 9)
+				current = b.end()
 			} else if (
 				precedence < 10 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "||" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("ConcatenateOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 10);
-					},
-				);
+				b.start("ConcatenateOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 10)
+				current = b.end()
 			} else if (
 				precedence < 10 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "->" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("JsonExtractOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 10);
-					},
-				);
+				b.start("JsonExtractOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 10)
+				current = b.end()
 			} else if (
 				precedence < 10 &&
 				r.peekIf({ type: SqlTokenType.Operator, text: "->>" })
 			) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("JsonExtractValueOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.expression(node, r, 10);
-					},
-				);
+				b.start("JsonExtractValueOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.expression(b, r, 10)
+				current = b.end()
 			} else if (precedence < 11 && r.peekIf(SqlKeyword.COLLATE)) {
-				current = apply(
-					this.wrap(current, new SyntaxNode("CollateOperation", {})),
-					(node) => {
-						this.appendToken(node, r.consume());
-						this.identifier(node, r, "CollationName");
-					},
-				);
+				b.start("CollateOperation")
+				b.append(current)
+				b.token(r.consume())
+				this.identifier(b, r, "CollationName")
+				current = b.end()
 			} else {
-				break;
+				break
 			}
 		}
-		return current;
+		if (precedence === 0) {
+			b.end();
+		}
+		return b.current;
 	}
 
-	private expressionValue(parent: SyntaxNode, r: TokenReader) {
+	private expressionValue(b: CstBuilder, r: TokenReader) {
 		if (r.peekIf(SqlKeyword.NULL)) {
-			return apply(
-				this.append(parent, new SyntaxNode("NullLiteral", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-				},
-			);
+			b.start("NullLiteral")
+			b.token(r.consume())
+			return b.end()
 		} else if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
-			return this.booleanLiteral(parent, r);
+			return this.booleanLiteral(b, r)
 		} else if (
 			r.peekIf({
 				type: [
@@ -3425,457 +2741,326 @@ export class Sqlite3Parser extends Parser {
 				],
 			})
 		) {
-			return apply(
-				this.append(parent, new SyntaxNode("FunctionExpression", {})),
-				(node) => {
-					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						const token = r.consume();
-						this.appendToken(node, token);
-						node.attribs.value = token.text.toUpperCase();
-					});
-				},
-			);
+			b.start("FunctionExpression")
+			{
+				b.start("ObjectName")
+				b.value(b.token(r.consume()).text.toUpperCase())
+				b.end()	
+			}
+			return b.end()
 		} else if (r.peekIf(SqlKeyword.CASE)) {
-			return apply(
-				this.append(parent, new SyntaxNode("CaseExpression", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					if (!r.peekIf(SqlKeyword.WHEN)) {
-						this.expression(node, r);
-					}
-					do {
-						apply(
-							this.append(node, new SyntaxNode("WhenClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume(SqlKeyword.WHEN));
-								this.expression(node, r);
-								apply(
-									this.append(node, new SyntaxNode("ThenClause", {})),
-									(node) => {
-										this.appendToken(node, r.consume(SqlKeyword.THEN));
-										this.expression(node, r);
-									},
-								);
-							},
-						);
-					} while (r.peekIf(SqlKeyword.WHEN));
-					if (r.peekIf(SqlKeyword.ELSE)) {
-						apply(
-							this.append(node, new SyntaxNode("ElseClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.expression(node, r);
-							},
-						);
-					}
-					this.appendToken(node, r.consume(SqlKeyword.END));
-				},
-			);
+			b.start("CaseExpression")
+			b.token(r.consume())
+			if (!r.peekIf(SqlKeyword.WHEN)) {
+				this.expression(b, r)
+			}
+			do {
+				b.start("WhenClause")
+				b.token(r.consume(SqlKeyword.WHEN))
+				this.expression(b, r)
+				{
+					b.start("ThenClause")
+					b.token(r.consume(SqlKeyword.THEN))
+					this.expression(b, r)
+					b.end()	
+				}
+				b.end()
+			} while (r.peekIf(SqlKeyword.WHEN))
+			if (r.peekIf(SqlKeyword.ELSE)) {
+				b.start("ElseClause")
+				b.token(r.consume())
+				this.expression(b, r)
+				b.end()
+			}
+			b.token(r.consume(SqlKeyword.END))
+			return b.end()
 		} else if (r.peekIf(SqlKeyword.CAST)) {
-			return apply(
-				this.append(parent, new SyntaxNode("FunctionExpression", {})),
-				(node) => {
-					const token = r.consume();
-					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						node.attribs.value = token.text.toUpperCase();
-						this.appendToken(node, token);
-					});
-					this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-					apply(
-						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("FunctionArgument", {})),
-								(node) => {
-									this.expression(node, r);
-								},
-							);
-							this.appendToken(node, r.consume(SqlKeyword.AS));
-							this.columnType(node, r);
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.RAISE)) {
-			return apply(
-				this.append(parent, new SyntaxNode("FunctionExpression", {})),
-				(node) => {
-					const token = r.consume();
-					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						this.appendToken(node, token);
-						node.attribs.value = token.text.toUpperCase();
-					});
-					this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-					apply(
-						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
-						(node) => {
-							apply(
-								this.append(node, new SyntaxNode("FunctionArgument", {})),
-								(node) => {
-									this.conflictAction(node, r);
-								},
-							);
-							this.appendToken(node, r.consume(SqlTokenType.Comma));
-							apply(
-								this.append(node, new SyntaxNode("FunctionArgument", {})),
-								(node) => {
-									this.expression(node, r);
-								},
-							);
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlKeyword.EXISTS)) {
-			return apply(
-				this.append(parent, new SyntaxNode("ExistsOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-					this.selectStatement(node, r);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.VALUES)) {
-			return apply(
-				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					apply(
-						this.append(node, new SyntaxNode("ValuesClause", {})),
-						(node) => {
-							this.appendToken(node, r.consume(SqlKeyword.VALUES));
-							this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-							this.expressionList(node, r);
-							this.appendToken(node, r.consume(SqlTokenType.RightParen));
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.SELECT)) {
-			return apply(
-				this.append(parent, new SyntaxNode("SubqueryExpression", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.selectStatement(node, r);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlTokenType.LeftParen)) {
-			return apply(
-				this.append(parent, new SyntaxNode("ParenthesesOperation", {})),
-				(node) => {
-					this.appendToken(node, r.consume());
-					this.expression(node, r);
-					if (r.peekIf(SqlTokenType.Comma)) {
-						node.attribs.type = "ExpressionList";
-						this.appendToken(node, r.consume());
-						do {
-							this.expression(node, r);
-							if (r.peekIf(SqlTokenType.Comma)) {
-								this.appendToken(node, r.consume());
-							} else {
-								break;
-							}
-						} while (!r.peek().eos);
-					}
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-				},
-			);
-		} else if (r.peekIf(SqlTokenType.Identifier, SqlTokenType.LeftParen)) {
-			return apply(
-				this.append(parent, new SyntaxNode("FunctionExpression", {})),
-				(node) => {
-					apply(this.append(node, new SyntaxNode("ObjectName", {})), (node) => {
-						this.appendToken(node, r.consume());
-					});
+			b.start("FunctionExpression")
+			{
+				b.start("ObjectName")
+				b.value(b.token(r.consume()).text.toUpperCase())
+				b.end()	
+			}
+			b.token(r.consume(SqlTokenType.LeftParen))
+			{
 
-					this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-					apply(
-						this.append(node, new SyntaxNode("FunctionArgumentList", {})),
-						(node) => {
-							if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
-								apply(
-									this.append(node, new SyntaxNode("FunctionArgument", {})),
-									(node) => {
-										apply(
-											this.append(node, new SyntaxNode("AllColumnsOption", {})),
-											(node) => {
-												this.appendToken(node, r.consume());
-											},
-										);
-									},
-								);
-							} else {
-								if (r.peekIf(SqlKeyword.DISTINCT)) {
-									apply(
-										this.append(node, new SyntaxNode("DistinctOption", {})),
-										(node) => {
-											this.appendToken(node, r.consume());
-										},
-									);
-								}
-								while (!r.peek().eos) {
-									apply(
-										this.append(node, new SyntaxNode("Argument", {})),
-										(node) => {
-											this.expression(node, r);
-										},
-									);
-									if (r.peekIf(SqlTokenType.Comma)) {
-										this.appendToken(node, r.consume());
-									} else {
-										break;
-									}
-								}
-							}
-						},
-					);
-					this.appendToken(node, r.consume(SqlTokenType.RightParen));
-					if (r.peekIf(SqlKeyword.FILTER)) {
-						apply(
-							this.append(node, new SyntaxNode("FilterClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								this.appendToken(node, r.consume(SqlTokenType.LeftParen));
-								this.whereClause(node, r);
-								this.appendToken(node, r.consume(SqlTokenType.RightParen));
-							},
-						);
+				b.start("FunctionArgumentList")
+				{
+					b.start("FunctionArgument")
+					this.expression(b, r)
+					b.end()	
+				}	
+				b.token(r.consume(SqlKeyword.AS))
+				this.columnType(b, r)
+				b.end()
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.RAISE)) {
+			b.start("FunctionExpression")
+
+			{
+				b.start("ObjectName")
+				b.value(b.token(r.consume()).text.toUpperCase())
+				b.end()	
+			}
+
+			b.token(r.consume(SqlTokenType.LeftParen))
+			{
+				b.start("FunctionArgumentList")
+				{
+					b.start("FunctionArgument")
+					this.conflictAction(b, r)
+					b.end()
+				}
+				b.token(r.consume(SqlTokenType.Comma))
+				{
+					b.start("FunctionArgument")
+					this.expression(b, r)
+					b.end()	
+				}
+				b.end()
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlKeyword.EXISTS)) {
+			b.start("ExistsOperation")
+			b.token(r.consume())
+			b.token(r.consume(SqlTokenType.LeftParen))
+			this.selectStatement(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.VALUES)) {
+			b.start("SubqueryExpression")
+			b.token(r.consume())
+			{
+				b.start("ValuesClause")
+				b.token(r.consume(SqlKeyword.VALUES))
+				b.token(r.consume(SqlTokenType.LeftParen))
+				this.expressionList(b, r)
+				b.token(r.consume(SqlTokenType.RightParen))
+				b.end()	
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.SELECT)) {
+			b.start("SubqueryExpression")
+			b.token(r.consume())
+			this.selectStatement(b, r)
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlTokenType.LeftParen)) {
+			const node = b.start("ParenthesesOperation")
+			b.token(r.consume())
+			this.expression(b, r)
+			if (r.peekIf(SqlTokenType.Comma)) {
+				node.attribs.type = "ExpressionList"
+				b.token(r.consume())
+				do {
+					this.expression(b, r)
+					if (r.peekIf(SqlTokenType.Comma)) {
+						b.token(r.consume())
+					} else {
+						break
 					}
-					if (
-						!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
-						r.peekIf(SqlKeyword.OVER)
-					) {
-						apply(
-							this.append(node, new SyntaxNode("OverClause", {})),
-							(node) => {
-								this.appendToken(node, r.consume());
-								if (r.peekIf(SqlTokenType.LeftParen)) {
-									this.appendToken(node, r.consume());
-									this.window(node, r);
-									this.appendToken(node, r.consume(SqlTokenType.RightParen));
-								} else {
-									this.identifier(node, r, "WindowName");
-								}
-							},
-						);
+				} while (!r.peek().eos)
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+			return b.end()
+		} else if (r.peekIf(SqlTokenType.Identifier, SqlTokenType.LeftParen)) {
+			b.start("FunctionExpression")
+			{
+				b.start("ObjectName")
+				b.token(r.consume())
+				b.end()	
+			}
+			b.token(r.consume(SqlTokenType.LeftParen))
+			{
+				b.start("FunctionArgumentList")
+				if (r.peekIf({ type: SqlTokenType.Operator, text: "*" })) {
+					b.start("FunctionArgument")
+					{
+						b.start("AllColumnsOption")
+						b.token(r.consume())
+						b.end()	
 					}
-				},
-			);
+					b.end()
+				} else {
+					if (r.peekIf(SqlKeyword.DISTINCT)) {
+						b.start("DistinctOption")
+						b.token(r.consume())
+						b.end()
+					}
+					while (!r.peek().eos) {
+						b.start("Argument")
+						this.expression(b, r)
+						b.end()
+						if (r.peekIf(SqlTokenType.Comma)) {
+							b.token(r.consume())
+						} else {
+							break
+						}
+					}
+				}
+				b.end()
+			}
+			b.token(r.consume(SqlTokenType.RightParen))
+			if (r.peekIf(SqlKeyword.FILTER)) {
+				b.start("FilterClause")
+				b.token(r.consume())
+				b.token(r.consume(SqlTokenType.LeftParen))
+				this.whereClause(b, r)
+				b.token(r.consume(SqlTokenType.RightParen))
+				b.end()
+			}
+			if (
+				!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
+				r.peekIf(SqlKeyword.OVER)
+			) {
+				b.start("OverClause")
+				b.token(r.consume())
+				if (r.peekIf(SqlTokenType.LeftParen)) {
+					b.token(r.consume())
+					this.window(b, r)
+					b.token(r.consume(SqlTokenType.RightParen))
+				} else {
+					this.identifier(b, r, "WindowName")
+				}
+				b.end()
+			}
+			return b.end()
 		} else if (r.peekIf(SqlTokenType.Numeric)) {
-			return this.numericLiteral(parent, r);
+			return this.numericLiteral(b, r)
 		} else if (
 			r.peekIf(SqlTokenType.String) ||
 			r.peekIf({ type: SqlTokenType.Identifier, text: /^"/ })
 		) {
-			return this.stringLiteral(parent, r);
+			return this.stringLiteral(b, r)
 		} else if (r.peekIf(SqlTokenType.Blob)) {
-			return this.blobLiteral(parent, r);
+			return this.blobLiteral(b, r)
 		} else if (
 			r.peekIf(SqlTokenType.Identifier) ||
 			r.peekIf(SqlTokenType.String, SqlTokenType.Dot)
 		) {
-			return this.columnReference(parent, r);
+			return this.columnReference(b, r)
 		} else if (r.peekIf(SqlTokenType.BindVariable)) {
-			const token = r.consume();
+			const token = r.consume()
 			if (token.text.startsWith("?")) {
-				return apply(
-					this.append(parent, new SyntaxNode("PositionalBindVariable", {})),
-					(node) => {
-						this.appendToken(node, token);
-
-						let value = token.text.substring(1);
-						if (value) {
-							r.state.bindPosition = Number.parseInt(value, 10);
-						} else {
-							const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1;
-							value = `${pos}`;
-							r.state.bindPosition = pos;
-						}
-						node.attribs.value = value;
-					},
-				);
+				b.start("PositionalBindVariable")
+				b.token(token)
+				let value = token.text.substring(1)
+				if (value) {
+					r.state.bindPosition = Number.parseInt(value, 10)
+				} else {
+					const pos = r.state.bindPosition ? r.state.bindPosition + 1 : 1
+					value = `${pos}`
+					r.state.bindPosition = pos
+				}
+				b.value(value)
+				return b.end()
 			} else {
-				return apply(
-					this.append(parent, new SyntaxNode("NamedBindVariable", {})),
-					(node) => {
-						this.appendToken(node, token);
-						node.attribs.value = token.text.substring(1);
-					},
-				);
+				b.start("NamedBindVariable")
+				b.token(token)
+				b.value(token.text.substring(1))
+				return b.end()
 			}
 		} else {
-			throw r.createParseError();
+			throw r.createParseError()
 		}
 	}
 
-	private sortColumn(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("SortColumn", {})),
-			(node) => {
-				this.expression(node, r);
-				if (r.peekIf(SqlKeyword.COLLATE)) {
-					this.appendToken(node, r.consume());
-					this.identifier(node, r, "CollationName");
-				}
-				if (r.peekIf(SqlKeyword.ASC)) {
-					apply(this.append(node, new SyntaxNode("AscOption", {})), (node) => {
-						this.appendToken(node, r.consume());
-					});
-				} else if (r.peekIf(SqlKeyword.DESC)) {
-					apply(this.append(node, new SyntaxNode("DescOption", {})), (node) => {
-						this.appendToken(node, r.consume());
-					});
-				}
-			},
-		);
+	private sortColumn(b: CstBuilder, r: TokenReader) {
+		b.start("SortColumn")
+		this.expression(b, r)
+		if (r.peekIf(SqlKeyword.COLLATE)) {
+			b.token(r.consume())
+			this.identifier(b, r, "CollationName")
+		}
+		if (r.peekIf(SqlKeyword.ASC)) {
+			b.start("AscOption")
+			b.token(r.consume())
+			b.end()
+		} else if (r.peekIf(SqlKeyword.DESC)) {
+			b.start("DescOption")
+			b.token(r.consume())
+			b.end()
+		}
+		return b.end()
 	}
 
-	private columnList(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ColumnList", {})),
-			(node) => {
-				do {
-					this.identifier(node, r, "ColumnName");
-					if (r.peekIf(SqlTokenType.Comma)) {
-						this.appendToken(node, r.consume());
-					} else {
-						break;
-					}
-				} while (!r.peek().eos);
-			},
-		);
-	}
-
-	private columnReference(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("ColumnReference", {})),
-			(node) => {
-				const ident1 = this.identifier(node, r, "ColumnName");
-				if (r.peekIf(SqlTokenType.Dot)) {
-					this.appendToken(node, r.consume());
-					ident1.attribs.type = "ObjectName";
-					const ident2 = this.identifier(node, r, "ColumnName");
-					if (r.peekIf(SqlTokenType.Dot)) {
-						this.appendToken(node, r.consume());
-						ident1.attribs.type = "SchemaName";
-						ident2.attribs.type = "ObjectName";
-						this.identifier(node, r, "ColumnName");
-					}
-				}
-			},
-		);
-	}
-
-	private identifier(parent: SyntaxNode, r: TokenReader, name: string) {
-		return apply(this.append(parent, new SyntaxNode(name, {})), (node) => {
-			if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
-				const token = r.consume();
-				this.appendToken(node, token);
-				node.attribs.value = dequote(token.text);
+	private columnList(b: CstBuilder, r: TokenReader) {
+		b.start("ColumnList")
+		do {
+			this.identifier(b, r, "ColumnName")
+			if (r.peekIf(SqlTokenType.Comma)) {
+				b.token(r.consume())
 			} else {
-				throw r.createParseError();
+				break
 			}
-		});
+		} while (!r.peek().eos)
+		return b.end()
 	}
 
-	private numericLiteral(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("NumericLiteral", {})),
-			(node) => {
-				const token = r.consume(SqlTokenType.Numeric);
-				this.appendToken(node, token);
-				node.attribs.value = token.text.toLowerCase();
-			},
-		);
-	}
-
-	private stringLiteral(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("StringLiteral", {})),
-			(node) => {
-				if (r.peekIf({ type: SqlTokenType.Identifier, text: /^"/ })) {
-					const token = r.consume();
-					this.appendToken(node, token);
-					node.attribs.value = dequote(token.text);
-				} else {
-					const token = r.consume(SqlTokenType.String);
-					this.appendToken(node, token);
-					node.attribs.value = dequote(token.text);
-				}
-			},
-		);
-	}
-
-	private blobLiteral(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("BlobLiteral", {})),
-			(node) => {
-				const token = r.consume(SqlTokenType.Blob);
-				this.appendToken(node, token);
-				node.attribs.value = token.text
-					.substring(2, token.text.length - 1)
-					.toUpperCase();
-			},
-		);
-	}
-
-	private booleanLiteral(parent: SyntaxNode, r: TokenReader) {
-		return apply(
-			this.append(parent, new SyntaxNode("BooleanLiteral", {})),
-			(node) => {
-				if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
-					const token = r.consume();
-					this.appendToken(node, token);
-					node.attribs.value = token.text.toUpperCase();
-				} else {
-					throw r.createParseError();
-				}
-			},
-		);
-	}
-
-	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
-		elem.replaceWith(wrapper);
-		wrapper.append(elem);
-		return wrapper;
-	}
-
-	private append(parent: SyntaxNode, child: SyntaxNode) {
-		parent.append(child);
-		return child;
-	}
-
-	private appendToken(parent: SyntaxNode, child: Token) {
-		const token = new SyntaxToken(child.type.name, {
-			...(child.keyword && { value: child.keyword.name }),
-		});
-		for (const skip of child.preskips) {
-			const skipToken = new SyntaxTrivia(skip.type.name, {
-				...(skip.keyword && { value: skip.keyword.name }),
-			});
-			if (skip.text) {
-				skipToken.append(skip.text);
+	private columnReference(b: CstBuilder, r: TokenReader) {
+		b.start("ColumnReference")
+		const ident1 = this.identifier(b, r, "ColumnName")
+		if (r.peekIf(SqlTokenType.Dot)) {
+			b.token(r.consume())
+			ident1.attribs.type = "ObjectName"
+			const ident2 = this.identifier(b, r, "ColumnName")
+			if (r.peekIf(SqlTokenType.Dot)) {
+				b.token(r.consume())
+				ident1.attribs.type = "SchemaName"
+				ident2.attribs.type = "ObjectName"
+				this.identifier(b, r, "ColumnName")
 			}
-			token.append(skipToken);
 		}
-		if (child.text) {
-			token.append(child.text);
+		return b.end()
+	}
+
+	private identifier(b: CstBuilder, r: TokenReader, name: string) {
+		b.start(name)
+		if (r.peekIf({ type: [SqlTokenType.Identifier, SqlTokenType.String] })) {
+			b.value(dequote(b.token(r.consume()).text))
+		} else {
+			throw r.createParseError()
 		}
-		for (const skip of child.postskips) {
-			const skipToken = new SyntaxTrivia(skip.type.name, {
-				...(skip.keyword && { value: skip.keyword.name }),
-			});
-			if (skip.text) {
-				skipToken.append(skip.text);
-			}
-			token.append(skipToken);
+		return b.end()
+	}
+
+	private numericLiteral(b: CstBuilder, r: TokenReader) {
+		b.start("NumericLiteral")
+		b.value(b.token(r.consume(SqlTokenType.Numeric)).text.toLowerCase())
+		return b.end()
+	}
+
+	private stringLiteral(b: CstBuilder, r: TokenReader) {
+		b.start("StringLiteral")
+		if (r.peekIf({ type: SqlTokenType.Identifier, text: /^"/ })) {
+			b.value(dequote(b.token(r.consume()).text)) //TODO
+		} else {
+			b.value(dequote(b.token(r.consume(SqlTokenType.String)).text))
 		}
-		parent.append(token);
-		return token;
+		return b.end()
+	}
+
+	private blobLiteral(b: CstBuilder, r: TokenReader) {
+		b.start("BlobLiteral")
+		const token = r.consume(SqlTokenType.Blob)
+		b.token(token)
+		b.value(token.text
+			.substring(2, token.text.length - 1)
+			.toUpperCase())
+		return b.end()
+	}
+
+	private booleanLiteral(b: CstBuilder, r: TokenReader) {
+		b.start("BooleanLiteral")
+		if (r.peekIf({ type: [SqlKeyword.TRUE, SqlKeyword.FALSE] })) {
+			b.value(b.token(r.consume()).text.toUpperCase())
+		} else {
+			throw r.createParseError()
+		}
+		return b.end()
 	}
 }

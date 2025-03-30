@@ -370,19 +370,22 @@ export class TokenReader {
 		return this.tokens[this.pos + pos];
 	}
 
-	peekIf(...conditions: (Keyword | TokenType | TokenQuery)[]) {
+	peekIf(...conditions: (Keyword | TokenType | TokenQuery & { optional?: boolean })[]) {
 		if (conditions.length === 0) {
 			throw new RangeError("conditions must be at least one.");
 		}
 
+		let pos = 0;
 		for (let i = 0; i < conditions.length; i++) {
 			const condition = conditions[i];
 			if (!condition) {
-				continue;
+				throw new RangeError("condition must not be empty.");
 			}
 
-			const token = this.peek(i);
-			if (!token || !token.is(condition)) {
+			const token = this.peek(pos);
+			if (token && token.is(condition)) {
+				pos++;
+			} else if (!("optional" in condition && condition.optional)) {
 				return false;
 			}
 		}

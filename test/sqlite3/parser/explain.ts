@@ -2,10 +2,10 @@ import { Element, Text } from "domhandler"
 
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"ExplainStatement"}, [
-    new Element("token", {"value":"EXPLAIN","type":"Identifier"}, [new Text("EXPLAIN")]),
+    new Element("token", {"type":"Identifier","value":"EXPLAIN"}, [new Text("EXPLAIN")]),
     new Element("node", {"type":"SelectStatement"}, [
       new Element("node", {"type":"SelectClause"}, [
-        new Element("token", {"value":"SELECT","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"SELECT"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("SELECT"),
         ]),
@@ -37,7 +37,7 @@ export default new Element("node", {"type":"Script"}, [
           ]),
         ]),
         new Element("node", {"type":"FromClause"}, [
-          new Element("token", {"value":"FROM","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"FROM"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("FROM"),
           ]),
@@ -55,7 +55,7 @@ export default new Element("node", {"type":"Script"}, [
           ]),
         ]),
         new Element("node", {"type":"WhereClause"}, [
-          new Element("token", {"value":"WHERE","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"WHERE"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("WHERE"),
           ]),
@@ -84,23 +84,23 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"ExplainStatement"}, [
-    new Element("token", {"value":"EXPLAIN","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"EXPLAIN"}, [
       new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
       new Text("EXPLAIN"),
     ]),
     new Element("node", {"type":"QueryPlanOption"}, [
-      new Element("token", {"value":"QUERY","type":"Identifier"}, [
+      new Element("token", {"type":"Identifier","value":"QUERY"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("QUERY"),
       ]),
-      new Element("token", {"value":"PLAN","type":"Identifier"}, [
+      new Element("token", {"type":"Identifier","value":"PLAN"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("PLAN"),
       ]),
     ]),
     new Element("node", {"type":"SelectStatement"}, [
       new Element("node", {"type":"SelectClause"}, [
-        new Element("token", {"value":"SELECT","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"SELECT"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("SELECT"),
         ]),
@@ -132,7 +132,7 @@ export default new Element("node", {"type":"Script"}, [
           ]),
         ]),
         new Element("node", {"type":"FromClause"}, [
-          new Element("token", {"value":"FROM","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"FROM"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("FROM"),
           ]),
@@ -161,7 +161,7 @@ export default new Element("node", {"type":"Script"}, [
           ]),
         ]),
         new Element("node", {"type":"WhereClause"}, [
-          new Element("token", {"value":"WHERE","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"WHERE"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("WHERE"),
           ]),
@@ -185,7 +185,7 @@ export default new Element("node", {"type":"Script"}, [
                   new Element("token", {"type":"Numeric"}, [new Text("1")]),
                 ]),
               ]),
-              new Element("token", {"value":"AND","type":"Reserved"}, [
+              new Element("token", {"type":"Reserved","value":"AND"}, [
                 new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                 new Text("AND"),
               ]),

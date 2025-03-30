@@ -2,8 +2,8 @@ import { Element, Text } from "domhandler"
 
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
-    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"DATABASE"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("DATABASE"),
     ]),
@@ -17,7 +17,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),
@@ -33,8 +33,8 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
-    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"DATABASE"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("DATABASE"),
     ]),
@@ -48,7 +48,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),
@@ -64,8 +64,8 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
-    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"DATABASE"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("DATABASE"),
     ]),
@@ -73,7 +73,7 @@ export default new Element("node", {"type":"Script"}, [
       new Element("node", {"type":"Expression"}, [
         new Element("node", {"type":"FunctionExpression"}, [
           new Element("node", {"type":"ObjectName"}, [
-            new Element("token", {"value":"CONCAT","type":"Identifier"}, [
+            new Element("token", {"type":"Identifier","value":"CONCAT"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("CONCAT"),
             ]),
@@ -103,7 +103,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),
@@ -119,8 +119,8 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
-    new Element("token", {"value":"DATABASE","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"DATABASE"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("DATABASE"),
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -141,7 +141,7 @@ export default new Element("node", {"type":"Script"}, [
                 new Element("token", {"type":"Operator"}, [new Text("||")]),
                 new Element("node", {"type":"FunctionExpression"}, [
                   new Element("node", {"type":"ObjectName"}, [
-                    new Element("token", {"value":"STRFTIME","type":"Identifier"}, [
+                    new Element("token", {"type":"Identifier","value":"STRFTIME"}, [
                       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                       new Text("strftime"),
                     ]),
@@ -186,7 +186,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),
@@ -202,7 +202,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
     new Element("node", {"type":"Database"}, [
       new Element("node", {"type":"Expression"}, [
         new Element("node", {"type":"StringLiteral","value":"new_database.db"}, [
@@ -213,7 +213,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),
@@ -229,7 +229,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"AttachDatabaseStatement"}, [
-    new Element("token", {"value":"ATTACH","type":"Identifier"}, [new Text("ATTACH")]),
+    new Element("token", {"type":"Identifier","value":"ATTACH"}, [new Text("ATTACH")]),
     new Element("node", {"type":"Database"}, [
       new Element("node", {"type":"Expression"}, [
         new Element("node", {"type":"ConcatenateOperation"}, [
@@ -250,7 +250,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
     ]),
-    new Element("token", {"value":"AS","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"AS"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("AS"),
     ]),

@@ -3,7 +3,7 @@ import { Element, Text } from "domhandler"
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"SelectStatement"}, [
     new Element("node", {"type":"SelectClause"}, [
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [
         new Text("SELECT"),
         new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
       ]),
@@ -14,11 +14,11 @@ export default new Element("node", {"type":"Script"}, [
       ]),
     ]),
     new Element("node", {"type":"Unknown"}, [
-      new Element("token", {"value":"UPDATE","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"UPDATE"}, [
         new Text("UPDATE"),
         new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
       ]),
-      new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("select")]),
+      new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("select")]),
       new Element("token", {"type":"Numeric"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("1"),
@@ -32,8 +32,8 @@ export default new Element("node", {"type":"Script"}, [
         new Text("3"),
         new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
       ]),
-      new Element("token", {"value":"CREATE","type":"Reserved"}, [new Text("CREATE")]),
-      new Element("token", {"value":"TABLE","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"CREATE"}, [new Text("CREATE")]),
+      new Element("token", {"type":"Reserved","value":"TABLE"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("TABLE"),
       ]),
@@ -44,7 +44,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"Unknown"}, [
-    new Element("token", {"value":"CREATE","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"CREATE"}, [
       new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
       new Text("CREATE"),
     ]),
@@ -53,7 +53,7 @@ export default new Element("node", {"type":"Script"}, [
       new Text("@aaa"),
     ]),
     new Element("token", {"type":"Error"}, [new Text("@")]),
-    new Element("token", {"value":"FROM","type":"Reserved"}, [
+    new Element("token", {"type":"Reserved","value":"FROM"}, [
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
       new Text("FROM"),
       new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),

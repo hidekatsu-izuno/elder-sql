@@ -2,7 +2,7 @@ import { Element, Text } from "domhandler"
 
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
     new Element("node", {"type":"PragmaName","value":"analysis_limit"}, [
       new Element("token", {"type":"Identifier"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -15,7 +15,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
     new Element("node", {"type":"PragmaName","value":"analysis_limit"}, [
       new Element("token", {"type":"Identifier"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -38,9 +38,9 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
-    new Element("SchemaName", {"type":"PragmaName","value":"test"}, [
-      new Element("token", {"value":"TEST","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
+    new Element("node", {"type":"SchemaName","value":"test"}, [
+      new Element("token", {"type":"Identifier","value":"TEST"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("test"),
       ]),
@@ -55,9 +55,9 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
-    new Element("SchemaName", {"type":"PragmaName","value":"test"}, [
-      new Element("token", {"value":"TEST","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
+    new Element("node", {"type":"SchemaName","value":"test"}, [
+      new Element("token", {"type":"Identifier","value":"TEST"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("test"),
       ]),
@@ -92,9 +92,9 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
-    new Element("SchemaName", {"type":"PragmaName","value":"Test"}, [
-      new Element("token", {"value":"TEST","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
+    new Element("node", {"type":"SchemaName","value":"Test"}, [
+      new Element("token", {"type":"Identifier","value":"TEST"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("Test"),
       ]),
@@ -109,9 +109,9 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
-    new Element("SchemaName", {"type":"PragmaName","value":"Test"}, [
-      new Element("token", {"value":"TEST","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
+    new Element("node", {"type":"SchemaName","value":"Test"}, [
+      new Element("token", {"type":"Identifier","value":"TEST"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("Test"),
       ]),
@@ -126,7 +126,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("token", {"type":"Operator"}, [new Text("=")]),
     new Element("node", {"type":"PragmaValue"}, [
       new Element("node", {"type":"PragmaLiteral","value":"NONE"}, [
-        new Element("token", {"value":"NONE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"NONE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("NONE"),
         ]),
@@ -138,7 +138,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("pragma")]),
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("pragma")]),
     new Element("node", {"type":"PragmaName","value":"automatic_index"}, [
       new Element("token", {"type":"Identifier"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -151,7 +151,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("pragma")]),
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("pragma")]),
     new Element("node", {"type":"PragmaName","value":"automatic_index"}, [
       new Element("token", {"type":"Identifier"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -162,7 +162,7 @@ export default new Element("node", {"type":"Script"}, [
     new Element("token", {"type":"Operator"}, [new Text("=")]),
     new Element("node", {"type":"PragmaValue"}, [
       new Element("node", {"type":"PragmaLiteral","value":"true"}, [
-        new Element("token", {"value":"TRUE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"TRUE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("true"),
         ]),
@@ -174,9 +174,9 @@ export default new Element("node", {"type":"Script"}, [
     new Element("trivia", {"type":"LineBreak"}, [new Text("\n")]),
   ]),
   new Element("node", {"type":"PragmaStatement"}, [
-    new Element("token", {"value":"PRAGMA","type":"Identifier"}, [new Text("PRAGMA")]),
-    new Element("SchemaName", {"type":"PragmaName","value":"test"}, [
-      new Element("token", {"value":"TEST","type":"Identifier"}, [
+    new Element("token", {"type":"Identifier","value":"PRAGMA"}, [new Text("PRAGMA")]),
+    new Element("node", {"type":"SchemaName","value":"test"}, [
+      new Element("token", {"type":"Identifier","value":"TEST"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("test"),
       ]),

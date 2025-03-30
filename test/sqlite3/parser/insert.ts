@@ -3,19 +3,19 @@ import { Element, Text } from "domhandler"
 export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
       ]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -40,23 +40,23 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -81,7 +81,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"NullLiteral"}, [
-                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                new Element("token", {"type":"Reserved","value":"NULL"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("NULL"),
                 ]),
@@ -99,32 +99,32 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
       new Element("node", {"type":"OrConflictClause"}, [
-        new Element("token", {"value":"OR","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"OR"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("OR"),
         ]),
         new Element("node", {"type":"AbortOption"}, [
-          new Element("token", {"value":"ABORT","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"ABORT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("ABORT"),
           ]),
         ]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Text("sample"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         ]),
@@ -137,7 +137,7 @@ export default new Element("node", {"type":"Script"}, [
       ]),
       new Element("token", {"type":"RightParen"}, [new Text(")")]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -162,30 +162,30 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
       new Element("node", {"type":"OrConflictClause"}, [
-        new Element("token", {"value":"OR","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"OR"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("OR"),
         ]),
         new Element("node", {"type":"FailOption"}, [
-          new Element("token", {"value":"FAIL","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"FAIL"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("FAIL"),
           ]),
         ]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
       ]),
-      new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"AS"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("AS"),
       ]),
@@ -211,7 +211,7 @@ export default new Element("node", {"type":"Script"}, [
       ]),
       new Element("token", {"type":"RightParen"}, [new Text(")")]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -245,34 +245,34 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
       new Element("node", {"type":"OrConflictClause"}, [
-        new Element("token", {"value":"OR","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"OR"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("OR"),
         ]),
         new Element("node", {"type":"IgnoreOption"}, [
-          new Element("token", {"value":"IGNORE","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"IGNORE"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("IGNORE"),
           ]),
         ]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
-      new Element("token", {"value":"AS","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"AS"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("AS"),
       ]),
@@ -305,7 +305,7 @@ export default new Element("node", {"type":"Script"}, [
       ]),
       new Element("token", {"type":"RightParen"}, [new Text(")")]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -330,7 +330,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"BooleanLiteral","value":"TRUE"}, [
-                new Element("token", {"value":"TRUE","type":"Identifier"}, [
+                new Element("token", {"type":"Identifier","value":"TRUE"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("TRUE"),
                 ]),
@@ -361,7 +361,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"BooleanLiteral","value":"FALSE"}, [
-                new Element("token", {"value":"FALSE","type":"Identifier"}, [
+                new Element("token", {"type":"Identifier","value":"FALSE"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("FALSE"),
                 ]),
@@ -379,31 +379,31 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
       new Element("node", {"type":"OrConflictClause"}, [
-        new Element("token", {"value":"OR","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"OR"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("OR"),
         ]),
         new Element("node", {"type":"ReplaceOption"}, [
-          new Element("token", {"value":"REPLACE","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"REPLACE"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("REPLACE"),
           ]),
         ]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
       ]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -428,7 +428,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"NullLiteral"}, [
-                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                new Element("token", {"type":"Reserved","value":"NULL"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("NULL"),
                 ]),
@@ -459,7 +459,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"BooleanLiteral","value":"TRUE"}, [
-                new Element("token", {"value":"TRUE","type":"Identifier"}, [
+                new Element("token", {"type":"Identifier","value":"TRUE"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("TRUE"),
                 ]),
@@ -490,7 +490,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"BooleanLiteral","value":"FALSE"}, [
-                new Element("token", {"value":"FALSE","type":"Identifier"}, [
+                new Element("token", {"type":"Identifier","value":"FALSE"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("FALSE"),
                 ]),
@@ -508,36 +508,36 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
       new Element("node", {"type":"OrConflictClause"}, [
-        new Element("token", {"value":"OR","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"OR"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("OR"),
         ]),
         new Element("node", {"type":"RollbackOption"}, [
-          new Element("token", {"value":"ROLLBACK","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"ROLLBACK"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("ROLLBACK"),
           ]),
         ]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"SelectStatement"}, [
         new Element("node", {"type":"SelectClause"}, [
-          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"SELECT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("SELECT"),
           ]),
@@ -563,23 +563,23 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
       ]),
       new Element("node", {"type":"DefaultValuesOption"}, [
-        new Element("token", {"value":"DEFAULT","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"DEFAULT"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("DEFAULT"),
         ]),
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
         ]),
@@ -592,24 +592,24 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"SelectStatement"}, [
         new Element("node", {"type":"SelectClause"}, [
-          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"SELECT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("SELECT"),
           ]),
@@ -626,7 +626,7 @@ export default new Element("node", {"type":"Script"}, [
             ]),
           ]),
           new Element("node", {"type":"FromClause"}, [
-            new Element("token", {"value":"FROM","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"FROM"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("FROM"),
             ]),
@@ -654,21 +654,21 @@ export default new Element("node", {"type":"Script"}, [
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
       new Element("node", {"type":"ReplaceOption"}, [
-        new Element("token", {"value":"REPLACE","type":"Identifier"}, [new Text("REPLACE")]),
+        new Element("token", {"type":"Identifier","value":"REPLACE"}, [new Text("REPLACE")]),
       ]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Text("sample"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         ]),
@@ -681,7 +681,7 @@ export default new Element("node", {"type":"Script"}, [
       ]),
       new Element("token", {"type":"RightParen"}, [new Text(")")]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -706,7 +706,7 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"WithClause"}, [
-      new Element("token", {"value":"WITH","type":"Identifier"}, [new Text("WITH")]),
+      new Element("token", {"type":"Identifier","value":"WITH"}, [new Text("WITH")]),
       new Element("node", {"type":"CommonTableList"}, [
         new Element("node", {"type":"CommonTable"}, [
           new Element("node", {"type":"ObjectName","value":"X"}, [
@@ -715,7 +715,7 @@ export default new Element("node", {"type":"Script"}, [
               new Text("X"),
             ]),
           ]),
-          new Element("token", {"value":"AS","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"AS"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("AS"),
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -723,7 +723,7 @@ export default new Element("node", {"type":"Script"}, [
           new Element("token", {"type":"LeftParen"}, [new Text("(")]),
           new Element("node", {"type":"SelectStatement"}, [
             new Element("node", {"type":"SelectClause"}, [
-              new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+              new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
               new Element("node", {"type":"SelectColumnList"}, [
                 new Element("node", {"type":"SelectColumn"}, [
                   new Element("node", {"type":"Expression"}, [
@@ -734,7 +734,7 @@ export default new Element("node", {"type":"Script"}, [
                       ]),
                     ]),
                   ]),
-                  new Element("token", {"value":"AS","type":"Reserved"}, [
+                  new Element("token", {"type":"Reserved","value":"AS"}, [
                     new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                     new Text("AS"),
                   ]),
@@ -756,24 +756,24 @@ export default new Element("node", {"type":"Script"}, [
       ]),
     ]),
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"SelectStatement"}, [
         new Element("node", {"type":"SelectClause"}, [
-          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"SELECT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("SELECT"),
           ]),
@@ -792,7 +792,7 @@ export default new Element("node", {"type":"Script"}, [
             ]),
           ]),
           new Element("node", {"type":"FromClause"}, [
-            new Element("token", {"value":"FROM","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"FROM"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("FROM"),
             ]),
@@ -819,24 +819,24 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"SelectStatement"}, [
         new Element("node", {"type":"WithClause"}, [
-          new Element("token", {"value":"WITH","type":"Identifier"}, [
+          new Element("token", {"type":"Identifier","value":"WITH"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("WITH"),
           ]),
@@ -848,7 +848,7 @@ export default new Element("node", {"type":"Script"}, [
                   new Text("X"),
                 ]),
               ]),
-              new Element("token", {"value":"AS","type":"Reserved"}, [
+              new Element("token", {"type":"Reserved","value":"AS"}, [
                 new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                 new Text("AS"),
                 new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -856,7 +856,7 @@ export default new Element("node", {"type":"Script"}, [
               new Element("token", {"type":"LeftParen"}, [new Text("(")]),
               new Element("node", {"type":"SelectStatement"}, [
                 new Element("node", {"type":"SelectClause"}, [
-                  new Element("token", {"value":"SELECT","type":"Reserved"}, [new Text("SELECT")]),
+                  new Element("token", {"type":"Reserved","value":"SELECT"}, [new Text("SELECT")]),
                   new Element("node", {"type":"SelectColumnList"}, [
                     new Element("node", {"type":"SelectColumn"}, [
                       new Element("node", {"type":"Expression"}, [
@@ -867,7 +867,7 @@ export default new Element("node", {"type":"Script"}, [
                           ]),
                         ]),
                       ]),
-                      new Element("token", {"value":"AS","type":"Reserved"}, [
+                      new Element("token", {"type":"Reserved","value":"AS"}, [
                         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                         new Text("AS"),
                       ]),
@@ -886,7 +886,7 @@ export default new Element("node", {"type":"Script"}, [
           ]),
         ]),
         new Element("node", {"type":"SelectClause"}, [
-          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"SELECT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("SELECT"),
           ]),
@@ -905,7 +905,7 @@ export default new Element("node", {"type":"Script"}, [
             ]),
           ]),
           new Element("node", {"type":"FromClause"}, [
-            new Element("token", {"value":"FROM","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"FROM"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("FROM"),
             ]),
@@ -932,23 +932,23 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"ValuesClause"}, [
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -973,7 +973,7 @@ export default new Element("node", {"type":"Script"}, [
             new Element("token", {"type":"Comma"}, [new Text(",")]),
             new Element("node", {"type":"Expression"}, [
               new Element("node", {"type":"NullLiteral"}, [
-                new Element("token", {"value":"NULL","type":"Reserved"}, [
+                new Element("token", {"type":"Reserved","value":"NULL"}, [
                   new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
                   new Text("NULL"),
                 ]),
@@ -984,7 +984,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
       new Element("node", {"type":"ReturningClause"}, [
-        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"RETURNING"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("RETURNING"),
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
@@ -1005,24 +1005,24 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"SchemaName","value":"main"}, [
-        new Element("token", {"value":"MAIN","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"MAIN"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("main"),
         ]),
       ]),
       new Element("token", {"type":"Dot"}, [new Text(".")]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [new Text("sample")]),
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [new Text("sample")]),
       ]),
       new Element("node", {"type":"SelectStatement"}, [
         new Element("node", {"type":"SelectClause"}, [
-          new Element("token", {"value":"SELECT","type":"Reserved"}, [
+          new Element("token", {"type":"Reserved","value":"SELECT"}, [
             new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
             new Text("SELECT"),
           ]),
@@ -1041,7 +1041,7 @@ export default new Element("node", {"type":"Script"}, [
             ]),
           ]),
           new Element("node", {"type":"FromClause"}, [
-            new Element("token", {"value":"FROM","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"FROM"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("FROM"),
             ]),
@@ -1061,7 +1061,7 @@ export default new Element("node", {"type":"Script"}, [
         ]),
       ]),
       new Element("node", {"type":"ReturningClause"}, [
-        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"RETURNING"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("RETURNING"),
         ]),
@@ -1088,7 +1088,7 @@ export default new Element("node", {"type":"Script"}, [
                 ]),
               ]),
             ]),
-            new Element("token", {"value":"AS","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"AS"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("AS"),
             ]),
@@ -1109,29 +1109,29 @@ export default new Element("node", {"type":"Script"}, [
   ]),
   new Element("node", {"type":"InsertStatement"}, [
     new Element("node", {"type":"InsertClause"}, [
-      new Element("token", {"value":"INSERT","type":"Reserved"}, [new Text("INSERT")]),
-      new Element("token", {"value":"INTO","type":"Reserved"}, [
+      new Element("token", {"type":"Reserved","value":"INSERT"}, [new Text("INSERT")]),
+      new Element("token", {"type":"Reserved","value":"INTO"}, [
         new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
         new Text("INTO"),
       ]),
       new Element("node", {"type":"ObjectName","value":"sample"}, [
-        new Element("token", {"value":"SAMPLE","type":"Identifier"}, [
+        new Element("token", {"type":"Identifier","value":"SAMPLE"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("sample"),
         ]),
       ]),
       new Element("node", {"type":"DefaultValuesOption"}, [
-        new Element("token", {"value":"DEFAULT","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"DEFAULT"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("DEFAULT"),
         ]),
-        new Element("token", {"value":"VALUES","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"VALUES"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("VALUES"),
         ]),
       ]),
       new Element("node", {"type":"ReturningClause"}, [
-        new Element("token", {"value":"RETURNING","type":"Reserved"}, [
+        new Element("token", {"type":"Reserved","value":"RETURNING"}, [
           new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
           new Text("RETURNING"),
         ]),
@@ -1145,7 +1145,7 @@ export default new Element("node", {"type":"Script"}, [
                 ]),
               ]),
             ]),
-            new Element("token", {"value":"AS","type":"Reserved"}, [
+            new Element("token", {"type":"Reserved","value":"AS"}, [
               new Element("trivia", {"type":"WhiteSpace"}, [new Text(" ")]),
               new Text("AS"),
             ]),
