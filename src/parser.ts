@@ -1,6 +1,6 @@
 import { Element, Text } from "domhandler";
 import { appendChild, replaceElement } from "domutils";
-import type { Lexer, Token } from "./lexer.js";
+import type { Lexer, Token } from "./lexer.ts";
 
 export abstract class Parser {
 	lexer: Lexer;
@@ -32,17 +32,14 @@ export class AggregateParseError extends Error {
 	}
 }
 
+const EMPTY_NODE = new Element("node", {});
 export class CstBuilder {
 	root: Element;
 	current: Element;
 
-	constructor(type: string, value?: string | number | boolean) {
-		const elem = new Element("node", {
-			type,
-			...(value != null ? { value: value.toString() } : {}),
-		});
-		this.root = elem;
-		this.current = this.root;
+	constructor() {
+		this.root = EMPTY_NODE;
+		this.current = EMPTY_NODE;
 	}
 
 	start(type: string, value?: string | number | boolean) {
@@ -50,8 +47,10 @@ export class CstBuilder {
 			type,
 			...(value != null ? { value: value.toString() } : {}),
 		});
-		appendChild(this.current, elem);
-		this.current = elem;
+		if (this.current !== EMPTY_NODE) {
+			appendChild(this.current, elem);
+		}
+		this.current = elem;	
 		return this.current;
 	}
 
@@ -120,7 +119,8 @@ export class CstBuilder {
 			const current = this.current;
 			this.current = this.current.parent;
 			return current;
+		} else {
+			return this.root;
 		}
-		return this.root;
 	}
 }

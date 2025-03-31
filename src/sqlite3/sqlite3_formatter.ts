@@ -1,5 +1,5 @@
-import { Formatter, type FormatterOptions } from "../formatter.js";
-import { Sqlite3Parser } from "./sqlite3_parser.js";
+import { Formatter, type FormatterOptions } from "../formatter.ts";
+import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
 export class Sqlite3Formatter extends Formatter {
 	constructor(options: FormatterOptions = {}) {

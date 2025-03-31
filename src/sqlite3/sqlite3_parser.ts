@@ -1,9 +1,9 @@
 import type { Element } from "domhandler";
-import { ParseError, type Token, TokenReader } from "../lexer.js";
-import { AggregateParseError, CstBuilder, Parser } from "../parser.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
-import { dequote } from "../utils.js";
-import { Sqlite3Lexer } from "./sqlite3_lexer.js";
+import { ParseError, type Token, TokenReader } from "../lexer.ts";
+import { AggregateParseError, CstBuilder, Parser } from "../parser.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
+import { dequote } from "../utils.ts";
+import { Sqlite3Lexer } from "./sqlite3_lexer.ts";
 
 export class Sqlite3Parser extends Parser {
 	compileOptions: Set<string>;
@@ -15,8 +15,9 @@ export class Sqlite3Parser extends Parser {
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-		const b = new CstBuilder("Script");
+		const b = new CstBuilder();
 		const errors = [];
+		const root = b.start("Script");
 		while (r.peek()) {
 			try {
 				if (
@@ -36,23 +37,22 @@ export class Sqlite3Parser extends Parser {
 				}
 			} catch (err) {
 				if (err instanceof ParseError) {
-					this.unknown(b, r, b.root);
+					this.unknown(b, r, root);
 					errors.push(err);
 				} else {
 					throw err;
 				}
 			}
 		}
-
+		b.end();
 		if (errors.length) {
 			throw new AggregateParseError(
-				b.root,
+				root,
 				errors,
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
-
-		return b.root;
+		return root;
 	}
 
 	private unknown(b: CstBuilder, r: TokenReader, base: Element) {

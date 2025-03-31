@@ -1,4 +1,4 @@
-import { Keyword, KeywordMap, TokenType } from "./lexer.js";
+import { Keyword, KeywordMap, TokenType } from "./lexer.ts";
 
 export class SqlTokenType extends TokenType {
 	static WhiteSpace = new TokenType("WhiteSpace");

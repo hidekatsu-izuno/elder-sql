@@ -1,9 +1,9 @@
 import type { Element } from "domhandler";
-import { ParseError, type Token, TokenReader } from "../lexer.js";
-import { AggregateParseError, CstBuilder, Parser } from "../parser.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
-import { dequote } from "../utils.js";
-import { MysqlLexer } from "./mysql_lexer.js";
+import { ParseError, type Token, TokenReader } from "../lexer.ts";
+import { AggregateParseError, CstBuilder, Parser } from "../parser.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
+import { dequote } from "../utils.ts";
+import { MysqlLexer } from "./mysql_lexer.ts";
 
 export class OracleParser extends Parser {
 	constructor(options: Record<string, any> = {}) {
@@ -12,8 +12,9 @@ export class OracleParser extends Parser {
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-		const b = new CstBuilder("Script");
+		const b = new CstBuilder();
 		const errors = [];
+		b.start("Script");
 		while (r.peek()) {
 			try {
 				if (
@@ -40,16 +41,20 @@ export class OracleParser extends Parser {
 				}
 			}
 		}
+		const root = b.end();
+		if (root !== b.root) {
+			throw new Error("The current position is invalid.");
+		}
 
 		if (errors.length) {
 			throw new AggregateParseError(
-				b.root,
+				root,
 				errors,
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
 
-		return b.root;
+		return root;
 	}
 
 	private explainStatement(b: CstBuilder, r: TokenReader) {

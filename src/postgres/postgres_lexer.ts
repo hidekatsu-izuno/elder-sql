@@ -5,8 +5,8 @@ import {
 	SourceLocation,
 	Token,
 	TokenType,
-} from "../lexer.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
+} from "../lexer.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 const ObjectStartSet = new Set<Keyword>([
 	SqlKeywords.ACCESS,

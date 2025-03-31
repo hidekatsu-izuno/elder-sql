@@ -4,11 +4,11 @@ import {
 	type LexerOptions,
 	SourceLocation,
 	Token,
-} from "../lexer.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
+} from "../lexer.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
-const keywords = new SqlKeywords();
-keywords.options(SqlKeywords.TABLE).reserved = true;
+//const keywords = new SqlKeywords();
+//keywords.options(SqlKeywords.TABLE).reserved = true;
 
 const ReservedSet = new Set<Keyword>([
 	SqlKeywords.ADD,

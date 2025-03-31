@@ -1,5 +1,5 @@
 import { Element } from "domhandler";
-import type { Parser } from "./parser.js";
+import type { Parser } from "./parser.ts";
 
 export declare type ResolverOptions = {
 	global?: FromObject[];

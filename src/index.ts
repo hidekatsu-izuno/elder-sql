@@ -1,4 +1,4 @@
-export * from "./driver.js";
-export * from "./lexer.js";
-export * from "./parser.js";
-export { squote, dquote, bquote, dequote } from "./utils.js";
+export * from "./driver.ts";
+export * from "./lexer.ts";
+export * from "./parser.ts";
+export { squote, dquote, bquote, dequote } from "./utils.ts";

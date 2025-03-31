@@ -1,5 +1,5 @@
-import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeywords, SqlTokenType } from "../../../src/sql";
+import { SourceLocation, Token } from "../../../src/lexer.ts";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql.ts";
 
 export default [
 	new Token(SqlTokenType.Reserved, "CREATE", {

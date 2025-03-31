@@ -3,8 +3,8 @@ import {
 	Lexer,
 	type LexerOptions,
 	type Token,
-} from "../lexer.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
+} from "../lexer.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 const ReservedSet = new Set<Keyword>([
 	SqlKeywords.ADD,

@@ -7,8 +7,8 @@
 	"module": "./module/index.js",
 	"types": "./module/index.d.ts",
 	"scripts": {
-		"build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
-		"test": "vitest run --config vite.config.ts",
+		"build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
+		"test": "node --test --disable-warning=ExperimentalWarning --experimental-strip-types",
 		"biome:check": "biome check --write",
 		"version.major": "npm run build && commit-and-tag-version --release-as major",
 		"version.major.alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
@@ -116,8 +116,7 @@
 		"@types/node": "^22.13.14",
 		"@types/semver": "^7.7.0",
 		"commit-and-tag-version": "^12.5.0",
-		"typescript": "^5.8.2",
-		"vitest": "^3.0.9"
+		"typescript": "^5.8.2"
 	},
 	"dependencies": {
 		"acorn": "^8.14.1",

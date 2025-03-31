@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Element, Text } from "domhandler";
-import type { Token } from "../../src/lexer.js";
+import type { Token } from "../../src/lexer.ts";
 
 export function getRootDir() {
 	let current = process.cwd();
@@ -29,8 +29,8 @@ export function toJSScript(target: Element | Token | (Element | Token)[]) {
 	if (target instanceof Element) {
 		imports += 'import { Element, Text } from "domhandler"\n';
 	} else {
-		imports += 'import { SourceLocation, Token } from "../../../src/lexer"\n';
-		imports += 'import { SqlTokenType, SqlKeywords } from "../../../src/sql"\n';
+		imports += 'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
+		imports += 'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
 	}
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { bquote, dequote, dquote, squote } from "../src/utils";
+import { bquote, dequote, dquote, squote } from "../src/utils.ts";
 
 describe("test utils", () => {
 	test("test squote", async () => {

@@ -5,8 +5,8 @@ import {
 	ResolvedColumn,
 	Resolver,
 	type ResolverOptions,
-} from "../resolver.js";
-import { Sqlite3Parser } from "./sqlite3_parser.js";
+} from "../resolver.ts";
+import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
 export class Sqlite3Resolver extends Resolver {
 	constructor(options: ResolverOptions = {}) {

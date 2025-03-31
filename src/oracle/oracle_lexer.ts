@@ -4,8 +4,8 @@ import {
 	type LexerOptions,
 	SourceLocation,
 	Token,
-} from "../lexer.js";
-import { SqlKeywords, SqlTokenType } from "../sql.js";
+} from "../lexer.ts";
+import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 export const ReservedSet = new Set<Keyword>([
 	SqlKeywords.ACCESS,

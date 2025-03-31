@@ -1,2 +1,2 @@
-export * from "./postgres_lexer.js";
-export * from "./postgres_parser.js";
+export * from "./postgres_lexer.ts";
+export * from "./postgres_parser.ts";

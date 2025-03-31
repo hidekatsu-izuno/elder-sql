@@ -2,7 +2,7 @@ import { EOL } from "node:os";
 import { compile } from "css-select";
 import { Element, type Node, Text } from "domhandler";
 import { textContent } from "domutils";
-import { AggregateParseError, type Parser } from "./parser.js";
+import { AggregateParseError, type Parser } from "./parser.ts";
 
 export declare type FormatActionType =
 	| "reset"

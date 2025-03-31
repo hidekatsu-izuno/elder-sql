@@ -1,59 +1,69 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from 'node:url';
 import type { Element } from "domhandler";
-import { describe, expect, test } from "vitest";
-import { AggregateParseError } from "../../src/parser.js";
-import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.js";
-import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.js";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { AggregateParseError } from "../../src/parser.ts";
+import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
+import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe("test sqlite3 parser", () => {
-	test.each([
-		"alter_table",
-		"analyze",
-		"attach_database",
-		"begin_transaction",
-		"command",
-		"commit_transaction",
-		"create_index",
-		"create_table",
-		"create_trigger",
-		"create_view",
-		"delete",
-		"detach_database",
-		"drop_index",
-		"drop_table",
-		"drop_trigger",
-		"drop_view",
-		"explain",
-		"insert",
-		"pragma",
-		"reindex",
-		"release_savepoint",
-		"rollback_transaction",
-		"savepoint",
-		"select",
-		"update",
-		"vacuum",
-		"unknown",
-	])("%s", async (target) => {
-		const script = fs.readFileSync(
-			path.join(__dirname, "scripts", `${target}.sql`),
-			"utf8",
-		);
-		const expected = (await import(`./parser/${target}.ts`)).default;
-		let node: Element;
-		try {
-			node = new Sqlite3Parser().parse(script);
-		} catch (err) {
-			if (target === "unknown" && err instanceof AggregateParseError) {
-				node = err.node;
-			} else {
-				throw err;
-			}
+	test("test by file", { concurrency: true }, async t => {
+		const targets = [
+			"alter_table",
+			"analyze",
+			"attach_database",
+			"begin_transaction",
+			"command",
+			"commit_transaction",
+			"create_index",
+			"create_table",
+			"create_trigger",
+			"create_view",
+			"delete",
+			"detach_database",
+			"drop_index",
+			"drop_table",
+			"drop_trigger",
+			"drop_view",
+			"explain",
+			"insert",
+			"pragma",
+			"reindex",
+			"release_savepoint",
+			"rollback_transaction",
+			"savepoint",
+			"select",
+			"update",
+			"vacuum",
+			"unknown",
+		];
+		for (const target of targets) {
+			await t.test(`${target}`, async () => {
+				const script = fs.readFileSync(
+					path.join(__dirname, "scripts", `${target}.sql`),
+					"utf8",
+				);
+				const expected = (await import(`./parser/${target}.ts`)).default;
+				let node: Element;
+				try {
+					node = new Sqlite3Parser().parse(script);
+				} catch (err) {
+					if (target === "unknown" && err instanceof AggregateParseError) {
+						node = err.node;
+					} else {
+						throw err;
+					}
+				}
+		
+				writeDebugFile(`dump/sqlite3/parser/${target}.ts`, toJSScript(node));
+		
+				assert.strictEqual(toJSString(node), toJSString(expected));
+			});
 		}
-
-		writeDebugFile(`test/dump/sqlite3/parser/${target}.ts`, toJSScript(node));
-
-		expect(toJSString(node)).toStrictEqual(toJSString(expected));
 	});
 });

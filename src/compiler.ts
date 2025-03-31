@@ -1,12 +1,12 @@
-import { type Lexer, type Token, TokenType } from "./lexer.js";
-import { TokenReader } from "./lexer.js";
-import { MssqlLexer } from "./mssql/mssql_lexer.js";
-import { MysqlLexer } from "./mysql/mysql_lexer.js";
-import { OracleLexer } from "./oracle/oracle_lexer.js";
-import { PostgresLexer } from "./postgres/postgres_lexer.js";
-import { SqlKeywords, SqlTokenType } from "./sql.js";
-import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.js";
-import { isJSExpression, isJSIdentifier } from "./utils.js";
+import { type Lexer, type Token, TokenType } from "./lexer.ts";
+import { TokenReader } from "./lexer.ts";
+import { MssqlLexer } from "./mssql/mssql_lexer.ts";
+import { MysqlLexer } from "./mysql/mysql_lexer.ts";
+import { OracleLexer } from "./oracle/oracle_lexer.ts";
+import { PostgresLexer } from "./postgres/postgres_lexer.ts";
+import { SqlKeywords, SqlTokenType } from "./sql.ts";
+import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.ts";
+import { isJSExpression, isJSIdentifier } from "./utils.ts";
 
 export type ElderSqlCompilerOptions = {
 	dialect: "sqlite3" | "mysql" | "postgres" | "oracle" | "mssql";
@@ -291,7 +291,7 @@ export class ElderSqlCompiler {
 							}
 						} else if (
 							tr.peekIf(
-								{ type: SqlTokenType.Operator, text: /^[+-]$/ },
+								token => token.is(SqlTokenType.Operator) && token.is(["+", "-"]),
 								SqlTokenType.Numeric,
 							)
 						) {

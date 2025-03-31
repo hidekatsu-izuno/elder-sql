@@ -1,2 +1,2 @@
-export * from "./oracle_lexer.js";
-export * from "./oracle_parser.js";
+export * from "./oracle_lexer.ts";
+export * from "./oracle_parser.ts";
