@@ -6,127 +6,127 @@ import {
 	Token,
 	TokenType,
 } from "../lexer.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 
 const ObjectStartSet = new Set<Keyword>([
-	SqlKeyword.ACCESS,
-	SqlKeyword.AGGREGATE,
-	SqlKeyword.CAST,
-	SqlKeyword.COLLATION,
-	SqlKeyword.CONVERSION,
-	SqlKeyword.DATABASE,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DOMAIN,
-	SqlKeyword.EVENT,
-	SqlKeyword.EXTENSION,
-	SqlKeyword.FOREIGN,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.GROUP,
-	SqlKeyword.INDEX,
-	SqlKeyword.LANGUAGE,
-	SqlKeyword.LARGE,
-	SqlKeyword.MATERIALIZED,
-	SqlKeyword.OPERATOR,
-	SqlKeyword.POLICY,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.PUBLICATION,
-	SqlKeyword.ROLE,
-	SqlKeyword.ROUTINE,
-	SqlKeyword.RULE,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.SEQUENCE,
-	SqlKeyword.SERVER,
-	SqlKeyword.STATISTICS,
-	SqlKeyword.SUBSCRIPTION,
-	SqlKeyword.SYSTEM,
-	SqlKeyword.TABLE,
-	SqlKeyword.TABLESPACE,
-	SqlKeyword.TEXT,
-	SqlKeyword.TRANSFORM,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TYPE,
-	SqlKeyword.USER,
-	SqlKeyword.VIEW,
+	SqlKeywords.ACCESS,
+	SqlKeywords.AGGREGATE,
+	SqlKeywords.CAST,
+	SqlKeywords.COLLATION,
+	SqlKeywords.CONVERSION,
+	SqlKeywords.DATABASE,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DOMAIN,
+	SqlKeywords.EVENT,
+	SqlKeywords.EXTENSION,
+	SqlKeywords.FOREIGN,
+	SqlKeywords.FUNCTION,
+	SqlKeywords.GROUP,
+	SqlKeywords.INDEX,
+	SqlKeywords.LANGUAGE,
+	SqlKeywords.LARGE,
+	SqlKeywords.MATERIALIZED,
+	SqlKeywords.OPERATOR,
+	SqlKeywords.POLICY,
+	SqlKeywords.PROCEDURE,
+	SqlKeywords.PUBLICATION,
+	SqlKeywords.ROLE,
+	SqlKeywords.ROUTINE,
+	SqlKeywords.RULE,
+	SqlKeywords.SCHEMA,
+	SqlKeywords.SEQUENCE,
+	SqlKeywords.SERVER,
+	SqlKeywords.STATISTICS,
+	SqlKeywords.SUBSCRIPTION,
+	SqlKeywords.SYSTEM,
+	SqlKeywords.TABLE,
+	SqlKeywords.TABLESPACE,
+	SqlKeywords.TEXT,
+	SqlKeywords.TRANSFORM,
+	SqlKeywords.TRIGGER,
+	SqlKeywords.TYPE,
+	SqlKeywords.USER,
+	SqlKeywords.VIEW,
 ]);
 
 const ReservedSet = new Set<Keyword>([
-	SqlKeyword.ALL,
-	SqlKeyword.ANALYSE,
-	SqlKeyword.ANALYZE,
-	SqlKeyword.AND,
-	SqlKeyword.ANY,
-	SqlKeyword.ARRAY,
-	SqlKeyword.AS,
-	SqlKeyword.ASC,
-	SqlKeyword.ASYMMETRIC,
-	SqlKeyword.BOTH,
-	SqlKeyword.CASE,
-	SqlKeyword.CAST,
-	SqlKeyword.CHECK,
-	SqlKeyword.COLLATE,
-	SqlKeyword.COLUMN,
-	SqlKeyword.CONSTRAINT,
-	SqlKeyword.CREATE,
-	SqlKeyword.CURRENT_CATALOG,
-	SqlKeyword.CURRENT_DATE,
-	SqlKeyword.CURRENT_ROLE,
-	SqlKeyword.CURRENT_TIME,
-	SqlKeyword.CURRENT_TIMESTAMP,
-	SqlKeyword.CURRENT_USER,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DEFERRABLE,
-	SqlKeyword.DESC,
-	SqlKeyword.DISTINCT,
-	SqlKeyword.DO,
-	SqlKeyword.ELSE,
-	SqlKeyword.END,
-	SqlKeyword.EXCEPT,
-	SqlKeyword.FALSE,
-	SqlKeyword.FETCH,
-	SqlKeyword.FOR,
-	SqlKeyword.FOREIGN,
-	SqlKeyword.FROM,
-	SqlKeyword.GRANT,
-	SqlKeyword.GROUP,
-	SqlKeyword.HAVING,
-	SqlKeyword.IN,
-	SqlKeyword.INITIALLY,
-	SqlKeyword.INTERSECT,
-	SqlKeyword.INTO,
-	SqlKeyword.LATERAL,
-	SqlKeyword.LEADING,
-	SqlKeyword.LIMIT,
-	SqlKeyword.LOCALTIME,
-	SqlKeyword.LOCALTIMESTAMP,
-	SqlKeyword.NOT,
-	SqlKeyword.NULL,
-	SqlKeyword.OFFSET,
-	SqlKeyword.ON,
-	SqlKeyword.ONLY,
-	SqlKeyword.OR,
-	SqlKeyword.ORDER,
-	SqlKeyword.PLACING,
-	SqlKeyword.PRIMARY,
-	SqlKeyword.REFERENCES,
-	SqlKeyword.RETURNING,
-	SqlKeyword.SELECT,
-	SqlKeyword.SESSION_USER,
-	SqlKeyword.SOME,
-	SqlKeyword.SYMMETRIC,
-	SqlKeyword.TABLE,
-	SqlKeyword.THEN,
-	SqlKeyword.TO,
-	SqlKeyword.TRAILING,
-	SqlKeyword.TRUE,
-	SqlKeyword.UNION,
-	SqlKeyword.UNIQUE,
-	SqlKeyword.USER,
-	SqlKeyword.USING,
-	SqlKeyword.VARIADIC,
-	SqlKeyword.WHEN,
-	SqlKeyword.WHERE,
-	SqlKeyword.WINDOW,
-	SqlKeyword.WITH,
+	SqlKeywords.ALL,
+	SqlKeywords.ANALYSE,
+	SqlKeywords.ANALYZE,
+	SqlKeywords.AND,
+	SqlKeywords.ANY,
+	SqlKeywords.ARRAY,
+	SqlKeywords.AS,
+	SqlKeywords.ASC,
+	SqlKeywords.ASYMMETRIC,
+	SqlKeywords.BOTH,
+	SqlKeywords.CASE,
+	SqlKeywords.CAST,
+	SqlKeywords.CHECK,
+	SqlKeywords.COLLATE,
+	SqlKeywords.COLUMN,
+	SqlKeywords.CONSTRAINT,
+	SqlKeywords.CREATE,
+	SqlKeywords.CURRENT_CATALOG,
+	SqlKeywords.CURRENT_DATE,
+	SqlKeywords.CURRENT_ROLE,
+	SqlKeywords.CURRENT_TIME,
+	SqlKeywords.CURRENT_TIMESTAMP,
+	SqlKeywords.CURRENT_USER,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DEFERRABLE,
+	SqlKeywords.DESC,
+	SqlKeywords.DISTINCT,
+	SqlKeywords.DO,
+	SqlKeywords.ELSE,
+	SqlKeywords.END,
+	SqlKeywords.EXCEPT,
+	SqlKeywords.FALSE,
+	SqlKeywords.FETCH,
+	SqlKeywords.FOR,
+	SqlKeywords.FOREIGN,
+	SqlKeywords.FROM,
+	SqlKeywords.GRANT,
+	SqlKeywords.GROUP,
+	SqlKeywords.HAVING,
+	SqlKeywords.IN,
+	SqlKeywords.INITIALLY,
+	SqlKeywords.INTERSECT,
+	SqlKeywords.INTO,
+	SqlKeywords.LATERAL,
+	SqlKeywords.LEADING,
+	SqlKeywords.LIMIT,
+	SqlKeywords.LOCALTIME,
+	SqlKeywords.LOCALTIMESTAMP,
+	SqlKeywords.NOT,
+	SqlKeywords.NULL,
+	SqlKeywords.OFFSET,
+	SqlKeywords.ON,
+	SqlKeywords.ONLY,
+	SqlKeywords.OR,
+	SqlKeywords.ORDER,
+	SqlKeywords.PLACING,
+	SqlKeywords.PRIMARY,
+	SqlKeywords.REFERENCES,
+	SqlKeywords.RETURNING,
+	SqlKeywords.SELECT,
+	SqlKeywords.SESSION_USER,
+	SqlKeywords.SOME,
+	SqlKeywords.SYMMETRIC,
+	SqlKeywords.TABLE,
+	SqlKeywords.THEN,
+	SqlKeywords.TO,
+	SqlKeywords.TRAILING,
+	SqlKeywords.TRUE,
+	SqlKeywords.UNION,
+	SqlKeywords.UNIQUE,
+	SqlKeywords.USER,
+	SqlKeywords.USING,
+	SqlKeywords.VARIADIC,
+	SqlKeywords.WHEN,
+	SqlKeywords.WHERE,
+	SqlKeywords.WINDOW,
+	SqlKeywords.WITH,
 ]);
 
 const Mode = {
@@ -158,7 +158,12 @@ export class PostgresLexer extends Lexer {
 					skip: true,
 				},
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
+				{
+					type: SqlTokenType.LineBreak,
+					re: /\n|\r\n?/y,
+					skip: true,
+					separator: true,
+				},
 				{ type: SqlTokenType.WhiteSpace, re: /[ \t]+/y, skip: true },
 				{
 					type: SqlTokenType.Command,
@@ -201,7 +206,11 @@ export class PostgresLexer extends Lexer {
 					type: SqlTokenType.BindVariable,
 					re: /:[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 				},
-				{ type: SqlTokenType.Operator, re: /::|[*/<>=~!@#%^&|`?+-]+/y, separator: true },
+				{
+					type: SqlTokenType.Operator,
+					re: /::|[*/<>=~!@#%^&|`?+-]+/y,
+					separator: true,
+				},
 				{
 					type: SqlTokenType.Identifier,
 					re: /[a-zA-Z_\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
@@ -209,13 +218,6 @@ export class PostgresLexer extends Lexer {
 				},
 			],
 			options,
-		);
-	}
-
-	isReserved(keyword?: Keyword) {
-		return (
-			keyword != null &&
-			(ReservedSet.has(keyword) || this.reserved.has(keyword))
 		);
 	}
 
@@ -301,18 +303,18 @@ export class PostgresLexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeyword.for(token.text);
+		const keyword = SqlKeywords.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
-			if (this.isReserved(keyword)) {
+			if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
 				token.type = SqlTokenType.Reserved;
 			}
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeyword.CREATE) {
+				if (keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else if (
-					keyword === SqlKeyword.DECLARE ||
-					keyword === SqlKeyword.BEGIN
+					keyword === SqlKeywords.DECLARE ||
+					keyword === SqlKeywords.BEGIN
 				) {
 					state.mode = Mode.SQL_PROC_BODY;
 					state.stack = [{ isSentenceStart: true, type: keyword }];
@@ -321,18 +323,58 @@ export class PostgresLexer extends Lexer {
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				PostgresLexer.isObjectStart(keyword)
+				(keyword === SqlKeywords.ACCESS ||
+					keyword === SqlKeywords.AGGREGATE ||
+					keyword === SqlKeywords.CAST ||
+					keyword === SqlKeywords.COLLATION ||
+					keyword === SqlKeywords.CONVERSION ||
+					keyword === SqlKeywords.DATABASE ||
+					keyword === SqlKeywords.DEFAULT ||
+					keyword === SqlKeywords.DOMAIN ||
+					keyword === SqlKeywords.EVENT ||
+					keyword === SqlKeywords.EXTENSION ||
+					keyword === SqlKeywords.FOREIGN ||
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.GROUP ||
+					keyword === SqlKeywords.INDEX ||
+					keyword === SqlKeywords.LANGUAGE ||
+					keyword === SqlKeywords.LARGE ||
+					keyword === SqlKeywords.MATERIALIZED ||
+					keyword === SqlKeywords.OPERATOR ||
+					keyword === SqlKeywords.POLICY ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.PUBLICATION ||
+					keyword === SqlKeywords.ROLE ||
+					keyword === SqlKeywords.ROUTINE ||
+					keyword === SqlKeywords.RULE ||
+					keyword === SqlKeywords.SCHEMA ||
+					keyword === SqlKeywords.SEQUENCE ||
+					keyword === SqlKeywords.SERVER ||
+					keyword === SqlKeywords.STATISTICS ||
+					keyword === SqlKeywords.SUBSCRIPTION ||
+					keyword === SqlKeywords.SYSTEM ||
+					keyword === SqlKeywords.TABLE ||
+					keyword === SqlKeywords.TABLESPACE ||
+					keyword === SqlKeywords.TEXT ||
+					keyword === SqlKeywords.TRANSFORM ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.TYPE ||
+					keyword === SqlKeywords.USER ||
+					keyword === SqlKeywords.VIEW)
 			) {
 				if (
-					keyword === SqlKeyword.FUNCTION ||
-					keyword === SqlKeyword.PROCEDURE
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.PROCEDURE
 				) {
 					state.mode = Mode.SQL_PROC_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (state.mode === Mode.SQL_PROC_DEF) {
-				if (state.last === SqlKeyword.BEGIN && keyword === SqlKeyword.ATOMIC) {
+				if (
+					state.last === SqlKeywords.BEGIN &&
+					keyword === SqlKeywords.ATOMIC
+				) {
 					state.mode = Mode.SQL_PROC_BODY;
 					state.stack = [{ isSentenceStart: true, type: state.last }];
 					delete state.last;
@@ -342,32 +384,35 @@ export class PostgresLexer extends Lexer {
 			} else if (state.mode === Mode.SQL_PROC_BODY) {
 				const ctx = state.stack[state.stack.length - 1];
 				if (ctx.isSentenceStart) {
-					if (keyword === SqlKeyword.END) {
+					if (keyword === SqlKeywords.END) {
 						state.stack.pop();
 						if (state.stack.length === 0) {
 							state.mode = Mode.SQL_PART;
 							delete state.stack;
 						}
 					} else if (
-						keyword === SqlKeyword.IF ||
-						keyword === SqlKeyword.CASE ||
-						keyword === SqlKeyword.WHILE ||
-						keyword === SqlKeyword.FOR
+						keyword === SqlKeywords.IF ||
+						keyword === SqlKeywords.CASE ||
+						keyword === SqlKeywords.WHILE ||
+						keyword === SqlKeywords.FOR
 					) {
 						ctx.isSentenceStart = false;
 						state.stack.push({ isSentenceStart: false, type: keyword });
-					} else if (keyword === SqlKeyword.LOOP) {
+					} else if (keyword === SqlKeywords.LOOP) {
 						ctx.isSentenceStart = false;
 						state.stack.push({ isSentenceStart: true, type: keyword });
 					} else {
 						ctx.isSentenceStart = false;
 					}
-				} else if (keyword === SqlKeyword.THEN || keyword === SqlKeyword.ELSE) {
-					if (ctx.type === SqlKeyword.IF || ctx.type === SqlKeyword.CASE) {
+				} else if (
+					keyword === SqlKeywords.THEN ||
+					keyword === SqlKeywords.ELSE
+				) {
+					if (ctx.type === SqlKeywords.IF || ctx.type === SqlKeywords.CASE) {
 						ctx.isSentenceStart = true;
 					}
-				} else if (keyword === SqlKeyword.LOOP) {
-					if (ctx.type === SqlKeyword.WHILE || ctx.type === SqlKeyword.FOR) {
+				} else if (keyword === SqlKeywords.LOOP) {
+					if (ctx.type === SqlKeywords.WHILE || ctx.type === SqlKeywords.FOR) {
 						ctx.isSentenceStart = true;
 					}
 				}

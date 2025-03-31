@@ -30,7 +30,7 @@ export function toJSScript(target: Element | Token | (Element | Token)[]) {
 		imports += 'import { Element, Text } from "domhandler"\n';
 	} else {
 		imports += 'import { SourceLocation, Token } from "../../../src/lexer"\n';
-		imports += 'import { SqlTokenType, SqlKeyword } from "../../../src/sql"\n';
+		imports += 'import { SqlTokenType, SqlKeywords } from "../../../src/sql"\n';
 	}
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
@@ -98,7 +98,7 @@ export function toJSString(
 			text += ", { ";
 			const elems = new Array<string>();
 			if (target.keyword) {
-				elems.push(`keyword: SqlKeyword.${target.keyword.name}`);
+				elems.push(`keyword: SqlKeywords.${target.keyword.name}`);
 			}
 			if (target.eos) {
 				elems.push(`eos: ${target.eos}`);

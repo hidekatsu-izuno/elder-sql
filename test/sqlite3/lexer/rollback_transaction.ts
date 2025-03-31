@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "ROLLBACK", {
-		keyword: SqlKeyword.ROLLBACK,
+		keyword: SqlKeywords.ROLLBACK,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -16,11 +16,11 @@ export default [
 		location: new SourceLocation(8, 1, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "ROLLBACK", {
-		keyword: SqlKeyword.ROLLBACK,
+		keyword: SqlKeywords.ROLLBACK,
 		location: new SourceLocation(10, 2, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(18, 2, 9),
@@ -38,11 +38,11 @@ export default [
 		location: new SourceLocation(30, 2, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "ROLLBACK", {
-		keyword: SqlKeyword.ROLLBACK,
+		keyword: SqlKeywords.ROLLBACK,
 		location: new SourceLocation(32, 3, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(40, 3, 9),
@@ -51,7 +51,7 @@ export default [
 		location: new SourceLocation(41, 3, 10),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
-		keyword: SqlKeyword.TO,
+		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(52, 3, 21),
@@ -77,11 +77,11 @@ export default [
 		location: new SourceLocation(61, 3, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "ROLLBACK", {
-		keyword: SqlKeyword.ROLLBACK,
+		keyword: SqlKeywords.ROLLBACK,
 		location: new SourceLocation(63, 4, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(71, 4, 9),
@@ -90,7 +90,7 @@ export default [
 		location: new SourceLocation(72, 4, 10),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
-		keyword: SqlKeyword.TO,
+		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(83, 4, 21),
@@ -99,7 +99,7 @@ export default [
 		location: new SourceLocation(84, 4, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "SAVEPOINT", {
-		keyword: SqlKeyword.SAVEPOINT,
+		keyword: SqlKeywords.SAVEPOINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(86, 4, 24),

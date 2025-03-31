@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -16,11 +16,11 @@ export default [
 		location: new SourceLocation(5, 1, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(7, 2, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(12, 2, 6),
@@ -38,11 +38,11 @@ export default [
 		location: new SourceLocation(24, 2, 18),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(26, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "DEFERRED", {
-		keyword: SqlKeyword.DEFERRED,
+		keyword: SqlKeywords.DEFERRED,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(31, 3, 6),
@@ -60,11 +60,11 @@ export default [
 		location: new SourceLocation(40, 3, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(42, 4, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "IMMEDIATE", {
-		keyword: SqlKeyword.IMMEDIATE,
+		keyword: SqlKeywords.IMMEDIATE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(47, 4, 6),
@@ -82,11 +82,11 @@ export default [
 		location: new SourceLocation(57, 4, 16),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(59, 5, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "EXCLUSIVE", {
-		keyword: SqlKeyword.EXCLUSIVE,
+		keyword: SqlKeywords.EXCLUSIVE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(64, 5, 6),
@@ -104,11 +104,11 @@ export default [
 		location: new SourceLocation(74, 5, 16),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(76, 6, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "DEFERRED", {
-		keyword: SqlKeyword.DEFERRED,
+		keyword: SqlKeywords.DEFERRED,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(81, 6, 6),
@@ -117,7 +117,7 @@ export default [
 		location: new SourceLocation(82, 6, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(90, 6, 15),
@@ -135,11 +135,11 @@ export default [
 		location: new SourceLocation(102, 6, 27),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(104, 7, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "IMMEDIATE", {
-		keyword: SqlKeyword.IMMEDIATE,
+		keyword: SqlKeywords.IMMEDIATE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(109, 7, 6),
@@ -148,7 +148,7 @@ export default [
 		location: new SourceLocation(110, 7, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(119, 7, 16),
@@ -166,11 +166,11 @@ export default [
 		location: new SourceLocation(131, 7, 28),
 	}),
 	new Token(SqlTokenType.Identifier, "BEGIN", {
-		keyword: SqlKeyword.BEGIN,
+		keyword: SqlKeywords.BEGIN,
 		location: new SourceLocation(133, 8, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "EXCLUSIVE", {
-		keyword: SqlKeyword.EXCLUSIVE,
+		keyword: SqlKeywords.EXCLUSIVE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(138, 8, 6),
@@ -179,7 +179,7 @@ export default [
 		location: new SourceLocation(139, 8, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(148, 8, 16),

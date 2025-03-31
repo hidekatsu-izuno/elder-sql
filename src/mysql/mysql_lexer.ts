@@ -5,256 +5,239 @@ import {
 	type LexerOptions,
 	type Token,
 } from "../lexer.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 import { escapeRegExp } from "../utils.js";
 
 const ReservedSet = new Set<Keyword>([
-	SqlKeyword.ACCESSIBLE,
-	SqlKeyword.ADD,
-	SqlKeyword.ALL,
-	SqlKeyword.ALTER,
-	SqlKeyword.ANALYZE,
-	SqlKeyword.AND,
-	SqlKeyword.AS,
-	SqlKeyword.ASC,
-	SqlKeyword.ASENSITIVE,
-	SqlKeyword.BEFORE,
-	SqlKeyword.BETWEEN,
-	SqlKeyword.BIGINT,
-	SqlKeyword.BINARY,
-	SqlKeyword.BLOB,
-	SqlKeyword.BOTH,
-	SqlKeyword.BY,
-	SqlKeyword.CALL,
-	SqlKeyword.CASCADE,
-	SqlKeyword.CASE,
-	SqlKeyword.CHANGE,
-	SqlKeyword.CHAR,
-	SqlKeyword.CHARACTER,
-	SqlKeyword.CHECK,
-	SqlKeyword.COLLATE,
-	SqlKeyword.COLUMN,
-	SqlKeyword.CONDITION,
-	SqlKeyword.CONSTRAINT,
-	SqlKeyword.CONTINUE,
-	SqlKeyword.CONVERT,
-	SqlKeyword.CREATE,
-	SqlKeyword.CROSS,
-	SqlKeyword.CURRENT_DATE,
-	SqlKeyword.CURRENT_TIME,
-	SqlKeyword.CURRENT_TIMESTAMP,
-	SqlKeyword.CURRENT_USER,
-	SqlKeyword.CURSOR,
-	SqlKeyword.DATABASE,
-	SqlKeyword.DATABASES,
-	SqlKeyword.DAY_HOUR,
-	SqlKeyword.DAY_MICROSECOND,
-	SqlKeyword.DAY_MINUTE,
-	SqlKeyword.DAY_SECOND,
-	SqlKeyword.DEC,
-	SqlKeyword.DECIMAL,
-	SqlKeyword.DECLARE,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DELAYED,
-	SqlKeyword.DELETE,
-	SqlKeyword.DESC,
-	SqlKeyword.DESCRIBE,
-	SqlKeyword.DETERMINISTIC,
-	SqlKeyword.DISTINCT,
-	SqlKeyword.DISTINCTROW,
-	SqlKeyword.DIV,
-	SqlKeyword.DOUBLE,
-	SqlKeyword.DROP,
-	SqlKeyword.DUAL,
-	SqlKeyword.EACH,
-	SqlKeyword.ELSE,
-	SqlKeyword.ELSEIF,
-	SqlKeyword.ENCLOSED,
-	SqlKeyword.ESCAPED,
-	SqlKeyword.EXCEPT,
-	SqlKeyword.EXISTS,
-	SqlKeyword.EXIT,
-	SqlKeyword.EXPLAIN,
-	SqlKeyword.FALSE,
-	SqlKeyword.FETCH,
-	SqlKeyword.FLOAT,
-	SqlKeyword.FOR,
-	SqlKeyword.FORCE,
-	SqlKeyword.FOREIGN,
-	SqlKeyword.FROM,
-	SqlKeyword.FULLTEXT,
-	SqlKeyword.GENERATED,
-	SqlKeyword.GET,
-	SqlKeyword.GRANT,
-	SqlKeyword.GROUP,
-	SqlKeyword.HAVING,
-	SqlKeyword.HIGH_PRIORITY,
-	SqlKeyword.HOUR_MICROSECOND,
-	SqlKeyword.HOUR_MINUTE,
-	SqlKeyword.HOUR_SECOND,
-	SqlKeyword.IF,
-	SqlKeyword.IGNORE,
-	SqlKeyword.IN,
-	SqlKeyword.INDEX,
-	SqlKeyword.INFILE,
-	SqlKeyword.INNER,
-	SqlKeyword.INOUT,
-	SqlKeyword.INSENSITIVE,
-	SqlKeyword.INSERT,
-	SqlKeyword.INT,
-	SqlKeyword.INTEGER,
-	SqlKeyword.INTERVAL,
-	SqlKeyword.INTO,
-	SqlKeyword.IO_AFTER_GTIDS,
-	SqlKeyword.IO_BEFORE_GTIDS,
-	SqlKeyword.IS,
-	SqlKeyword.ITERATE,
-	SqlKeyword.JOIN,
-	SqlKeyword.KEY,
-	SqlKeyword.KEYS,
-	SqlKeyword.KILL,
-	SqlKeyword.LEADING,
-	SqlKeyword.LEAVE,
-	SqlKeyword.LEFT,
-	SqlKeyword.LIKE,
-	SqlKeyword.LIMIT,
-	SqlKeyword.LINEAR,
-	SqlKeyword.LINES,
-	SqlKeyword.LOAD,
-	SqlKeyword.LOCALTIME,
-	SqlKeyword.LOCALTIMESTAMP,
-	SqlKeyword.LOCK,
-	SqlKeyword.LONG,
-	SqlKeyword.LONGBLOB,
-	SqlKeyword.LONGTEXT,
-	SqlKeyword.LOOP,
-	SqlKeyword.LOW_PRIORITY,
-	SqlKeyword.MASTER_BIND,
-	SqlKeyword.MASTER_SSL_VERIFY_SERVER_CERT,
-	SqlKeyword.MATCH,
-	SqlKeyword.MAXVALUE,
-	SqlKeyword.MEDIUMBLOB,
-	SqlKeyword.MEDIUMINT,
-	SqlKeyword.MEDIUMTEXT,
-	SqlKeyword.MIDDLEINT,
-	SqlKeyword.MINUTE_MICROSECOND,
-	SqlKeyword.MINUTE_SECOND,
-	SqlKeyword.MOD,
-	SqlKeyword.MODIFIES,
-	SqlKeyword.NATURAL,
-	SqlKeyword.NOT,
-	SqlKeyword.NO_WRITE_TO_BINLOG,
-	SqlKeyword.NULL,
-	SqlKeyword.NUMERIC,
-	SqlKeyword.ON,
-	SqlKeyword.OPTIMIZE,
-	SqlKeyword.OPTIMIZER_COSTS,
-	SqlKeyword.OPTION,
-	SqlKeyword.OPTIONALLY,
-	SqlKeyword.OR,
-	SqlKeyword.ORDER,
-	SqlKeyword.OUT,
-	SqlKeyword.OUTER,
-	SqlKeyword.OUTFILE,
-	SqlKeyword.PARTITION,
-	SqlKeyword.PRECISION,
-	SqlKeyword.PRIMARY,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.PURGE,
-	SqlKeyword.RANGE,
-	SqlKeyword.READ,
-	SqlKeyword.READS,
-	SqlKeyword.READ_WRITE,
-	SqlKeyword.REAL,
-	SqlKeyword.REFERENCES,
-	SqlKeyword.REGEXP,
-	SqlKeyword.RELEASE,
-	SqlKeyword.RENAME,
-	SqlKeyword.REPEAT,
-	SqlKeyword.REPLACE,
-	SqlKeyword.REQUIRE,
-	SqlKeyword.RESIGNAL,
-	SqlKeyword.RESTRICT,
-	SqlKeyword.RETURN,
-	SqlKeyword.REVOKE,
-	SqlKeyword.RIGHT,
-	SqlKeyword.RLIKE,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.SCHEMAS,
-	SqlKeyword.SECOND_MICROSECOND,
-	SqlKeyword.SELECT,
-	SqlKeyword.SENSITIVE,
-	SqlKeyword.SEPARATOR,
-	SqlKeyword.SET,
-	SqlKeyword.SHOW,
-	SqlKeyword.SIGNAL,
-	SqlKeyword.SMALLINT,
-	SqlKeyword.SPATIAL,
-	SqlKeyword.SPECIFIC,
-	SqlKeyword.SQL,
-	SqlKeyword.SQLEXCEPTION,
-	SqlKeyword.SQLSTATE,
-	SqlKeyword.SQLWARNING,
-	SqlKeyword.SQL_BIG_RESULT,
-	SqlKeyword.SQL_CALC_FOUND_ROWS,
-	SqlKeyword.SQL_SMALL_RESULT,
-	SqlKeyword.SSL,
-	SqlKeyword.STARTING,
-	SqlKeyword.STORED,
-	SqlKeyword.STRAIGHT_JOIN,
-	SqlKeyword.TABLE,
-	SqlKeyword.TERMINATED,
-	SqlKeyword.THEN,
-	SqlKeyword.TINYBLOB,
-	SqlKeyword.TINYINT,
-	SqlKeyword.TINYTEXT,
-	SqlKeyword.TO,
-	SqlKeyword.TRAILING,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TRUE,
-	SqlKeyword.UNDO,
-	SqlKeyword.UNION,
-	SqlKeyword.UNIQUE,
-	SqlKeyword.UNLOCK,
-	SqlKeyword.UNSIGNED,
-	SqlKeyword.UPDATE,
-	SqlKeyword.USAGE,
-	SqlKeyword.USE,
-	SqlKeyword.USING,
-	SqlKeyword.UTC_DATE,
-	SqlKeyword.UTC_TIME,
-	SqlKeyword.UTC_TIMESTAMP,
-	SqlKeyword.VALUES,
-	SqlKeyword.VARBINARY,
-	SqlKeyword.VARCHAR,
-	SqlKeyword.VARCHARACTER,
-	SqlKeyword.VARYING,
-	SqlKeyword.VIRTUAL,
-	SqlKeyword.WHEN,
-	SqlKeyword.WHERE,
-	SqlKeyword.WHILE,
-	SqlKeyword.WITH,
-	SqlKeyword.WRITE,
-	SqlKeyword.XOR,
-	SqlKeyword.YEAR_MONTH,
-	SqlKeyword.ZEROFILL,
-]);
-
-const ObjectStartSet = new Set<Keyword>([
-	SqlKeyword.DATABASE,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.EVENT,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.INDEX,
-	SqlKeyword.INSTANCE,
-	SqlKeyword.LOGFILE,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.SERVER,
-	SqlKeyword.SPATIAL,
-	SqlKeyword.TABLE,
-	SqlKeyword.TABLESPACE,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.VIEW,
+	SqlKeywords.ACCESSIBLE,
+	SqlKeywords.ADD,
+	SqlKeywords.ALL,
+	SqlKeywords.ALTER,
+	SqlKeywords.ANALYZE,
+	SqlKeywords.AND,
+	SqlKeywords.AS,
+	SqlKeywords.ASC,
+	SqlKeywords.ASENSITIVE,
+	SqlKeywords.BEFORE,
+	SqlKeywords.BETWEEN,
+	SqlKeywords.BIGINT,
+	SqlKeywords.BINARY,
+	SqlKeywords.BLOB,
+	SqlKeywords.BOTH,
+	SqlKeywords.BY,
+	SqlKeywords.CALL,
+	SqlKeywords.CASCADE,
+	SqlKeywords.CASE,
+	SqlKeywords.CHANGE,
+	SqlKeywords.CHAR,
+	SqlKeywords.CHARACTER,
+	SqlKeywords.CHECK,
+	SqlKeywords.COLLATE,
+	SqlKeywords.COLUMN,
+	SqlKeywords.CONDITION,
+	SqlKeywords.CONSTRAINT,
+	SqlKeywords.CONTINUE,
+	SqlKeywords.CONVERT,
+	SqlKeywords.CREATE,
+	SqlKeywords.CROSS,
+	SqlKeywords.CURRENT_DATE,
+	SqlKeywords.CURRENT_TIME,
+	SqlKeywords.CURRENT_TIMESTAMP,
+	SqlKeywords.CURRENT_USER,
+	SqlKeywords.CURSOR,
+	SqlKeywords.DATABASE,
+	SqlKeywords.DATABASES,
+	SqlKeywords.DAY_HOUR,
+	SqlKeywords.DAY_MICROSECOND,
+	SqlKeywords.DAY_MINUTE,
+	SqlKeywords.DAY_SECOND,
+	SqlKeywords.DEC,
+	SqlKeywords.DECIMAL,
+	SqlKeywords.DECLARE,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DELAYED,
+	SqlKeywords.DELETE,
+	SqlKeywords.DESC,
+	SqlKeywords.DESCRIBE,
+	SqlKeywords.DETERMINISTIC,
+	SqlKeywords.DISTINCT,
+	SqlKeywords.DISTINCTROW,
+	SqlKeywords.DIV,
+	SqlKeywords.DOUBLE,
+	SqlKeywords.DROP,
+	SqlKeywords.DUAL,
+	SqlKeywords.EACH,
+	SqlKeywords.ELSE,
+	SqlKeywords.ELSEIF,
+	SqlKeywords.ENCLOSED,
+	SqlKeywords.ESCAPED,
+	SqlKeywords.EXCEPT,
+	SqlKeywords.EXISTS,
+	SqlKeywords.EXIT,
+	SqlKeywords.EXPLAIN,
+	SqlKeywords.FALSE,
+	SqlKeywords.FETCH,
+	SqlKeywords.FLOAT,
+	SqlKeywords.FOR,
+	SqlKeywords.FORCE,
+	SqlKeywords.FOREIGN,
+	SqlKeywords.FROM,
+	SqlKeywords.FULLTEXT,
+	SqlKeywords.GENERATED,
+	SqlKeywords.GET,
+	SqlKeywords.GRANT,
+	SqlKeywords.GROUP,
+	SqlKeywords.HAVING,
+	SqlKeywords.HIGH_PRIORITY,
+	SqlKeywords.HOUR_MICROSECOND,
+	SqlKeywords.HOUR_MINUTE,
+	SqlKeywords.HOUR_SECOND,
+	SqlKeywords.IF,
+	SqlKeywords.IGNORE,
+	SqlKeywords.IN,
+	SqlKeywords.INDEX,
+	SqlKeywords.INFILE,
+	SqlKeywords.INNER,
+	SqlKeywords.INOUT,
+	SqlKeywords.INSENSITIVE,
+	SqlKeywords.INSERT,
+	SqlKeywords.INT,
+	SqlKeywords.INTEGER,
+	SqlKeywords.INTERVAL,
+	SqlKeywords.INTO,
+	SqlKeywords.IO_AFTER_GTIDS,
+	SqlKeywords.IO_BEFORE_GTIDS,
+	SqlKeywords.IS,
+	SqlKeywords.ITERATE,
+	SqlKeywords.JOIN,
+	SqlKeywords.KEY,
+	SqlKeywords.KEYS,
+	SqlKeywords.KILL,
+	SqlKeywords.LEADING,
+	SqlKeywords.LEAVE,
+	SqlKeywords.LEFT,
+	SqlKeywords.LIKE,
+	SqlKeywords.LIMIT,
+	SqlKeywords.LINEAR,
+	SqlKeywords.LINES,
+	SqlKeywords.LOAD,
+	SqlKeywords.LOCALTIME,
+	SqlKeywords.LOCALTIMESTAMP,
+	SqlKeywords.LOCK,
+	SqlKeywords.LONG,
+	SqlKeywords.LONGBLOB,
+	SqlKeywords.LONGTEXT,
+	SqlKeywords.LOOP,
+	SqlKeywords.LOW_PRIORITY,
+	SqlKeywords.MASTER_BIND,
+	SqlKeywords.MASTER_SSL_VERIFY_SERVER_CERT,
+	SqlKeywords.MATCH,
+	SqlKeywords.MAXVALUE,
+	SqlKeywords.MEDIUMBLOB,
+	SqlKeywords.MEDIUMINT,
+	SqlKeywords.MEDIUMTEXT,
+	SqlKeywords.MIDDLEINT,
+	SqlKeywords.MINUTE_MICROSECOND,
+	SqlKeywords.MINUTE_SECOND,
+	SqlKeywords.MOD,
+	SqlKeywords.MODIFIES,
+	SqlKeywords.NATURAL,
+	SqlKeywords.NOT,
+	SqlKeywords.NO_WRITE_TO_BINLOG,
+	SqlKeywords.NULL,
+	SqlKeywords.NUMERIC,
+	SqlKeywords.ON,
+	SqlKeywords.OPTIMIZE,
+	SqlKeywords.OPTIMIZER_COSTS,
+	SqlKeywords.OPTION,
+	SqlKeywords.OPTIONALLY,
+	SqlKeywords.OR,
+	SqlKeywords.ORDER,
+	SqlKeywords.OUT,
+	SqlKeywords.OUTER,
+	SqlKeywords.OUTFILE,
+	SqlKeywords.PARTITION,
+	SqlKeywords.PRECISION,
+	SqlKeywords.PRIMARY,
+	SqlKeywords.PROCEDURE,
+	SqlKeywords.PURGE,
+	SqlKeywords.RANGE,
+	SqlKeywords.READ,
+	SqlKeywords.READS,
+	SqlKeywords.READ_WRITE,
+	SqlKeywords.REAL,
+	SqlKeywords.REFERENCES,
+	SqlKeywords.REGEXP,
+	SqlKeywords.RELEASE,
+	SqlKeywords.RENAME,
+	SqlKeywords.REPEAT,
+	SqlKeywords.REPLACE,
+	SqlKeywords.REQUIRE,
+	SqlKeywords.RESIGNAL,
+	SqlKeywords.RESTRICT,
+	SqlKeywords.RETURN,
+	SqlKeywords.REVOKE,
+	SqlKeywords.RIGHT,
+	SqlKeywords.RLIKE,
+	SqlKeywords.SCHEMA,
+	SqlKeywords.SCHEMAS,
+	SqlKeywords.SECOND_MICROSECOND,
+	SqlKeywords.SELECT,
+	SqlKeywords.SENSITIVE,
+	SqlKeywords.SEPARATOR,
+	SqlKeywords.SET,
+	SqlKeywords.SHOW,
+	SqlKeywords.SIGNAL,
+	SqlKeywords.SMALLINT,
+	SqlKeywords.SPATIAL,
+	SqlKeywords.SPECIFIC,
+	SqlKeywords.SQL,
+	SqlKeywords.SQLEXCEPTION,
+	SqlKeywords.SQLSTATE,
+	SqlKeywords.SQLWARNING,
+	SqlKeywords.SQL_BIG_RESULT,
+	SqlKeywords.SQL_CALC_FOUND_ROWS,
+	SqlKeywords.SQL_SMALL_RESULT,
+	SqlKeywords.SSL,
+	SqlKeywords.STARTING,
+	SqlKeywords.STORED,
+	SqlKeywords.STRAIGHT_JOIN,
+	SqlKeywords.TABLE,
+	SqlKeywords.TERMINATED,
+	SqlKeywords.THEN,
+	SqlKeywords.TINYBLOB,
+	SqlKeywords.TINYINT,
+	SqlKeywords.TINYTEXT,
+	SqlKeywords.TO,
+	SqlKeywords.TRAILING,
+	SqlKeywords.TRIGGER,
+	SqlKeywords.TRUE,
+	SqlKeywords.UNDO,
+	SqlKeywords.UNION,
+	SqlKeywords.UNIQUE,
+	SqlKeywords.UNLOCK,
+	SqlKeywords.UNSIGNED,
+	SqlKeywords.UPDATE,
+	SqlKeywords.USAGE,
+	SqlKeywords.USE,
+	SqlKeywords.USING,
+	SqlKeywords.UTC_DATE,
+	SqlKeywords.UTC_TIME,
+	SqlKeywords.UTC_TIMESTAMP,
+	SqlKeywords.VALUES,
+	SqlKeywords.VARBINARY,
+	SqlKeywords.VARCHAR,
+	SqlKeywords.VARCHARACTER,
+	SqlKeywords.VARYING,
+	SqlKeywords.VIRTUAL,
+	SqlKeywords.WHEN,
+	SqlKeywords.WHERE,
+	SqlKeywords.WHILE,
+	SqlKeywords.WITH,
+	SqlKeywords.WRITE,
+	SqlKeywords.XOR,
+	SqlKeywords.YEAR_MONTH,
+	SqlKeywords.ZEROFILL,
 ]);
 
 const CommandPattern = [
@@ -299,10 +282,6 @@ export declare type MysqlLexerOptions = LexerOptions & {
 };
 
 export class MysqlLexer extends Lexer {
-	static isObjectStart(keyword?: Keyword) {
-		return keyword != null && ObjectStartSet.has(keyword);
-	}
-
 	private reserved = new Set<Keyword>();
 	private reCommandPattern = new RegExp(
 		`^(${CommandPattern})\\b.*?(;|$)`,
@@ -314,7 +293,12 @@ export class MysqlLexer extends Lexer {
 		super(
 			"mysql",
 			[
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
+				{
+					type: SqlTokenType.LineBreak,
+					re: /\n|\r\n?/y,
+					skip: true,
+					separator: true,
+				},
 				{ type: SqlTokenType.WhiteSpace, re: /[ \t\v\f]+/y, skip: true },
 				{ type: SqlTokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
 				{
@@ -387,63 +371,63 @@ export class MysqlLexer extends Lexer {
 			options.package === "mysql" &&
 			semver.satisfies("<8.0.0", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.ANALYSE);
-			this.reserved.add(SqlKeyword.DES_KEY_FILE);
-			this.reserved.add(SqlKeyword.ANALYSE);
-			this.reserved.add(SqlKeyword.MASTER_SERVER_ID);
-			this.reserved.add(SqlKeyword.PARSE_GCOL_EXPR);
-			this.reserved.add(SqlKeyword.REDOFILE);
-			this.reserved.add(SqlKeyword.SQL_CACHE);
+			this.reserved.add(SqlKeywords.ANALYSE);
+			this.reserved.add(SqlKeywords.DES_KEY_FILE);
+			this.reserved.add(SqlKeywords.ANALYSE);
+			this.reserved.add(SqlKeywords.MASTER_SERVER_ID);
+			this.reserved.add(SqlKeywords.PARSE_GCOL_EXPR);
+			this.reserved.add(SqlKeywords.REDOFILE);
+			this.reserved.add(SqlKeywords.SQL_CACHE);
 		}
 		if (
 			options.package === "mysql" &&
 			semver.satisfies(">=8.0.1", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.CUBE);
-			this.reserved.add(SqlKeyword.FUNCTION);
-			this.reserved.add(SqlKeyword.GROUPING);
-			this.reserved.add(SqlKeyword.OF);
-			this.reserved.add(SqlKeyword.RECURSIVE);
+			this.reserved.add(SqlKeywords.CUBE);
+			this.reserved.add(SqlKeywords.FUNCTION);
+			this.reserved.add(SqlKeywords.GROUPING);
+			this.reserved.add(SqlKeywords.OF);
+			this.reserved.add(SqlKeywords.RECURSIVE);
 		}
 		if (
 			options.package === "mysql" &&
 			semver.satisfies(">=8.0.2", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.CUME_DIST);
-			this.reserved.add(SqlKeyword.DENSE_RANK);
-			this.reserved.add(SqlKeyword.FIRST_VALUE);
-			this.reserved.add(SqlKeyword.GROUPS);
-			this.reserved.add(SqlKeyword.LAG);
-			this.reserved.add(SqlKeyword.LAST_VALUE);
-			this.reserved.add(SqlKeyword.LEAD);
-			this.reserved.add(SqlKeyword.NTH_VALUE);
-			this.reserved.add(SqlKeyword.NTILE);
-			this.reserved.add(SqlKeyword.OVER);
-			this.reserved.add(SqlKeyword.PERCENT_RANK);
-			this.reserved.add(SqlKeyword.RANK);
-			this.reserved.add(SqlKeyword.ROW);
-			this.reserved.add(SqlKeyword.ROWS);
-			this.reserved.add(SqlKeyword.ROW_NUMBER);
-			this.reserved.add(SqlKeyword.WINDOW);
+			this.reserved.add(SqlKeywords.CUME_DIST);
+			this.reserved.add(SqlKeywords.DENSE_RANK);
+			this.reserved.add(SqlKeywords.FIRST_VALUE);
+			this.reserved.add(SqlKeywords.GROUPS);
+			this.reserved.add(SqlKeywords.LAG);
+			this.reserved.add(SqlKeywords.LAST_VALUE);
+			this.reserved.add(SqlKeywords.LEAD);
+			this.reserved.add(SqlKeywords.NTH_VALUE);
+			this.reserved.add(SqlKeywords.NTILE);
+			this.reserved.add(SqlKeywords.OVER);
+			this.reserved.add(SqlKeywords.PERCENT_RANK);
+			this.reserved.add(SqlKeywords.RANK);
+			this.reserved.add(SqlKeywords.ROW);
+			this.reserved.add(SqlKeywords.ROWS);
+			this.reserved.add(SqlKeywords.ROW_NUMBER);
+			this.reserved.add(SqlKeywords.WINDOW);
 		}
 		if (
 			options.package === "mysql" &&
 			semver.satisfies(">=8.0.3", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.SYSTEM);
+			this.reserved.add(SqlKeywords.SYSTEM);
 		}
 		if (
 			options.package === "mysql" &&
 			semver.satisfies(">=8.0.4", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.EMPTY);
-			this.reserved.add(SqlKeyword.JSON_TABLE);
+			this.reserved.add(SqlKeywords.EMPTY);
+			this.reserved.add(SqlKeywords.JSON_TABLE);
 		}
 		if (
 			options.package === "mysql" &&
 			semver.satisfies(">=8.0.14", options.version || "0")
 		) {
-			this.reserved.add(SqlKeyword.LATERAL);
+			this.reserved.add(SqlKeywords.LATERAL);
 		}
 	}
 
@@ -509,7 +493,7 @@ export class MysqlLexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeyword.for(token.text);
+		const keyword = SqlKeywords.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
 			if (this.isReserved(keyword)) {
@@ -520,19 +504,32 @@ export class MysqlLexer extends Lexer {
 			}
 
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeyword.CREATE) {
+				if (keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				MysqlLexer.isObjectStart(keyword)
+				(keyword === SqlKeywords.DATABASE ||
+					keyword === SqlKeywords.SCHEMA ||
+					keyword === SqlKeywords.EVENT ||
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.INDEX ||
+					keyword === SqlKeywords.INSTANCE ||
+					keyword === SqlKeywords.LOGFILE ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.SERVER ||
+					keyword === SqlKeywords.SPATIAL ||
+					keyword === SqlKeywords.TABLE ||
+					keyword === SqlKeywords.TABLESPACE ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.VIEW)
 			) {
 				if (
-					keyword === SqlKeyword.FUNCTION ||
-					keyword === SqlKeyword.PROCEDURE ||
-					keyword === SqlKeyword.TRIGGER
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.TRIGGER
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {

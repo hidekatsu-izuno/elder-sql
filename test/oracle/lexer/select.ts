@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -15,7 +15,7 @@ export default [
 		location: new SourceLocation(7, 1, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(8, 1, 8),
@@ -24,7 +24,7 @@ export default [
 		location: new SourceLocation(9, 1, 9),
 	}),
 	new Token(SqlTokenType.Identifier, "DUAL", {
-		keyword: SqlKeyword.DUAL,
+		keyword: SqlKeywords.DUAL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(13, 1, 13),

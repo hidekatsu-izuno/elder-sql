@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "analyze", {
-		keyword: SqlKeyword.ANALYZE,
+		keyword: SqlKeywords.ANALYZE,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(7, 1, 7),
@@ -25,11 +25,11 @@ export default [
 		location: new SourceLocation(12, 1, 12),
 	}),
 	new Token(SqlTokenType.Identifier, "ANALYZE", {
-		keyword: SqlKeyword.ANALYZE,
+		keyword: SqlKeywords.ANALYZE,
 		location: new SourceLocation(14, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(21, 2, 8),
@@ -39,7 +39,7 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(26, 2, 13) }),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(31, 2, 18),

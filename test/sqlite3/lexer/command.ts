@@ -1,5 +1,5 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Command, ".print", {
@@ -28,7 +28,7 @@ export default [
 		location: new SourceLocation(29, 4, 8),
 	}),
 	new Token(SqlTokenType.Reserved, "select", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(34, 5, 1),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -49,7 +49,7 @@ export default [
 		location: new SourceLocation(42, 5, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "select", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(44, 6, 1),
 	}),
 	new Token(SqlTokenType.Numeric, "2", {
@@ -83,11 +83,11 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(57, 7, 1) }),
 	new Token(SqlTokenType.Identifier, "print", {
-		keyword: SqlKeyword.PRINT,
+		keyword: SqlKeywords.PRINT,
 		location: new SourceLocation(58, 7, 2),
 	}),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(63, 7, 7),
@@ -110,7 +110,7 @@ export default [
 		location: new SourceLocation(69, 8, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "select", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		preskips: [
 			new Token(SqlTokenType.BlockComment, "/*.print*/", {
 				location: new SourceLocation(71, 9, 1),
@@ -150,7 +150,7 @@ export default [
 		location: new SourceLocation(94, 11, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "select", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(98, 12, 1),

@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "DETACH", {
-		keyword: SqlKeyword.DETACH,
+		keyword: SqlKeywords.DETACH,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "DATABASE", {
-		keyword: SqlKeyword.DATABASE,
+		keyword: SqlKeywords.DATABASE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(6, 1, 6),
@@ -33,7 +33,7 @@ export default [
 		location: new SourceLocation(22, 1, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "DETACH", {
-		keyword: SqlKeyword.DETACH,
+		keyword: SqlKeywords.DETACH,
 		location: new SourceLocation(24, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "new_db", {

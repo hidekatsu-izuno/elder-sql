@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "RELEASE", {
-		keyword: SqlKeyword.RELEASE,
+		keyword: SqlKeywords.RELEASE,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "sect1", {
@@ -24,11 +24,11 @@ export default [
 		location: new SourceLocation(13, 1, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "RELEASE", {
-		keyword: SqlKeyword.RELEASE,
+		keyword: SqlKeywords.RELEASE,
 		location: new SourceLocation(15, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "SAVEPOINT", {
-		keyword: SqlKeyword.SAVEPOINT,
+		keyword: SqlKeywords.SAVEPOINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(22, 2, 8),

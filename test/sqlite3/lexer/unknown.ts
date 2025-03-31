@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(6, 1, 6),
@@ -12,7 +12,7 @@ export default [
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Reserved, "UPDATE", {
-		keyword: SqlKeyword.UPDATE,
+		keyword: SqlKeywords.UPDATE,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(13, 2, 7),
@@ -21,7 +21,7 @@ export default [
 		location: new SourceLocation(7, 2, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "select", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(14, 3, 1),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -54,11 +54,11 @@ export default [
 		location: new SourceLocation(25, 3, 12),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		location: new SourceLocation(27, 4, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
-		keyword: SqlKeyword.TABLE,
+		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(33, 4, 7),
@@ -76,7 +76,7 @@ export default [
 		location: new SourceLocation(39, 4, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(41, 5, 1),
@@ -96,7 +96,7 @@ export default [
 		location: new SourceLocation(53, 6, 12),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(54, 6, 13),

@@ -5,186 +5,144 @@ import {
 	SourceLocation,
 	Token,
 } from "../lexer.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 
 export const ReservedSet = new Set<Keyword>([
-	SqlKeyword.ACCESS,
-	SqlKeyword.ADD,
-	SqlKeyword.ALL,
-	SqlKeyword.ALTER,
-	SqlKeyword.AND,
-	SqlKeyword.ANY,
-	SqlKeyword.AS,
-	SqlKeyword.ASC,
-	SqlKeyword.AT,
-	SqlKeyword.AUDIT,
-	SqlKeyword.BEGIN,
-	SqlKeyword.BETWEEN,
-	SqlKeyword.BY,
-	SqlKeyword.CASE,
-	SqlKeyword.CHAR,
-	SqlKeyword.CHECK,
-	SqlKeyword.CLUSTER,
-	SqlKeyword.CLUSTERS,
-	SqlKeyword.COLAUTH,
-	SqlKeyword.COLUMN,
-	SqlKeyword.COLUMNS,
-	SqlKeyword.COMMENT,
-	SqlKeyword.COMPRESS,
-	SqlKeyword.CONNECT,
-	SqlKeyword.CRASH,
-	SqlKeyword.CREATE,
-	SqlKeyword.CURRENT,
-	SqlKeyword.CURSOR,
-	SqlKeyword.DATE,
-	SqlKeyword.DECIMAL,
-	SqlKeyword.DECLARE,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DELETE,
-	SqlKeyword.DESC,
-	SqlKeyword.DISTINCT,
-	SqlKeyword.DROP,
-	SqlKeyword.ELSE,
-	SqlKeyword.END,
-	SqlKeyword.EXCEPTION,
-	SqlKeyword.EXCLUSIVE,
-	SqlKeyword.EXISTS,
-	SqlKeyword.FETCH,
-	SqlKeyword.FILE,
-	SqlKeyword.FLOAT,
-	SqlKeyword.FOR,
-	SqlKeyword.FROM,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.GOTO,
-	SqlKeyword.GRANT,
-	SqlKeyword.GROUP,
-	SqlKeyword.HAVING,
-	SqlKeyword.IDENTIFIED,
-	SqlKeyword.IF,
-	SqlKeyword.IMMEDIATE,
-	SqlKeyword.IN,
-	SqlKeyword.INCREMENT,
-	SqlKeyword.INDEX,
-	SqlKeyword.INDEXES,
-	SqlKeyword.INITIAL,
-	SqlKeyword.INSERT,
-	SqlKeyword.INTEGER,
-	SqlKeyword.INTERSECT,
-	SqlKeyword.INTO,
-	SqlKeyword.IS,
-	SqlKeyword.LEVEL,
-	SqlKeyword.LIKE,
-	SqlKeyword.LOCK,
-	SqlKeyword.LONG,
-	SqlKeyword.MAXEXTENTS,
-	SqlKeyword.MINUS,
-	SqlKeyword.MLSLABEL,
-	SqlKeyword.MODE,
-	SqlKeyword.MODIFY,
-	SqlKeyword.NOAUDIT,
-	SqlKeyword.NOCOMPRESS,
-	SqlKeyword.NOT,
-	SqlKeyword.NOWAIT,
-	SqlKeyword.NULL,
-	SqlKeyword.NUMBER,
-	SqlKeyword.OF,
-	SqlKeyword.OFFLINE,
-	SqlKeyword.ON,
-	SqlKeyword.ONLINE,
-	SqlKeyword.OPTION,
-	SqlKeyword.OR,
-	SqlKeyword.ORDER,
-	SqlKeyword.OVERLAPS,
-	SqlKeyword.PCTFREE,
-	SqlKeyword.PRIOR,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.PUBLIC,
-	SqlKeyword.RAW,
-	SqlKeyword.RENAME,
-	SqlKeyword.RESOURCE,
-	SqlKeyword.REVOKE,
-	SqlKeyword.ROW,
-	SqlKeyword.ROWID,
-	SqlKeyword.ROWNUM,
-	SqlKeyword.ROWS,
-	SqlKeyword.SELECT,
-	SqlKeyword.SESSION,
-	SqlKeyword.SET,
-	SqlKeyword.SHARE,
-	SqlKeyword.SIZE,
-	SqlKeyword.SMALLINT,
-	SqlKeyword.SQL,
-	SqlKeyword.START,
-	SqlKeyword.SUBTYPE,
-	SqlKeyword.SUCCESSFUL,
-	SqlKeyword.SYNONYM,
-	SqlKeyword.SYSDATE,
-	SqlKeyword.TABAUTH,
-	SqlKeyword.TABLE,
-	SqlKeyword.THEN,
-	SqlKeyword.TO,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TYPE,
-	SqlKeyword.UID,
-	SqlKeyword.UNION,
-	SqlKeyword.UNIQUE,
-	SqlKeyword.UPDATE,
-	SqlKeyword.USER,
-	SqlKeyword.VALIDATE,
-	SqlKeyword.VALUES,
-	SqlKeyword.VARCHAR,
-	SqlKeyword.VARCHAR2,
-	SqlKeyword.VIEW,
-	SqlKeyword.VIEWS,
-	SqlKeyword.WHEN,
-	SqlKeyword.WHENEVER,
-	SqlKeyword.WHERE,
-	SqlKeyword.WITH,
+	SqlKeywords.ACCESS,
+	SqlKeywords.ADD,
+	SqlKeywords.ALL,
+	SqlKeywords.ALTER,
+	SqlKeywords.AND,
+	SqlKeywords.ANY,
+	SqlKeywords.AS,
+	SqlKeywords.ASC,
+	SqlKeywords.AT,
+	SqlKeywords.AUDIT,
+	SqlKeywords.BEGIN,
+	SqlKeywords.BETWEEN,
+	SqlKeywords.BY,
+	SqlKeywords.CASE,
+	SqlKeywords.CHAR,
+	SqlKeywords.CHECK,
+	SqlKeywords.CLUSTER,
+	SqlKeywords.CLUSTERS,
+	SqlKeywords.COLAUTH,
+	SqlKeywords.COLUMN,
+	SqlKeywords.COLUMNS,
+	SqlKeywords.COMMENT,
+	SqlKeywords.COMPRESS,
+	SqlKeywords.CONNECT,
+	SqlKeywords.CRASH,
+	SqlKeywords.CREATE,
+	SqlKeywords.CURRENT,
+	SqlKeywords.CURSOR,
+	SqlKeywords.DATE,
+	SqlKeywords.DECIMAL,
+	SqlKeywords.DECLARE,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DELETE,
+	SqlKeywords.DESC,
+	SqlKeywords.DISTINCT,
+	SqlKeywords.DROP,
+	SqlKeywords.ELSE,
+	SqlKeywords.END,
+	SqlKeywords.EXCEPTION,
+	SqlKeywords.EXCLUSIVE,
+	SqlKeywords.EXISTS,
+	SqlKeywords.FETCH,
+	SqlKeywords.FILE,
+	SqlKeywords.FLOAT,
+	SqlKeywords.FOR,
+	SqlKeywords.FROM,
+	SqlKeywords.FUNCTION,
+	SqlKeywords.GOTO,
+	SqlKeywords.GRANT,
+	SqlKeywords.GROUP,
+	SqlKeywords.HAVING,
+	SqlKeywords.IDENTIFIED,
+	SqlKeywords.IF,
+	SqlKeywords.IMMEDIATE,
+	SqlKeywords.IN,
+	SqlKeywords.INCREMENT,
+	SqlKeywords.INDEX,
+	SqlKeywords.INDEXES,
+	SqlKeywords.INITIAL,
+	SqlKeywords.INSERT,
+	SqlKeywords.INTEGER,
+	SqlKeywords.INTERSECT,
+	SqlKeywords.INTO,
+	SqlKeywords.IS,
+	SqlKeywords.LEVEL,
+	SqlKeywords.LIKE,
+	SqlKeywords.LOCK,
+	SqlKeywords.LONG,
+	SqlKeywords.MAXEXTENTS,
+	SqlKeywords.MINUS,
+	SqlKeywords.MLSLABEL,
+	SqlKeywords.MODE,
+	SqlKeywords.MODIFY,
+	SqlKeywords.NOAUDIT,
+	SqlKeywords.NOCOMPRESS,
+	SqlKeywords.NOT,
+	SqlKeywords.NOWAIT,
+	SqlKeywords.NULL,
+	SqlKeywords.NUMBER,
+	SqlKeywords.OF,
+	SqlKeywords.OFFLINE,
+	SqlKeywords.ON,
+	SqlKeywords.ONLINE,
+	SqlKeywords.OPTION,
+	SqlKeywords.OR,
+	SqlKeywords.ORDER,
+	SqlKeywords.OVERLAPS,
+	SqlKeywords.PCTFREE,
+	SqlKeywords.PRIOR,
+	SqlKeywords.PROCEDURE,
+	SqlKeywords.PUBLIC,
+	SqlKeywords.RAW,
+	SqlKeywords.RENAME,
+	SqlKeywords.RESOURCE,
+	SqlKeywords.REVOKE,
+	SqlKeywords.ROW,
+	SqlKeywords.ROWID,
+	SqlKeywords.ROWNUM,
+	SqlKeywords.ROWS,
+	SqlKeywords.SELECT,
+	SqlKeywords.SESSION,
+	SqlKeywords.SET,
+	SqlKeywords.SHARE,
+	SqlKeywords.SIZE,
+	SqlKeywords.SMALLINT,
+	SqlKeywords.SQL,
+	SqlKeywords.START,
+	SqlKeywords.SUBTYPE,
+	SqlKeywords.SUCCESSFUL,
+	SqlKeywords.SYNONYM,
+	SqlKeywords.SYSDATE,
+	SqlKeywords.TABAUTH,
+	SqlKeywords.TABLE,
+	SqlKeywords.THEN,
+	SqlKeywords.TO,
+	SqlKeywords.TRIGGER,
+	SqlKeywords.TYPE,
+	SqlKeywords.UID,
+	SqlKeywords.UNION,
+	SqlKeywords.UNIQUE,
+	SqlKeywords.UPDATE,
+	SqlKeywords.USER,
+	SqlKeywords.VALIDATE,
+	SqlKeywords.VALUES,
+	SqlKeywords.VARCHAR,
+	SqlKeywords.VARCHAR2,
+	SqlKeywords.VIEW,
+	SqlKeywords.VIEWS,
+	SqlKeywords.WHEN,
+	SqlKeywords.WHENEVER,
+	SqlKeywords.WHERE,
+	SqlKeywords.WITH,
 ]);
 
-const ObjectStartSet = new Set<Keyword>([
-	SqlKeyword.ANALYTIC,
-	SqlKeyword.ATTRIBUTE,
-	SqlKeyword.AUDIT,
-	SqlKeyword.CLUSTER,
-	SqlKeyword.CONTEXT,
-	SqlKeyword.CONTROLFILE,
-	SqlKeyword.DATABASE,
-	SqlKeyword.DIMENSION,
-	SqlKeyword.DIRECTORY,
-	SqlKeyword.DISKGROUP,
-	SqlKeyword.EDITION,
-	SqlKeyword.FLASHBACK,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.HIERARCHY,
-	SqlKeyword.INDEX,
-	SqlKeyword.INDEXTYPE,
-	SqlKeyword.INMEMORY,
-	SqlKeyword.JAVA,
-	SqlKeyword.LIBRARY,
-	SqlKeyword.LOCKDOWN,
-	SqlKeyword.MATERIALIZED,
-	SqlKeyword.OPERATOR,
-	SqlKeyword.OUTLINE,
-	SqlKeyword.PACKAGE,
-	SqlKeyword.PFILE,
-	SqlKeyword.PLUGGABLE,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.PROFILE,
-	SqlKeyword.RESTORE,
-	SqlKeyword.ROLE,
-	SqlKeyword.ROLLBACK,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.SEQUENCE,
-	SqlKeyword.SPFILE,
-	SqlKeyword.SYNONYM,
-	SqlKeyword.TABLE,
-	SqlKeyword.TABLESPACE,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TYPE,
-	SqlKeyword.USER,
-	SqlKeyword.VIEW,
-]);
+const ObjectStartSet = new Set<Keyword>([]);
 
 const CommandPattern = new RegExp(
 	`(${[
@@ -253,10 +211,6 @@ const Mode = {
 export declare type OracleLexerOptions = LexerOptions & {};
 
 export class OracleLexer extends Lexer {
-	static isObjectStart(keyword?: Keyword) {
-		return keyword != null && ObjectStartSet.has(keyword);
-	}
-
 	private reserved = new Set<Keyword>();
 
 	constructor(options: OracleLexerOptions = {}) {
@@ -266,7 +220,12 @@ export class OracleLexer extends Lexer {
 				{ type: SqlTokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
 				{ type: SqlTokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
+				{
+					type: SqlTokenType.LineBreak,
+					re: /\n|\r\n?/y,
+					skip: true,
+					separator: true,
+				},
 				{
 					type: SqlTokenType.WhiteSpace,
 					re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y,
@@ -292,7 +251,11 @@ export class OracleLexer extends Lexer {
 				},
 				{ type: SqlTokenType.LeftBrace, re: /\{/y, separator: true },
 				{ type: SqlTokenType.RightBrace, re: /\}/y, separator: true },
-				{ type: SqlTokenType.Operator, re: /[（(][＋+][）)]|\.\./y, separator: true },
+				{
+					type: SqlTokenType.Operator,
+					re: /[（(][＋+][）)]|\.\./y,
+					separator: true,
+				},
 				{ type: SqlTokenType.LeftParen, re: /[（(]/y, separator: true },
 				{ type: SqlTokenType.RightParen, re: /[）)]/y, separator: true },
 				{ type: SqlTokenType.Comma, re: /[，,]/y, separator: true },
@@ -328,13 +291,6 @@ export class OracleLexer extends Lexer {
 				},
 			],
 			options,
-		);
-	}
-
-	isReserved(keyword?: Keyword) {
-		return (
-			keyword != null &&
-			(ReservedSet.has(keyword) || this.reserved.has(keyword))
 		);
 	}
 
@@ -475,19 +431,19 @@ export class OracleLexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeyword.for(token.text);
+		const keyword = SqlKeywords.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
-			if (this.isReserved(keyword)) {
+			if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
 				token.type = SqlTokenType.Reserved;
 			}
 
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeyword.CREATE) {
+				if (keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else if (
-					keyword === SqlKeyword.DECLARE ||
-					keyword === SqlKeyword.BEGIN
+					keyword === SqlKeywords.DECLARE ||
+					keyword === SqlKeywords.BEGIN
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {
@@ -495,15 +451,55 @@ export class OracleLexer extends Lexer {
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				OracleLexer.isObjectStart(keyword)
+				(keyword === SqlKeywords.ANALYTIC ||
+					keyword === SqlKeywords.ATTRIBUTE ||
+					keyword === SqlKeywords.AUDIT ||
+					keyword === SqlKeywords.CLUSTER ||
+					keyword === SqlKeywords.CONTEXT ||
+					keyword === SqlKeywords.CONTROLFILE ||
+					keyword === SqlKeywords.DATABASE ||
+					keyword === SqlKeywords.DIMENSION ||
+					keyword === SqlKeywords.DIRECTORY ||
+					keyword === SqlKeywords.DISKGROUP ||
+					keyword === SqlKeywords.EDITION ||
+					keyword === SqlKeywords.FLASHBACK ||
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.HIERARCHY ||
+					keyword === SqlKeywords.INDEX ||
+					keyword === SqlKeywords.INDEXTYPE ||
+					keyword === SqlKeywords.INMEMORY ||
+					keyword === SqlKeywords.JAVA ||
+					keyword === SqlKeywords.LIBRARY ||
+					keyword === SqlKeywords.LOCKDOWN ||
+					keyword === SqlKeywords.MATERIALIZED ||
+					keyword === SqlKeywords.OPERATOR ||
+					keyword === SqlKeywords.OUTLINE ||
+					keyword === SqlKeywords.PACKAGE ||
+					keyword === SqlKeywords.PFILE ||
+					keyword === SqlKeywords.PLUGGABLE ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.PROFILE ||
+					keyword === SqlKeywords.RESTORE ||
+					keyword === SqlKeywords.ROLE ||
+					keyword === SqlKeywords.ROLLBACK ||
+					keyword === SqlKeywords.SCHEMA ||
+					keyword === SqlKeywords.SEQUENCE ||
+					keyword === SqlKeywords.SPFILE ||
+					keyword === SqlKeywords.SYNONYM ||
+					keyword === SqlKeywords.TABLE ||
+					keyword === SqlKeywords.TABLESPACE ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.TYPE ||
+					keyword === SqlKeywords.USER ||
+					keyword === SqlKeywords.VIEW)
 			) {
 				if (
-					keyword === SqlKeyword.FUNCTION ||
-					keyword === SqlKeyword.LIBRARY ||
-					keyword === SqlKeyword.PACKAGE ||
-					keyword === SqlKeyword.PROCEDURE ||
-					keyword === SqlKeyword.TRIGGER ||
-					keyword === SqlKeyword.TYPE
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.LIBRARY ||
+					keyword === SqlKeywords.PACKAGE ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.TYPE
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {

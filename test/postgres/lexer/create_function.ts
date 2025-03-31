@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(6, 1, 6),
@@ -16,7 +16,7 @@ export default [
 		location: new SourceLocation(7, 1, 7),
 	}),
 	new Token(SqlTokenType.Identifier, "add", {
-		keyword: SqlKeyword.ADD,
+		keyword: SqlKeywords.ADD,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(15, 1, 15),
@@ -28,14 +28,14 @@ export default [
 		location: new SourceLocation(19, 1, 19),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		location: new SourceLocation(20, 1, 20),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		location: new SourceLocation(27, 1, 27),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(28, 1, 28),
@@ -55,7 +55,7 @@ export default [
 		location: new SourceLocation(38, 1, 38),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(45, 1, 45),
@@ -69,7 +69,7 @@ export default [
 		location: new SourceLocation(46, 1, 46),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(54, 2, 1),
@@ -91,7 +91,7 @@ export default [
 		location: new SourceLocation(61, 2, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(79, 3, 1),
@@ -100,7 +100,7 @@ export default [
 		location: new SourceLocation(83, 3, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "SQL", {
-		keyword: SqlKeyword.SQL,
+		keyword: SqlKeywords.SQL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(91, 3, 13),
@@ -114,7 +114,7 @@ export default [
 		location: new SourceLocation(92, 3, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "IMMUTABLE", {
-		keyword: SqlKeyword.IMMUTABLE,
+		keyword: SqlKeywords.IMMUTABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(96, 4, 1),
@@ -136,7 +136,7 @@ export default [
 		location: new SourceLocation(114, 5, 5),
 	}),
 	new Token(SqlTokenType.Reserved, "NULL", {
-		keyword: SqlKeyword.NULL,
+		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(121, 5, 12),
@@ -145,7 +145,7 @@ export default [
 		location: new SourceLocation(122, 5, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "ON", {
-		keyword: SqlKeyword.ON,
+		keyword: SqlKeywords.ON,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(126, 5, 17),
@@ -154,7 +154,7 @@ export default [
 		location: new SourceLocation(127, 5, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "NULL", {
-		keyword: SqlKeyword.NULL,
+		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(129, 5, 20),
@@ -180,7 +180,7 @@ export default [
 		location: new SourceLocation(140, 5, 31),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(142, 6, 1),
@@ -189,7 +189,7 @@ export default [
 		location: new SourceLocation(143, 7, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(149, 7, 7),
@@ -198,7 +198,7 @@ export default [
 		location: new SourceLocation(150, 7, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "add", {
-		keyword: SqlKeyword.ADD,
+		keyword: SqlKeywords.ADD,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(158, 7, 16),
@@ -213,7 +213,7 @@ export default [
 		location: new SourceLocation(163, 7, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(164, 7, 22),
@@ -233,7 +233,7 @@ export default [
 		location: new SourceLocation(174, 7, 32),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(175, 7, 33),
@@ -253,7 +253,7 @@ export default [
 		location: new SourceLocation(185, 7, 43),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(192, 7, 50),
@@ -267,7 +267,7 @@ export default [
 		location: new SourceLocation(193, 7, 51),
 	}),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(201, 8, 1),
@@ -276,7 +276,7 @@ export default [
 		location: new SourceLocation(205, 8, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "SQL", {
-		keyword: SqlKeyword.SQL,
+		keyword: SqlKeywords.SQL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(213, 8, 13),
@@ -290,7 +290,7 @@ export default [
 		location: new SourceLocation(214, 8, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "IMMUTABLE", {
-		keyword: SqlKeyword.IMMUTABLE,
+		keyword: SqlKeywords.IMMUTABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(218, 9, 1),
@@ -312,7 +312,7 @@ export default [
 		location: new SourceLocation(236, 10, 5),
 	}),
 	new Token(SqlTokenType.Reserved, "NULL", {
-		keyword: SqlKeyword.NULL,
+		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(243, 10, 12),
@@ -321,7 +321,7 @@ export default [
 		location: new SourceLocation(244, 10, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "ON", {
-		keyword: SqlKeyword.ON,
+		keyword: SqlKeywords.ON,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(248, 10, 17),
@@ -330,7 +330,7 @@ export default [
 		location: new SourceLocation(249, 10, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "NULL", {
-		keyword: SqlKeyword.NULL,
+		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(251, 10, 20),
@@ -352,7 +352,7 @@ export default [
 		location: new SourceLocation(257, 10, 26),
 	}),
 	new Token(SqlTokenType.Identifier, "RETURN", {
-		keyword: SqlKeyword.RETURN,
+		keyword: SqlKeywords.RETURN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(263, 11, 1),
@@ -394,7 +394,7 @@ export default [
 		location: new SourceLocation(279, 11, 17),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(281, 12, 1),
@@ -403,7 +403,7 @@ export default [
 		location: new SourceLocation(282, 13, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "OR", {
-		keyword: SqlKeyword.OR,
+		keyword: SqlKeywords.OR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(288, 13, 7),
@@ -412,7 +412,7 @@ export default [
 		location: new SourceLocation(289, 13, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "REPLACE", {
-		keyword: SqlKeyword.REPLACE,
+		keyword: SqlKeywords.REPLACE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(291, 13, 10),
@@ -421,7 +421,7 @@ export default [
 		location: new SourceLocation(292, 13, 11),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(299, 13, 18),
@@ -430,7 +430,7 @@ export default [
 		location: new SourceLocation(300, 13, 19),
 	}),
 	new Token(SqlTokenType.Identifier, "increment", {
-		keyword: SqlKeyword.INCREMENT,
+		keyword: SqlKeywords.INCREMENT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(308, 13, 27),
@@ -445,7 +445,7 @@ export default [
 		location: new SourceLocation(319, 13, 38),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(320, 13, 39),
@@ -465,7 +465,7 @@ export default [
 		location: new SourceLocation(330, 13, 49),
 	}),
 	new Token(SqlTokenType.Identifier, "integer", {
-		keyword: SqlKeyword.INTEGER,
+		keyword: SqlKeywords.INTEGER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(337, 13, 56),
@@ -474,7 +474,7 @@ export default [
 		location: new SourceLocation(338, 13, 57),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(345, 13, 64),
@@ -495,7 +495,7 @@ export default [
 		},
 	),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(411, 17, 3),
@@ -521,7 +521,7 @@ export default [
 		location: new SourceLocation(428, 17, 20),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(430, 18, 1),
@@ -530,7 +530,7 @@ export default [
 		location: new SourceLocation(431, 19, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(437, 19, 7),
@@ -550,11 +550,11 @@ export default [
 		location: new SourceLocation(450, 19, 20),
 	}),
 	new Token(SqlTokenType.Reserved, "in", {
-		keyword: SqlKeyword.IN,
+		keyword: SqlKeywords.IN,
 		location: new SourceLocation(451, 19, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
-		keyword: SqlKeyword.INT,
+		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(453, 19, 23),
@@ -566,7 +566,7 @@ export default [
 		location: new SourceLocation(457, 19, 27),
 	}),
 	new Token(SqlTokenType.Identifier, "out", {
-		keyword: SqlKeyword.OUT,
+		keyword: SqlKeywords.OUT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(458, 19, 28),
@@ -583,7 +583,7 @@ export default [
 		location: new SourceLocation(463, 19, 33),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
-		keyword: SqlKeyword.INT,
+		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(465, 19, 35),
@@ -595,7 +595,7 @@ export default [
 		location: new SourceLocation(469, 19, 39),
 	}),
 	new Token(SqlTokenType.Identifier, "out", {
-		keyword: SqlKeyword.OUT,
+		keyword: SqlKeywords.OUT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(470, 19, 40),
@@ -612,7 +612,7 @@ export default [
 		location: new SourceLocation(475, 19, 45),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
-		keyword: SqlKeyword.TEXT,
+		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(477, 19, 47),
@@ -629,7 +629,7 @@ export default [
 		location: new SourceLocation(482, 19, 52),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(484, 20, 1),
@@ -655,7 +655,7 @@ export default [
 		},
 	),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(539, 21, 1),
@@ -664,7 +664,7 @@ export default [
 		location: new SourceLocation(543, 21, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "SQL", {
-		keyword: SqlKeyword.SQL,
+		keyword: SqlKeywords.SQL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(551, 21, 13),
@@ -682,7 +682,7 @@ export default [
 		location: new SourceLocation(555, 21, 17),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(557, 22, 1),
@@ -691,7 +691,7 @@ export default [
 		location: new SourceLocation(558, 23, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(564, 23, 7),
@@ -711,7 +711,7 @@ export default [
 		location: new SourceLocation(577, 23, 20),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
-		keyword: SqlKeyword.INT,
+		keyword: SqlKeywords.INT,
 		location: new SourceLocation(578, 23, 21),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
@@ -726,7 +726,7 @@ export default [
 		location: new SourceLocation(583, 23, 26),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
-		keyword: SqlKeyword.TABLE,
+		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(590, 23, 33),
@@ -741,7 +741,7 @@ export default [
 		location: new SourceLocation(597, 23, 40),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
-		keyword: SqlKeyword.INT,
+		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(599, 23, 42),
@@ -761,7 +761,7 @@ export default [
 		location: new SourceLocation(605, 23, 48),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
-		keyword: SqlKeyword.TEXT,
+		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(607, 23, 50),
@@ -778,7 +778,7 @@ export default [
 		location: new SourceLocation(612, 23, 55),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(614, 24, 1),
@@ -804,7 +804,7 @@ export default [
 		},
 	),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(669, 25, 1),
@@ -813,7 +813,7 @@ export default [
 		location: new SourceLocation(673, 25, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "SQL", {
-		keyword: SqlKeyword.SQL,
+		keyword: SqlKeywords.SQL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(681, 25, 13),
@@ -831,7 +831,7 @@ export default [
 		location: new SourceLocation(685, 25, 17),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
-		keyword: SqlKeyword.CREATE,
+		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(687, 26, 1),
@@ -840,7 +840,7 @@ export default [
 		location: new SourceLocation(688, 27, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "FUNCTION", {
-		keyword: SqlKeyword.FUNCTION,
+		keyword: SqlKeywords.FUNCTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(694, 27, 7),
@@ -863,7 +863,7 @@ export default [
 		location: new SourceLocation(719, 27, 32),
 	}),
 	new Token(SqlTokenType.Identifier, "TEXT", {
-		keyword: SqlKeyword.TEXT,
+		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(724, 27, 37),
@@ -883,7 +883,7 @@ export default [
 		location: new SourceLocation(731, 27, 44),
 	}),
 	new Token(SqlTokenType.Identifier, "TEXT", {
-		keyword: SqlKeyword.TEXT,
+		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(735, 27, 48),
@@ -903,7 +903,7 @@ export default [
 		location: new SourceLocation(742, 28, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "BOOLEAN", {
-		keyword: SqlKeyword.BOOLEAN,
+		keyword: SqlKeywords.BOOLEAN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(749, 28, 8),
@@ -912,7 +912,7 @@ export default [
 		location: new SourceLocation(750, 28, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(757, 28, 16),
@@ -933,7 +933,7 @@ export default [
 		},
 	),
 	new Token(SqlTokenType.Identifier, "LANGUAGE", {
-		keyword: SqlKeyword.LANGUAGE,
+		keyword: SqlKeywords.LANGUAGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "  ", {
 				location: new SourceLocation(916, 37, 3),
@@ -955,7 +955,7 @@ export default [
 		location: new SourceLocation(927, 37, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "SECURITY", {
-		keyword: SqlKeyword.SECURITY,
+		keyword: SqlKeywords.SECURITY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(935, 38, 1),
@@ -964,7 +964,7 @@ export default [
 		location: new SourceLocation(939, 38, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "DEFINER", {
-		keyword: SqlKeyword.DEFINER,
+		keyword: SqlKeywords.DEFINER,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(947, 38, 13),
@@ -978,7 +978,7 @@ export default [
 		location: new SourceLocation(948, 38, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "SET", {
-		keyword: SqlKeyword.SET,
+		keyword: SqlKeywords.SET,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(956, 39, 1),
@@ -1006,7 +1006,7 @@ export default [
 		location: new SourceLocation(977, 40, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "admin", {
-		keyword: SqlKeyword.ADMIN,
+		keyword: SqlKeywords.ADMIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(978, 40, 22),

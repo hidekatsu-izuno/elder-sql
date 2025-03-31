@@ -5,86 +5,82 @@ import {
 	SourceLocation,
 	Token,
 } from "../lexer.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 
-const ObjectStartSet = new Set<Keyword>([
-	SqlKeyword.TABLE,
-	SqlKeyword.VIEW,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.INDEX,
-]);
+const keywords = new SqlKeywords();
+keywords.options(SqlKeywords.TABLE).reserved = true;
 
 const ReservedSet = new Set<Keyword>([
-	SqlKeyword.ADD,
-	SqlKeyword.ALL,
-	SqlKeyword.ALTER,
-	SqlKeyword.AND,
-	SqlKeyword.AS,
-	SqlKeyword.AUTOINCREMENT,
-	SqlKeyword.BETWEEN,
-	SqlKeyword.CASE,
-	SqlKeyword.CHECK,
-	SqlKeyword.COLLATE,
-	SqlKeyword.COMMIT,
-	SqlKeyword.CONSTRAINT,
-	SqlKeyword.CREATE,
-	SqlKeyword.CROSS,
-	SqlKeyword.CURRENT_DATE,
-	SqlKeyword.CURRENT_TIME,
-	SqlKeyword.CURRENT_TIMESTAMP,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DEFERRABLE,
-	SqlKeyword.DELETE,
-	SqlKeyword.DISTINCT,
-	SqlKeyword.ELSE,
-	SqlKeyword.ESCAPE,
-	SqlKeyword.EXISTS,
-	SqlKeyword.FILTER,
-	SqlKeyword.FOREIGN,
-	SqlKeyword.FROM,
-	SqlKeyword.GLOB,
-	SqlKeyword.GROUP,
-	SqlKeyword.HAVING,
-	SqlKeyword.IN,
-	SqlKeyword.INDEX,
-	SqlKeyword.INDEXED,
-	SqlKeyword.INNER,
-	SqlKeyword.INSERT,
-	SqlKeyword.INTO,
-	SqlKeyword.IS,
-	SqlKeyword.ISNULL,
-	SqlKeyword.JOIN,
-	SqlKeyword.LEFT,
-	SqlKeyword.LIMIT,
-	SqlKeyword.NATURAL,
-	SqlKeyword.NOT,
-	SqlKeyword.NOTHING,
-	SqlKeyword.NOTNULL,
-	SqlKeyword.NULL,
-	SqlKeyword.ON,
-	SqlKeyword.OR,
-	SqlKeyword.ORDER,
-	SqlKeyword.PRIMARY,
-	SqlKeyword.OUTER,
-	SqlKeyword.OVER,
-	SqlKeyword.REFERENCES,
-	SqlKeyword.REGEXP,
-	SqlKeyword.RETURNING,
-	SqlKeyword.RIGHT,
-	SqlKeyword.SELECT,
-	SqlKeyword.SET,
-	SqlKeyword.TABLE,
-	SqlKeyword.TEMPORARY,
-	SqlKeyword.THEN,
-	SqlKeyword.TO,
-	SqlKeyword.TRANSACTION,
-	SqlKeyword.UNIQUE,
-	SqlKeyword.UPDATE,
-	SqlKeyword.USING,
-	SqlKeyword.VALUES,
-	SqlKeyword.WHEN,
-	SqlKeyword.WHERE,
-	SqlKeyword.WINDOW,
+	SqlKeywords.ADD,
+	SqlKeywords.ALL,
+	SqlKeywords.ALTER,
+	SqlKeywords.AND,
+	SqlKeywords.AS,
+	SqlKeywords.AUTOINCREMENT,
+	SqlKeywords.BETWEEN,
+	SqlKeywords.CASE,
+	SqlKeywords.CHECK,
+	SqlKeywords.COLLATE,
+	SqlKeywords.COMMIT,
+	SqlKeywords.CONSTRAINT,
+	SqlKeywords.CREATE,
+	SqlKeywords.CROSS,
+	SqlKeywords.CURRENT_DATE,
+	SqlKeywords.CURRENT_TIME,
+	SqlKeywords.CURRENT_TIMESTAMP,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DEFERRABLE,
+	SqlKeywords.DELETE,
+	SqlKeywords.DISTINCT,
+	SqlKeywords.ELSE,
+	SqlKeywords.ESCAPE,
+	SqlKeywords.EXISTS,
+	SqlKeywords.FILTER,
+	SqlKeywords.FOREIGN,
+	SqlKeywords.FROM,
+	SqlKeywords.GLOB,
+	SqlKeywords.GROUP,
+	SqlKeywords.HAVING,
+	SqlKeywords.IN,
+	SqlKeywords.INDEX,
+	SqlKeywords.INDEXED,
+	SqlKeywords.INNER,
+	SqlKeywords.INSERT,
+	SqlKeywords.INTO,
+	SqlKeywords.IS,
+	SqlKeywords.ISNULL,
+	SqlKeywords.JOIN,
+	SqlKeywords.LEFT,
+	SqlKeywords.LIMIT,
+	SqlKeywords.NATURAL,
+	SqlKeywords.NOT,
+	SqlKeywords.NOTHING,
+	SqlKeywords.NOTNULL,
+	SqlKeywords.NULL,
+	SqlKeywords.ON,
+	SqlKeywords.OR,
+	SqlKeywords.ORDER,
+	SqlKeywords.PRIMARY,
+	SqlKeywords.OUTER,
+	SqlKeywords.OVER,
+	SqlKeywords.REFERENCES,
+	SqlKeywords.REGEXP,
+	SqlKeywords.RETURNING,
+	SqlKeywords.RIGHT,
+	SqlKeywords.SELECT,
+	SqlKeywords.SET,
+	SqlKeywords.TABLE,
+	SqlKeywords.TEMPORARY,
+	SqlKeywords.THEN,
+	SqlKeywords.TO,
+	SqlKeywords.TRANSACTION,
+	SqlKeywords.UNIQUE,
+	SqlKeywords.UPDATE,
+	SqlKeywords.USING,
+	SqlKeywords.VALUES,
+	SqlKeywords.WHEN,
+	SqlKeywords.WHERE,
+	SqlKeywords.WINDOW,
 ]);
 
 const Mode = {
@@ -101,10 +97,6 @@ export declare type Sqlite3LexerOptions = LexerOptions & {
 };
 
 export class Sqlite3Lexer extends Lexer {
-	static isObjectStart(keyword?: Keyword) {
-		return keyword != null && ObjectStartSet.has(keyword);
-	}
-
 	private reserved = new Set<Keyword>();
 
 	constructor(options: Sqlite3LexerOptions = {}) {
@@ -113,7 +105,12 @@ export class Sqlite3Lexer extends Lexer {
 			[
 				{ type: SqlTokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
+				{
+					type: SqlTokenType.LineBreak,
+					re: /\n|\r\n?/y,
+					skip: true,
+					separator: true,
+				},
 				{ type: SqlTokenType.WhiteSpace, re: /[ \t\f]+/y, skip: true },
 				{
 					type: SqlTokenType.Delimiter,
@@ -173,33 +170,26 @@ export class Sqlite3Lexer extends Lexer {
 
 		const compileOptions = new Set(options.compileOptions || []);
 		if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
-			this.reserved.add(SqlKeyword.ALWAYS);
-			this.reserved.add(SqlKeyword.GENERATED);
+			this.reserved.add(SqlKeywords.ALWAYS);
+			this.reserved.add(SqlKeywords.GENERATED);
 		}
 		if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
-			this.reserved.add(SqlKeyword.CURRENT);
-			this.reserved.add(SqlKeyword.EXCLUDE);
-			this.reserved.add(SqlKeyword.FOLLOWING);
-			this.reserved.add(SqlKeyword.GROUPS);
-			this.reserved.add(SqlKeyword.OTHERS);
-			this.reserved.add(SqlKeyword.PARTITION);
-			this.reserved.add(SqlKeyword.PRECEDING);
-			this.reserved.add(SqlKeyword.RANGE);
-			this.reserved.add(SqlKeyword.TIES);
-			this.reserved.add(SqlKeyword.UNBOUNDED);
+			this.reserved.add(SqlKeywords.CURRENT);
+			this.reserved.add(SqlKeywords.EXCLUDE);
+			this.reserved.add(SqlKeywords.FOLLOWING);
+			this.reserved.add(SqlKeywords.GROUPS);
+			this.reserved.add(SqlKeywords.OTHERS);
+			this.reserved.add(SqlKeywords.PARTITION);
+			this.reserved.add(SqlKeywords.PRECEDING);
+			this.reserved.add(SqlKeywords.RANGE);
+			this.reserved.add(SqlKeywords.TIES);
+			this.reserved.add(SqlKeywords.UNBOUNDED);
 		}
 		if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
-			this.reserved.add(SqlKeyword.EXCEPT);
-			this.reserved.add(SqlKeyword.INTERSECT);
-			this.reserved.add(SqlKeyword.UNION);
+			this.reserved.add(SqlKeywords.EXCEPT);
+			this.reserved.add(SqlKeywords.INTERSECT);
+			this.reserved.add(SqlKeywords.UNION);
 		}
-	}
-
-	isReserved(keyword?: Keyword) {
-		return (
-			keyword != null &&
-			(ReservedSet.has(keyword) || this.reserved.has(keyword))
-		);
 	}
 
 	protected initState(state: Record<string, any>): void {
@@ -324,37 +314,40 @@ export class Sqlite3Lexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeyword.for(token.text);
+		const keyword = SqlKeywords.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
-			if (this.isReserved(keyword)) {
+			if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
 				token.type = SqlTokenType.Reserved;
 			}
 
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeyword.CREATE) {
+				if (keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				Sqlite3Lexer.isObjectStart(keyword)
+				(keyword === SqlKeywords.TABLE ||
+					keyword === SqlKeywords.VIEW ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.INDEX)
 			) {
-				if (keyword === SqlKeyword.TRIGGER) {
+				if (keyword === SqlKeywords.TRIGGER) {
 					state.mode = Mode.SQL_PROC_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (state.mode === Mode.SQL_PROC_DEF) {
-				if (keyword === SqlKeyword.BEGIN) {
+				if (keyword === SqlKeywords.BEGIN) {
 					state.mode = Mode.SQL_PROC_BODY;
 					state.stack = [{ isSentenceStart: true, type: keyword }];
 				}
 			} else if (state.mode === Mode.SQL_PROC_BODY) {
 				const ctx = state.stack[state.stack.length - 1];
 				if (ctx.isSentenceStart) {
-					if (keyword === SqlKeyword.END) {
+					if (keyword === SqlKeywords.END) {
 						state.stack.pop();
 						if (state.stack.length === 0) {
 							state.mode = Mode.SQL_PART;

@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "COMMIT", {
-		keyword: SqlKeyword.COMMIT,
+		keyword: SqlKeywords.COMMIT,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -16,11 +16,11 @@ export default [
 		location: new SourceLocation(6, 1, 6),
 	}),
 	new Token(SqlTokenType.Reserved, "COMMIT", {
-		keyword: SqlKeyword.COMMIT,
+		keyword: SqlKeywords.COMMIT,
 		location: new SourceLocation(8, 2, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(14, 2, 7),
@@ -38,7 +38,7 @@ export default [
 		location: new SourceLocation(26, 2, 19),
 	}),
 	new Token(SqlTokenType.Identifier, "END", {
-		keyword: SqlKeyword.END,
+		keyword: SqlKeywords.END,
 		location: new SourceLocation(28, 3, 1),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -51,11 +51,11 @@ export default [
 		location: new SourceLocation(31, 3, 4),
 	}),
 	new Token(SqlTokenType.Identifier, "END", {
-		keyword: SqlKeyword.END,
+		keyword: SqlKeywords.END,
 		location: new SourceLocation(33, 4, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TRANSACTION", {
-		keyword: SqlKeyword.TRANSACTION,
+		keyword: SqlKeywords.TRANSACTION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(36, 4, 4),

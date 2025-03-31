@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "REINDEX", {
-		keyword: SqlKeyword.REINDEX,
+		keyword: SqlKeywords.REINDEX,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -16,7 +16,7 @@ export default [
 		location: new SourceLocation(7, 1, 7),
 	}),
 	new Token(SqlTokenType.Identifier, "REINDEX", {
-		keyword: SqlKeyword.REINDEX,
+		keyword: SqlKeywords.REINDEX,
 		location: new SourceLocation(9, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "test_collation", {
@@ -37,11 +37,11 @@ export default [
 		location: new SourceLocation(31, 2, 23),
 	}),
 	new Token(SqlTokenType.Identifier, "REINDEX", {
-		keyword: SqlKeyword.REINDEX,
+		keyword: SqlKeywords.REINDEX,
 		location: new SourceLocation(33, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(40, 3, 8),
@@ -51,7 +51,7 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(45, 3, 13) }),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
 				location: new SourceLocation(52, 3, 20),

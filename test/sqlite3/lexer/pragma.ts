@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "analysis_limit", {
@@ -24,7 +24,7 @@ export default [
 		location: new SourceLocation(21, 1, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(23, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "analysis_limit", {
@@ -61,11 +61,11 @@ export default [
 		location: new SourceLocation(48, 2, 26),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(50, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(56, 3, 7),
@@ -87,11 +87,11 @@ export default [
 		location: new SourceLocation(76, 3, 27),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(78, 4, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(84, 4, 7),
@@ -137,11 +137,11 @@ export default [
 		location: new SourceLocation(110, 4, 33),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(112, 5, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "Test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(118, 5, 7),
@@ -165,11 +165,11 @@ export default [
 		location: new SourceLocation(135, 5, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(137, 6, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "Test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(143, 6, 7),
@@ -192,7 +192,7 @@ export default [
 		location: new SourceLocation(161, 6, 25),
 	}),
 	new Token(SqlTokenType.Identifier, "NONE", {
-		keyword: SqlKeyword.NONE,
+		keyword: SqlKeywords.NONE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(162, 6, 26),
@@ -210,7 +210,7 @@ export default [
 		location: new SourceLocation(167, 6, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "pragma", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(169, 7, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "automatic_index", {
@@ -231,7 +231,7 @@ export default [
 		location: new SourceLocation(191, 7, 23),
 	}),
 	new Token(SqlTokenType.Identifier, "pragma", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(193, 8, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "automatic_index", {
@@ -251,7 +251,7 @@ export default [
 		location: new SourceLocation(216, 8, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "true", {
-		keyword: SqlKeyword.TRUE,
+		keyword: SqlKeywords.TRUE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(217, 8, 25),
@@ -269,11 +269,11 @@ export default [
 		location: new SourceLocation(222, 8, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "PRAGMA", {
-		keyword: SqlKeyword.PRAGMA,
+		keyword: SqlKeywords.PRAGMA,
 		location: new SourceLocation(224, 9, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeyword.TEST,
+		keyword: SqlKeywords.TEST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(230, 9, 7),

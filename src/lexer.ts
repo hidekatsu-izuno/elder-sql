@@ -14,11 +14,74 @@ export class TokenType {
 	}
 }
 
+declare type KeywordMapEntry = {
+	keyword: Keyword;
+	options?: Record<string, any>;
+};
+
+export class KeywordMap {
+	private map = new Map<string, KeywordMapEntry>();
+	private imap = new Map<string, KeywordMapEntry>();
+
+	constructor() {
+		for (const key of Object.keys(this.constructor)) {
+			const keyword = (this.constructor as any)[key];
+			if (keyword instanceof Keyword) {
+				if (keyword.ignoreCase) {
+					this.imap.set(keyword.name.toLowerCase(), { keyword });
+				} else {
+					this.map.set(keyword.name, { keyword });
+				}
+			}
+		}
+	}
+
+	get(name: string): Keyword | undefined {
+		let entry = this.map.get(name);
+		if (entry) {
+			return entry.keyword;
+		}
+
+		const iname = name.toLowerCase();
+		entry = this.imap.get(iname);
+		if (entry) {
+			return entry.keyword;
+		}
+	}
+
+	options(keyword: Keyword, options?: Record<string, any>) {
+		let entry: ReturnType<typeof this.map.get>;
+		if (keyword.ignoreCase) {
+			entry = this.imap.get(keyword.name.toLowerCase());
+		} else {
+			entry = this.map.get(keyword.name);
+		}
+		if (options) {
+			if (entry) {
+				entry.options = options;
+			} else {
+				this.map.set(keyword.name, {
+					keyword,
+					options,
+				});
+			}
+		}
+		return entry?.options;
+	}
+}
+
 export class Keyword {
 	name: string;
+	ignoreCase: boolean;
 
-	constructor(name: string) {
+	constructor(
+		name: string,
+		options?: {
+			ignoreCase?: boolean;
+		},
+	) {
 		this.name = name;
+		this.ignoreCase = !!options?.ignoreCase;
 	}
 
 	toString() {
@@ -163,6 +226,7 @@ export declare type TokenPattern = {
 	re: RegExp | ((state: Record<string, any>) => RegExp | false);
 	skip?: boolean;
 	separator?: boolean;
+	keywords?: KeywordMap;
 	onMatch?: (state: Record<string, any>, token: Token) => Token[] | void;
 	onUnmatch?: (state: Record<string, any>) => void;
 };

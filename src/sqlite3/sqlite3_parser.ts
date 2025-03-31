@@ -1,7 +1,7 @@
 import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.js";
 import { AggregateParseError, CstBuilder, Parser } from "../parser.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 import { dequote } from "../utils.js";
 import { Sqlite3Lexer } from "./sqlite3_lexer.js";
 
@@ -29,7 +29,7 @@ export class Sqlite3Parser extends Parser {
 					b.token(r.consume());
 				} else if (r.peekIf(SqlTokenType.Command)) {
 					this.command(b, r);
-				} else if (r.peekIf(SqlKeyword.EXPLAIN)) {
+				} else if (r.peekIf(SqlKeywords.EXPLAIN)) {
 					this.explainStatement(b, r);
 				} else {
 					this.statement(b, r);
@@ -102,11 +102,11 @@ export class Sqlite3Parser extends Parser {
 	private explainStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
-			b.token(r.consume(SqlKeyword.EXPLAIN));
-			if (r.peekIf(SqlKeyword.QUERY)) {
+			b.token(r.consume(SqlKeywords.EXPLAIN));
+			if (r.peekIf(SqlKeywords.QUERY)) {
 				b.start("QueryPlanOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.PLAN));
+				b.token(r.consume(SqlKeywords.PLAN));
 				b.end();
 			}
 			this.statement(b, r);
@@ -121,91 +121,99 @@ export class Sqlite3Parser extends Parser {
 
 	private statement(b: CstBuilder, r: TokenReader) {
 		let stmt: Element | undefined;
-		if (r.peekIf(SqlKeyword.CREATE)) {
+		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
 			r.consume();
-			while (!r.peek().eos && !Sqlite3Lexer.isObjectStart(r.peek().keyword)) {
+			while (
+				!r.peek().eos &&
+				!r.peekIf([
+					SqlKeywords.TABLE,
+					SqlKeywords.VIEW,
+					SqlKeywords.TRIGGER,
+					SqlKeywords.INDEX,
+				])
+			) {
 				r.consume();
 			}
 
-			if (r.peekIf(SqlKeyword.TABLE)) {
+			if (r.peekIf(SqlKeywords.TABLE)) {
 				r.pos = mark;
 				stmt = this.createTableStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.VIEW)) {
+			} else if (r.peekIf(SqlKeywords.VIEW)) {
 				r.pos = mark;
 				stmt = this.createViewStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.TRIGGER)) {
+			} else if (r.peekIf(SqlKeywords.TRIGGER)) {
 				r.pos = mark;
 				stmt = this.createTriggerStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.INDEX)) {
+			} else if (r.peekIf(SqlKeywords.INDEX)) {
 				r.pos = mark;
 				stmt = this.createIndexStatement(b, r);
 			} else {
 				r.pos = mark;
 			}
-		} else if (r.peekIf(SqlKeyword.ALTER)) {
+		} else if (r.peekIf(SqlKeywords.ALTER)) {
 			const mark = r.pos;
 			r.consume();
 
-			if (r.peekIf(SqlKeyword.TABLE)) {
+			if (r.peekIf(SqlKeywords.TABLE)) {
 				r.pos = mark;
 				stmt = this.alterTableStatement(b, r);
 			} else {
 				r.pos = mark;
 			}
-		} else if (r.peekIf(SqlKeyword.DROP)) {
+		} else if (r.peekIf(SqlKeywords.DROP)) {
 			const mark = r.pos;
 			r.consume();
 
-			if (r.peekIf(SqlKeyword.TABLE)) {
+			if (r.peekIf(SqlKeywords.TABLE)) {
 				r.pos = mark;
 				stmt = this.dropTableStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.VIEW)) {
+			} else if (r.peekIf(SqlKeywords.VIEW)) {
 				r.pos = mark;
 				stmt = this.dropViewStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.TRIGGER)) {
+			} else if (r.peekIf(SqlKeywords.TRIGGER)) {
 				r.pos = mark;
 				stmt = this.dropTriggerStatement(b, r);
-			} else if (r.peekIf(SqlKeyword.INDEX)) {
+			} else if (r.peekIf(SqlKeywords.INDEX)) {
 				r.pos = mark;
 				stmt = this.dropIndexStatement(b, r);
 			} else {
 				r.pos = mark;
 			}
-		} else if (r.peekIf(SqlKeyword.ATTACH)) {
+		} else if (r.peekIf(SqlKeywords.ATTACH)) {
 			stmt = this.attachDatabaseStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.DETACH)) {
+		} else if (r.peekIf(SqlKeywords.DETACH)) {
 			stmt = this.detachDatabaseStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.ANALYZE)) {
+		} else if (r.peekIf(SqlKeywords.ANALYZE)) {
 			stmt = this.analyzeStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.REINDEX)) {
+		} else if (r.peekIf(SqlKeywords.REINDEX)) {
 			stmt = this.reindexStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.VACUUM)) {
+		} else if (r.peekIf(SqlKeywords.VACUUM)) {
 			stmt = this.vacuumStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.PRAGMA)) {
+		} else if (r.peekIf(SqlKeywords.PRAGMA)) {
 			stmt = this.pragmaStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.BEGIN)) {
+		} else if (r.peekIf(SqlKeywords.BEGIN)) {
 			stmt = this.beginTransactionStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.SAVEPOINT)) {
+		} else if (r.peekIf(SqlKeywords.SAVEPOINT)) {
 			stmt = this.savepointStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.RELEASE)) {
+		} else if (r.peekIf(SqlKeywords.RELEASE)) {
 			stmt = this.releaseSavepointStatement(b, r);
-		} else if (r.peekIf([SqlKeyword.COMMIT, SqlKeyword.END])) {
+		} else if (r.peekIf([SqlKeywords.COMMIT, SqlKeywords.END])) {
 			stmt = this.commitTransactionStatement(b, r);
-		} else if (r.peekIf(SqlKeyword.ROLLBACK)) {
+		} else if (r.peekIf(SqlKeywords.ROLLBACK)) {
 			stmt = this.rollbackTransactionStatement(b, r);
 		} else {
 			let withClause: ReturnType<typeof this.withClause> | undefined;
-			if (r.peekIf(SqlKeyword.WITH)) {
+			if (r.peekIf(SqlKeywords.WITH)) {
 				withClause = this.withClause(b, r);
 			}
-			if (r.peekIf([SqlKeyword.INSERT, SqlKeyword.REPLACE])) {
+			if (r.peekIf([SqlKeywords.INSERT, SqlKeywords.REPLACE])) {
 				stmt = this.insertStatement(b, r, withClause);
-			} else if (r.peekIf(SqlKeyword.UPDATE)) {
+			} else if (r.peekIf(SqlKeywords.UPDATE)) {
 				stmt = this.updateStatement(b, r, withClause);
-			} else if (r.peekIf(SqlKeyword.DELETE)) {
+			} else if (r.peekIf(SqlKeywords.DELETE)) {
 				stmt = this.deleteStatement(b, r, withClause);
-			} else if (r.peekIf([SqlKeyword.SELECT, SqlKeyword.VALUES])) {
+			} else if (r.peekIf([SqlKeywords.SELECT, SqlKeywords.VALUES])) {
 				stmt = this.selectStatement(b, r, withClause);
 			}
 		}
@@ -219,24 +227,24 @@ export class Sqlite3Parser extends Parser {
 	private createTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateTableStatement");
 		try {
-			b.token(r.consume(SqlKeyword.CREATE));
+			b.token(r.consume(SqlKeywords.CREATE));
 			let virtual = false;
-			if (r.peekIf([SqlKeyword.TEMPORARY, SqlKeyword.TEMP])) {
+			if (r.peekIf([SqlKeywords.TEMPORARY, SqlKeywords.TEMP])) {
 				b.start("TemporaryOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
+			} else if (r.peekIf(SqlKeywords.VIRTUAL)) {
 				b.start("VirtualOption");
 				b.token(r.consume());
 				b.end();
 				virtual = true;
 			}
-			b.token(r.consume(SqlKeyword.TABLE));
-			if (r.peekIf(SqlKeyword.IF)) {
+			b.token(r.consume(SqlKeywords.TABLE));
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfNotExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.NOT));
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.NOT));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 			const ident = this.identifier(b, r, "ObjectName");
@@ -247,7 +255,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			if (virtual) {
 				b.start("UsingModuleClause");
-				b.token(r.consume(SqlKeyword.USING));
+				b.token(r.consume(SqlKeywords.USING));
 				this.identifier(b, r, "ModuleName");
 				if (r.peekIf(SqlTokenType.LeftParen)) {
 					b.token(r.consume());
@@ -281,12 +289,12 @@ export class Sqlite3Parser extends Parser {
 						if (!hasTableConstraint) {
 							if (
 								r.peekIf([
-									SqlKeyword.CONSTRAINT,
-									SqlKeyword.UNIQUE,
-									SqlKeyword.CHECK,
-									SqlKeyword.FOREIGN,
+									SqlKeywords.CONSTRAINT,
+									SqlKeywords.UNIQUE,
+									SqlKeywords.CHECK,
+									SqlKeywords.FOREIGN,
 								]) ||
-								r.peekIf(SqlKeyword.PRIMARY, SqlKeyword.KEY)
+								r.peekIf(SqlKeywords.PRIMARY, SqlKeywords.KEY)
 							) {
 								hasTableConstraint = true;
 							} else {
@@ -306,13 +314,13 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume(SqlTokenType.RightParen));
 
-				while (r.peekIf([SqlKeyword.WITHOUT, SqlKeyword.STRICT])) {
-					if (r.peekIf(SqlKeyword.WITHOUT)) {
+				while (r.peekIf([SqlKeywords.WITHOUT, SqlKeywords.STRICT])) {
+					if (r.peekIf(SqlKeywords.WITHOUT)) {
 						b.start("WithoutRowidOption");
 						b.token(r.consume());
-						b.token(r.consume(SqlKeyword.ROWID));
+						b.token(r.consume(SqlKeywords.ROWID));
 						b.end();
-					} else if (r.peekIf(SqlKeyword.STRICT)) {
+					} else if (r.peekIf(SqlKeywords.STRICT)) {
 						b.start("StrictOption");
 						b.token(r.consume());
 						b.end();
@@ -323,7 +331,7 @@ export class Sqlite3Parser extends Parser {
 						break;
 					}
 				}
-			} else if (r.peekIf(SqlKeyword.AS)) {
+			} else if (r.peekIf(SqlKeywords.AS)) {
 				b.token(r.consume());
 				this.selectStatement(b, r);
 			} else {
@@ -341,18 +349,18 @@ export class Sqlite3Parser extends Parser {
 	private createViewStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateViewStatement");
 		try {
-			b.token(r.consume(SqlKeyword.CREATE));
-			if (r.peekIf([SqlKeyword.TEMPORARY, SqlKeyword.TEMP])) {
+			b.token(r.consume(SqlKeywords.CREATE));
+			if (r.peekIf([SqlKeywords.TEMPORARY, SqlKeywords.TEMP])) {
 				b.start("TemporaryOption");
 				b.token(r.consume());
 				b.end();
 			}
-			b.token(r.consume(SqlKeyword.VIEW));
-			if (r.peekIf(SqlKeyword.IF)) {
+			b.token(r.consume(SqlKeywords.VIEW));
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfNotExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.NOT));
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.NOT));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 			const ident = this.identifier(b, r, "ObjectName");
@@ -366,7 +374,7 @@ export class Sqlite3Parser extends Parser {
 				this.columnList(b, r);
 				b.token(r.consume(SqlTokenType.RightParen));
 			}
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 			this.selectStatement(b, r);
 		} catch (err) {
 			if (err instanceof ParseError) {
@@ -380,18 +388,18 @@ export class Sqlite3Parser extends Parser {
 	private createTriggerStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateTriggerStatement");
 		try {
-			b.token(r.consume(SqlKeyword.CREATE));
-			if (r.peekIf(SqlKeyword.TEMPORARY) || r.peekIf(SqlKeyword.TEMP)) {
+			b.token(r.consume(SqlKeywords.CREATE));
+			if (r.peekIf(SqlKeywords.TEMPORARY) || r.peekIf(SqlKeywords.TEMP)) {
 				b.start("TemporaryOption");
 				b.token(r.consume());
 				b.end();
 			}
-			b.token(r.consume(SqlKeyword.TRIGGER));
-			if (r.peekIf(SqlKeyword.IF)) {
+			b.token(r.consume(SqlKeywords.TRIGGER));
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfNotExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.NOT));
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.NOT));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 			const ident = this.identifier(b, r, "ObjectName");
@@ -401,27 +409,27 @@ export class Sqlite3Parser extends Parser {
 				this.identifier(b, r, "ObjectName");
 			}
 			let option: ReturnType<typeof b.end> | undefined;
-			if (r.peekIf(SqlKeyword.BEFORE)) {
+			if (r.peekIf(SqlKeywords.BEFORE)) {
 				b.start("BeforeOption");
 				b.token(r.consume());
 				option = b.end();
-			} else if (r.peekIf(SqlKeyword.AFTER)) {
+			} else if (r.peekIf(SqlKeywords.AFTER)) {
 				option = b.start("AfterOption");
 				b.token(r.consume());
 				option = b.end();
-			} else if (r.peekIf(SqlKeyword.INSTEAD)) {
+			} else if (r.peekIf(SqlKeywords.INSTEAD)) {
 				option = b.start("InsteadOfOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.OF));
+				b.token(r.consume(SqlKeywords.OF));
 				option = b.end();
 			}
-			if (r.peekIf(SqlKeyword.INSERT)) {
+			if (r.peekIf(SqlKeywords.INSERT)) {
 				b.start("InsertOnClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ON));
+				b.token(r.consume(SqlKeywords.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
 					b.type("SchemaName", ident);
@@ -429,13 +437,13 @@ export class Sqlite3Parser extends Parser {
 					this.identifier(b, r, "ObjectName");
 				}
 				b.end();
-			} else if (r.peekIf(SqlKeyword.UPDATE)) {
+			} else if (r.peekIf(SqlKeywords.UPDATE)) {
 				b.start("UpdateOnClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.OF)) {
+				if (r.peekIf(SqlKeywords.OF)) {
 					b.start("ColumnList");
 					b.token(r.consume());
 					do {
@@ -448,7 +456,7 @@ export class Sqlite3Parser extends Parser {
 					} while (!r.peek().eos);
 					b.end();
 				}
-				b.token(r.consume(SqlKeyword.ON));
+				b.token(r.consume(SqlKeywords.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
 					b.type("SchemaName", ident);
@@ -456,13 +464,13 @@ export class Sqlite3Parser extends Parser {
 					this.identifier(b, r, "ObjectName");
 				}
 				b.end();
-			} else if (r.peekIf(SqlKeyword.DELETE)) {
+			} else if (r.peekIf(SqlKeywords.DELETE)) {
 				b.start("DeleteOnClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ON));
+				b.token(r.consume(SqlKeywords.ON));
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
 					b.type("SchemaName", ident);
@@ -473,34 +481,34 @@ export class Sqlite3Parser extends Parser {
 			} else {
 				throw r.createParseError();
 			}
-			if (r.peekIf(SqlKeyword.FOR)) {
+			if (r.peekIf(SqlKeywords.FOR)) {
 				b.start("ForEachRowOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.EACH));
-				b.token(r.consume(SqlKeyword.ROW));
+				b.token(r.consume(SqlKeywords.EACH));
+				b.token(r.consume(SqlKeywords.ROW));
 				b.end();
 			}
-			if (r.peekIf(SqlKeyword.WHEN)) {
+			if (r.peekIf(SqlKeywords.WHEN)) {
 				b.start("WhenClause");
 				b.token(r.consume());
 				this.expression(b, r);
 				b.end();
 			}
 			b.start("BeginStatement");
-			b.token(r.consume(SqlKeyword.BEGIN));
+			b.token(r.consume(SqlKeywords.BEGIN));
 			{
 				b.start("BeginBlock");
 				let withClause: ReturnType<typeof this.withClause> | undefined;
-				if (r.peekIf(SqlKeyword.WITH)) {
+				if (r.peekIf(SqlKeywords.WITH)) {
 					withClause = this.withClause(b, r);
 				}
-				if (r.peekIf([SqlKeyword.INSERT, SqlKeyword.REPLACE])) {
+				if (r.peekIf([SqlKeywords.INSERT, SqlKeywords.REPLACE])) {
 					this.insertStatement(b, r, withClause);
-				} else if (r.peekIf(SqlKeyword.UPDATE)) {
+				} else if (r.peekIf(SqlKeywords.UPDATE)) {
 					this.updateStatement(b, r, withClause);
-				} else if (r.peekIf(SqlKeyword.DELETE)) {
+				} else if (r.peekIf(SqlKeywords.DELETE)) {
 					this.deleteStatement(b, r, withClause);
-				} else if (r.peekIf(SqlKeyword.SELECT)) {
+				} else if (r.peekIf(SqlKeywords.SELECT)) {
 					this.selectStatement(b, r, withClause);
 				} else {
 					throw r.createParseError();
@@ -508,7 +516,7 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume(SqlTokenType.SemiColon));
 				b.end();
 			}
-			b.token(r.consume(SqlKeyword.END));
+			b.token(r.consume(SqlKeywords.END));
 			b.end();
 		} catch (err) {
 			if (err instanceof ParseError) {
@@ -522,18 +530,18 @@ export class Sqlite3Parser extends Parser {
 	private createIndexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateIndexStatement");
 		try {
-			b.token(r.consume(SqlKeyword.CREATE));
-			if (r.peekIf(SqlKeyword.UNIQUE)) {
+			b.token(r.consume(SqlKeywords.CREATE));
+			if (r.peekIf(SqlKeywords.UNIQUE)) {
 				b.start("UniqueOption");
 				b.token(r.consume());
 				b.end();
 			}
-			b.token(r.consume(SqlKeyword.INDEX));
-			if (r.peekIf(SqlKeyword.IF)) {
+			b.token(r.consume(SqlKeywords.INDEX));
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfNotExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.NOT));
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.NOT));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 			const ident = this.identifier(b, r, "ObjectName");
@@ -543,7 +551,7 @@ export class Sqlite3Parser extends Parser {
 				this.identifier(b, r, "ObjectName");
 			}
 			b.start("IndexOnClause");
-			b.token(r.consume(SqlKeyword.ON));
+			b.token(r.consume(SqlKeywords.ON));
 			this.identifier(b, r, "ObjectName");
 			b.token(r.consume(SqlTokenType.LeftParen));
 			b.start("SortColumnList");
@@ -558,7 +566,7 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 			b.end();
-			if (r.peekIf(SqlKeyword.WHERE)) {
+			if (r.peekIf(SqlKeywords.WHERE)) {
 				this.whereClause(b, r);
 			}
 		} catch (err) {
@@ -573,44 +581,44 @@ export class Sqlite3Parser extends Parser {
 	private alterTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AlterTableStatement");
 		try {
-			b.token(r.consume(SqlKeyword.ALTER));
-			b.token(r.consume(SqlKeyword.TABLE));
+			b.token(r.consume(SqlKeywords.ALTER));
+			b.token(r.consume(SqlKeywords.TABLE));
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
 				b.type("SchemaName", ident);
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 			}
-			if (r.peekIf(SqlKeyword.RENAME, SqlKeyword.TO)) {
+			if (r.peekIf(SqlKeywords.RENAME, SqlKeywords.TO)) {
 				b.start("RenameToObjectClause");
 				b.token(r.consume());
 				b.token(r.consume());
 				this.identifier(b, r, "ObjectName");
 				b.end();
-			} else if (r.peekIf(SqlKeyword.RENAME)) {
+			} else if (r.peekIf(SqlKeywords.RENAME)) {
 				b.start("RenameColumnClause");
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.COLUMN)) {
+				if (r.peekIf(SqlKeywords.COLUMN)) {
 					b.token(r.consume());
 				}
 				this.identifier(b, r, "ColumnName");
 				b.start("RenameToColumnClause");
-				b.token(r.consume(SqlKeyword.TO));
+				b.token(r.consume(SqlKeywords.TO));
 				this.identifier(b, r, "ColumnName");
 				b.end();
 				b.end();
-			} else if (r.peekIf(SqlKeyword.ADD)) {
+			} else if (r.peekIf(SqlKeywords.ADD)) {
 				b.start("AddColumnClause");
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.COLUMN)) {
+				if (r.peekIf(SqlKeywords.COLUMN)) {
 					b.token(r.consume());
 				}
 				this.tableColumn(b, r);
 				b.end();
-			} else if (r.peekIf(SqlKeyword.DROP)) {
+			} else if (r.peekIf(SqlKeywords.DROP)) {
 				b.start("DropColumnClause");
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.COLUMN)) {
+				if (r.peekIf(SqlKeywords.COLUMN)) {
 					b.token(r.consume());
 				}
 				this.identifier(b, r, "ColumnName");
@@ -630,12 +638,12 @@ export class Sqlite3Parser extends Parser {
 	private dropTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropTableStatement");
 		try {
-			b.token(r.consume(SqlKeyword.DROP));
-			b.token(r.consume(SqlKeyword.TABLE));
-			if (r.peekIf(SqlKeyword.IF)) {
+			b.token(r.consume(SqlKeywords.DROP));
+			b.token(r.consume(SqlKeywords.TABLE));
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 			const ident = this.identifier(b, r, "ObjectName");
@@ -656,13 +664,13 @@ export class Sqlite3Parser extends Parser {
 	private dropViewStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropViewStatement");
 		try {
-			b.token(r.consume(SqlKeyword.DROP));
-			b.token(r.consume(SqlKeyword.VIEW));
+			b.token(r.consume(SqlKeywords.DROP));
+			b.token(r.consume(SqlKeywords.VIEW));
 
-			if (r.peekIf(SqlKeyword.IF)) {
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 
@@ -684,13 +692,13 @@ export class Sqlite3Parser extends Parser {
 	private dropTriggerStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropTriggerStatement");
 		try {
-			b.token(r.consume(SqlKeyword.DROP));
-			b.token(r.consume(SqlKeyword.TRIGGER));
+			b.token(r.consume(SqlKeywords.DROP));
+			b.token(r.consume(SqlKeywords.TRIGGER));
 
-			if (r.peekIf(SqlKeyword.IF)) {
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfExistsOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 
@@ -712,13 +720,13 @@ export class Sqlite3Parser extends Parser {
 	private dropIndexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropIndexStatement");
 		try {
-			b.token(r.consume(SqlKeyword.DROP));
-			b.token(r.consume(SqlKeyword.INDEX));
+			b.token(r.consume(SqlKeywords.DROP));
+			b.token(r.consume(SqlKeywords.INDEX));
 
-			if (r.peekIf(SqlKeyword.IF)) {
+			if (r.peekIf(SqlKeywords.IF)) {
 				b.start("IfExists");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.EXISTS));
+				b.token(r.consume(SqlKeywords.EXISTS));
 				b.end();
 			}
 
@@ -740,14 +748,14 @@ export class Sqlite3Parser extends Parser {
 	private attachDatabaseStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AttachDatabaseStatement");
 		try {
-			b.token(r.consume(SqlKeyword.ATTACH));
-			if (r.peekIf(SqlKeyword.DATABASE)) {
+			b.token(r.consume(SqlKeywords.ATTACH));
+			if (r.peekIf(SqlKeywords.DATABASE)) {
 				b.token(r.consume());
 			}
 			b.start("Database");
 			this.expression(b, r);
 			b.end();
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 			this.identifier(b, r, "SchemaName");
 		} catch (err) {
 			if (err instanceof ParseError) {
@@ -761,8 +769,8 @@ export class Sqlite3Parser extends Parser {
 	private detachDatabaseStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DetachDatabaseStatement");
 		try {
-			b.token(r.consume(SqlKeyword.DETACH));
-			if (r.peekIf(SqlKeyword.DATABASE)) {
+			b.token(r.consume(SqlKeywords.DETACH));
+			if (r.peekIf(SqlKeywords.DATABASE)) {
 				b.token(r.consume());
 			}
 
@@ -779,7 +787,7 @@ export class Sqlite3Parser extends Parser {
 	private analyzeStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AnalyzeStatement");
 		try {
-			b.token(r.consume(SqlKeyword.ANALYZE));
+			b.token(r.consume(SqlKeywords.ANALYZE));
 
 			const ident = this.identifier(b, r, "ObjectName");
 			if (r.peekIf(SqlTokenType.Dot)) {
@@ -799,7 +807,7 @@ export class Sqlite3Parser extends Parser {
 	private reindexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ReindexStatement");
 		try {
-			b.token(r.consume(SqlKeyword.REINDEX));
+			b.token(r.consume(SqlKeywords.REINDEX));
 			if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 				const ident = this.identifier(b, r, "ObjectName");
 				if (r.peekIf(SqlTokenType.Dot)) {
@@ -820,13 +828,13 @@ export class Sqlite3Parser extends Parser {
 	private vacuumStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("VacuumStatement");
 		try {
-			b.token(r.consume(SqlKeyword.VACUUM));
+			b.token(r.consume(SqlKeywords.VACUUM));
 
 			if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 				this.identifier(b, r, "SchemaName");
 			}
 
-			if (r.peekIf(SqlKeyword.INTO)) {
+			if (r.peekIf(SqlKeywords.INTO)) {
 				b.token(r.consume());
 				b.start("FileName");
 				this.stringLiteral(b, r);
@@ -844,7 +852,7 @@ export class Sqlite3Parser extends Parser {
 	private pragmaStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("PragmaStatement");
 		try {
-			b.token(r.consume(SqlKeyword.PRAGMA));
+			b.token(r.consume(SqlKeywords.PRAGMA));
 
 			const ident = this.identifier(b, r, "PragmaName");
 			if (r.peekIf(SqlTokenType.Dot)) {
@@ -879,21 +887,21 @@ export class Sqlite3Parser extends Parser {
 	private beginTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("BeginTransactionStatement");
 		try {
-			b.token(r.consume(SqlKeyword.BEGIN));
-			if (r.peekIf(SqlKeyword.DEFERRED)) {
+			b.token(r.consume(SqlKeywords.BEGIN));
+			if (r.peekIf(SqlKeywords.DEFERRED)) {
 				b.start("DeferredOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.IMMEDIATE)) {
+			} else if (r.peekIf(SqlKeywords.IMMEDIATE)) {
 				b.start("ImmediateOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.EXCLUSIVE)) {
+			} else if (r.peekIf(SqlKeywords.EXCLUSIVE)) {
 				b.start("ExclusiveOption");
 				b.token(r.consume());
 				b.end();
 			}
-			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+			if (r.peekIf(SqlKeywords.TRANSACTION)) {
 				b.token(r.consume());
 			}
 		} catch (err) {
@@ -908,7 +916,7 @@ export class Sqlite3Parser extends Parser {
 	private savepointStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("SavepointStatement");
 		try {
-			b.token(r.consume(SqlKeyword.SAVEPOINT));
+			b.token(r.consume(SqlKeywords.SAVEPOINT));
 			this.identifier(b, r, "SavepointName");
 		} catch (err) {
 			if (err instanceof ParseError) {
@@ -922,8 +930,8 @@ export class Sqlite3Parser extends Parser {
 	private releaseSavepointStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ReleaseSavepointStatement");
 		try {
-			b.token(r.consume(SqlKeyword.RELEASE));
-			if (r.peekIf(SqlKeyword.SAVEPOINT)) {
+			b.token(r.consume(SqlKeywords.RELEASE));
+			if (r.peekIf(SqlKeywords.SAVEPOINT)) {
 				b.token(r.consume());
 			}
 			this.identifier(b, r, "SavepointName");
@@ -939,12 +947,12 @@ export class Sqlite3Parser extends Parser {
 	private commitTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CommitTransactionStatement");
 		try {
-			if (r.peekIf(SqlKeyword.END)) {
+			if (r.peekIf(SqlKeywords.END)) {
 				b.token(r.consume());
 			} else {
-				b.token(r.consume(SqlKeyword.COMMIT));
+				b.token(r.consume(SqlKeywords.COMMIT));
 			}
-			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+			if (r.peekIf(SqlKeywords.TRANSACTION)) {
 				b.token(r.consume());
 			}
 		} catch (err) {
@@ -959,13 +967,13 @@ export class Sqlite3Parser extends Parser {
 	private rollbackTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("RollbackTransactionStatement");
 		try {
-			b.token(r.consume(SqlKeyword.ROLLBACK));
-			if (r.peekIf(SqlKeyword.TRANSACTION)) {
+			b.token(r.consume(SqlKeywords.ROLLBACK));
+			if (r.peekIf(SqlKeywords.TRANSACTION)) {
 				b.token(r.consume());
 			}
-			if (r.peekIf(SqlKeyword.TO)) {
+			if (r.peekIf(SqlKeywords.TO)) {
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.SAVEPOINT)) {
+				if (r.peekIf(SqlKeywords.SAVEPOINT)) {
 					b.token(r.consume());
 				}
 				this.identifier(b, r, "SavepointName");
@@ -997,20 +1005,20 @@ export class Sqlite3Parser extends Parser {
 
 	private insertClause(b: CstBuilder, r: TokenReader) {
 		b.start("InsertClause");
-		if (r.peekIf(SqlKeyword.REPLACE)) {
+		if (r.peekIf(SqlKeywords.REPLACE)) {
 			b.start("ReplaceOption");
 			b.token(r.consume());
 			b.end();
 		} else {
-			b.token(r.consume(SqlKeyword.INSERT));
-			if (r.peekIf(SqlKeyword.OR)) {
+			b.token(r.consume(SqlKeywords.INSERT));
+			if (r.peekIf(SqlKeywords.OR)) {
 				b.start("OrConflictClause");
 				b.token(r.consume());
 				this.conflictAction(b, r);
 				b.end();
 			}
 		}
-		b.token(r.consume(SqlKeyword.INTO));
+		b.token(r.consume(SqlKeywords.INTO));
 
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
@@ -1019,7 +1027,7 @@ export class Sqlite3Parser extends Parser {
 			this.identifier(b, r, "ObjectName");
 		}
 
-		if (r.peekIf(SqlKeyword.AS)) {
+		if (r.peekIf(SqlKeywords.AS)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectAlias");
 		}
@@ -1030,13 +1038,13 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume(SqlTokenType.RightParen));
 		}
 
-		if (r.peekIf(SqlKeyword.DEFAULT)) {
+		if (r.peekIf(SqlKeywords.DEFAULT)) {
 			b.start("DefaultValuesOption");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.VALUES));
+			b.token(r.consume(SqlKeywords.VALUES));
 			b.end();
 		} else {
-			if (r.peekIf(SqlKeyword.VALUES)) {
+			if (r.peekIf(SqlKeywords.VALUES)) {
 				b.start("ValuesClause");
 				b.token(r.consume());
 				b.start("ExpressionListGroup");
@@ -1056,14 +1064,14 @@ export class Sqlite3Parser extends Parser {
 				b.end();
 			} else {
 				let withClause: ReturnType<typeof this.withClause> | undefined;
-				if (r.peekIf(SqlKeyword.WITH)) {
+				if (r.peekIf(SqlKeywords.WITH)) {
 					withClause = this.withClause(b, r);
 				}
 				this.selectStatement(b, r, withClause);
 			}
 
 			do {
-				if (r.peekIf(SqlKeyword.ON)) {
+				if (r.peekIf(SqlKeywords.ON)) {
 					this.onConflictClause(b, r);
 				} else {
 					break;
@@ -1071,7 +1079,7 @@ export class Sqlite3Parser extends Parser {
 			} while (!r.peek().eos);
 		}
 
-		if (r.peekIf(SqlKeyword.RETURNING)) {
+		if (r.peekIf(SqlKeywords.RETURNING)) {
 			this.returningClause(b, r);
 		}
 
@@ -1080,8 +1088,8 @@ export class Sqlite3Parser extends Parser {
 
 	private onConflictClause(b: CstBuilder, r: TokenReader) {
 		b.start("OnConflictClause");
-		b.token(r.consume(SqlKeyword.ON));
-		b.token(r.consume(SqlKeyword.CONFLICT));
+		b.token(r.consume(SqlKeywords.ON));
+		b.token(r.consume(SqlKeywords.CONFLICT));
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {
 			b.token(r.consume());
@@ -1098,20 +1106,20 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 
 			b.token(r.consume(SqlTokenType.RightParen));
-			if (r.peekIf(SqlKeyword.WHERE)) {
+			if (r.peekIf(SqlKeywords.WHERE)) {
 				this.whereClause(b, r);
 			}
 		}
-		b.token(r.consume(SqlKeyword.DO));
-		if (r.peekIf(SqlKeyword.NOTHING)) {
+		b.token(r.consume(SqlKeywords.DO));
+		if (r.peekIf(SqlKeywords.NOTHING)) {
 			b.start("DoNothingOption");
 			b.token(r.consume());
 			b.end();
-		} else if (r.peekIf(SqlKeyword.UPDATE)) {
+		} else if (r.peekIf(SqlKeywords.UPDATE)) {
 			b.start("DoUpdateOption");
 			b.token(r.consume());
 			this.setClause(b, r);
-			if (r.peekIf(SqlKeyword.WHERE)) {
+			if (r.peekIf(SqlKeywords.WHERE)) {
 				this.whereClause(b, r);
 			}
 			b.end();
@@ -1139,7 +1147,7 @@ export class Sqlite3Parser extends Parser {
 
 	private updateClause(b: CstBuilder, r: TokenReader) {
 		b.start("UpdateClause");
-		b.token(r.consume(SqlKeyword.UPDATE));
+		b.token(r.consume(SqlKeywords.UPDATE));
 
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
@@ -1148,38 +1156,38 @@ export class Sqlite3Parser extends Parser {
 			this.identifier(b, r, "ObjectName");
 		}
 
-		if (r.peekIf(SqlKeyword.AS)) {
+		if (r.peekIf(SqlKeywords.AS)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectAlias");
 		}
 
-		if (r.peekIf(SqlKeyword.INDEXED)) {
+		if (r.peekIf(SqlKeywords.INDEXED)) {
 			b.start("IndexedByOption");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.BY));
+			b.token(r.consume(SqlKeywords.BY));
 			this.identifier(b, r, "ObjectName");
 			b.end();
-		} else if (r.peekIf(SqlKeyword.NOT)) {
+		} else if (r.peekIf(SqlKeywords.NOT)) {
 			b.start("NotIndexedOption");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.INDEXED));
+			b.token(r.consume(SqlKeywords.INDEXED));
 			b.end();
 		}
 
 		this.setClause(b, r);
-		if (r.peekIf(SqlKeyword.FROM)) {
+		if (r.peekIf(SqlKeywords.FROM)) {
 			this.fromClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.WHERE)) {
+		if (r.peekIf(SqlKeywords.WHERE)) {
 			this.whereClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.RETURNING)) {
+		if (r.peekIf(SqlKeywords.RETURNING)) {
 			this.returningClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.ORDER)) {
+		if (r.peekIf(SqlKeywords.ORDER)) {
 			this.orderByClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.LIMIT)) {
+		if (r.peekIf(SqlKeywords.LIMIT)) {
 			this.limitClause(b, r);
 		}
 
@@ -1188,7 +1196,7 @@ export class Sqlite3Parser extends Parser {
 
 	private setClause(b: CstBuilder, r: TokenReader) {
 		b.start("SetClause");
-		b.token(r.consume(SqlKeyword.SET));
+		b.token(r.consume(SqlKeywords.SET));
 		b.start("UpdateColumnList");
 		do {
 			b.start("UpdateColumn");
@@ -1238,18 +1246,18 @@ export class Sqlite3Parser extends Parser {
 
 	private deleteClause(b: CstBuilder, r: TokenReader) {
 		b.start("DeleteClause");
-		b.token(r.consume(SqlKeyword.DELETE));
-		b.token(r.consume(SqlKeyword.FROM));
+		b.token(r.consume(SqlKeywords.DELETE));
+		b.token(r.consume(SqlKeywords.FROM));
 		const ident = this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.Dot)) {
 			b.type("SchemaName", ident);
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectName");
 		}
-		if (r.peekIf(SqlKeyword.WHERE)) {
+		if (r.peekIf(SqlKeywords.WHERE)) {
 			this.whereClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.RETURNING)) {
+		if (r.peekIf(SqlKeywords.RETURNING)) {
 			this.returningClause(b, r);
 		}
 		return b.end();
@@ -1266,24 +1274,24 @@ export class Sqlite3Parser extends Parser {
 				!this.compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT") &&
 				!r.peek().eos
 			) {
-				if (r.peekIf(SqlKeyword.UNION)) {
+				if (r.peekIf(SqlKeywords.UNION)) {
 					b.start("UnionOperation");
 					b.append(current);
 					b.token(r.consume());
-					if (r.peekIf(SqlKeyword.ALL)) {
+					if (r.peekIf(SqlKeywords.ALL)) {
 						b.start("AllOption");
 						b.token(r.consume());
 						b.end();
 					}
 					this.selectClause(b, r);
 					current = b.end();
-				} else if (r.peekIf(SqlKeyword.INTERSECT)) {
+				} else if (r.peekIf(SqlKeywords.INTERSECT)) {
 					b.start("IntersectOperation");
 					b.append(current);
 					b.token(r.consume());
 					this.selectClause(b, r);
 					current = b.end();
-				} else if (r.peekIf(SqlKeyword.EXCEPT)) {
+				} else if (r.peekIf(SqlKeywords.EXCEPT)) {
 					b.start("ExceptOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -1294,10 +1302,10 @@ export class Sqlite3Parser extends Parser {
 				}
 			}
 
-			if (r.peekIf(SqlKeyword.ORDER)) {
+			if (r.peekIf(SqlKeywords.ORDER)) {
 				this.orderByClause(b, r);
 			}
-			if (r.peekIf(SqlKeyword.LIMIT)) {
+			if (r.peekIf(SqlKeywords.LIMIT)) {
 				this.limitClause(b, r);
 			}
 		} catch (err) {
@@ -1312,41 +1320,41 @@ export class Sqlite3Parser extends Parser {
 	private selectClause(b: CstBuilder, r: TokenReader) {
 		b.start("SelectClause");
 
-		if (r.peekIf(SqlKeyword.VALUES)) {
+		if (r.peekIf(SqlKeywords.VALUES)) {
 			b.start("ValuesClause");
-			b.token(r.consume(SqlKeyword.VALUES));
+			b.token(r.consume(SqlKeywords.VALUES));
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.expressionList(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
 			b.end();
 		} else {
-			b.token(r.consume(SqlKeyword.SELECT));
-			if (r.peekIf(SqlKeyword.DISTINCT)) {
+			b.token(r.consume(SqlKeywords.SELECT));
+			if (r.peekIf(SqlKeywords.DISTINCT)) {
 				b.start("DistinctOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.ALL)) {
+			} else if (r.peekIf(SqlKeywords.ALL)) {
 				b.start("AllOption");
 				b.token(r.consume());
 				b.end();
 			}
 			this.selectColumnList(b, r);
 
-			if (r.peekIf(SqlKeyword.FROM)) {
+			if (r.peekIf(SqlKeywords.FROM)) {
 				this.fromClause(b, r);
 			}
-			if (r.peekIf(SqlKeyword.WHERE)) {
+			if (r.peekIf(SqlKeywords.WHERE)) {
 				this.whereClause(b, r);
 			}
-			if (r.peekIf(SqlKeyword.GROUP)) {
+			if (r.peekIf(SqlKeywords.GROUP)) {
 				this.gropuByClause(b, r);
 			}
-			if (r.peekIf(SqlKeyword.HAVING)) {
+			if (r.peekIf(SqlKeywords.HAVING)) {
 				this.havingClause(b, r);
 			}
 			if (
 				!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
-				r.peekIf(SqlKeyword.WINDOW)
+				r.peekIf(SqlKeywords.WINDOW)
 			) {
 				this.windowClause(b, r);
 			}
@@ -1356,9 +1364,9 @@ export class Sqlite3Parser extends Parser {
 
 	private withClause(b: CstBuilder, r: TokenReader) {
 		b.start("WithClause");
-		b.token(r.consume(SqlKeyword.WITH));
+		b.token(r.consume(SqlKeywords.WITH));
 
-		if (r.peekIf(SqlKeyword.RECURSIVE)) {
+		if (r.peekIf(SqlKeywords.RECURSIVE)) {
 			b.start("RecursiveOption");
 			b.token(r.consume());
 			b.end();
@@ -1373,13 +1381,13 @@ export class Sqlite3Parser extends Parser {
 				this.columnList(b, r);
 				b.token(r.consume(SqlTokenType.RightParen));
 			}
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 
-			if (r.peekIf(SqlKeyword.MATERIALIZED)) {
+			if (r.peekIf(SqlKeywords.MATERIALIZED)) {
 				const option = b.start("MaterializedOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.NOT, SqlKeyword.MATERIALIZED)) {
+			} else if (r.peekIf(SqlKeywords.NOT, SqlKeywords.MATERIALIZED)) {
 				const option = b.start("NotMaterializedOption");
 				b.token(r.consume());
 				b.token(r.consume());
@@ -1426,7 +1434,7 @@ export class Sqlite3Parser extends Parser {
 				b.end();
 			} else {
 				this.expression(b, r);
-				if (r.peekIf(SqlKeyword.AS)) {
+				if (r.peekIf(SqlKeywords.AS)) {
 					b.token(r.consume());
 					this.identifier(b, r, "ColumnAlias");
 				} else if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
@@ -1445,7 +1453,7 @@ export class Sqlite3Parser extends Parser {
 
 	private fromClause(b: CstBuilder, r: TokenReader) {
 		b.start("FromClause");
-		b.token(r.consume(SqlKeyword.FROM));
+		b.token(r.consume(SqlKeywords.FROM));
 		{
 			b.start("FromObjectList");
 
@@ -1454,13 +1462,13 @@ export class Sqlite3Parser extends Parser {
 				this.fromObject(b, r);
 				while (
 					r.peekIf([
-						SqlKeyword.NATURAL,
-						SqlKeyword.JOIN,
-						SqlKeyword.CROSS,
-						SqlKeyword.INNER,
-						SqlKeyword.LEFT,
-						SqlKeyword.RIGHT,
-						SqlKeyword.FULL,
+						SqlKeywords.NATURAL,
+						SqlKeywords.JOIN,
+						SqlKeywords.CROSS,
+						SqlKeywords.INNER,
+						SqlKeywords.LEFT,
+						SqlKeywords.RIGHT,
+						SqlKeywords.FULL,
 					])
 				) {
 					hasJoinClause = true;
@@ -1484,9 +1492,9 @@ export class Sqlite3Parser extends Parser {
 		if (r.peekIf(SqlTokenType.LeftParen)) {
 			b.token(r.consume());
 			b.start("SubqueryExpression");
-			if (r.peekIf([SqlKeyword.WITH, SqlKeyword.SELECT])) {
+			if (r.peekIf([SqlKeywords.WITH, SqlKeywords.SELECT])) {
 				let withClause: ReturnType<typeof this.withClause> | undefined;
-				if (r.peekIf(SqlKeyword.WITH)) {
+				if (r.peekIf(SqlKeywords.WITH)) {
 					withClause = this.withClause(b, r);
 				}
 				this.selectStatement(b, r, withClause);
@@ -1524,7 +1532,7 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 		}
 
-		if (r.peekIf(SqlKeyword.AS)) {
+		if (r.peekIf(SqlKeywords.AS)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ObjectAlias");
 		} else if (r.peekIf(SqlTokenType.Identifier)) {
@@ -1534,41 +1542,41 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private joinClause(b: CstBuilder, r: TokenReader) {
-		if (r.peekIf(SqlKeyword.CROSS)) {
+		if (r.peekIf(SqlKeywords.CROSS)) {
 			b.start("CrossJoinClause");
 			b.token(r.consume());
 		} else {
 			let option: ReturnType<typeof b.end> | undefined;
-			if (r.peekIf(SqlKeyword.NATURAL)) {
+			if (r.peekIf(SqlKeywords.NATURAL)) {
 				b.start("NatualOption");
 				b.token(r.consume());
 				option = b.end();
 			}
-			if (r.peekIf(SqlKeyword.LEFT)) {
+			if (r.peekIf(SqlKeywords.LEFT)) {
 				b.start("LeftOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.OUTER)) {
+				if (r.peekIf(SqlKeywords.OUTER)) {
 					b.token(r.consume());
 				}
-			} else if (r.peekIf(SqlKeyword.RIGHT)) {
+			} else if (r.peekIf(SqlKeywords.RIGHT)) {
 				b.start("RightOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.OUTER)) {
+				if (r.peekIf(SqlKeywords.OUTER)) {
 					b.token(r.consume());
 				}
-			} else if (r.peekIf(SqlKeyword.FULL)) {
+			} else if (r.peekIf(SqlKeywords.FULL)) {
 				b.start("FullOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.OUTER)) {
+				if (r.peekIf(SqlKeywords.OUTER)) {
 					b.token(r.consume());
 				}
 			} else {
@@ -1576,21 +1584,21 @@ export class Sqlite3Parser extends Parser {
 				if (option) {
 					b.append(option);
 				}
-				if (r.peekIf(SqlKeyword.INNER)) {
+				if (r.peekIf(SqlKeywords.INNER)) {
 					b.token(r.consume());
 				}
 			}
 		}
-		b.token(r.consume(SqlKeyword.JOIN));
+		b.token(r.consume(SqlKeywords.JOIN));
 
 		this.fromObject(b, r);
 
-		if (r.peekIf(SqlKeyword.ON)) {
+		if (r.peekIf(SqlKeywords.ON)) {
 			b.start("JoinOnClause");
 			b.token(r.consume());
 			this.expression(b, r);
 			b.end();
-		} else if (r.peekIf(SqlKeyword.USING)) {
+		} else if (r.peekIf(SqlKeywords.USING)) {
 			b.start("UsingClause");
 			b.token(r.consume());
 			b.token(r.consume(SqlTokenType.LeftParen));
@@ -1603,32 +1611,32 @@ export class Sqlite3Parser extends Parser {
 
 	private whereClause(b: CstBuilder, r: TokenReader) {
 		b.start("WhereClause");
-		b.token(r.consume(SqlKeyword.WHERE));
+		b.token(r.consume(SqlKeywords.WHERE));
 		this.expression(b, r);
 		return b.end();
 	}
 
 	private gropuByClause(b: CstBuilder, r: TokenReader) {
 		b.start("GroupByClause");
-		b.token(r.consume(SqlKeyword.GROUP));
-		b.token(r.consume(SqlKeyword.BY));
+		b.token(r.consume(SqlKeywords.GROUP));
+		b.token(r.consume(SqlKeywords.BY));
 		this.expressionList(b, r);
 		return b.end();
 	}
 
 	private havingClause(b: CstBuilder, r: TokenReader) {
 		b.start("HavingClause");
-		b.token(r.consume(SqlKeyword.HAVING));
+		b.token(r.consume(SqlKeywords.HAVING));
 		this.expression(b, r);
 		return b.end();
 	}
 
 	private windowClause(b: CstBuilder, r: TokenReader) {
 		b.start("WindowClause");
-		b.token(r.consume(SqlKeyword.WINDOW));
+		b.token(r.consume(SqlKeywords.WINDOW));
 		do {
 			this.identifier(b, r, "WindowName");
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 			this.window(b, r);
 			if (r.peekIf(SqlTokenType.Comma)) {
 				b.token(r.consume());
@@ -1641,65 +1649,65 @@ export class Sqlite3Parser extends Parser {
 
 	private window(b: CstBuilder, r: TokenReader) {
 		b.start("Window");
-		if (!r.peekIf(SqlKeyword.PARTITION)) {
+		if (!r.peekIf(SqlKeywords.PARTITION)) {
 			this.identifier(b, r, "BaseWindowName");
 		}
-		if (r.peekIf(SqlKeyword.PARTITION)) {
+		if (r.peekIf(SqlKeywords.PARTITION)) {
 			this.partitionByClause(b, r);
 		}
-		if (r.peekIf(SqlKeyword.ORDER)) {
+		if (r.peekIf(SqlKeywords.ORDER)) {
 			this.orderByClause(b, r);
 		}
 		b.start("FrameClause");
-		if (r.peekIf(SqlKeyword.RANGE)) {
+		if (r.peekIf(SqlKeywords.RANGE)) {
 			b.start("RangeOption");
 			b.token(r.consume());
 			b.end();
-		} else if (r.peekIf(SqlKeyword.ROWS)) {
+		} else if (r.peekIf(SqlKeywords.ROWS)) {
 			b.start("RowsOption");
 			b.token(r.consume());
 			b.end();
-		} else if (r.peekIf(SqlKeyword.GROUPS)) {
+		} else if (r.peekIf(SqlKeywords.GROUPS)) {
 			b.start("GroupsOption");
 			b.token(r.consume());
 			b.end();
 		}
-		if (r.peekIf(SqlKeyword.CURRENT)) {
+		if (r.peekIf(SqlKeywords.CURRENT)) {
 			b.start("FrameStartClause");
 			b.start("CurrentRowOption");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.ROW));
+			b.token(r.consume(SqlKeywords.ROW));
 			b.end();
 			b.end();
-		} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+		} else if (r.peekIf(SqlKeywords.UNBOUNDED)) {
 			b.start("FrameStartClause");
 			b.start("UnboundedPrecedingOption");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.PRECEDING));
+			b.token(r.consume(SqlKeywords.PRECEDING));
 			b.end();
 			b.end();
-		} else if (r.peekIf(SqlKeyword.BETWEEN)) {
+		} else if (r.peekIf(SqlKeywords.BETWEEN)) {
 			b.token(r.consume());
 
 			b.start("FrameStartClause");
 			b.token(r.consume());
-			if (r.peekIf(SqlKeyword.CURRENT)) {
+			if (r.peekIf(SqlKeywords.CURRENT)) {
 				b.start("CurrentRowOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ROW));
+				b.token(r.consume(SqlKeywords.ROW));
 				b.end();
-			} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+			} else if (r.peekIf(SqlKeywords.UNBOUNDED)) {
 				b.start("UnboundedPrecedingOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.PRECEDING));
+				b.token(r.consume(SqlKeywords.PRECEDING));
 				b.end();
 			} else {
-				if (r.peekIf(SqlKeyword.PRECEDING)) {
+				if (r.peekIf(SqlKeywords.PRECEDING)) {
 					b.start("PrecedingOption");
 					this.expression(b, r);
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
+				} else if (r.peekIf(SqlKeywords.FOLLOWING)) {
 					b.start("FollowingOption");
 					this.expression(b, r);
 					b.token(r.consume());
@@ -1709,28 +1717,28 @@ export class Sqlite3Parser extends Parser {
 				}
 			}
 			b.end();
-			b.token(r.consume(SqlKeyword.AND));
+			b.token(r.consume(SqlKeywords.AND));
 
 			b.start("FrameEndClause");
 
 			b.token(r.consume());
-			if (r.peekIf(SqlKeyword.CURRENT)) {
+			if (r.peekIf(SqlKeywords.CURRENT)) {
 				b.start("CurrentRowOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ROW));
+				b.token(r.consume(SqlKeywords.ROW));
 				b.end();
-			} else if (r.peekIf(SqlKeyword.UNBOUNDED)) {
+			} else if (r.peekIf(SqlKeywords.UNBOUNDED)) {
 				b.start("UnboundedFollowingOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.FOLLOWING));
+				b.token(r.consume(SqlKeywords.FOLLOWING));
 				b.end();
 			} else {
-				if (r.peekIf(SqlKeyword.PRECEDING)) {
+				if (r.peekIf(SqlKeywords.PRECEDING)) {
 					b.start("PrecedingOption");
 					this.expression(b, r);
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.FOLLOWING)) {
+				} else if (r.peekIf(SqlKeywords.FOLLOWING)) {
 					b.start("FollowingOption");
 					this.expression(b, r);
 					b.token(r.consume());
@@ -1744,29 +1752,29 @@ export class Sqlite3Parser extends Parser {
 			b.start("FrameStartClause");
 			b.start("PrecedingOption");
 			this.expression(b, r);
-			b.token(r.consume(SqlKeyword.PRECEDING));
+			b.token(r.consume(SqlKeywords.PRECEDING));
 			b.end();
 			b.end();
 		}
 		b.end();
-		if (r.peekIf(SqlKeyword.EXCLUDE)) {
+		if (r.peekIf(SqlKeywords.EXCLUDE)) {
 			b.start("ExcludeClause");
 			b.token(r.consume());
-			if (r.peekIf(SqlKeyword.NO)) {
+			if (r.peekIf(SqlKeywords.NO)) {
 				b.start("NoOthersOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.OTHERS));
+				b.token(r.consume(SqlKeywords.OTHERS));
 				b.end();
-			} else if (r.peekIf(SqlKeyword.CURRENT)) {
+			} else if (r.peekIf(SqlKeywords.CURRENT)) {
 				b.start("CurrentRowOption");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ROW));
+				b.token(r.consume(SqlKeywords.ROW));
 				b.end();
-			} else if (r.peekIf(SqlKeyword.GROUP)) {
+			} else if (r.peekIf(SqlKeywords.GROUP)) {
 				b.start("GroupOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.TIES)) {
+			} else if (r.peekIf(SqlKeywords.TIES)) {
 				b.start("TiesOption");
 				b.token(r.consume());
 				b.end();
@@ -1780,8 +1788,8 @@ export class Sqlite3Parser extends Parser {
 
 	private partitionByClause(b: CstBuilder, r: TokenReader) {
 		b.start("PartitionByClause");
-		b.token(r.consume(SqlKeyword.PARTITION));
-		b.token(r.consume(SqlKeyword.BY));
+		b.token(r.consume(SqlKeywords.PARTITION));
+		b.token(r.consume(SqlKeywords.BY));
 		do {
 			this.expression(b, r);
 			if (r.peekIf(SqlTokenType.Comma)) {
@@ -1795,25 +1803,25 @@ export class Sqlite3Parser extends Parser {
 
 	private returningClause(b: CstBuilder, r: TokenReader) {
 		b.start("ReturningClause");
-		b.token(r.consume(SqlKeyword.RETURNING));
+		b.token(r.consume(SqlKeywords.RETURNING));
 		this.selectColumnList(b, r);
 		return b.end();
 	}
 
 	private orderByClause(b: CstBuilder, r: TokenReader) {
 		b.start("OrderByClause");
-		b.token(r.consume(SqlKeyword.ORDER));
-		b.token(r.consume(SqlKeyword.BY));
+		b.token(r.consume(SqlKeywords.ORDER));
+		b.token(r.consume(SqlKeywords.BY));
 
 		b.start("SortColumnList");
 		do {
 			this.sortColumn(b, r);
-			if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.FIRST)) {
+			if (r.peekIf(SqlKeywords.NULLS, SqlKeywords.FIRST)) {
 				b.start("NullsFirstOption");
 				b.token(r.consume());
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.NULLS, SqlKeyword.LAST)) {
+			} else if (r.peekIf(SqlKeywords.NULLS, SqlKeywords.LAST)) {
 				b.start("NullsLastOption");
 				b.token(r.consume());
 				b.token(r.consume());
@@ -1832,9 +1840,9 @@ export class Sqlite3Parser extends Parser {
 
 	private limitClause(b: CstBuilder, r: TokenReader) {
 		b.start("LimitClause");
-		b.token(r.consume(SqlKeyword.LIMIT));
+		b.token(r.consume(SqlKeywords.LIMIT));
 		const node = this.expression(b, r);
-		if (r.peekIf(SqlKeyword.OFFSET)) {
+		if (r.peekIf(SqlKeywords.OFFSET)) {
 			b.start("LimitOption");
 			b.append(node);
 			b.end();
@@ -1870,17 +1878,17 @@ export class Sqlite3Parser extends Parser {
 
 		while (
 			r.peekIf([
-				SqlKeyword.CONSTRAINT,
-				SqlKeyword.PRIMARY,
-				SqlKeyword.NOT,
-				SqlKeyword.UNIQUE,
-				SqlKeyword.CHECK,
-				SqlKeyword.DEFAULT,
-				SqlKeyword.COLLATE,
-				SqlKeyword.REFERENCES,
+				SqlKeywords.CONSTRAINT,
+				SqlKeywords.PRIMARY,
+				SqlKeywords.NOT,
+				SqlKeywords.UNIQUE,
+				SqlKeywords.CHECK,
+				SqlKeywords.DEFAULT,
+				SqlKeywords.COLLATE,
+				SqlKeywords.REFERENCES,
 			]) ||
 			(!this.compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS") &&
-				r.peekIf([SqlKeyword.GENERATED, SqlKeyword.AS]))
+				r.peekIf([SqlKeywords.GENERATED, SqlKeywords.AS]))
 		) {
 			this.columnConstraint(b, r);
 		}
@@ -1922,81 +1930,81 @@ export class Sqlite3Parser extends Parser {
 
 	private columnConstraint(b: CstBuilder, r: TokenReader) {
 		b.start("ColumnConstraint");
-		if (r.peekIf(SqlKeyword.CONSTRAINT)) {
+		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ConstraintName");
 		}
-		if (r.peekIf(SqlKeyword.PRIMARY)) {
+		if (r.peekIf(SqlKeywords.PRIMARY)) {
 			b.start("PrimaryKeyConstraint");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.KEY));
+			b.token(r.consume(SqlKeywords.KEY));
 
-			if (r.peekIf(SqlKeyword.ASC)) {
+			if (r.peekIf(SqlKeywords.ASC)) {
 				b.start("AscOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.DESC)) {
+			} else if (r.peekIf(SqlKeywords.DESC)) {
 				b.start("DescOption");
 				b.token(r.consume());
 				b.end();
 			}
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
-			if (r.peekIf(SqlKeyword.AUTOINCREMENT)) {
+			if (r.peekIf(SqlKeywords.AUTOINCREMENT)) {
 				b.start("AutoincrementOption");
 				b.token(r.consume());
 				b.end();
 			}
 			b.end();
-		} else if (r.peekIf(SqlKeyword.NOT)) {
+		} else if (r.peekIf(SqlKeywords.NOT)) {
 			b.start("NotNullConstraint");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.NULL));
+			b.token(r.consume(SqlKeywords.NULL));
 
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
 
 			b.end();
-		} else if (r.peekIf(SqlKeyword.NULL)) {
+		} else if (r.peekIf(SqlKeywords.NULL)) {
 			b.start("NullConstraint");
 			b.token(r.consume());
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
 			b.end();
-		} else if (r.peekIf(SqlKeyword.UNIQUE)) {
+		} else if (r.peekIf(SqlKeywords.UNIQUE)) {
 			b.start("UniqueConstraint");
 			b.token(r.consume());
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
 			b.end();
-		} else if (r.peekIf(SqlKeyword.CHECK)) {
+		} else if (r.peekIf(SqlKeywords.CHECK)) {
 			b.start("CheckConstraint");
 			b.token(r.consume());
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.expression(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
 			b.end();
-		} else if (r.peekIf(SqlKeyword.DEFAULT)) {
+		} else if (r.peekIf(SqlKeywords.DEFAULT)) {
 			b.start("DefaultOption");
 			b.token(r.consume());
 			if (r.peekIf(SqlTokenType.LeftParen)) {
@@ -2007,22 +2015,22 @@ export class Sqlite3Parser extends Parser {
 				this.expression(b, r);
 			}
 			b.end();
-		} else if (r.peekIf(SqlKeyword.COLLATE)) {
+		} else if (r.peekIf(SqlKeywords.COLLATE)) {
 			b.start("CollateOption");
 			b.token(r.consume());
 			this.identifier(b, r, "CollateName");
 			b.end();
-		} else if (r.peekIf(SqlKeyword.REFERENCES)) {
+		} else if (r.peekIf(SqlKeywords.REFERENCES)) {
 			b.start("ForeignKeyConstraint");
 			this.referencesClause(b, r);
 			b.end();
-		} else if (r.peekIf([SqlKeyword.GENERATED, SqlKeyword.AS])) {
+		} else if (r.peekIf([SqlKeywords.GENERATED, SqlKeywords.AS])) {
 			b.start("GeneratedColumnOption");
-			if (r.peekIf(SqlKeyword.GENERATED)) {
+			if (r.peekIf(SqlKeywords.GENERATED)) {
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.ALWAYS));
+				b.token(r.consume(SqlKeywords.ALWAYS));
 			}
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 			b.token(r.consume(SqlTokenType.LeftParen));
 			b.start("GeneratedColumn");
 			this.expression(b, r);
@@ -2030,11 +2038,11 @@ export class Sqlite3Parser extends Parser {
 
 			b.token(r.consume(SqlTokenType.RightParen));
 
-			if (r.peekIf(SqlKeyword.STORED)) {
+			if (r.peekIf(SqlKeywords.STORED)) {
 				b.start("StoredOption");
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.VIRTUAL)) {
+			} else if (r.peekIf(SqlKeywords.VIRTUAL)) {
 				b.start("virtual option");
 				b.token(r.consume());
 				b.end();
@@ -2049,14 +2057,14 @@ export class Sqlite3Parser extends Parser {
 
 	private tableConstraint(b: CstBuilder, r: TokenReader) {
 		b.start("TableConstraint");
-		if (r.peekIf(SqlKeyword.CONSTRAINT)) {
+		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ConstraintName");
 		}
-		if (r.peekIf(SqlKeyword.PRIMARY)) {
+		if (r.peekIf(SqlKeywords.PRIMARY)) {
 			b.start("PrimaryKeyConstraint");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.KEY));
+			b.token(r.consume(SqlKeywords.KEY));
 			b.token(r.consume(SqlTokenType.LeftParen));
 			b.start("SortColumnList");
 			do {
@@ -2071,16 +2079,16 @@ export class Sqlite3Parser extends Parser {
 
 			b.token(r.consume(SqlTokenType.RightParen));
 
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
 
 			b.end();
-		} else if (r.peekIf(SqlKeyword.UNIQUE)) {
+		} else if (r.peekIf(SqlKeywords.UNIQUE)) {
 			b.start("UniqueConstraint");
 			b.token(r.consume());
 
@@ -2097,26 +2105,26 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 
-			if (r.peekIf(SqlKeyword.ON)) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				b.start("OnConflictClause");
 				b.token(r.consume());
-				b.token(r.consume(SqlKeyword.CONFLICT));
+				b.token(r.consume(SqlKeywords.CONFLICT));
 				this.conflictAction(b, r);
 				b.end();
 			}
 
 			b.end();
-		} else if (r.peekIf(SqlKeyword.CHECK)) {
+		} else if (r.peekIf(SqlKeywords.CHECK)) {
 			b.start("CheckConstraint");
 			b.token(r.consume());
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.expression(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
 			b.end();
-		} else if (r.peekIf(SqlKeyword.FOREIGN)) {
+		} else if (r.peekIf(SqlKeywords.FOREIGN)) {
 			b.start("ForeignKeyConstraint");
 			b.token(r.consume());
-			b.token(r.consume(SqlKeyword.KEY));
+			b.token(r.consume(SqlKeywords.KEY));
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.columnList(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
@@ -2138,37 +2146,37 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume(SqlTokenType.RightParen));
 		}
 
-		while (!r.peek().eos && r.peekIf([SqlKeyword.ON, SqlKeyword.MATCH])) {
-			if (r.peekIf(SqlKeyword.ON)) {
+		while (!r.peek().eos && r.peekIf([SqlKeywords.ON, SqlKeywords.MATCH])) {
+			if (r.peekIf(SqlKeywords.ON)) {
 				const token = r.consume();
-				if (r.peekIf(SqlKeyword.DELETE)) {
+				if (r.peekIf(SqlKeywords.DELETE)) {
 					b.start("OnDeleteClause");
 					b.token(token);
 					b.token(r.consume());
 				} else {
 					b.start("OnUpdateClause");
 					b.token(token);
-					b.token(r.consume(SqlKeyword.UPDATE));
+					b.token(r.consume(SqlKeywords.UPDATE));
 				}
-				if (r.peekIf(SqlKeyword.SET, SqlKeyword.NULL)) {
+				if (r.peekIf(SqlKeywords.SET, SqlKeywords.NULL)) {
 					b.start("SetNullOption");
 					b.token(r.consume());
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.SET, SqlKeyword.DEFAULT)) {
+				} else if (r.peekIf(SqlKeywords.SET, SqlKeywords.DEFAULT)) {
 					b.start("SetDefaultOption");
 					b.token(r.consume());
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.CASCADE)) {
+				} else if (r.peekIf(SqlKeywords.CASCADE)) {
 					b.start("CascadeOption");
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.RESTRICT)) {
+				} else if (r.peekIf(SqlKeywords.RESTRICT)) {
 					b.start("RestrictOption");
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.NO, SqlKeyword.ACTION)) {
+				} else if (r.peekIf(SqlKeywords.NO, SqlKeywords.ACTION)) {
 					b.start("NoActionOption");
 					b.token(r.consume());
 					b.token(r.consume());
@@ -2177,18 +2185,18 @@ export class Sqlite3Parser extends Parser {
 					throw r.createParseError();
 				}
 				b.end();
-			} else if (r.peekIf(SqlKeyword.MATCH)) {
+			} else if (r.peekIf(SqlKeywords.MATCH)) {
 				b.start("MatchClause");
 				b.token(r.consume());
-				if (r.peekIf(SqlKeyword.SIMPLE)) {
+				if (r.peekIf(SqlKeywords.SIMPLE)) {
 					b.start("SimpleOption");
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.FULL)) {
+				} else if (r.peekIf(SqlKeywords.FULL)) {
 					b.start("FullOption");
 					b.token(r.consume());
 					b.end();
-				} else if (r.peekIf(SqlKeyword.PARTIAL)) {
+				} else if (r.peekIf(SqlKeywords.PARTIAL)) {
 					b.start("PartialOption");
 					b.token(r.consume());
 					b.end();
@@ -2202,9 +2210,12 @@ export class Sqlite3Parser extends Parser {
 		}
 
 		if (
-			r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.DEFERRABLE)
+			r.peekIf(
+				{ query: SqlKeywords.NOT, optional: true },
+				SqlKeywords.DEFERRABLE,
+			)
 		) {
-			if (r.peekIf(SqlKeyword.NOT)) {
+			if (r.peekIf(SqlKeywords.NOT)) {
 				b.start("NotDeferrableOption");
 				b.token(r.consume());
 			} else {
@@ -2212,12 +2223,12 @@ export class Sqlite3Parser extends Parser {
 			}
 			b.token(r.consume());
 
-			if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.DEFERRED)) {
+			if (r.peekIf(SqlKeywords.INITIALLY, SqlKeywords.DEFERRED)) {
 				b.start("InitiallyDeferredOption");
 				b.token(r.consume());
 				b.token(r.consume());
 				b.end();
-			} else if (r.peekIf(SqlKeyword.INITIALLY, SqlKeyword.IMMEDIATE)) {
+			} else if (r.peekIf(SqlKeywords.INITIALLY, SqlKeywords.IMMEDIATE)) {
 				b.start("InitiallyImmediateOption");
 				b.token(r.consume());
 				b.token(r.consume());
@@ -2229,23 +2240,23 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private conflictAction(b: CstBuilder, r: TokenReader) {
-		if (r.peekIf(SqlKeyword.ROLLBACK)) {
+		if (r.peekIf(SqlKeywords.ROLLBACK)) {
 			b.start("RollbackOption");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.ABORT)) {
+		} else if (r.peekIf(SqlKeywords.ABORT)) {
 			b.start("AbortOption");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.FAIL)) {
+		} else if (r.peekIf(SqlKeywords.FAIL)) {
 			b.start("FailOption");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.IGNORE)) {
+		} else if (r.peekIf(SqlKeywords.IGNORE)) {
 			b.start("IgnoreOption");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.REPLACE)) {
+		} else if (r.peekIf(SqlKeywords.REPLACE)) {
 			b.start("ReplaceOption");
 			b.token(r.consume());
 			return b.end();
@@ -2302,7 +2313,7 @@ export class Sqlite3Parser extends Parser {
 			b.start("Expression");
 		}
 		let current: ReturnType<typeof b.end> | undefined;
-		if (r.peekIf(SqlKeyword.NOT)) {
+		if (r.peekIf(SqlKeywords.NOT)) {
 			b.start("NotOperation");
 			b.token(r.consume());
 			this.expression(b, r, 3);
@@ -2333,13 +2344,13 @@ export class Sqlite3Parser extends Parser {
 		}
 
 		while (!r.peek().eos) {
-			if (precedence < 1 && r.peekIf(SqlKeyword.OR)) {
+			if (precedence < 1 && r.peekIf(SqlKeywords.OR)) {
 				b.start("OrOperation");
 				b.append(current);
 				b.token(r.consume());
 				this.expression(b, r, 1);
 				current = b.end();
-			} else if (precedence < 2 && r.peekIf(SqlKeyword.AND)) {
+			} else if (precedence < 2 && r.peekIf(SqlKeywords.AND)) {
 				b.start("AndOperation");
 				b.append(current);
 				b.token(r.consume());
@@ -2367,22 +2378,22 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume());
 				this.expression(b, r, 4);
 				current = b.end();
-			} else if (precedence < 4 && r.peekIf(SqlKeyword.IS)) {
+			} else if (precedence < 4 && r.peekIf(SqlKeywords.IS)) {
 				const token = r.consume();
-				if (r.peekIf(SqlKeyword.NOT, SqlKeyword.DISTINCT)) {
+				if (r.peekIf(SqlKeywords.NOT, SqlKeywords.DISTINCT)) {
 					b.start("IsNotDistinctFromOperation");
 					b.append(current);
 					b.token(token);
 					b.token(r.consume());
 					b.token(r.consume());
-					b.token(r.consume(SqlKeyword.FROM));
-				} else if (r.peekIf(SqlKeyword.DISTINCT)) {
+					b.token(r.consume(SqlKeywords.FROM));
+				} else if (r.peekIf(SqlKeywords.DISTINCT)) {
 					b.start("IsDistinctFromOperation");
 					b.append(current);
 					b.token(token);
 					b.token(r.consume());
-					b.token(r.consume(SqlKeyword.FROM));
-				} else if (r.peekIf(SqlKeyword.NOT)) {
+					b.token(r.consume(SqlKeywords.FROM));
+				} else if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("IsNotOperation");
 					b.append(current);
 					b.token(token);
@@ -2396,9 +2407,12 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.BETWEEN)
+				r.peekIf(
+					{ query: SqlKeywords.NOT, optional: true },
+					SqlKeywords.BETWEEN,
+				)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotBetweenOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2408,14 +2422,14 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume());
 				this.expression(b, r, 4);
-				b.token(r.consume(SqlKeyword.AND));
+				b.token(r.consume(SqlKeywords.AND));
 				this.expression(b, r, 4);
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.IN)
+				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.IN)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotInOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2425,12 +2439,15 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume());
 				if (
-					r.peekIf(SqlTokenType.LeftParen, [SqlKeyword.WITH, SqlKeyword.SELECT])
+					r.peekIf(SqlTokenType.LeftParen, [
+						SqlKeywords.WITH,
+						SqlKeywords.SELECT,
+					])
 				) {
 					b.start("SubqueryExpression");
 					b.token(r.consume());
 					let withClause: ReturnType<typeof this.withClause> | undefined;
-					if (r.peekIf(SqlKeyword.WITH)) {
+					if (r.peekIf(SqlKeywords.WITH)) {
 						withClause = this.withClause(b, r);
 					}
 					this.selectStatement(b, r, withClause);
@@ -2470,9 +2487,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.MATCH)
+				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.MATCH)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotMatchOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2485,9 +2502,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.LIKE)
+				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.LIKE)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotLikeOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2497,7 +2514,7 @@ export class Sqlite3Parser extends Parser {
 				}
 				b.token(r.consume());
 				this.expression(b, r, 4);
-				if (r.peekIf(SqlKeyword.ESCAPE)) {
+				if (r.peekIf(SqlKeywords.ESCAPE)) {
 					b.start("EscapeOption");
 
 					this.expression(b, r, 6);
@@ -2506,9 +2523,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.REGEXP)
+				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.REGEXP)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotRegexpOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2521,9 +2538,9 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeyword.NOT, optional: true }, SqlKeyword.GLOB)
+				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.GLOB)
 			) {
-				if (r.peekIf(SqlKeyword.NOT)) {
+				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotGlobOperation");
 					b.append(current);
 					b.token(r.consume());
@@ -2535,17 +2552,20 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume());
 				this.expression(b, r, 4);
 				current = b.end();
-			} else if (precedence < 4 && r.peekIf(SqlKeyword.ISNULL)) {
+			} else if (precedence < 4 && r.peekIf(SqlKeywords.ISNULL)) {
 				b.start("IsNullOperation");
 				b.append(current);
 				b.token(r.consume());
 				current = b.end();
-			} else if (precedence < 4 && r.peekIf(SqlKeyword.NOTNULL)) {
+			} else if (precedence < 4 && r.peekIf(SqlKeywords.NOTNULL)) {
 				b.start("IsNotNullOperation");
 				b.append(current);
 				b.token(r.consume());
 				current = b.end();
-			} else if (precedence < 4 && r.peekIf(SqlKeyword.NOT, SqlKeyword.NULL)) {
+			} else if (
+				precedence < 4 &&
+				r.peekIf(SqlKeywords.NOT, SqlKeywords.NULL)
+			) {
 				b.start("IsNotNullOperation");
 				b.append(current);
 				b.token(r.consume());
@@ -2695,7 +2715,7 @@ export class Sqlite3Parser extends Parser {
 				b.token(r.consume());
 				this.expression(b, r, 10);
 				current = b.end();
-			} else if (precedence < 11 && r.peekIf(SqlKeyword.COLLATE)) {
+			} else if (precedence < 11 && r.peekIf(SqlKeywords.COLLATE)) {
 				b.start("CollateOperation");
 				b.append(current);
 				b.token(r.consume());
@@ -2712,17 +2732,17 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private expressionValue(b: CstBuilder, r: TokenReader) {
-		if (r.peekIf(SqlKeyword.NULL)) {
+		if (r.peekIf(SqlKeywords.NULL)) {
 			b.start("NullLiteral");
 			b.token(r.consume());
 			return b.end();
-		} else if (r.peekIf([SqlKeyword.TRUE, SqlKeyword.FALSE])) {
+		} else if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			return this.booleanLiteral(b, r);
 		} else if (
 			r.peekIf([
-				SqlKeyword.CURRENT_DATE,
-				SqlKeyword.CURRENT_TIME,
-				SqlKeyword.CURRENT_TIMESTAMP,
+				SqlKeywords.CURRENT_DATE,
+				SqlKeywords.CURRENT_TIME,
+				SqlKeywords.CURRENT_TIMESTAMP,
 			])
 		) {
 			b.start("FunctionExpression");
@@ -2730,31 +2750,31 @@ export class Sqlite3Parser extends Parser {
 			b.value(b.token(r.consume()).text.toUpperCase());
 			b.end();
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.CASE)) {
+		} else if (r.peekIf(SqlKeywords.CASE)) {
 			b.start("CaseExpression");
 			b.token(r.consume());
-			if (!r.peekIf(SqlKeyword.WHEN)) {
+			if (!r.peekIf(SqlKeywords.WHEN)) {
 				this.expression(b, r);
 			}
 			do {
 				b.start("WhenClause");
-				b.token(r.consume(SqlKeyword.WHEN));
+				b.token(r.consume(SqlKeywords.WHEN));
 				this.expression(b, r);
 				b.start("ThenClause");
-				b.token(r.consume(SqlKeyword.THEN));
+				b.token(r.consume(SqlKeywords.THEN));
 				this.expression(b, r);
 				b.end();
 				b.end();
-			} while (r.peekIf(SqlKeyword.WHEN));
-			if (r.peekIf(SqlKeyword.ELSE)) {
+			} while (r.peekIf(SqlKeywords.WHEN));
+			if (r.peekIf(SqlKeywords.ELSE)) {
 				b.start("ElseClause");
 				b.token(r.consume());
 				this.expression(b, r);
 				b.end();
 			}
-			b.token(r.consume(SqlKeyword.END));
+			b.token(r.consume(SqlKeywords.END));
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.CAST)) {
+		} else if (r.peekIf(SqlKeywords.CAST)) {
 			b.start("FunctionExpression");
 			b.start("ObjectName");
 			b.value(b.token(r.consume()).text.toUpperCase());
@@ -2765,12 +2785,12 @@ export class Sqlite3Parser extends Parser {
 			b.start("FunctionArgument");
 			this.expression(b, r);
 			b.end();
-			b.token(r.consume(SqlKeyword.AS));
+			b.token(r.consume(SqlKeywords.AS));
 			this.columnType(b, r);
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.RAISE)) {
+		} else if (r.peekIf(SqlKeywords.RAISE)) {
 			b.start("FunctionExpression");
 			b.start("ObjectName");
 			b.value(b.token(r.consume()).text.toUpperCase());
@@ -2788,25 +2808,25 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 			return b.end();
-		} else if (r.peekIf(SqlKeyword.EXISTS)) {
+		} else if (r.peekIf(SqlKeywords.EXISTS)) {
 			b.start("ExistsOperation");
 			b.token(r.consume());
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.selectStatement(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
 			return b.end();
-		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.VALUES)) {
+		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeywords.VALUES)) {
 			b.start("SubqueryExpression");
 			b.token(r.consume());
 			b.start("ValuesClause");
-			b.token(r.consume(SqlKeyword.VALUES));
+			b.token(r.consume(SqlKeywords.VALUES));
 			b.token(r.consume(SqlTokenType.LeftParen));
 			this.expressionList(b, r);
 			b.token(r.consume(SqlTokenType.RightParen));
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 			return b.end();
-		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeyword.SELECT)) {
+		} else if (r.peekIf(SqlTokenType.LeftParen, SqlKeywords.SELECT)) {
 			b.start("SubqueryExpression");
 			b.token(r.consume());
 			this.selectStatement(b, r);
@@ -2846,7 +2866,7 @@ export class Sqlite3Parser extends Parser {
 				b.end();
 				b.end();
 			} else {
-				if (r.peekIf(SqlKeyword.DISTINCT)) {
+				if (r.peekIf(SqlKeywords.DISTINCT)) {
 					b.start("DistinctOption");
 					b.token(r.consume());
 					b.end();
@@ -2864,7 +2884,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
-			if (r.peekIf(SqlKeyword.FILTER)) {
+			if (r.peekIf(SqlKeywords.FILTER)) {
 				b.start("FilterClause");
 				b.token(r.consume());
 				b.token(r.consume(SqlTokenType.LeftParen));
@@ -2874,7 +2894,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			if (
 				!this.compileOptions.has("SQLITE_OMIT_WINDOWFUNC") &&
-				r.peekIf(SqlKeyword.OVER)
+				r.peekIf(SqlKeywords.OVER)
 			) {
 				b.start("OverClause");
 				b.token(r.consume());
@@ -2931,15 +2951,15 @@ export class Sqlite3Parser extends Parser {
 	private sortColumn(b: CstBuilder, r: TokenReader) {
 		b.start("SortColumn");
 		this.expression(b, r);
-		if (r.peekIf(SqlKeyword.COLLATE)) {
+		if (r.peekIf(SqlKeywords.COLLATE)) {
 			b.token(r.consume());
 			this.identifier(b, r, "CollationName");
 		}
-		if (r.peekIf(SqlKeyword.ASC)) {
+		if (r.peekIf(SqlKeywords.ASC)) {
 			b.start("AscOption");
 			b.token(r.consume());
 			b.end();
-		} else if (r.peekIf(SqlKeyword.DESC)) {
+		} else if (r.peekIf(SqlKeywords.DESC)) {
 			b.start("DescOption");
 			b.token(r.consume());
 			b.end();
@@ -3015,7 +3035,7 @@ export class Sqlite3Parser extends Parser {
 
 	private booleanLiteral(b: CstBuilder, r: TokenReader) {
 		b.start("BooleanLiteral");
-		if (r.peekIf([SqlKeyword.TRUE, SqlKeyword.FALSE])) {
+		if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			b.value(b.token(r.consume()).text.toUpperCase());
 		} else {
 			throw r.createParseError();

@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "DATABASE", {
-		keyword: SqlKeyword.DATABASE,
+		keyword: SqlKeywords.DATABASE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(6, 1, 6),
@@ -24,7 +24,7 @@ export default [
 		location: new SourceLocation(16, 1, 16),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(26, 1, 26),
@@ -50,11 +50,11 @@ export default [
 		location: new SourceLocation(36, 1, 36),
 	}),
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(38, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "DATABASE", {
-		keyword: SqlKeyword.DATABASE,
+		keyword: SqlKeywords.DATABASE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(44, 2, 7),
@@ -71,7 +71,7 @@ export default [
 		location: new SourceLocation(54, 2, 17),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(71, 2, 34),
@@ -97,11 +97,11 @@ export default [
 		location: new SourceLocation(81, 2, 44),
 	}),
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(83, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "DATABASE", {
-		keyword: SqlKeyword.DATABASE,
+		keyword: SqlKeywords.DATABASE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(89, 3, 7),
@@ -110,7 +110,7 @@ export default [
 		location: new SourceLocation(90, 3, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "CONCAT", {
-		keyword: SqlKeyword.CONCAT,
+		keyword: SqlKeywords.CONCAT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(98, 3, 16),
@@ -139,7 +139,7 @@ export default [
 		location: new SourceLocation(127, 3, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(128, 3, 46),
@@ -165,11 +165,11 @@ export default [
 		location: new SourceLocation(138, 3, 56),
 	}),
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(140, 4, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "DATABASE", {
-		keyword: SqlKeyword.DATABASE,
+		keyword: SqlKeywords.DATABASE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(146, 4, 7),
@@ -197,7 +197,7 @@ export default [
 		location: new SourceLocation(169, 4, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "strftime", {
-		keyword: SqlKeyword.STRFTIME,
+		keyword: SqlKeywords.STRFTIME,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(171, 4, 32),
@@ -245,7 +245,7 @@ export default [
 		location: new SourceLocation(206, 4, 67),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(207, 4, 68),
@@ -271,7 +271,7 @@ export default [
 		location: new SourceLocation(217, 4, 78),
 	}),
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(219, 5, 1),
 	}),
 	new Token(SqlTokenType.String, "'new_database.db'", {
@@ -283,7 +283,7 @@ export default [
 		location: new SourceLocation(226, 5, 8),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(243, 5, 25),
@@ -309,7 +309,7 @@ export default [
 		location: new SourceLocation(253, 5, 35),
 	}),
 	new Token(SqlTokenType.Identifier, "ATTACH", {
-		keyword: SqlKeyword.ATTACH,
+		keyword: SqlKeywords.ATTACH,
 		location: new SourceLocation(255, 6, 1),
 	}),
 	new Token(SqlTokenType.String, "'database_'", {
@@ -337,7 +337,7 @@ export default [
 		location: new SourceLocation(277, 6, 23),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(282, 6, 28),

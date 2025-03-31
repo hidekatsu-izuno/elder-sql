@@ -4,283 +4,194 @@ import {
 	type LexerOptions,
 	type Token,
 } from "../lexer.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
 
 const ReservedSet = new Set<Keyword>([
-	SqlKeyword.ADD,
-	SqlKeyword.ALL,
-	SqlKeyword.ALTER,
-	SqlKeyword.AND,
-	SqlKeyword.ANY,
-	SqlKeyword.AS,
-	SqlKeyword.ASC,
-	SqlKeyword.AUTHORIZATION,
-	SqlKeyword.BACKUP,
-	SqlKeyword.BEGIN,
-	SqlKeyword.BETWEEN,
-	SqlKeyword.BREAK,
-	SqlKeyword.BROWSE,
-	SqlKeyword.BULK,
-	SqlKeyword.BY,
-	SqlKeyword.CASCADE,
-	SqlKeyword.CASE,
-	SqlKeyword.CHECK,
-	SqlKeyword.CHECKPOINT,
-	SqlKeyword.CLOSE,
-	SqlKeyword.CLUSTERED,
-	SqlKeyword.COALESCE,
-	SqlKeyword.COLLATE,
-	SqlKeyword.COLUMN,
-	SqlKeyword.COMMIT,
-	SqlKeyword.COMPUTE,
-	SqlKeyword.CONSTRAINT,
-	SqlKeyword.CONTAINS,
-	SqlKeyword.CONTAINSTABLE,
-	SqlKeyword.CONTINUE,
-	SqlKeyword.CONVERT,
-	SqlKeyword.CREATE,
-	SqlKeyword.CROSS,
-	SqlKeyword.CURRENT,
-	SqlKeyword.CURRENT_DATE,
-	SqlKeyword.CURRENT_TIME,
-	SqlKeyword.CURRENT_TIMESTAMP,
-	SqlKeyword.CURRENT_USER,
-	SqlKeyword.CURSOR,
-	SqlKeyword.DATABASE,
-	SqlKeyword.DBCC,
-	SqlKeyword.DEALLOCATE,
-	SqlKeyword.DECLARE,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.DELETE,
-	SqlKeyword.DENY,
-	SqlKeyword.DESC,
-	SqlKeyword.DISK,
-	SqlKeyword.DISTINCT,
-	SqlKeyword.DISTRIBUTED,
-	SqlKeyword.DOUBLE,
-	SqlKeyword.DROP,
-	SqlKeyword.DUMP,
-	SqlKeyword.ELSE,
-	SqlKeyword.END,
-	SqlKeyword.ERRLVL,
-	SqlKeyword.ESCAPE,
-	SqlKeyword.EXCEPT,
-	SqlKeyword.EXEC,
-	SqlKeyword.EXECUTE,
-	SqlKeyword.EXISTS,
-	SqlKeyword.EXIT,
-	SqlKeyword.EXTERNAL,
-	SqlKeyword.FETCH,
-	SqlKeyword.FILE,
-	SqlKeyword.FILLFACTOR,
-	SqlKeyword.FOR,
-	SqlKeyword.FOREIGN,
-	SqlKeyword.FREETEXT,
-	SqlKeyword.FREETEXTTABLE,
-	SqlKeyword.FROM,
-	SqlKeyword.FULL,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.GOTO,
-	SqlKeyword.GRANT,
-	SqlKeyword.GROUP,
-	SqlKeyword.HAVING,
-	SqlKeyword.HOLDLOCK,
-	SqlKeyword.IDENTITY,
-	SqlKeyword.IDENTITYCOL,
-	SqlKeyword.IDENTITY_INSERT,
-	SqlKeyword.IF,
-	SqlKeyword.IN,
-	SqlKeyword.INDEX,
-	SqlKeyword.INNER,
-	SqlKeyword.INSERT,
-	SqlKeyword.INTERSECT,
-	SqlKeyword.INTO,
-	SqlKeyword.IS,
-	SqlKeyword.JOIN,
-	SqlKeyword.KEY,
-	SqlKeyword.KILL,
-	SqlKeyword.LEFT,
-	SqlKeyword.LIKE,
-	SqlKeyword.LINENO,
-	SqlKeyword.LOAD,
-	SqlKeyword.MERGE,
-	SqlKeyword.NATIONAL,
-	SqlKeyword.NOCHECK,
-	SqlKeyword.NONCLUSTERED,
-	SqlKeyword.NOT,
-	SqlKeyword.NULL,
-	SqlKeyword.NULLIF,
-	SqlKeyword.OF,
-	SqlKeyword.OFF,
-	SqlKeyword.OFFSETS,
-	SqlKeyword.ON,
-	SqlKeyword.OPEN,
-	SqlKeyword.OPENDATASOURCE,
-	SqlKeyword.OPENQUERY,
-	SqlKeyword.OPENROWSET,
-	SqlKeyword.OPENXML,
-	SqlKeyword.OPTION,
-	SqlKeyword.OR,
-	SqlKeyword.ORDER,
-	SqlKeyword.OUTER,
-	SqlKeyword.OVER,
-	SqlKeyword.PERCENT,
-	SqlKeyword.PIVOT,
-	SqlKeyword.PLAN,
-	SqlKeyword.PRECISION,
-	SqlKeyword.PRIMARY,
-	SqlKeyword.PRINT,
-	SqlKeyword.PROC,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.PUBLIC,
-	SqlKeyword.RAISERROR,
-	SqlKeyword.READ,
-	SqlKeyword.READTEXT,
-	SqlKeyword.RECONFIGURE,
-	SqlKeyword.REFERENCES,
-	SqlKeyword.REPLICATION,
-	SqlKeyword.RESTORE,
-	SqlKeyword.RESTRICT,
-	SqlKeyword.RETURN,
-	SqlKeyword.REVERT,
-	SqlKeyword.REVOKE,
-	SqlKeyword.RIGHT,
-	SqlKeyword.ROLLBACK,
-	SqlKeyword.ROWCOUNT,
-	SqlKeyword.ROWGUIDCOL,
-	SqlKeyword.RULE,
-	SqlKeyword.SAVE,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.SECURITYAUDIT,
-	SqlKeyword.SELECT,
-	SqlKeyword.SEMANTICKEYPHRASETABLE,
-	SqlKeyword.SEMANTICSIMILARITYDETAILSTABLE,
-	SqlKeyword.SEMANTICSIMILARITYTABLE,
-	SqlKeyword.SESSION_USER,
-	SqlKeyword.SET,
-	SqlKeyword.SETUSER,
-	SqlKeyword.SHUTDOWN,
-	SqlKeyword.SOME,
-	SqlKeyword.STATISTICS,
-	SqlKeyword.SYSTEM_USER,
-	SqlKeyword.TABLE,
-	SqlKeyword.TABLESAMPLE,
-	SqlKeyword.TEXTSIZE,
-	SqlKeyword.THEN,
-	SqlKeyword.TO,
-	SqlKeyword.TOP,
-	SqlKeyword.TRAN,
-	SqlKeyword.TRANSACTION,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TRUNCATE,
-	SqlKeyword.TRY_CONVERT,
-	SqlKeyword.TSEQUAL,
-	SqlKeyword.UNION,
-	SqlKeyword.UNIQUE,
-	SqlKeyword.UNPIVOT,
-	SqlKeyword.UPDATE,
-	SqlKeyword.UPDATETEXT,
-	SqlKeyword.USE,
-	SqlKeyword.USER,
-	SqlKeyword.VALUES,
-	SqlKeyword.VARYING,
-	SqlKeyword.VIEW,
-	SqlKeyword.WAITFOR,
-	SqlKeyword.WHEN,
-	SqlKeyword.WHERE,
-	SqlKeyword.WHILE,
-	SqlKeyword.WITH,
-	SqlKeyword.WITHIN,
-	SqlKeyword.WRITETEXT,
-]);
-
-const StatementStartSet = new Set<Keyword>([
-	SqlKeyword.ADD,
-	SqlKeyword.ALTER,
-	SqlKeyword.BACKUP,
-	SqlKeyword.BEGIN,
-	SqlKeyword.BULK,
-	SqlKeyword.CLOSE,
-	SqlKeyword.CREATE,
-	SqlKeyword.DECLARE,
-	SqlKeyword.DELETE,
-	SqlKeyword.DENY,
-	SqlKeyword.DISABLE,
-	SqlKeyword.DROP,
-	SqlKeyword.ENABLE,
-	SqlKeyword.END,
-	SqlKeyword.GRANT,
-	SqlKeyword.GET,
-	SqlKeyword.INSERT,
-	SqlKeyword.UPDATE,
-	SqlKeyword.UPDATETEXT,
-	SqlKeyword.MERGE,
-	SqlKeyword.MOVE,
-	SqlKeyword.OPEN,
-	SqlKeyword.READTEXT,
-	SqlKeyword.RECEIVE,
-	SqlKeyword.REVERT,
-	SqlKeyword.REVOKE,
-	SqlKeyword.RESTORE,
-	SqlKeyword.SEND,
-	SqlKeyword.SET,
-	SqlKeyword.SETUSER,
-	SqlKeyword.TRUNCATE,
-	SqlKeyword.WAITFOR,
-	SqlKeyword.WITH,
-	SqlKeyword.WRITETEXT,
-]);
-
-const ObjectStartSet = new Set<Keyword>([
-	SqlKeyword.AGGREGATE,
-	SqlKeyword.APPICATION,
-	SqlKeyword.ASSEMBLY,
-	SqlKeyword.ASYMMETRIC,
-	SqlKeyword.AVAILABILITY,
-	SqlKeyword.BROKER,
-	SqlKeyword.CERTIFICATE,
-	SqlKeyword.COLUMNSTORE,
-	SqlKeyword.COLUMN,
-	SqlKeyword.CONTRACT,
-	SqlKeyword.CREDENTIAL,
-	SqlKeyword.CRYPTOGRAPHIC,
-	SqlKeyword.DATABASE,
-	SqlKeyword.DEFAULT,
-	SqlKeyword.ENDPOINT,
-	SqlKeyword.EVENT,
-	SqlKeyword.EXTERNAL,
-	SqlKeyword.FULLTEXT,
-	SqlKeyword.FUNCTION,
-	SqlKeyword.INDEX,
-	SqlKeyword.LOGIN,
-	SqlKeyword.MASTER,
-	SqlKeyword.MESSAGE,
-	SqlKeyword.PARTITION,
-	SqlKeyword.PROCEDURE,
-	SqlKeyword.QUEUE,
-	SqlKeyword.REMOTE,
-	SqlKeyword.RESOURCE,
-	SqlKeyword.ROLE,
-	SqlKeyword.ROUTE,
-	SqlKeyword.RULE,
-	SqlKeyword.SCHEMA,
-	SqlKeyword.SEARCH,
-	SqlKeyword.SECURITY,
-	SqlKeyword.SELECTIVE,
-	SqlKeyword.SEQUENCE,
-	SqlKeyword.SERVICE,
-	SqlKeyword.SIGNATURE,
-	SqlKeyword.SPATIAL,
-	SqlKeyword.STATISTICS,
-	SqlKeyword.SYMMETRIC,
-	SqlKeyword.SYNONYM,
-	SqlKeyword.TABLE,
-	SqlKeyword.TRIGGER,
-	SqlKeyword.TYPE,
-	SqlKeyword.USER,
-	SqlKeyword.VIEW,
-	SqlKeyword.WORKLOAD,
-	SqlKeyword.XML,
+	SqlKeywords.ADD,
+	SqlKeywords.ALL,
+	SqlKeywords.ALTER,
+	SqlKeywords.AND,
+	SqlKeywords.ANY,
+	SqlKeywords.AS,
+	SqlKeywords.ASC,
+	SqlKeywords.AUTHORIZATION,
+	SqlKeywords.BACKUP,
+	SqlKeywords.BEGIN,
+	SqlKeywords.BETWEEN,
+	SqlKeywords.BREAK,
+	SqlKeywords.BROWSE,
+	SqlKeywords.BULK,
+	SqlKeywords.BY,
+	SqlKeywords.CASCADE,
+	SqlKeywords.CASE,
+	SqlKeywords.CHECK,
+	SqlKeywords.CHECKPOINT,
+	SqlKeywords.CLOSE,
+	SqlKeywords.CLUSTERED,
+	SqlKeywords.COALESCE,
+	SqlKeywords.COLLATE,
+	SqlKeywords.COLUMN,
+	SqlKeywords.COMMIT,
+	SqlKeywords.COMPUTE,
+	SqlKeywords.CONSTRAINT,
+	SqlKeywords.CONTAINS,
+	SqlKeywords.CONTAINSTABLE,
+	SqlKeywords.CONTINUE,
+	SqlKeywords.CONVERT,
+	SqlKeywords.CREATE,
+	SqlKeywords.CROSS,
+	SqlKeywords.CURRENT,
+	SqlKeywords.CURRENT_DATE,
+	SqlKeywords.CURRENT_TIME,
+	SqlKeywords.CURRENT_TIMESTAMP,
+	SqlKeywords.CURRENT_USER,
+	SqlKeywords.CURSOR,
+	SqlKeywords.DATABASE,
+	SqlKeywords.DBCC,
+	SqlKeywords.DEALLOCATE,
+	SqlKeywords.DECLARE,
+	SqlKeywords.DEFAULT,
+	SqlKeywords.DELETE,
+	SqlKeywords.DENY,
+	SqlKeywords.DESC,
+	SqlKeywords.DISK,
+	SqlKeywords.DISTINCT,
+	SqlKeywords.DISTRIBUTED,
+	SqlKeywords.DOUBLE,
+	SqlKeywords.DROP,
+	SqlKeywords.DUMP,
+	SqlKeywords.ELSE,
+	SqlKeywords.END,
+	SqlKeywords.ERRLVL,
+	SqlKeywords.ESCAPE,
+	SqlKeywords.EXCEPT,
+	SqlKeywords.EXEC,
+	SqlKeywords.EXECUTE,
+	SqlKeywords.EXISTS,
+	SqlKeywords.EXIT,
+	SqlKeywords.EXTERNAL,
+	SqlKeywords.FETCH,
+	SqlKeywords.FILE,
+	SqlKeywords.FILLFACTOR,
+	SqlKeywords.FOR,
+	SqlKeywords.FOREIGN,
+	SqlKeywords.FREETEXT,
+	SqlKeywords.FREETEXTTABLE,
+	SqlKeywords.FROM,
+	SqlKeywords.FULL,
+	SqlKeywords.FUNCTION,
+	SqlKeywords.GOTO,
+	SqlKeywords.GRANT,
+	SqlKeywords.GROUP,
+	SqlKeywords.HAVING,
+	SqlKeywords.HOLDLOCK,
+	SqlKeywords.IDENTITY,
+	SqlKeywords.IDENTITYCOL,
+	SqlKeywords.IDENTITY_INSERT,
+	SqlKeywords.IF,
+	SqlKeywords.IN,
+	SqlKeywords.INDEX,
+	SqlKeywords.INNER,
+	SqlKeywords.INSERT,
+	SqlKeywords.INTERSECT,
+	SqlKeywords.INTO,
+	SqlKeywords.IS,
+	SqlKeywords.JOIN,
+	SqlKeywords.KEY,
+	SqlKeywords.KILL,
+	SqlKeywords.LEFT,
+	SqlKeywords.LIKE,
+	SqlKeywords.LINENO,
+	SqlKeywords.LOAD,
+	SqlKeywords.MERGE,
+	SqlKeywords.NATIONAL,
+	SqlKeywords.NOCHECK,
+	SqlKeywords.NONCLUSTERED,
+	SqlKeywords.NOT,
+	SqlKeywords.NULL,
+	SqlKeywords.NULLIF,
+	SqlKeywords.OF,
+	SqlKeywords.OFF,
+	SqlKeywords.OFFSETS,
+	SqlKeywords.ON,
+	SqlKeywords.OPEN,
+	SqlKeywords.OPENDATASOURCE,
+	SqlKeywords.OPENQUERY,
+	SqlKeywords.OPENROWSET,
+	SqlKeywords.OPENXML,
+	SqlKeywords.OPTION,
+	SqlKeywords.OR,
+	SqlKeywords.ORDER,
+	SqlKeywords.OUTER,
+	SqlKeywords.OVER,
+	SqlKeywords.PERCENT,
+	SqlKeywords.PIVOT,
+	SqlKeywords.PLAN,
+	SqlKeywords.PRECISION,
+	SqlKeywords.PRIMARY,
+	SqlKeywords.PRINT,
+	SqlKeywords.PROC,
+	SqlKeywords.PROCEDURE,
+	SqlKeywords.PUBLIC,
+	SqlKeywords.RAISERROR,
+	SqlKeywords.READ,
+	SqlKeywords.READTEXT,
+	SqlKeywords.RECONFIGURE,
+	SqlKeywords.REFERENCES,
+	SqlKeywords.REPLICATION,
+	SqlKeywords.RESTORE,
+	SqlKeywords.RESTRICT,
+	SqlKeywords.RETURN,
+	SqlKeywords.REVERT,
+	SqlKeywords.REVOKE,
+	SqlKeywords.RIGHT,
+	SqlKeywords.ROLLBACK,
+	SqlKeywords.ROWCOUNT,
+	SqlKeywords.ROWGUIDCOL,
+	SqlKeywords.RULE,
+	SqlKeywords.SAVE,
+	SqlKeywords.SCHEMA,
+	SqlKeywords.SECURITYAUDIT,
+	SqlKeywords.SELECT,
+	SqlKeywords.SEMANTICKEYPHRASETABLE,
+	SqlKeywords.SEMANTICSIMILARITYDETAILSTABLE,
+	SqlKeywords.SEMANTICSIMILARITYTABLE,
+	SqlKeywords.SESSION_USER,
+	SqlKeywords.SET,
+	SqlKeywords.SETUSER,
+	SqlKeywords.SHUTDOWN,
+	SqlKeywords.SOME,
+	SqlKeywords.STATISTICS,
+	SqlKeywords.SYSTEM_USER,
+	SqlKeywords.TABLE,
+	SqlKeywords.TABLESAMPLE,
+	SqlKeywords.TEXTSIZE,
+	SqlKeywords.THEN,
+	SqlKeywords.TO,
+	SqlKeywords.TOP,
+	SqlKeywords.TRAN,
+	SqlKeywords.TRANSACTION,
+	SqlKeywords.TRIGGER,
+	SqlKeywords.TRUNCATE,
+	SqlKeywords.TRY_CONVERT,
+	SqlKeywords.TSEQUAL,
+	SqlKeywords.UNION,
+	SqlKeywords.UNIQUE,
+	SqlKeywords.UNPIVOT,
+	SqlKeywords.UPDATE,
+	SqlKeywords.UPDATETEXT,
+	SqlKeywords.USE,
+	SqlKeywords.USER,
+	SqlKeywords.VALUES,
+	SqlKeywords.VARYING,
+	SqlKeywords.VIEW,
+	SqlKeywords.WAITFOR,
+	SqlKeywords.WHEN,
+	SqlKeywords.WHERE,
+	SqlKeywords.WHILE,
+	SqlKeywords.WITH,
+	SqlKeywords.WITHIN,
+	SqlKeywords.WRITETEXT,
 ]);
 
 export declare type MssqlLexerOptions = LexerOptions & {};
@@ -297,14 +208,6 @@ const BLOCK_COMMENT_START = /\/\*.*?\*\//sy;
 const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy;
 
 export class MssqlLexer extends Lexer {
-	static isStatementStart(keyword: Keyword) {
-		return keyword != null && StatementStartSet.has(keyword);
-	}
-
-	static isObjectStart(keyword?: Keyword) {
-		return keyword != null && ObjectStartSet.has(keyword);
-	}
-
 	constructor(options: { [key: string]: any } = {}) {
 		super(
 			"mssql",
@@ -317,7 +220,12 @@ export class MssqlLexer extends Lexer {
 					onMatch: (state, token) => this.onMatchBlockComment(state, token),
 				},
 				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
-				{ type: SqlTokenType.LineBreak, re: /\n|\r\n?/y, skip: true, separator: true },
+				{
+					type: SqlTokenType.LineBreak,
+					re: /\n|\r\n?/y,
+					skip: true,
+					separator: true,
+				},
 				{
 					type: SqlTokenType.WhiteSpace,
 					skip: true,
@@ -434,7 +342,7 @@ export class MssqlLexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeyword.for(token.text);
+		const keyword = SqlKeywords.for(token.text);
 		if (keyword) {
 			token.keyword = keyword;
 			if (this.isReserved(keyword)) {
@@ -442,21 +350,72 @@ export class MssqlLexer extends Lexer {
 			}
 
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeyword.CREATE || keyword === SqlKeyword.ALTER) {
+				if (keyword === SqlKeywords.CREATE || keyword === SqlKeywords.ALTER) {
 					state.mode = Mode.SQL_OBJECT_DEF;
-				} else if (keyword === SqlKeyword.IF || keyword === SqlKeyword.WHILE) {
+				} else if (
+					keyword === SqlKeywords.IF ||
+					keyword === SqlKeywords.WHILE
+				) {
 					state.mode = Mode.SQL_PROC;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				MssqlLexer.isObjectStart(keyword)
+				(keyword === SqlKeywords.AGGREGATE ||
+					keyword === SqlKeywords.APPICATION ||
+					keyword === SqlKeywords.ASSEMBLY ||
+					keyword === SqlKeywords.ASYMMETRIC ||
+					keyword === SqlKeywords.AVAILABILITY ||
+					keyword === SqlKeywords.BROKER ||
+					keyword === SqlKeywords.CERTIFICATE ||
+					keyword === SqlKeywords.COLUMNSTORE ||
+					keyword === SqlKeywords.COLUMN ||
+					keyword === SqlKeywords.CONTRACT ||
+					keyword === SqlKeywords.CREDENTIAL ||
+					keyword === SqlKeywords.CRYPTOGRAPHIC ||
+					keyword === SqlKeywords.DATABASE ||
+					keyword === SqlKeywords.DEFAULT ||
+					keyword === SqlKeywords.ENDPOINT ||
+					keyword === SqlKeywords.EVENT ||
+					keyword === SqlKeywords.EXTERNAL ||
+					keyword === SqlKeywords.FULLTEXT ||
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.INDEX ||
+					keyword === SqlKeywords.LOGIN ||
+					keyword === SqlKeywords.MASTER ||
+					keyword === SqlKeywords.MESSAGE ||
+					keyword === SqlKeywords.PARTITION ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.QUEUE ||
+					keyword === SqlKeywords.REMOTE ||
+					keyword === SqlKeywords.RESOURCE ||
+					keyword === SqlKeywords.ROLE ||
+					keyword === SqlKeywords.ROUTE ||
+					keyword === SqlKeywords.RULE ||
+					keyword === SqlKeywords.SCHEMA ||
+					keyword === SqlKeywords.SEARCH ||
+					keyword === SqlKeywords.SECURITY ||
+					keyword === SqlKeywords.SELECTIVE ||
+					keyword === SqlKeywords.SEQUENCE ||
+					keyword === SqlKeywords.SERVICE ||
+					keyword === SqlKeywords.SIGNATURE ||
+					keyword === SqlKeywords.SPATIAL ||
+					keyword === SqlKeywords.STATISTICS ||
+					keyword === SqlKeywords.SYMMETRIC ||
+					keyword === SqlKeywords.SYNONYM ||
+					keyword === SqlKeywords.TABLE ||
+					keyword === SqlKeywords.TRIGGER ||
+					keyword === SqlKeywords.TYPE ||
+					keyword === SqlKeywords.USER ||
+					keyword === SqlKeywords.VIEW ||
+					keyword === SqlKeywords.WORKLOAD ||
+					keyword === SqlKeywords.XML)
 			) {
 				if (
-					keyword === SqlKeyword.FUNCTION ||
-					keyword === SqlKeyword.PROCEDURE ||
-					keyword === SqlKeyword.TRIGGER
+					keyword === SqlKeywords.FUNCTION ||
+					keyword === SqlKeywords.PROCEDURE ||
+					keyword === SqlKeywords.TRIGGER
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {

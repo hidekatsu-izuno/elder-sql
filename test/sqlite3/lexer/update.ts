@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "UPDATE", {
-		keyword: SqlKeyword.UPDATE,
+		keyword: SqlKeywords.UPDATE,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(6, 1, 6),
@@ -16,7 +16,7 @@ export default [
 		location: new SourceLocation(7, 1, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "SET", {
-		keyword: SqlKeyword.SET,
+		keyword: SqlKeywords.SET,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(13, 1, 13),
@@ -58,11 +58,11 @@ export default [
 		location: new SourceLocation(23, 1, 23),
 	}),
 	new Token(SqlTokenType.Reserved, "UPDATE", {
-		keyword: SqlKeyword.UPDATE,
+		keyword: SqlKeywords.UPDATE,
 		location: new SourceLocation(25, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(31, 2, 7),
@@ -72,11 +72,11 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(36, 2, 12) }),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		location: new SourceLocation(37, 2, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "SET", {
-		keyword: SqlKeyword.SET,
+		keyword: SqlKeywords.SET,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(43, 2, 19),
@@ -136,7 +136,7 @@ export default [
 		location: new SourceLocation(59, 2, 35),
 	}),
 	new Token(SqlTokenType.Reserved, "WHERE", {
-		keyword: SqlKeyword.WHERE,
+		keyword: SqlKeywords.WHERE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(60, 2, 36),
@@ -178,7 +178,7 @@ export default [
 		location: new SourceLocation(72, 2, 48),
 	}),
 	new Token(SqlTokenType.Identifier, "WITH", {
-		keyword: SqlKeyword.WITH,
+		keyword: SqlKeywords.WITH,
 		location: new SourceLocation(74, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "X", {
@@ -190,7 +190,7 @@ export default [
 		location: new SourceLocation(79, 3, 6),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(80, 3, 7),
@@ -207,7 +207,7 @@ export default [
 		location: new SourceLocation(84, 3, 11),
 	}),
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(85, 3, 12),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -219,7 +219,7 @@ export default [
 		location: new SourceLocation(92, 3, 19),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(93, 3, 20),
@@ -244,11 +244,11 @@ export default [
 		location: new SourceLocation(98, 3, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "UPDATE", {
-		keyword: SqlKeyword.UPDATE,
+		keyword: SqlKeywords.UPDATE,
 		location: new SourceLocation(100, 4, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(106, 4, 7),
@@ -257,7 +257,7 @@ export default [
 		location: new SourceLocation(107, 4, 8),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(113, 4, 14),
@@ -274,7 +274,7 @@ export default [
 		location: new SourceLocation(117, 4, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "SET", {
-		keyword: SqlKeyword.SET,
+		keyword: SqlKeywords.SET,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(121, 4, 22),
@@ -334,7 +334,7 @@ export default [
 		location: new SourceLocation(137, 4, 38),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(138, 4, 39),
@@ -351,7 +351,7 @@ export default [
 		location: new SourceLocation(144, 4, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "WHERE", {
-		keyword: SqlKeyword.WHERE,
+		keyword: SqlKeywords.WHERE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(145, 4, 46),
@@ -405,11 +405,11 @@ export default [
 		location: new SourceLocation(164, 4, 65),
 	}),
 	new Token(SqlTokenType.Reserved, "UPDATE", {
-		keyword: SqlKeyword.UPDATE,
+		keyword: SqlKeywords.UPDATE,
 		location: new SourceLocation(166, 5, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(172, 5, 7),
@@ -421,11 +421,11 @@ export default [
 		location: new SourceLocation(177, 5, 12),
 	}),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		location: new SourceLocation(178, 5, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "SET", {
-		keyword: SqlKeyword.SET,
+		keyword: SqlKeywords.SET,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(184, 5, 19),
@@ -485,7 +485,7 @@ export default [
 		location: new SourceLocation(200, 5, 35),
 	}),
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(201, 5, 36),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -500,7 +500,7 @@ export default [
 		location: new SourceLocation(209, 5, 44),
 	}),
 	new Token(SqlTokenType.Reserved, "RETURNING", {
-		keyword: SqlKeyword.RETURNING,
+		keyword: SqlKeywords.RETURNING,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(210, 5, 45),
@@ -528,7 +528,7 @@ export default [
 		location: new SourceLocation(224, 5, 59),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(225, 5, 60),

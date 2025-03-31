@@ -1,13 +1,8 @@
+import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.js";
-import {
-	AggregateParseError,
-	Parser,
-	SyntaxNode,
-	SyntaxToken,
-	SyntaxTrivia,
-} from "../parser.js";
-import { SqlKeyword, SqlTokenType } from "../sql.js";
-import { apply, dequote } from "../utils.js";
+import { AggregateParseError, CstBuilder, Parser } from "../parser.js";
+import { SqlKeywords, SqlTokenType } from "../sql.js";
+import { dequote } from "../utils.js";
 import { OracleLexer } from "./oracle_lexer.js";
 
 export class OracleParser extends Parser {
@@ -17,32 +12,28 @@ export class OracleParser extends Parser {
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-
-		const root = new SyntaxNode("Script", {});
+		const b = new CstBuilder("Script");
 		const errors = [];
-
 		while (r.peek()) {
 			try {
 				if (
-					r.peekIf({
-						type: [
-							SqlTokenType.SemiColon,
-							SqlTokenType.Delimiter,
-							SqlTokenType.EoF,
-						],
-					})
+					r.peekIf([
+						SqlTokenType.SemiColon,
+						SqlTokenType.Delimiter,
+						SqlTokenType.EoF,
+					])
 				) {
-					this.appendToken(root, r.consume());
+					b.token(r.consume());
 				} else if (r.peekIf(SqlTokenType.Command)) {
-					this.command(root, r);
-				} else if (r.peekIf(SqlKeyword.EXPLAIN)) {
-					this.explainStatement(root, r);
+					this.command(b, r);
+				} else if (r.peekIf(SqlKeywords.EXPLAIN)) {
+					this.explainStatement(b, r);
 				} else {
-					this.statement(root, r);
+					this.statement(b, r);
 				}
 			} catch (err) {
 				if (err instanceof ParseError) {
-					this.unknown(root, r);
+					this.unknown(b, r, b.root);
 					errors.push(err);
 				} else {
 					throw err;
@@ -52,54 +43,97 @@ export class OracleParser extends Parser {
 
 		if (errors.length) {
 			throw new AggregateParseError(
-				root,
+				b.root,
 				errors,
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
 
-		return root;
+		return b.root;
 	}
 
-	private explainStatement(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("ExplainStatement", {}));
+	private explainStatement(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("ExplainStatement");
 		try {
-			return apply(current, (node) => {
-				this.appendToken(node, r.consume(SqlKeyword.EXPLAIN));
-				if (r.peekIf(SqlKeyword.QUERY)) {
-					apply(
-						this.append(node, new SyntaxNode("QueryPlanOption", {})),
-						(node) => {
-							this.appendToken(node, r.consume());
-							this.appendToken(node, r.consume(SqlKeyword.PLAN));
-						},
-					);
-				}
-				this.statement(node, r);
-			});
+			b.token(r.consume(SqlKeywords.EXPLAIN));
+			if (r.peekIf(SqlKeywords.QUERY)) {
+				b.start("QueryPlanOption");
+				b.token(r.consume());
+				b.token(r.consume(SqlKeywords.PLAN));
+				b.end();
+			}
+			this.statement(b, r);
+			b.end();
 		} catch (err) {
 			if (err instanceof ParseError) {
-				this.unknown(current, r);
+				this.unknown(b, r, stmt);
 			}
 			throw err;
 		}
+		return b.end();
 	}
 
-	private statement(parent: SyntaxNode, r: TokenReader) {
+	private statement(b: CstBuilder, r: TokenReader) {
 		let stmt: unknown;
-		if (r.peekIf(SqlKeyword.CREATE)) {
+		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
 			r.consume();
-			while (!r.peek().eos && !OracleLexer.isObjectStart(r.peek().keyword)) {
+			while (
+				!r.peek().eos &&
+				!r.peekIf([
+					SqlKeywords.ANALYTIC,
+					SqlKeywords.ATTRIBUTE,
+					SqlKeywords.AUDIT,
+					SqlKeywords.CLUSTER,
+					SqlKeywords.CONTEXT,
+					SqlKeywords.CONTROLFILE,
+					SqlKeywords.DATABASE,
+					SqlKeywords.DIMENSION,
+					SqlKeywords.DIRECTORY,
+					SqlKeywords.DISKGROUP,
+					SqlKeywords.EDITION,
+					SqlKeywords.FLASHBACK,
+					SqlKeywords.FUNCTION,
+					SqlKeywords.HIERARCHY,
+					SqlKeywords.INDEX,
+					SqlKeywords.INDEXTYPE,
+					SqlKeywords.INMEMORY,
+					SqlKeywords.JAVA,
+					SqlKeywords.LIBRARY,
+					SqlKeywords.LOCKDOWN,
+					SqlKeywords.MATERIALIZED,
+					SqlKeywords.OPERATOR,
+					SqlKeywords.OUTLINE,
+					SqlKeywords.PACKAGE,
+					SqlKeywords.PFILE,
+					SqlKeywords.PLUGGABLE,
+					SqlKeywords.PROCEDURE,
+					SqlKeywords.PROFILE,
+					SqlKeywords.RESTORE,
+					SqlKeywords.ROLE,
+					SqlKeywords.ROLLBACK,
+					SqlKeywords.SCHEMA,
+					SqlKeywords.SEQUENCE,
+					SqlKeywords.SPFILE,
+					SqlKeywords.SYNONYM,
+					SqlKeywords.TABLE,
+					SqlKeywords.TABLESPACE,
+					SqlKeywords.TRIGGER,
+					SqlKeywords.TYPE,
+					SqlKeywords.USER,
+					SqlKeywords.VIEW,
+				])
+			) {
 				r.consume();
 			}
-		} else if (r.peekIf(SqlKeyword.ALTER)) {
+		} else if (r.peekIf(SqlKeywords.ALTER)) {
 			const mark = r.pos;
 			r.consume();
-		} else if (r.peekIf(SqlKeyword.DROP)) {
+		} else if (r.peekIf(SqlKeywords.DROP)) {
 			const mark = r.pos;
 			r.consume();
 		} else {
+			//TODO
 		}
 
 		if (!stmt) {
@@ -108,91 +142,48 @@ export class OracleParser extends Parser {
 		return stmt;
 	}
 
-	private unknown(parent: SyntaxNode, r: TokenReader) {
-		if (!r.peek().eos) {
-			return apply(
-				this.append(parent, new SyntaxNode("Unknown", {})),
-				(node) => {
-					while (!r.peek().eos) {
-						this.appendToken(node, r.consume());
-					}
-				},
-			);
+	private unknown(b: CstBuilder, r: TokenReader, base: Element) {
+		while (b.current !== b.root && b.current !== base) {
+			b.end();
 		}
+		let node: ReturnType<typeof b.end> | undefined;
+		if (!r.peek().eos) {
+			b.start("Unknown");
+			while (!r.peek().eos) {
+				b.token(r.consume());
+			}
+			node = b.end();
+		}
+		if (base.parent) {
+			while (b.current !== b.root && b.current !== base.parent) {
+				b.end();
+			}
+		}
+		return node;
 	}
 
-	private command(parent: SyntaxNode, r: TokenReader) {
-		const current = this.append(parent, new SyntaxNode("CommandStatement", {}));
+	private command(b: CstBuilder, r: TokenReader) {
+		const stmt = b.start("CommandStatement");
 		try {
-			return apply(current, (node) => {
-				apply(this.append(node, new SyntaxNode("CommandName", {})), (node) => {
-					const token = r.consume(SqlTokenType.Command);
-					this.appendToken(node, token);
-					node.attribs.value = token.text;
-				});
-				if (!r.peek(-1).eos) {
-					apply(
-						this.append(node, new SyntaxNode("CommandArgumentList", {})),
-						(node) => {
-							do {
-								apply(
-									this.append(node, new SyntaxNode("CommandArgument", {})),
-									(node) => {
-										const token = r.consume();
-										this.appendToken(node, token);
-										node.attribs.value = dequote(token.text);
-									},
-								);
-							} while (!r.peek(-1).eos);
-						},
-					);
-				}
-			});
+			b.start("CommandName");
+			b.value(b.token(r.consume(SqlTokenType.Command)).text);
+			b.end();
+			if (!r.peek(-1).eos) {
+				b.start("CommandArgumentList");
+				do {
+					b.start("CommandArgument");
+					b.value(dequote(b.token(r.consume()).text));
+					b.end();
+				} while (!r.peek(-1).eos);
+				b.end();
+			}
+			b.end();
 		} catch (err) {
 			if (err instanceof ParseError) {
-				this.unknown(current, r);
+				this.unknown(b, r, stmt);
 			}
 			throw err;
 		}
-	}
-
-	private wrap(elem: SyntaxNode, wrapper: SyntaxNode) {
-		elem.replaceWith(wrapper);
-		wrapper.append(elem);
-		return wrapper;
-	}
-
-	private append(parent: SyntaxNode, child: SyntaxNode) {
-		parent.append(child);
-		return child;
-	}
-
-	private appendToken(parent: SyntaxNode, child: Token) {
-		const token = new SyntaxToken(child.type.name, {
-			...(child.keyword && { value: child.keyword.name }),
-		});
-		for (const skip of child.preskips) {
-			const skipToken = new SyntaxTrivia(skip.type.name, {
-				...(skip.keyword && { value: skip.keyword.name }),
-			});
-			if (skip.text) {
-				skipToken.append(skip.text);
-			}
-			token.append(skipToken);
-		}
-		if (child.text) {
-			token.append(child.text);
-		}
-		for (const skip of child.postskips) {
-			const skipToken = new SyntaxTrivia(skip.type.name, {
-				...(skip.keyword && { value: skip.keyword.name }),
-			});
-			if (skip.text) {
-				skipToken.append(skip.text);
-			}
-			token.append(skipToken);
-		}
-		parent.append(token);
-		return token;
+		return b.end();
 	}
 }

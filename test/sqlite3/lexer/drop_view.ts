@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "DROP", {
-		keyword: SqlKeyword.DROP,
+		keyword: SqlKeywords.DROP,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Identifier, "VIEW", {
-		keyword: SqlKeyword.VIEW,
+		keyword: SqlKeywords.VIEW,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(4, 1, 4),
@@ -33,11 +33,11 @@ export default [
 		location: new SourceLocation(18, 1, 18),
 	}),
 	new Token(SqlTokenType.Identifier, "DROP", {
-		keyword: SqlKeyword.DROP,
+		keyword: SqlKeywords.DROP,
 		location: new SourceLocation(20, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "VIEW", {
-		keyword: SqlKeyword.VIEW,
+		keyword: SqlKeywords.VIEW,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(24, 2, 5),
@@ -46,7 +46,7 @@ export default [
 		location: new SourceLocation(25, 2, 6),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(29, 2, 10),
@@ -68,11 +68,11 @@ export default [
 		location: new SourceLocation(43, 2, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "DROP", {
-		keyword: SqlKeyword.DROP,
+		keyword: SqlKeywords.DROP,
 		location: new SourceLocation(45, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "VIEW", {
-		keyword: SqlKeyword.VIEW,
+		keyword: SqlKeywords.VIEW,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(49, 3, 5),
@@ -81,7 +81,7 @@ export default [
 		location: new SourceLocation(50, 3, 6),
 	}),
 	new Token(SqlTokenType.Identifier, "IF", {
-		keyword: SqlKeyword.IF,
+		keyword: SqlKeywords.IF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(54, 3, 10),
@@ -90,7 +90,7 @@ export default [
 		location: new SourceLocation(55, 3, 11),
 	}),
 	new Token(SqlTokenType.Reserved, "EXISTS", {
-		keyword: SqlKeyword.EXISTS,
+		keyword: SqlKeywords.EXISTS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(57, 3, 13),
@@ -99,7 +99,7 @@ export default [
 		location: new SourceLocation(58, 3, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(64, 3, 20),

@@ -1,13 +1,13 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Reserved, "DELETE", {
-		keyword: SqlKeyword.DELETE,
+		keyword: SqlKeywords.DELETE,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(6, 1, 6),
@@ -16,7 +16,7 @@ export default [
 		location: new SourceLocation(7, 1, 7),
 	}),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(11, 1, 11),
@@ -34,11 +34,11 @@ export default [
 		location: new SourceLocation(18, 1, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "DELETE", {
-		keyword: SqlKeyword.DELETE,
+		keyword: SqlKeywords.DELETE,
 		location: new SourceLocation(20, 2, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(26, 2, 7),
@@ -47,7 +47,7 @@ export default [
 		location: new SourceLocation(27, 2, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(31, 2, 12),
@@ -57,7 +57,7 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(36, 2, 17) }),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		location: new SourceLocation(37, 2, 18),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -70,7 +70,7 @@ export default [
 		location: new SourceLocation(43, 2, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "WITH", {
-		keyword: SqlKeyword.WITH,
+		keyword: SqlKeywords.WITH,
 		location: new SourceLocation(45, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "X", {
@@ -82,7 +82,7 @@ export default [
 		location: new SourceLocation(50, 3, 6),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(51, 3, 7),
@@ -99,7 +99,7 @@ export default [
 		location: new SourceLocation(55, 3, 11),
 	}),
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(56, 3, 12),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
@@ -111,7 +111,7 @@ export default [
 		location: new SourceLocation(63, 3, 19),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
-		keyword: SqlKeyword.AS,
+		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(64, 3, 20),
@@ -131,7 +131,7 @@ export default [
 		location: new SourceLocation(69, 3, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "DELETE", {
-		keyword: SqlKeyword.DELETE,
+		keyword: SqlKeywords.DELETE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(70, 3, 26),
@@ -140,7 +140,7 @@ export default [
 		location: new SourceLocation(71, 3, 27),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(77, 3, 33),
@@ -149,7 +149,7 @@ export default [
 		location: new SourceLocation(78, 3, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(82, 3, 38),
@@ -159,11 +159,11 @@ export default [
 	}),
 	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(87, 3, 43) }),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		location: new SourceLocation(88, 3, 44),
 	}),
 	new Token(SqlTokenType.Reserved, "WHERE", {
-		keyword: SqlKeyword.WHERE,
+		keyword: SqlKeywords.WHERE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(94, 3, 50),
@@ -196,7 +196,7 @@ export default [
 		location: new SourceLocation(105, 3, 61),
 	}),
 	new Token(SqlTokenType.Reserved, "SELECT", {
-		keyword: SqlKeyword.SELECT,
+		keyword: SqlKeywords.SELECT,
 		location: new SourceLocation(106, 3, 62),
 	}),
 	new Token(SqlTokenType.Identifier, "Y", {
@@ -208,7 +208,7 @@ export default [
 		location: new SourceLocation(113, 3, 69),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(114, 3, 70),
@@ -237,11 +237,11 @@ export default [
 		location: new SourceLocation(122, 3, 78),
 	}),
 	new Token(SqlTokenType.Reserved, "DELETE", {
-		keyword: SqlKeyword.DELETE,
+		keyword: SqlKeywords.DELETE,
 		location: new SourceLocation(124, 4, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
-		keyword: SqlKeyword.FROM,
+		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(130, 4, 7),
@@ -250,7 +250,7 @@ export default [
 		location: new SourceLocation(131, 4, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(135, 4, 12),
@@ -262,11 +262,11 @@ export default [
 		location: new SourceLocation(140, 4, 17),
 	}),
 	new Token(SqlTokenType.Identifier, "sample", {
-		keyword: SqlKeyword.SAMPLE,
+		keyword: SqlKeywords.SAMPLE,
 		location: new SourceLocation(141, 4, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "WHERE", {
-		keyword: SqlKeyword.WHERE,
+		keyword: SqlKeywords.WHERE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(147, 4, 24),
@@ -299,7 +299,7 @@ export default [
 		location: new SourceLocation(158, 4, 35),
 	}),
 	new Token(SqlTokenType.Reserved, "AND", {
-		keyword: SqlKeyword.AND,
+		keyword: SqlKeywords.AND,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(159, 4, 36),
@@ -332,7 +332,7 @@ export default [
 		location: new SourceLocation(168, 4, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "RETURNING", {
-		keyword: SqlKeyword.RETURNING,
+		keyword: SqlKeywords.RETURNING,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(169, 4, 46),

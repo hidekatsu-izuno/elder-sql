@@ -1,9 +1,9 @@
 import { SourceLocation, Token } from "../../../src/lexer";
-import { SqlKeyword, SqlTokenType } from "../../../src/sql";
+import { SqlKeywords, SqlTokenType } from "../../../src/sql";
 
 export default [
 	new Token(SqlTokenType.Identifier, "VACUUM", {
-		keyword: SqlKeyword.VACUUM,
+		keyword: SqlKeywords.VACUUM,
 		location: new SourceLocation(0, 1, 0),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
@@ -16,11 +16,11 @@ export default [
 		location: new SourceLocation(6, 1, 6),
 	}),
 	new Token(SqlTokenType.Identifier, "VACUUM", {
-		keyword: SqlKeyword.VACUUM,
+		keyword: SqlKeywords.VACUUM,
 		location: new SourceLocation(8, 2, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(14, 2, 7),
@@ -38,11 +38,11 @@ export default [
 		location: new SourceLocation(19, 2, 12),
 	}),
 	new Token(SqlTokenType.Identifier, "VACUUM", {
-		keyword: SqlKeyword.VACUUM,
+		keyword: SqlKeywords.VACUUM,
 		location: new SourceLocation(21, 3, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeyword.MAIN,
+		keyword: SqlKeywords.MAIN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(27, 3, 7),
@@ -51,7 +51,7 @@ export default [
 		location: new SourceLocation(28, 3, 8),
 	}),
 	new Token(SqlTokenType.Reserved, "INTO", {
-		keyword: SqlKeyword.INTO,
+		keyword: SqlKeywords.INTO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(32, 3, 12),
@@ -77,11 +77,11 @@ export default [
 		location: new SourceLocation(52, 3, 32),
 	}),
 	new Token(SqlTokenType.Identifier, "VACUUM", {
-		keyword: SqlKeyword.VACUUM,
+		keyword: SqlKeywords.VACUUM,
 		location: new SourceLocation(54, 4, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "INTO", {
-		keyword: SqlKeyword.INTO,
+		keyword: SqlKeywords.INTO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
 				location: new SourceLocation(60, 4, 7),
