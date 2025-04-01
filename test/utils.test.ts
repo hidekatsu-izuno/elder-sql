@@ -1,40 +1,41 @@
-import { describe, expect, test } from "vitest";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { bquote, dequote, dquote, squote } from "../src/utils.ts";
 
 describe("test utils", () => {
 	test("test squote", async () => {
-		expect(squote("test")).toStrictEqual("'test'");
-		expect(squote("test's value")).toStrictEqual("'test''s value'");
+		assert.strictEqual(squote("test"), "'test'");
+		assert.strictEqual(squote("test's value"), "'test''s value'");
 	});
 
 	test("test dquote", async () => {
-		expect(dquote("test")).toStrictEqual('"test"');
-		expect(dquote('test"s value')).toStrictEqual('"test""s value"');
+		assert.strictEqual(dquote("test"), '"test"');
+		assert.strictEqual(dquote('test"s value'), '"test""s value"');
 	});
 
 	test("test bquote", async () => {
-		expect(bquote("test")).toStrictEqual("`test`");
-		expect(bquote("test`s value")).toStrictEqual("`test``s value`");
+		assert.strictEqual(bquote("test"), "`test`");
+		assert.strictEqual(bquote("test`s value"), "`test``s value`");
 	});
 
 	test("test dequote", async () => {
-		expect(dequote("test")).toBe("test");
-		expect(dequote("test's value")).toBe("test's value");
-		expect(dequote("'test'")).toBe("test");
-		expect(dequote("'test''s value'")).toBe("test's value");
-		expect(dequote('"test"')).toBe("test");
-		expect(dequote('"test""s value"')).toBe('test"s value');
-		expect(dequote("`test`")).toBe("test");
-		expect(dequote("`test``s value`")).toBe("test`s value");
-		expect(dequote("N'test'")).toBe("test");
-		expect(dequote("n'test''s value'")).toBe("test's value");
-		expect(dequote('N"test"')).toBe("test");
-		expect(dequote('n"test""s value"')).toBe('test"s value');
-		expect(dequote("$$test's value$$")).toBe("test's value");
-		expect(dequote("$body$test's value$body$")).toBe("test's value");
-		expect(dequote("Q'[test's value]'")).toBe("test's value");
-		expect(dequote("q'{test's value}'")).toBe("test's value");
-		expect(dequote("NQ'(test's value)'")).toBe("test's value");
-		expect(dequote("nq'#test's value#'")).toBe("test's value");
+		assert.strictEqual(dequote("test"), "test");
+		assert.strictEqual(dequote("test's value"), "test's value");
+		assert.strictEqual(dequote("'test'"), "test");
+		assert.strictEqual(dequote("'test''s value'"), "test's value");
+		assert.strictEqual(dequote('"test"'), "test");
+		assert.strictEqual(dequote('"test""s value"'), 'test"s value');
+		assert.strictEqual(dequote("`test`"), "test");
+		assert.strictEqual(dequote("`test``s value`"), "test`s value");
+		assert.strictEqual(dequote("N'test'"), "test");
+		assert.strictEqual(dequote("n'test''s value'"), "test's value");
+		assert.strictEqual(dequote('N"test"'), "test");
+		assert.strictEqual(dequote('n"test""s value"'), 'test"s value');
+		assert.strictEqual(dequote("$$test's value$$"), "test's value");
+		assert.strictEqual(dequote("$body$test's value$body$"), "test's value");
+		assert.strictEqual(dequote("Q'[test's value]'"), "test's value");
+		assert.strictEqual(dequote("q'{test's value}'"), "test's value");
+		assert.strictEqual(dequote("NQ'(test's value)'"), "test's value");
+		assert.strictEqual(dequote("nq'#test's value#'"), "test's value");
 	});
 });
