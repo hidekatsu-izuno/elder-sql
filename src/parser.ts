@@ -47,7 +47,9 @@ export class CstBuilder {
 			type,
 			...(value != null ? { value: value.toString() } : {}),
 		});
-		if (this.current !== EMPTY_NODE) {
+		if (this.current === EMPTY_NODE) {
+			this.root = elem;
+		} else {
 			appendChild(this.current, elem);
 		}
 		this.current = elem;	
