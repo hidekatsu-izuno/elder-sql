@@ -1,30 +1,30 @@
 import { Keyword, KeywordMap, TokenType } from "./lexer.ts";
 
 export class SqlTokenType extends TokenType {
-	static WhiteSpace = new TokenType("WhiteSpace");
-	static LineComment = new TokenType("LineComment");
-	static BlockComment = new TokenType("BlockComment");
-	static HintComment = new TokenType("HintComment");
-	static LineBreak = new TokenType("LineBreak");
-	static Command = new TokenType("Command");
-	static Delimiter = new TokenType("Delimiter");
-	static SemiColon = new TokenType("SemiColon");
-	static LeftParen = new TokenType("LeftParen");
-	static RightParen = new TokenType("RightParen");
-	static LeftBracket = new TokenType("LeftBracket");
-	static RightBracket = new TokenType("RightBracket");
-	static LeftBrace = new TokenType("LeftBrace");
-	static RightBrace = new TokenType("RightBrace");
-	static Comma = new TokenType("Comma");
-	static Dot = new TokenType("Dot");
+	static WhiteSpace = new TokenType("WhiteSpace", {skip: true});
+	static LineComment = new TokenType("LineComment", {skip: true});
+	static BlockComment = new TokenType("BlockComment", {skip: true});
+	static HintComment = new TokenType("HintComment", {skip: true});
+	static LineBreak = new TokenType("LineBreak", {skip: true, separator: true});
+	static Delimiter = new TokenType("Delimiter", {separator: true});
+	static SemiColon = new TokenType("SemiColon", {separator: true});
+	static LeftParen = new TokenType("LeftParen", {separator: true});
+	static RightParen = new TokenType("RightParen", {separator: true});
+	static LeftBracket = new TokenType("LeftBracket", {separator: true});
+	static RightBracket = new TokenType("RightBracket", {separator: true});
+	static LeftBrace = new TokenType("LeftBrace", {separator: true});
+	static RightBrace = new TokenType("RightBrace", {separator: true});
+	static Comma = new TokenType("Comma", {separator: true});
+	static Dot = new TokenType("Dot", {separator: true});
+	static Operator = new TokenType("Operator", {separator: true});
 	static Label = new TokenType("Label");
-	static Operator = new TokenType("Operator");
 	static Numeric = new TokenType("Numeric");
 	static Size = new TokenType("Size");
 	static Blob = new TokenType("Blob");
 	static String = new TokenType("String");
 	static BindVariable = new TokenType("BindVariable");
 	static Variable = new TokenType("Variable");
+	static Command = new TokenType("Command");
 	static Identifier = new TokenType("Identifier", { keyword: true });
 }
 

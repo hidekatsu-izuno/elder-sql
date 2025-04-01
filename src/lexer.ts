@@ -1,18 +1,24 @@
 export class TokenType {
 	static Reserved = new TokenType("Reserved");
 	static EoF = new TokenType("EoF");
-	static Error = new TokenType("Error");
+	static Error = new TokenType("Error", { separator: true });
 
 	name: string;
+	skip: boolean;
+	separator: boolean;
 	keyword: boolean;
 
 	constructor(
 		name: string,
 		options?: {
-			keyword?: boolean;
+			skip?: boolean,
+			separator?: boolean,
+			keyword?: boolean,
 		},
 	) {
 		this.name = name;
+		this.skip = !!options?.skip;
+		this.separator = !!options?.separator;
 		this.keyword = !!options?.keyword;
 	}
 
@@ -163,8 +169,6 @@ export class Token {
 	text: string;
 	keyword?: Keyword;
 	eos: boolean;
-	skip: boolean;
-	separator: boolean;
 	preskips: Token[];
 	postskips: Token[];
 	location?: SourceLocation;
@@ -175,8 +179,6 @@ export class Token {
 		options?: {
 			keyword?: Keyword;
 			eos?: boolean;
-			skip?: boolean;
-			separator?: boolean;
 			preskips?: Token[];
 			postskips?: Token[];
 			location?: SourceLocation;
@@ -186,8 +188,6 @@ export class Token {
 		this.text = text;
 		this.keyword = options?.keyword;
 		this.eos = !!options?.eos;
-		this.skip = !!options?.skip;
-		this.separator = !!options?.separator;
 		this.preskips = options?.preskips ?? [];
 		this.postskips = options?.postskips ?? [];
 		this.location = options?.location;
@@ -340,8 +340,6 @@ export abstract class Lexer {
 			}
 
 			const token = new Token(pattern.type, text, {
-				skip: pattern.skip,
-				separator: pattern.separator,
 				location,
 			});
 			if (this.options.keywords && token.type.keyword) {
@@ -375,14 +373,14 @@ export abstract class Lexer {
 				}
 			}
 			for (const newToken of newTokens || [token]) {
-				if (newToken.skip) {
+				if (newToken.type.skip) {
 					if (this.options.skipTokenStrategy !== "ignore") {
 						skips.push(newToken);
 					}
 				}
 
 				if (this.options.skipTokenStrategy === "adaptive") {
-					if (newToken.separator) {
+					if (newToken.type.separator) {
 						const last = tokens[tokens.length - 1];
 						if (last && last.postskips.length === 0 && skips.length > 0) {
 							last.postskips.push(...skips);
@@ -391,7 +389,7 @@ export abstract class Lexer {
 					}
 				}
 
-				if (!newToken.skip) {
+				if (!newToken.type.skip) {
 					if (skips.length > 0) {
 						newToken.preskips.push(...skips);
 						skips = [];
