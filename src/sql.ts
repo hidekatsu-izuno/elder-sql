@@ -25,7 +25,7 @@ export class SqlTokenType extends TokenType {
 	static String = new TokenType("String");
 	static BindVariable = new TokenType("BindVariable");
 	static Variable = new TokenType("Variable");
-	static Identifier = new TokenType("Identifier");
+	static Identifier = new TokenType("Identifier", { keyword: true });
 }
 
 export class SqlKeywords extends KeywordMap {
@@ -409,7 +409,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static DATABASE_TO_XML_AND_XMLSCHEMA = new Keyword(
-		"DATABASE_TO_XML_AND_XMLSCHEMA",
+		"DATABASE_TO_XML_AND_XMLSCHEMA", { ignoreCase: true }
 	);
 	static DATAFILE = new Keyword("DATAFILE", { ignoreCase: true });
 	static DATAFILES = new Keyword("DATAFILES", { ignoreCase: true });
@@ -742,7 +742,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE = new Keyword(
-		"HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE",
+		"HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE", { ignoreCase: true }
 	);
 	static HAS_FUNCTION_PRIVILEGE = new Keyword("HAS_FUNCTION_PRIVILEGE", {
 		ignoreCase: true,
@@ -1084,7 +1084,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static JSON_SCHEMA_VALIDATION_REPORT = new Keyword(
-		"JSON_SCHEMA_VALIDATION_REPORT",
+		"JSON_SCHEMA_VALIDATION_REPORT", { ignoreCase: true }
 	);
 	static JSON_SEARCH = new Keyword("JSON_SEARCH", { ignoreCase: true });
 	static JSON_SET = new Keyword("JSON_SET", { ignoreCase: true });
@@ -1249,7 +1249,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static MASTER_SSL_VERIFY_SERVER_CERT = new Keyword(
-		"MASTER_SSL_VERIFY_SERVER_CERT",
+		"MASTER_SSL_VERIFY_SERVER_CERT", { ignoreCase: true }
 	);
 	static MATCH = new Keyword("MATCH", { ignoreCase: true });
 	static MATCHED = new Keyword("MATCHED", { ignoreCase: true });
@@ -1555,7 +1555,7 @@ export class SqlKeywords extends KeywordMap {
 	static PASSING = new Keyword("PASSING", { ignoreCase: true });
 	static PASSWORD = new Keyword("PASSWORD", { ignoreCase: true });
 	static PASSWORDFILE_METADATA_CACHE = new Keyword(
-		"PASSWORDFILE_METADATA_CACHE",
+		"PASSWORDFILE_METADATA_CACHE", { ignoreCase: true }
 	);
 	static PASSWORD_GRACE_TIME = new Keyword("PASSWORD_GRACE_TIME", {
 		ignoreCase: true,
@@ -1619,7 +1619,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static PG_ADVISORY_XACT_LOCK_SHARED = new Keyword(
-		"PG_ADVISORY_XACT_LOCK_SHARED",
+		"PG_ADVISORY_XACT_LOCK_SHARED", { ignoreCase: true }
 	);
 	static PG_BACKEND_PID = new Keyword("PG_BACKEND_PID", { ignoreCase: true });
 	static PG_BLOCKING_PIDS = new Keyword("PG_BLOCKING_PIDS", {
@@ -1641,16 +1641,16 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static PG_EVENT_TRIGGER_DDL_COMMANDS = new Keyword(
-		"PG_EVENT_TRIGGER_DDL_COMMANDS",
+		"PG_EVENT_TRIGGER_DDL_COMMANDS", { ignoreCase: true }
 	);
 	static PG_EVENT_TRIGGER_DROPPED_OBJECTS = new Keyword(
-		"PG_EVENT_TRIGGER_DROPPED_OBJECTS",
+		"PG_EVENT_TRIGGER_DROPPED_OBJECTS", { ignoreCase: true }
 	);
 	static PG_EVENT_TRIGGER_TABLE_REWRITE_OID = new Keyword(
-		"PG_EVENT_TRIGGER_TABLE_REWRITE_OID",
+		"PG_EVENT_TRIGGER_TABLE_REWRITE_OID", { ignoreCase: true }
 	);
 	static PG_EVENT_TRIGGER_TABLE_REWRITE_REASON = new Keyword(
-		"PG_EVENT_TRIGGER_TABLE_REWRITE_REASON",
+		"PG_EVENT_TRIGGER_TABLE_REWRITE_REASON", { ignoreCase: true }
 	);
 	static PG_HAS_ROLE = new Keyword("PG_HAS_ROLE", { ignoreCase: true });
 	static PG_IS_OTHER_TEMP_SCHEMA = new Keyword("PG_IS_OTHER_TEMP_SCHEMA", {
@@ -1685,7 +1685,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static PG_NOTIFICATION_QUEUE_USAGE = new Keyword(
-		"PG_NOTIFICATION_QUEUE_USAGE",
+		"PG_NOTIFICATION_QUEUE_USAGE", { ignoreCase: true }
 	);
 	static PG_POSTMASTER_START_TIME = new Keyword("PG_POSTMASTER_START_TIME", {
 		ignoreCase: true,
@@ -1695,7 +1695,7 @@ export class SqlKeywords extends KeywordMap {
 	});
 	static PG_READ_FILE = new Keyword("PG_READ_FILE", { ignoreCase: true });
 	static PG_SAFE_SNAPSHOT_BLOCKING_PIDS = new Keyword(
-		"PG_SAFE_SNAPSHOT_BLOCKING_PIDS",
+		"PG_SAFE_SNAPSHOT_BLOCKING_PIDS", { ignoreCase: true }
 	);
 	static PG_SLEEP = new Keyword("PG_SLEEP", { ignoreCase: true });
 	static PG_SLEEP_FOR = new Keyword("PG_SLEEP_FOR", { ignoreCase: true });
@@ -1708,13 +1708,13 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static PG_TRY_ADVISORY_LOCK_SHARED = new Keyword(
-		"PG_TRY_ADVISORY_LOCK_SHARED",
+		"PG_TRY_ADVISORY_LOCK_SHARED", { ignoreCase: true }
 	);
 	static PG_TRY_ADVISORY_XACT_LOCK = new Keyword("PG_TRY_ADVISORY_XACT_LOCK", {
 		ignoreCase: true,
 	});
 	static PG_TRY_ADVISORY_XACT_LOCK_SHARED = new Keyword(
-		"PG_TRY_ADVISORY_XACT_LOCK_SHARED",
+		"PG_TRY_ADVISORY_XACT_LOCK_SHARED", { ignoreCase: true }
 	);
 	static PHRASETO_TSQUERY = new Keyword("PHRASETO_TSQUERY", {
 		ignoreCase: true,
@@ -1972,7 +1972,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static SCHEMA_TO_XML_AND_XMLSCHEMA = new Keyword(
-		"SCHEMA_TO_XML_AND_XMLSCHEMA",
+		"SCHEMA_TO_XML_AND_XMLSCHEMA", { ignoreCase: true }
 	);
 	static SCN = new Keyword("SCN", { ignoreCase: true });
 	static SCOPE = new Keyword("SCOPE", { ignoreCase: true });
@@ -2007,7 +2007,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static SEMANTICSIMILARITYDETAILSTABLE = new Keyword(
-		"SEMANTICSIMILARITYDETAILSTABLE",
+		"SEMANTICSIMILARITYDETAILSTABLE", { ignoreCase: true }
 	);
 	static SEMANTICSIMILARITYTABLE = new Keyword("SEMANTICSIMILARITYTABLE", {
 		ignoreCase: true,
@@ -2345,7 +2345,7 @@ export class SqlKeywords extends KeywordMap {
 	static SUMMARY = new Keyword("SUMMARY", { ignoreCase: true });
 	static SUPPLEMENTAL = new Keyword("SUPPLEMENTAL", { ignoreCase: true });
 	static SUPPRESS_REDUNDANT_UPDATES_TRIGGER = new Keyword(
-		"SUPPRESS_REDUNDANT_UPDATES_TRIGGER",
+		"SUPPRESS_REDUNDANT_UPDATES_TRIGGER", { ignoreCase: true }
 	);
 	static SUSPEND = new Keyword("SUSPEND", { ignoreCase: true });
 	static SWITCH = new Keyword("SWITCH", { ignoreCase: true });
@@ -2486,7 +2486,7 @@ export class SqlKeywords extends KeywordMap {
 		ignoreCase: true,
 	});
 	static TSVECTOR_UPDATE_TRIGGER_COLUMN = new Keyword(
-		"TSVECTOR_UPDATE_TRIGGER_COLUMN",
+		"TSVECTOR_UPDATE_TRIGGER_COLUMN", { ignoreCase: true }
 	);
 	static TS_DEBUG = new Keyword("TS_DEBUG", { ignoreCase: true });
 	static TS_DELETE = new Keyword("TS_DELETE", { ignoreCase: true });
@@ -2689,6 +2689,7 @@ export class SqlKeywords extends KeywordMap {
 	);
 	static XML_IS_WELL_FORMED_DOCUMENT = new Keyword(
 		"XML_IS_WELL_FORMED_DOCUMENT",
+		{ ignoreCase: true },
 	);
 	static XOR = new Keyword("XOR", { ignoreCase: true });
 	static XPATH = new Keyword("XPATH", { ignoreCase: true });
@@ -2705,12 +2706,4 @@ export class SqlKeywords extends KeywordMap {
 	static ZONE = new Keyword("ZONE", { ignoreCase: true });
 	static ZONEMAP = new Keyword("ZONEMAP", { ignoreCase: true });
 	static _ROWID_ = new Keyword("_ROWID_", { ignoreCase: true });
-
-	static for(name: string) {
-		const keyword = (SqlKeywords as any)[name.toUpperCase()];
-		if (keyword instanceof Keyword) {
-			return keyword;
-		}
-		return undefined;
-	}
 }

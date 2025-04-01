@@ -1,5 +1,4 @@
 import {
-	type Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
@@ -7,81 +6,82 @@ import {
 } from "../lexer.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
-//const keywords = new SqlKeywords();
-//keywords.options(SqlKeywords.TABLE).reserved = true;
+const keywords = new SqlKeywords();
+keywords.options(SqlKeywords.ADD).reserved = true;
+keywords.options(SqlKeywords.ALL).reserved = true;
+keywords.options(SqlKeywords.ALTER).reserved = true;
+keywords.options(SqlKeywords.AND).reserved = true;
+keywords.options(SqlKeywords.AS).reserved = true;
+keywords.options(SqlKeywords.AUTOINCREMENT).reserved = true;
+keywords.options(SqlKeywords.BETWEEN).reserved = true;
+keywords.options(SqlKeywords.CASE).reserved = true;
+keywords.options(SqlKeywords.CHECK).reserved = true;
+keywords.options(SqlKeywords.COLLATE).reserved = true;
+keywords.options(SqlKeywords.COMMIT).reserved = true;
+keywords.options(SqlKeywords.CONSTRAINT).reserved = true;
+keywords.options(SqlKeywords.CREATE).reserved = true;
+keywords.options(SqlKeywords.CROSS).reserved = true;
+keywords.options(SqlKeywords.CURRENT_DATE).reserved = true;
+keywords.options(SqlKeywords.CURRENT_TIME).reserved = true;
+keywords.options(SqlKeywords.CURRENT_TIMESTAMP).reserved = true;
+keywords.options(SqlKeywords.DEFAULT).reserved = true;
+keywords.options(SqlKeywords.DEFERRABLE).reserved = true;
+keywords.options(SqlKeywords.DELETE).reserved = true;
+keywords.options(SqlKeywords.DISTINCT).reserved = true;
+keywords.options(SqlKeywords.ELSE).reserved = true;
+keywords.options(SqlKeywords.ESCAPE).reserved = true;
+keywords.options(SqlKeywords.EXISTS).reserved = true;
+keywords.options(SqlKeywords.FILTER).reserved = true;
+keywords.options(SqlKeywords.FOREIGN).reserved = true;
+keywords.options(SqlKeywords.FROM).reserved = true;
+keywords.options(SqlKeywords.GLOB).reserved = true;
+keywords.options(SqlKeywords.GROUP).reserved = true;
+keywords.options(SqlKeywords.HAVING).reserved = true;
+keywords.options(SqlKeywords.IN).reserved = true;
+keywords.options(SqlKeywords.INDEX).reserved = true;
+keywords.options(SqlKeywords.INDEXED).reserved = true;
+keywords.options(SqlKeywords.INNER).reserved = true;
+keywords.options(SqlKeywords.INSERT).reserved = true;
+keywords.options(SqlKeywords.INTO).reserved = true;
+keywords.options(SqlKeywords.IS).reserved = true;
+keywords.options(SqlKeywords.ISNULL).reserved = true;
+keywords.options(SqlKeywords.JOIN).reserved = true;
+keywords.options(SqlKeywords.LEFT).reserved = true;
+keywords.options(SqlKeywords.LIMIT).reserved = true;
+keywords.options(SqlKeywords.NATURAL).reserved = true;
+keywords.options(SqlKeywords.NOT).reserved = true;
+keywords.options(SqlKeywords.NOTHING).reserved = true;
+keywords.options(SqlKeywords.NOTNULL).reserved = true;
+keywords.options(SqlKeywords.NULL).reserved = true;
+keywords.options(SqlKeywords.ON).reserved = true;
+keywords.options(SqlKeywords.OR).reserved = true;
+keywords.options(SqlKeywords.ORDER).reserved = true;
+keywords.options(SqlKeywords.PRIMARY).reserved = true;
+keywords.options(SqlKeywords.OUTER).reserved = true;
+keywords.options(SqlKeywords.OVER).reserved = true;
+keywords.options(SqlKeywords.REFERENCES).reserved = true;
+keywords.options(SqlKeywords.REGEXP).reserved = true;
+keywords.options(SqlKeywords.RETURNING).reserved = true;
+keywords.options(SqlKeywords.RIGHT).reserved = true;
+keywords.options(SqlKeywords.SELECT).reserved = true;
+keywords.options(SqlKeywords.SET).reserved = true;
+keywords.options(SqlKeywords.TABLE).reserved = true;
+keywords.options(SqlKeywords.TEMPORARY).reserved = true;
+keywords.options(SqlKeywords.THEN).reserved = true;
+keywords.options(SqlKeywords.TO).reserved = true;
+keywords.options(SqlKeywords.TRANSACTION).reserved = true;
+keywords.options(SqlKeywords.UNIQUE).reserved = true;
+keywords.options(SqlKeywords.UPDATE).reserved = true;
+keywords.options(SqlKeywords.USING).reserved = true;
+keywords.options(SqlKeywords.VALUES).reserved = true;
+keywords.options(SqlKeywords.WHEN).reserved = true;
+keywords.options(SqlKeywords.WHERE).reserved = true;
+keywords.options(SqlKeywords.WINDOW).reserved = true;
 
-const ReservedSet = new Set<Keyword>([
-	SqlKeywords.ADD,
-	SqlKeywords.ALL,
-	SqlKeywords.ALTER,
-	SqlKeywords.AND,
-	SqlKeywords.AS,
-	SqlKeywords.AUTOINCREMENT,
-	SqlKeywords.BETWEEN,
-	SqlKeywords.CASE,
-	SqlKeywords.CHECK,
-	SqlKeywords.COLLATE,
-	SqlKeywords.COMMIT,
-	SqlKeywords.CONSTRAINT,
-	SqlKeywords.CREATE,
-	SqlKeywords.CROSS,
-	SqlKeywords.CURRENT_DATE,
-	SqlKeywords.CURRENT_TIME,
-	SqlKeywords.CURRENT_TIMESTAMP,
-	SqlKeywords.DEFAULT,
-	SqlKeywords.DEFERRABLE,
-	SqlKeywords.DELETE,
-	SqlKeywords.DISTINCT,
-	SqlKeywords.ELSE,
-	SqlKeywords.ESCAPE,
-	SqlKeywords.EXISTS,
-	SqlKeywords.FILTER,
-	SqlKeywords.FOREIGN,
-	SqlKeywords.FROM,
-	SqlKeywords.GLOB,
-	SqlKeywords.GROUP,
-	SqlKeywords.HAVING,
-	SqlKeywords.IN,
-	SqlKeywords.INDEX,
-	SqlKeywords.INDEXED,
-	SqlKeywords.INNER,
-	SqlKeywords.INSERT,
-	SqlKeywords.INTO,
-	SqlKeywords.IS,
-	SqlKeywords.ISNULL,
-	SqlKeywords.JOIN,
-	SqlKeywords.LEFT,
-	SqlKeywords.LIMIT,
-	SqlKeywords.NATURAL,
-	SqlKeywords.NOT,
-	SqlKeywords.NOTHING,
-	SqlKeywords.NOTNULL,
-	SqlKeywords.NULL,
-	SqlKeywords.ON,
-	SqlKeywords.OR,
-	SqlKeywords.ORDER,
-	SqlKeywords.PRIMARY,
-	SqlKeywords.OUTER,
-	SqlKeywords.OVER,
-	SqlKeywords.REFERENCES,
-	SqlKeywords.REGEXP,
-	SqlKeywords.RETURNING,
-	SqlKeywords.RIGHT,
-	SqlKeywords.SELECT,
-	SqlKeywords.SET,
-	SqlKeywords.TABLE,
-	SqlKeywords.TEMPORARY,
-	SqlKeywords.THEN,
-	SqlKeywords.TO,
-	SqlKeywords.TRANSACTION,
-	SqlKeywords.UNIQUE,
-	SqlKeywords.UPDATE,
-	SqlKeywords.USING,
-	SqlKeywords.VALUES,
-	SqlKeywords.WHEN,
-	SqlKeywords.WHERE,
-	SqlKeywords.WINDOW,
-]);
+keywords.options(SqlKeywords.TABLE).objectStart = true;
+keywords.options(SqlKeywords.VIEW).objectStart = true;
+keywords.options(SqlKeywords.TRIGGER).objectStart = true;
+keywords.options(SqlKeywords.INDEX).objectStart = true;
 
 const Mode = {
 	INITIAL: 0,
@@ -97,8 +97,6 @@ export declare type Sqlite3LexerOptions = LexerOptions & {
 };
 
 export class Sqlite3Lexer extends Lexer {
-	private reserved = new Set<Keyword>();
-
 	constructor(options: Sqlite3LexerOptions = {}) {
 		super(
 			"sqlite3",
@@ -168,27 +166,40 @@ export class Sqlite3Lexer extends Lexer {
 			options,
 		);
 
-		const compileOptions = new Set(options.compileOptions || []);
-		if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
-			this.reserved.add(SqlKeywords.ALWAYS);
-			this.reserved.add(SqlKeywords.GENERATED);
-		}
-		if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
-			this.reserved.add(SqlKeywords.CURRENT);
-			this.reserved.add(SqlKeywords.EXCLUDE);
-			this.reserved.add(SqlKeywords.FOLLOWING);
-			this.reserved.add(SqlKeywords.GROUPS);
-			this.reserved.add(SqlKeywords.OTHERS);
-			this.reserved.add(SqlKeywords.PARTITION);
-			this.reserved.add(SqlKeywords.PRECEDING);
-			this.reserved.add(SqlKeywords.RANGE);
-			this.reserved.add(SqlKeywords.TIES);
-			this.reserved.add(SqlKeywords.UNBOUNDED);
-		}
-		if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
-			this.reserved.add(SqlKeywords.EXCEPT);
-			this.reserved.add(SqlKeywords.INTERSECT);
-			this.reserved.add(SqlKeywords.UNION);
+		if (!this.options.keywords) {
+			let newKeywords;
+			const compileOptions = new Set(options.compileOptions || []);
+			if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.ALWAYS).reserved = true;
+				newKeywords.options(SqlKeywords.GENERATED).reserved = true;
+			}
+			if (!compileOptions.has("SQLITE_OMIT_WINDOWFUNC")) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.CURRENT).reserved = true;
+				newKeywords.options(SqlKeywords.EXCLUDE).reserved = true;
+				newKeywords.options(SqlKeywords.FOLLOWING).reserved = true;
+				newKeywords.options(SqlKeywords.GROUPS).reserved = true;
+				newKeywords.options(SqlKeywords.OTHERS).reserved = true;
+				newKeywords.options(SqlKeywords.PARTITION).reserved = true;
+				newKeywords.options(SqlKeywords.PRECEDING).reserved = true;
+				newKeywords.options(SqlKeywords.RANGE).reserved = true;
+				newKeywords.options(SqlKeywords.TIES).reserved = true;
+				newKeywords.options(SqlKeywords.UNBOUNDED).reserved = true;
+			}
+			if (!compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT")) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.EXCEPT).reserved = true;
+				newKeywords.options(SqlKeywords.INTERSECT).reserved = true;
+				newKeywords.options(SqlKeywords.UNION).reserved = true;
+			}
+			this.options.keywords = newKeywords ? newKeywords : keywords;
 		}
 	}
 
@@ -314,40 +325,31 @@ export class Sqlite3Lexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeywords.for(token.text);
-		if (keyword) {
-			token.keyword = keyword;
-			if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
-				token.type = SqlTokenType.Reserved;
-			}
-
+		if (token.keyword) {
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeywords.CREATE) {
+				if (token.keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				(keyword === SqlKeywords.TABLE ||
-					keyword === SqlKeywords.VIEW ||
-					keyword === SqlKeywords.TRIGGER ||
-					keyword === SqlKeywords.INDEX)
+				this.options.keywords?.options(token.keyword).objectStart
 			) {
-				if (keyword === SqlKeywords.TRIGGER) {
+				if (token.keyword === SqlKeywords.TRIGGER) {
 					state.mode = Mode.SQL_PROC_DEF;
 				} else {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (state.mode === Mode.SQL_PROC_DEF) {
-				if (keyword === SqlKeywords.BEGIN) {
+				if (token.keyword === SqlKeywords.BEGIN) {
 					state.mode = Mode.SQL_PROC_BODY;
-					state.stack = [{ isSentenceStart: true, type: keyword }];
+					state.stack = [{ isSentenceStart: true, type: token.keyword }];
 				}
 			} else if (state.mode === Mode.SQL_PROC_BODY) {
 				const ctx = state.stack[state.stack.length - 1];
 				if (ctx.isSentenceStart) {
-					if (keyword === SqlKeywords.END) {
+					if (token.keyword === SqlKeywords.END) {
 						state.stack.pop();
 						if (state.stack.length === 0) {
 							state.mode = Mode.SQL_PART;

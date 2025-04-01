@@ -1,5 +1,5 @@
 import {
-	type Keyword,
+	Keyword,
 	Lexer,
 	type LexerOptions,
 	SourceLocation,
@@ -7,142 +7,181 @@ import {
 } from "../lexer.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
-export const ReservedSet = new Set<Keyword>([
-	SqlKeywords.ACCESS,
-	SqlKeywords.ADD,
-	SqlKeywords.ALL,
-	SqlKeywords.ALTER,
-	SqlKeywords.AND,
-	SqlKeywords.ANY,
-	SqlKeywords.AS,
-	SqlKeywords.ASC,
-	SqlKeywords.AT,
-	SqlKeywords.AUDIT,
-	SqlKeywords.BEGIN,
-	SqlKeywords.BETWEEN,
-	SqlKeywords.BY,
-	SqlKeywords.CASE,
-	SqlKeywords.CHAR,
-	SqlKeywords.CHECK,
-	SqlKeywords.CLUSTER,
-	SqlKeywords.CLUSTERS,
-	SqlKeywords.COLAUTH,
-	SqlKeywords.COLUMN,
-	SqlKeywords.COLUMNS,
-	SqlKeywords.COMMENT,
-	SqlKeywords.COMPRESS,
-	SqlKeywords.CONNECT,
-	SqlKeywords.CRASH,
-	SqlKeywords.CREATE,
-	SqlKeywords.CURRENT,
-	SqlKeywords.CURSOR,
-	SqlKeywords.DATE,
-	SqlKeywords.DECIMAL,
-	SqlKeywords.DECLARE,
-	SqlKeywords.DEFAULT,
-	SqlKeywords.DELETE,
-	SqlKeywords.DESC,
-	SqlKeywords.DISTINCT,
-	SqlKeywords.DROP,
-	SqlKeywords.ELSE,
-	SqlKeywords.END,
-	SqlKeywords.EXCEPTION,
-	SqlKeywords.EXCLUSIVE,
-	SqlKeywords.EXISTS,
-	SqlKeywords.FETCH,
-	SqlKeywords.FILE,
-	SqlKeywords.FLOAT,
-	SqlKeywords.FOR,
-	SqlKeywords.FROM,
-	SqlKeywords.FUNCTION,
-	SqlKeywords.GOTO,
-	SqlKeywords.GRANT,
-	SqlKeywords.GROUP,
-	SqlKeywords.HAVING,
-	SqlKeywords.IDENTIFIED,
-	SqlKeywords.IF,
-	SqlKeywords.IMMEDIATE,
-	SqlKeywords.IN,
-	SqlKeywords.INCREMENT,
-	SqlKeywords.INDEX,
-	SqlKeywords.INDEXES,
-	SqlKeywords.INITIAL,
-	SqlKeywords.INSERT,
-	SqlKeywords.INTEGER,
-	SqlKeywords.INTERSECT,
-	SqlKeywords.INTO,
-	SqlKeywords.IS,
-	SqlKeywords.LEVEL,
-	SqlKeywords.LIKE,
-	SqlKeywords.LOCK,
-	SqlKeywords.LONG,
-	SqlKeywords.MAXEXTENTS,
-	SqlKeywords.MINUS,
-	SqlKeywords.MLSLABEL,
-	SqlKeywords.MODE,
-	SqlKeywords.MODIFY,
-	SqlKeywords.NOAUDIT,
-	SqlKeywords.NOCOMPRESS,
-	SqlKeywords.NOT,
-	SqlKeywords.NOWAIT,
-	SqlKeywords.NULL,
-	SqlKeywords.NUMBER,
-	SqlKeywords.OF,
-	SqlKeywords.OFFLINE,
-	SqlKeywords.ON,
-	SqlKeywords.ONLINE,
-	SqlKeywords.OPTION,
-	SqlKeywords.OR,
-	SqlKeywords.ORDER,
-	SqlKeywords.OVERLAPS,
-	SqlKeywords.PCTFREE,
-	SqlKeywords.PRIOR,
-	SqlKeywords.PROCEDURE,
-	SqlKeywords.PUBLIC,
-	SqlKeywords.RAW,
-	SqlKeywords.RENAME,
-	SqlKeywords.RESOURCE,
-	SqlKeywords.REVOKE,
-	SqlKeywords.ROW,
-	SqlKeywords.ROWID,
-	SqlKeywords.ROWNUM,
-	SqlKeywords.ROWS,
-	SqlKeywords.SELECT,
-	SqlKeywords.SESSION,
-	SqlKeywords.SET,
-	SqlKeywords.SHARE,
-	SqlKeywords.SIZE,
-	SqlKeywords.SMALLINT,
-	SqlKeywords.SQL,
-	SqlKeywords.START,
-	SqlKeywords.SUBTYPE,
-	SqlKeywords.SUCCESSFUL,
-	SqlKeywords.SYNONYM,
-	SqlKeywords.SYSDATE,
-	SqlKeywords.TABAUTH,
-	SqlKeywords.TABLE,
-	SqlKeywords.THEN,
-	SqlKeywords.TO,
-	SqlKeywords.TRIGGER,
-	SqlKeywords.TYPE,
-	SqlKeywords.UID,
-	SqlKeywords.UNION,
-	SqlKeywords.UNIQUE,
-	SqlKeywords.UPDATE,
-	SqlKeywords.USER,
-	SqlKeywords.VALIDATE,
-	SqlKeywords.VALUES,
-	SqlKeywords.VARCHAR,
-	SqlKeywords.VARCHAR2,
-	SqlKeywords.VIEW,
-	SqlKeywords.VIEWS,
-	SqlKeywords.WHEN,
-	SqlKeywords.WHENEVER,
-	SqlKeywords.WHERE,
-	SqlKeywords.WITH,
-]);
+const keywords = new SqlKeywords();
+keywords.options(SqlKeywords.ACCESS).reserved = true;
+keywords.options(SqlKeywords.ADD).reserved = true;
+keywords.options(SqlKeywords.ALL).reserved = true;
+keywords.options(SqlKeywords.ALTER).reserved = true;
+keywords.options(SqlKeywords.AND).reserved = true;
+keywords.options(SqlKeywords.ANY).reserved = true;
+keywords.options(SqlKeywords.AS).reserved = true;
+keywords.options(SqlKeywords.ASC).reserved = true;
+keywords.options(SqlKeywords.AT).reserved = true;
+keywords.options(SqlKeywords.AUDIT).reserved = true;
+keywords.options(SqlKeywords.BEGIN).reserved = true;
+keywords.options(SqlKeywords.BETWEEN).reserved = true;
+keywords.options(SqlKeywords.BY).reserved = true;
+keywords.options(SqlKeywords.CASE).reserved = true;
+keywords.options(SqlKeywords.CHAR).reserved = true;
+keywords.options(SqlKeywords.CHECK).reserved = true;
+keywords.options(SqlKeywords.CLUSTER).reserved = true;
+keywords.options(SqlKeywords.CLUSTERS).reserved = true;
+keywords.options(SqlKeywords.COLAUTH).reserved = true;
+keywords.options(SqlKeywords.COLUMN).reserved = true;
+keywords.options(SqlKeywords.COLUMNS).reserved = true;
+keywords.options(SqlKeywords.COMMENT).reserved = true;
+keywords.options(SqlKeywords.COMPRESS).reserved = true;
+keywords.options(SqlKeywords.CONNECT).reserved = true;
+keywords.options(SqlKeywords.CRASH).reserved = true;
+keywords.options(SqlKeywords.CREATE).reserved = true;
+keywords.options(SqlKeywords.CURRENT).reserved = true;
+keywords.options(SqlKeywords.CURSOR).reserved = true;
+keywords.options(SqlKeywords.DATE).reserved = true;
+keywords.options(SqlKeywords.DECIMAL).reserved = true;
+keywords.options(SqlKeywords.DECLARE).reserved = true;
+keywords.options(SqlKeywords.DEFAULT).reserved = true;
+keywords.options(SqlKeywords.DELETE).reserved = true;
+keywords.options(SqlKeywords.DESC).reserved = true;
+keywords.options(SqlKeywords.DISTINCT).reserved = true;
+keywords.options(SqlKeywords.DROP).reserved = true;
+keywords.options(SqlKeywords.ELSE).reserved = true;
+keywords.options(SqlKeywords.END).reserved = true;
+keywords.options(SqlKeywords.EXCEPTION).reserved = true;
+keywords.options(SqlKeywords.EXCLUSIVE).reserved = true;
+keywords.options(SqlKeywords.EXISTS).reserved = true;
+keywords.options(SqlKeywords.FETCH).reserved = true;
+keywords.options(SqlKeywords.FILE).reserved = true;
+keywords.options(SqlKeywords.FLOAT).reserved = true;
+keywords.options(SqlKeywords.FOR).reserved = true;
+keywords.options(SqlKeywords.FROM).reserved = true;
+keywords.options(SqlKeywords.FUNCTION).reserved = true;
+keywords.options(SqlKeywords.GOTO).reserved = true;
+keywords.options(SqlKeywords.GRANT).reserved = true;
+keywords.options(SqlKeywords.GROUP).reserved = true;
+keywords.options(SqlKeywords.HAVING).reserved = true;
+keywords.options(SqlKeywords.IDENTIFIED).reserved = true;
+keywords.options(SqlKeywords.IF).reserved = true;
+keywords.options(SqlKeywords.IMMEDIATE).reserved = true;
+keywords.options(SqlKeywords.IN).reserved = true;
+keywords.options(SqlKeywords.INCREMENT).reserved = true;
+keywords.options(SqlKeywords.INDEX).reserved = true;
+keywords.options(SqlKeywords.INDEXES).reserved = true;
+keywords.options(SqlKeywords.INITIAL).reserved = true;
+keywords.options(SqlKeywords.INSERT).reserved = true;
+keywords.options(SqlKeywords.INTEGER).reserved = true;
+keywords.options(SqlKeywords.INTERSECT).reserved = true;
+keywords.options(SqlKeywords.INTO).reserved = true;
+keywords.options(SqlKeywords.IS).reserved = true;
+keywords.options(SqlKeywords.LEVEL).reserved = true;
+keywords.options(SqlKeywords.LIKE).reserved = true;
+keywords.options(SqlKeywords.LOCK).reserved = true;
+keywords.options(SqlKeywords.LONG).reserved = true;
+keywords.options(SqlKeywords.MAXEXTENTS).reserved = true;
+keywords.options(SqlKeywords.MINUS).reserved = true;
+keywords.options(SqlKeywords.MLSLABEL).reserved = true;
+keywords.options(SqlKeywords.MODE).reserved = true;
+keywords.options(SqlKeywords.MODIFY).reserved = true;
+keywords.options(SqlKeywords.NOAUDIT).reserved = true;
+keywords.options(SqlKeywords.NOCOMPRESS).reserved = true;
+keywords.options(SqlKeywords.NOT).reserved = true;
+keywords.options(SqlKeywords.NOWAIT).reserved = true;
+keywords.options(SqlKeywords.NULL).reserved = true;
+keywords.options(SqlKeywords.NUMBER).reserved = true;
+keywords.options(SqlKeywords.OF).reserved = true;
+keywords.options(SqlKeywords.OFFLINE).reserved = true;
+keywords.options(SqlKeywords.ON).reserved = true;
+keywords.options(SqlKeywords.ONLINE).reserved = true;
+keywords.options(SqlKeywords.OPTION).reserved = true;
+keywords.options(SqlKeywords.OR).reserved = true;
+keywords.options(SqlKeywords.ORDER).reserved = true;
+keywords.options(SqlKeywords.OVERLAPS).reserved = true;
+keywords.options(SqlKeywords.PCTFREE).reserved = true;
+keywords.options(SqlKeywords.PRIOR).reserved = true;
+keywords.options(SqlKeywords.PROCEDURE).reserved = true;
+keywords.options(SqlKeywords.PUBLIC).reserved = true;
+keywords.options(SqlKeywords.RAW).reserved = true;
+keywords.options(SqlKeywords.RENAME).reserved = true;
+keywords.options(SqlKeywords.RESOURCE).reserved = true;
+keywords.options(SqlKeywords.REVOKE).reserved = true;
+keywords.options(SqlKeywords.ROW).reserved = true;
+keywords.options(SqlKeywords.ROWID).reserved = true;
+keywords.options(SqlKeywords.ROWNUM).reserved = true;
+keywords.options(SqlKeywords.ROWS).reserved = true;
+keywords.options(SqlKeywords.SELECT).reserved = true;
+keywords.options(SqlKeywords.SESSION).reserved = true;
+keywords.options(SqlKeywords.SET).reserved = true;
+keywords.options(SqlKeywords.SHARE).reserved = true;
+keywords.options(SqlKeywords.SIZE).reserved = true;
+keywords.options(SqlKeywords.SMALLINT).reserved = true;
+keywords.options(SqlKeywords.SQL).reserved = true;
+keywords.options(SqlKeywords.START).reserved = true;
+keywords.options(SqlKeywords.SUBTYPE).reserved = true;
+keywords.options(SqlKeywords.SUCCESSFUL).reserved = true;
+keywords.options(SqlKeywords.SYNONYM).reserved = true;
+keywords.options(SqlKeywords.SYSDATE).reserved = true;
+keywords.options(SqlKeywords.TABAUTH).reserved = true;
+keywords.options(SqlKeywords.TABLE).reserved = true;
+keywords.options(SqlKeywords.THEN).reserved = true;
+keywords.options(SqlKeywords.TO).reserved = true;
+keywords.options(SqlKeywords.TRIGGER).reserved = true;
+keywords.options(SqlKeywords.TYPE).reserved = true;
+keywords.options(SqlKeywords.UID).reserved = true;
+keywords.options(SqlKeywords.UNION).reserved = true;
+keywords.options(SqlKeywords.UNIQUE).reserved = true;
+keywords.options(SqlKeywords.UPDATE).reserved = true;
+keywords.options(SqlKeywords.USER).reserved = true;
+keywords.options(SqlKeywords.VALIDATE).reserved = true;
+keywords.options(SqlKeywords.VALUES).reserved = true;
+keywords.options(SqlKeywords.VARCHAR).reserved = true;
+keywords.options(SqlKeywords.VARCHAR2).reserved = true;
+keywords.options(SqlKeywords.VIEW).reserved = true;
+keywords.options(SqlKeywords.VIEWS).reserved = true;
+keywords.options(SqlKeywords.WHEN).reserved = true;
+keywords.options(SqlKeywords.WHENEVER).reserved = true;
+keywords.options(SqlKeywords.WHERE).reserved = true;
+keywords.options(SqlKeywords.WITH).reserved = true;
 
-const ObjectStartSet = new Set<Keyword>([]);
+keywords.options(SqlKeywords.ANALYTIC).objectStart = true;
+keywords.options(SqlKeywords.ATTRIBUTE).objectStart = true;
+keywords.options(SqlKeywords.AUDIT).objectStart = true;
+keywords.options(SqlKeywords.CLUSTER).objectStart = true;
+keywords.options(SqlKeywords.CONTEXT).objectStart = true;
+keywords.options(SqlKeywords.CONTROLFILE).objectStart = true;
+keywords.options(SqlKeywords.DATABASE).objectStart = true;
+keywords.options(SqlKeywords.DIMENSION).objectStart = true;
+keywords.options(SqlKeywords.DIRECTORY).objectStart = true;
+keywords.options(SqlKeywords.DISKGROUP).objectStart = true;
+keywords.options(SqlKeywords.EDITION).objectStart = true;
+keywords.options(SqlKeywords.FLASHBACK).objectStart = true;
+keywords.options(SqlKeywords.FUNCTION).objectStart = true;
+keywords.options(SqlKeywords.HIERARCHY).objectStart = true;
+keywords.options(SqlKeywords.INDEX).objectStart = true;
+keywords.options(SqlKeywords.INDEXTYPE).objectStart = true;
+keywords.options(SqlKeywords.INMEMORY).objectStart = true;
+keywords.options(SqlKeywords.JAVA).objectStart = true;
+keywords.options(SqlKeywords.LIBRARY).objectStart = true;
+keywords.options(SqlKeywords.LOCKDOWN).objectStart = true;
+keywords.options(SqlKeywords.MATERIALIZED).objectStart = true;
+keywords.options(SqlKeywords.OPERATOR).objectStart = true;
+keywords.options(SqlKeywords.OUTLINE).objectStart = true;
+keywords.options(SqlKeywords.PACKAGE).objectStart = true;
+keywords.options(SqlKeywords.PFILE).objectStart = true;
+keywords.options(SqlKeywords.PLUGGABLE).objectStart = true;
+keywords.options(SqlKeywords.PROCEDURE).objectStart = true;
+keywords.options(SqlKeywords.PROFILE).objectStart = true;
+keywords.options(SqlKeywords.RESTORE).objectStart = true;
+keywords.options(SqlKeywords.ROLE).objectStart = true;
+keywords.options(SqlKeywords.ROLLBACK).objectStart = true;
+keywords.options(SqlKeywords.SCHEMA).objectStart = true;
+keywords.options(SqlKeywords.SEQUENCE).objectStart = true;
+keywords.options(SqlKeywords.SPFILE).objectStart = true;
+keywords.options(SqlKeywords.SYNONYM).objectStart = true;
+keywords.options(SqlKeywords.TABLE).objectStart = true;
+keywords.options(SqlKeywords.TABLESPACE).objectStart = true;
+keywords.options(SqlKeywords.TRIGGER).objectStart = true;
+keywords.options(SqlKeywords.TYPE).objectStart = true;
+keywords.options(SqlKeywords.USER).objectStart = true;
+keywords.options(SqlKeywords.VIEW).objectStart = true;
 
 const CommandPattern = new RegExp(
 	`(${[
@@ -292,6 +331,10 @@ export class OracleLexer extends Lexer {
 			],
 			options,
 		);
+
+		if (!this.options.keywords) {
+			this.options.keywords = keywords;
+		}
 	}
 
 	protected initState(state: Record<string, any>) {
@@ -431,19 +474,13 @@ export class OracleLexer extends Lexer {
 	}
 
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
-		const keyword = SqlKeywords.for(token.text);
-		if (keyword) {
-			token.keyword = keyword;
-			if (ReservedSet.has(keyword) || this.reserved.has(keyword)) {
-				token.type = SqlTokenType.Reserved;
-			}
-
+		if (token.keyword) {
 			if (state.mode === Mode.SQL_START) {
-				if (keyword === SqlKeywords.CREATE) {
+				if (token.keyword === SqlKeywords.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else if (
-					keyword === SqlKeywords.DECLARE ||
-					keyword === SqlKeywords.BEGIN
+					token.keyword === SqlKeywords.DECLARE ||
+					token.keyword === SqlKeywords.BEGIN
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {
@@ -451,55 +488,15 @@ export class OracleLexer extends Lexer {
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				(keyword === SqlKeywords.ANALYTIC ||
-					keyword === SqlKeywords.ATTRIBUTE ||
-					keyword === SqlKeywords.AUDIT ||
-					keyword === SqlKeywords.CLUSTER ||
-					keyword === SqlKeywords.CONTEXT ||
-					keyword === SqlKeywords.CONTROLFILE ||
-					keyword === SqlKeywords.DATABASE ||
-					keyword === SqlKeywords.DIMENSION ||
-					keyword === SqlKeywords.DIRECTORY ||
-					keyword === SqlKeywords.DISKGROUP ||
-					keyword === SqlKeywords.EDITION ||
-					keyword === SqlKeywords.FLASHBACK ||
-					keyword === SqlKeywords.FUNCTION ||
-					keyword === SqlKeywords.HIERARCHY ||
-					keyword === SqlKeywords.INDEX ||
-					keyword === SqlKeywords.INDEXTYPE ||
-					keyword === SqlKeywords.INMEMORY ||
-					keyword === SqlKeywords.JAVA ||
-					keyword === SqlKeywords.LIBRARY ||
-					keyword === SqlKeywords.LOCKDOWN ||
-					keyword === SqlKeywords.MATERIALIZED ||
-					keyword === SqlKeywords.OPERATOR ||
-					keyword === SqlKeywords.OUTLINE ||
-					keyword === SqlKeywords.PACKAGE ||
-					keyword === SqlKeywords.PFILE ||
-					keyword === SqlKeywords.PLUGGABLE ||
-					keyword === SqlKeywords.PROCEDURE ||
-					keyword === SqlKeywords.PROFILE ||
-					keyword === SqlKeywords.RESTORE ||
-					keyword === SqlKeywords.ROLE ||
-					keyword === SqlKeywords.ROLLBACK ||
-					keyword === SqlKeywords.SCHEMA ||
-					keyword === SqlKeywords.SEQUENCE ||
-					keyword === SqlKeywords.SPFILE ||
-					keyword === SqlKeywords.SYNONYM ||
-					keyword === SqlKeywords.TABLE ||
-					keyword === SqlKeywords.TABLESPACE ||
-					keyword === SqlKeywords.TRIGGER ||
-					keyword === SqlKeywords.TYPE ||
-					keyword === SqlKeywords.USER ||
-					keyword === SqlKeywords.VIEW)
+				this.options.keywords?.options(token.keyword).objectStart
 			) {
 				if (
-					keyword === SqlKeywords.FUNCTION ||
-					keyword === SqlKeywords.LIBRARY ||
-					keyword === SqlKeywords.PACKAGE ||
-					keyword === SqlKeywords.PROCEDURE ||
-					keyword === SqlKeywords.TRIGGER ||
-					keyword === SqlKeywords.TYPE
+					token.keyword === SqlKeywords.FUNCTION ||
+					token.keyword === SqlKeywords.LIBRARY ||
+					token.keyword === SqlKeywords.PACKAGE ||
+					token.keyword === SqlKeywords.PROCEDURE ||
+					token.keyword === SqlKeywords.TRIGGER ||
+					token.keyword === SqlKeywords.TYPE
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {

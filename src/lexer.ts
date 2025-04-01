@@ -4,69 +4,20 @@ export class TokenType {
 	static Error = new TokenType("Error");
 
 	name: string;
+	keyword: boolean;
 
-	constructor(name: string) {
+	constructor(
+		name: string,
+		options?: {
+			keyword?: boolean;
+		},
+	) {
 		this.name = name;
+		this.keyword = !!options?.keyword;
 	}
 
 	toString() {
 		return this.name;
-	}
-}
-
-declare type KeywordMapEntry = {
-	keyword: Keyword;
-	options?: Record<string, any>;
-};
-
-export class KeywordMap {
-	private map = new Map<string, KeywordMapEntry>();
-	private imap = new Map<string, KeywordMapEntry>();
-
-	constructor() {
-		for (const key of Object.keys(this.constructor)) {
-			const keyword = (this.constructor as any)[key];
-			if (keyword instanceof Keyword) {
-				if (keyword.ignoreCase) {
-					this.imap.set(keyword.name.toLowerCase(), { keyword });
-				} else {
-					this.map.set(keyword.name, { keyword });
-				}
-			}
-		}
-	}
-
-	get(name: string): Keyword | undefined {
-		let entry = this.map.get(name);
-		if (entry) {
-			return entry.keyword;
-		}
-
-		const iname = name.toLowerCase();
-		entry = this.imap.get(iname);
-		if (entry) {
-			return entry.keyword;
-		}
-	}
-
-	options(keyword: Keyword, options?: Record<string, any>) {
-		let entry: ReturnType<typeof this.map.get>;
-		if (keyword.ignoreCase) {
-			entry = this.imap.get(keyword.name.toLowerCase());
-		} else {
-			entry = this.map.get(keyword.name);
-		}
-		if (options) {
-			if (entry) {
-				entry.options = options;
-			} else {
-				this.map.set(keyword.name, {
-					keyword,
-					options,
-				});
-			}
-		}
-		return entry?.options;
 	}
 }
 
@@ -86,6 +37,76 @@ export class Keyword {
 
 	toString() {
 		return this.name;
+	}
+}
+
+declare type KeywordMapEntry = {
+	keyword: Keyword;
+	options: {
+		reserved: boolean,
+		[key: string]: any,
+	};
+};
+
+export class KeywordMap {
+	private map: Record<string, KeywordMapEntry> = {};
+	private imap: Record<string, KeywordMapEntry> = {};
+
+	constructor(base?: KeywordMap) {
+		if (base) {
+			this.map = {};
+			for (const [key, value] of Object.entries(base.map)) {
+				this.map[key] = {
+					keyword: value.keyword,
+					options: { ...value.options },
+				};
+			}
+			this.imap = {};
+			for (const [key, value] of Object.entries(base.imap)) {
+				this.imap[key] = {
+					keyword: value.keyword,
+					options: { ...value.options },
+				};
+			}
+		} else {
+			for (const key of Object.keys(this.constructor)) {
+				const keyword = (this.constructor as any)[key];
+				if (keyword instanceof Keyword) {
+					const entry = { 
+						keyword, 
+						options: {
+							reserved: false,
+						} 
+					};
+					const map = keyword.ignoreCase ? this.imap : this.map;
+					const key = keyword.ignoreCase ? keyword.name.toLowerCase() : keyword.name;
+					map[key] = entry;
+				}
+			}	
+		}
+	}
+
+	get(name: string): Keyword | undefined {
+		let entry = this.map[name];
+		if (entry) {
+			return entry.keyword;
+		}
+
+		entry = this.imap[name.toLowerCase()];
+		if (entry) {
+			return entry.keyword;
+		}
+	}
+
+	options(keyword: Keyword) {
+		const map = keyword.ignoreCase ? this.imap : this.map;
+		const key = keyword.ignoreCase ? keyword.name.toLowerCase() : keyword.name;
+		let entry = map[key];
+		if (!entry) {
+			entry = { keyword, options: { reserved: false } };
+			map[key] = entry;
+		}
+		return entry.options;
 	}
 }
 
@@ -226,13 +247,13 @@ export declare type TokenPattern = {
 	re: RegExp | ((state: Record<string, any>) => RegExp | false);
 	skip?: boolean;
 	separator?: boolean;
-	keywords?: KeywordMap;
 	onMatch?: (state: Record<string, any>, token: Token) => Token[] | void;
 	onUnmatch?: (state: Record<string, any>) => void;
 };
 
 export declare type LexerOptions = {
 	skipTokenStrategy?: "ignore" | "next" | "adaptive";
+	keywords?: KeywordMap;
 	[key: string]: any;
 };
 
@@ -323,10 +344,35 @@ export abstract class Lexer {
 				separator: pattern.separator,
 				location,
 			});
+			if (this.options.keywords && token.type.keyword) {
+				const keyword = this.options.keywords.get(token.text);
+				if (keyword) {
+					token.keyword = keyword;
+					if (this.options.keywords.options(keyword).reserved) {
+						token.type = TokenType.Reserved;
+					}
+				}
+			}
 			const newTokens = pattern.onMatch?.(state, token);
 			if (newTokens && newTokens.length > 0) {
 				skips.push(...newTokens[0].preskips);
 				newTokens[0].preskips = [];
+
+				if (this.options.keywords) {
+					for (const newToken of newTokens) {
+						if (newToken.keyword) {
+							continue;
+						}
+						
+						const keyword = this.options.keywords.get(token.text);
+						if (keyword) {
+							newToken.keyword = keyword;
+							if (this.options.keywords.options(keyword).reserved) {
+								newToken.type = TokenType.Reserved;
+							}
+						}
+					}	
+				}
 			}
 			for (const newToken of newTokens || [token]) {
 				if (newToken.skip) {
