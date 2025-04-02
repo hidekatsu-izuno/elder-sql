@@ -1,9 +1,4 @@
-import {
-	Lexer,
-	type LexerOptions,
-	SourceLocation,
-	Token,
-} from "../lexer.ts";
+import { Lexer, type LexerOptions, SourceLocation, Token } from "../lexer.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 const keywords = new SqlKeywords();
@@ -167,7 +162,7 @@ export class Sqlite3Lexer extends Lexer {
 		);
 
 		if (!this.options.keywords) {
-			let newKeywords;
+			let newKeywords: SqlKeywords | undefined;
 			const compileOptions = new Set(options.compileOptions || []);
 			if (!compileOptions.has("SQLITE_OMIT_GENERATED_COLUMNS")) {
 				if (!newKeywords) {

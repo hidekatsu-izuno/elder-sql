@@ -52,7 +52,7 @@ export class CstBuilder {
 		} else {
 			appendChild(this.current, elem);
 		}
-		this.current = elem;	
+		this.current = elem;
 		return this.current;
 	}
 

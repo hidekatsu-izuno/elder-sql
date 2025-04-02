@@ -1,8 +1,8 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from 'node:url';
 import { describe, test } from "node:test";
-import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
 import { PostgresLexer } from "../../src/postgres/postgres_lexer.ts";
 import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 
@@ -10,10 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test postgres lexer", () => {
-	test("test by file", { concurrency: true }, async t => {
+	test("test by file", { concurrency: true }, async (t) => {
 		const targets = [
-			"create_function", 
-			"create_procedure", 
+			"create_function",
+			"create_procedure",
 			"create_table",
 			"select",
 		];
@@ -24,12 +24,9 @@ describe("test postgres lexer", () => {
 					"utf8",
 				);
 				const tokens = new PostgresLexer().lex(script);
-	
-				writeDebugFile(
-					`dump/postgres/lexer/${target}.ts`,
-					toJSScript(tokens),
-				);
-	
+
+				writeDebugFile(`dump/postgres/lexer/${target}.ts`, toJSScript(tokens));
+
 				const expected = (await import(`./lexer/${target}.ts`)).default;
 				assert.strictEqual(toJSString(tokens), toJSString(expected));
 			});

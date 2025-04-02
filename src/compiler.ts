@@ -291,7 +291,8 @@ export class ElderSqlCompiler {
 							}
 						} else if (
 							tr.peekIf(
-								token => token.is(SqlTokenType.Operator) && token.is(["+", "-"]),
+								(token) =>
+									token.is(SqlTokenType.Operator) && token.is(["+", "-"]),
 								SqlTokenType.Numeric,
 							)
 						) {

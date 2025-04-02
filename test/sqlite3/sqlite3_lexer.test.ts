@@ -1,8 +1,8 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from 'node:url';
 import { describe, test } from "node:test";
-import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
 import { Sqlite3Lexer } from "../../src/sqlite3/sqlite3_lexer.ts";
 import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 
@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test sqlite3 lexer", () => {
-	test("test by file", { concurrency: true }, async t => {
+	test("test by file", { concurrency: true }, async (t) => {
 		const targets = [
 			"alter_table",
 			"analyze",
@@ -38,7 +38,7 @@ describe("test sqlite3 lexer", () => {
 			"select",
 			"update",
 			"vacuum",
-			"unknown",	
+			"unknown",
 		];
 		for (const target of targets) {
 			await t.test(`${target}`, async () => {
@@ -47,13 +47,12 @@ describe("test sqlite3 lexer", () => {
 					"utf8",
 				);
 				const tokens = new Sqlite3Lexer().lex(script);
-		
+
 				writeDebugFile(`dump/sqlite3/lexer/${target}.ts`, toJSScript(tokens));
-		
+
 				const expected = (await import(`./lexer/${target}.ts`)).default;
 				assert.strictEqual(toJSString(tokens), toJSString(expected));
-		
-			})
+			});
 		}
 	});
 });

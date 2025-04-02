@@ -11,9 +11,9 @@ export class TokenType {
 	constructor(
 		name: string,
 		options?: {
-			skip?: boolean,
-			separator?: boolean,
-			keyword?: boolean,
+			skip?: boolean;
+			separator?: boolean;
+			keyword?: boolean;
 		},
 	) {
 		this.name = name;
@@ -49,8 +49,8 @@ export class Keyword {
 declare type KeywordMapEntry = {
 	keyword: Keyword;
 	options: {
-		reserved: boolean,
-		[key: string]: any,
+		reserved: boolean;
+		[key: string]: any;
 	};
 };
 
@@ -78,17 +78,19 @@ export class KeywordMap {
 			for (const key of Object.keys(this.constructor)) {
 				const keyword = (this.constructor as any)[key];
 				if (keyword instanceof Keyword) {
-					const entry = { 
-						keyword, 
+					const entry = {
+						keyword,
 						options: {
 							reserved: false,
-						} 
+						},
 					};
 					const map = keyword.ignoreCase ? this.imap : this.map;
-					const key = keyword.ignoreCase ? keyword.name.toLowerCase() : keyword.name;
+					const key = keyword.ignoreCase
+						? keyword.name.toLowerCase()
+						: keyword.name;
 					map[key] = entry;
 				}
-			}	
+			}
 		}
 	}
 
@@ -361,7 +363,7 @@ export abstract class Lexer {
 						if (newToken.keyword) {
 							continue;
 						}
-						
+
 						const keyword = this.options.keywords.get(token.text);
 						if (keyword) {
 							newToken.keyword = keyword;
@@ -369,7 +371,7 @@ export abstract class Lexer {
 								newToken.type = TokenType.Reserved;
 							}
 						}
-					}	
+					}
 				}
 			}
 			for (const newToken of newTokens || [token]) {

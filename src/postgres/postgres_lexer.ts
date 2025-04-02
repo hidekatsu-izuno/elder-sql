@@ -312,8 +312,8 @@ export class PostgresLexer extends Lexer {
 					state.mode = Mode.SQL_PART;
 				}
 			} else if (
-				state.mode === Mode.SQL_OBJECT_DEF 
-				&& this.options.keywords?.options(token.keyword).objectStart
+				state.mode === Mode.SQL_OBJECT_DEF &&
+				this.options.keywords?.options(token.keyword).objectStart
 			) {
 				if (
 					token.keyword === SqlKeywords.FUNCTION ||

@@ -1,9 +1,9 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from 'node:url';
-import type { Element } from "domhandler";
 import { describe, test } from "node:test";
-import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
+import type { Element } from "domhandler";
 import { AggregateParseError } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test sqlite3 parser", () => {
-	test("test by file", { concurrency: true }, async t => {
+	test("test by file", { concurrency: true }, async (t) => {
 		const targets = [
 			"alter_table",
 			"analyze",
@@ -59,9 +59,9 @@ describe("test sqlite3 parser", () => {
 						throw err;
 					}
 				}
-		
+
 				writeDebugFile(`dump/sqlite3/parser/${target}.ts`, toJSScript(node));
-		
+
 				assert.strictEqual(toJSString(node), toJSString(expected));
 			});
 		}

@@ -382,7 +382,7 @@ export class MysqlLexer extends Lexer {
 		);
 
 		if (!this.options.keywords) {
-			let newKeywords;
+			let newKeywords: SqlKeywords | undefined;
 			if (
 				options.package === "mysql" &&
 				semver.satisfies("<8.0.0", options.version || "0")
@@ -390,13 +390,13 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;;
-				newKeywords.options(SqlKeywords.DES_KEY_FILE).reserved = true;;
-				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;;
-				newKeywords.options(SqlKeywords.MASTER_SERVER_ID).reserved = true;;
-				newKeywords.options(SqlKeywords.PARSE_GCOL_EXPR).reserved = true;;
-				newKeywords.options(SqlKeywords.REDOFILE).reserved = true;;
-				newKeywords.options(SqlKeywords.SQL_CACHE).reserved = true;;
+				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;
+				newKeywords.options(SqlKeywords.DES_KEY_FILE).reserved = true;
+				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;
+				newKeywords.options(SqlKeywords.MASTER_SERVER_ID).reserved = true;
+				newKeywords.options(SqlKeywords.PARSE_GCOL_EXPR).reserved = true;
+				newKeywords.options(SqlKeywords.REDOFILE).reserved = true;
+				newKeywords.options(SqlKeywords.SQL_CACHE).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
@@ -405,11 +405,11 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.CUBE).reserved = true;;
-				newKeywords.options(SqlKeywords.FUNCTION).reserved = true;;
-				newKeywords.options(SqlKeywords.GROUPING).reserved = true;;
-				newKeywords.options(SqlKeywords.OF).reserved = true;;
-				newKeywords.options(SqlKeywords.RECURSIVE).reserved = true;;
+				newKeywords.options(SqlKeywords.CUBE).reserved = true;
+				newKeywords.options(SqlKeywords.FUNCTION).reserved = true;
+				newKeywords.options(SqlKeywords.GROUPING).reserved = true;
+				newKeywords.options(SqlKeywords.OF).reserved = true;
+				newKeywords.options(SqlKeywords.RECURSIVE).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
@@ -418,22 +418,22 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.CUME_DIST).reserved = true;;
-				newKeywords.options(SqlKeywords.DENSE_RANK).reserved = true;;
-				newKeywords.options(SqlKeywords.FIRST_VALUE).reserved = true;;
-				newKeywords.options(SqlKeywords.GROUPS).reserved = true;;
-				newKeywords.options(SqlKeywords.LAG).reserved = true;;
-				newKeywords.options(SqlKeywords.LAST_VALUE).reserved = true;;
-				newKeywords.options(SqlKeywords.LEAD).reserved = true;;
-				newKeywords.options(SqlKeywords.NTH_VALUE).reserved = true;;
-				newKeywords.options(SqlKeywords.NTILE).reserved = true;;
-				newKeywords.options(SqlKeywords.OVER).reserved = true;;
-				newKeywords.options(SqlKeywords.PERCENT_RANK).reserved = true;;
-				newKeywords.options(SqlKeywords.RANK).reserved = true;;
-				newKeywords.options(SqlKeywords.ROW).reserved = true;;
-				newKeywords.options(SqlKeywords.ROWS).reserved = true;;
-				newKeywords.options(SqlKeywords.ROW_NUMBER).reserved = true;;
-				newKeywords.options(SqlKeywords.WINDOW).reserved = true;;
+				newKeywords.options(SqlKeywords.CUME_DIST).reserved = true;
+				newKeywords.options(SqlKeywords.DENSE_RANK).reserved = true;
+				newKeywords.options(SqlKeywords.FIRST_VALUE).reserved = true;
+				newKeywords.options(SqlKeywords.GROUPS).reserved = true;
+				newKeywords.options(SqlKeywords.LAG).reserved = true;
+				newKeywords.options(SqlKeywords.LAST_VALUE).reserved = true;
+				newKeywords.options(SqlKeywords.LEAD).reserved = true;
+				newKeywords.options(SqlKeywords.NTH_VALUE).reserved = true;
+				newKeywords.options(SqlKeywords.NTILE).reserved = true;
+				newKeywords.options(SqlKeywords.OVER).reserved = true;
+				newKeywords.options(SqlKeywords.PERCENT_RANK).reserved = true;
+				newKeywords.options(SqlKeywords.RANK).reserved = true;
+				newKeywords.options(SqlKeywords.ROW).reserved = true;
+				newKeywords.options(SqlKeywords.ROWS).reserved = true;
+				newKeywords.options(SqlKeywords.ROW_NUMBER).reserved = true;
+				newKeywords.options(SqlKeywords.WINDOW).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
@@ -442,7 +442,7 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.SYSTEM).reserved = true;;
+				newKeywords.options(SqlKeywords.SYSTEM).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
@@ -451,8 +451,8 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.EMPTY).reserved = true;;
-				newKeywords.options(SqlKeywords.JSON_TABLE).reserved = true;;
+				newKeywords.options(SqlKeywords.EMPTY).reserved = true;
+				newKeywords.options(SqlKeywords.JSON_TABLE).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
@@ -461,7 +461,7 @@ export class MysqlLexer extends Lexer {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
-				newKeywords.options(SqlKeywords.LATERAL).reserved = true;;
+				newKeywords.options(SqlKeywords.LATERAL).reserved = true;
 			}
 			this.options.keywords = newKeywords ? newKeywords : keywords;
 		}

@@ -14,7 +14,10 @@
 			"@/*": ["./src/*"]
 		},
 		"plugins": [
-			{ "transform": "./scripts/transform-ts-to-js.js", "transformProgram": true }
+			{
+				"transform": "./scripts/transform-ts-to-js.js",
+				"transformProgram": true
+			}
 		]
 	},
 	"include": ["./src/**/*"]

@@ -6,16 +6,8 @@
 			"request": "launch",
 			"type": "node",
 			"runtimeExecutable": "npm",
-			"runtimeArgs": [
-				"run",
-				"test",
-				"--",
-				"${relativeFile}"
-			],
-			"skipFiles": [
-				"<node_internals>/**"
-			],
+			"runtimeArgs": ["run", "test", "--", "${relativeFile}"],
+			"skipFiles": ["<node_internals>/**"]
 		}
-		
 	]
 }

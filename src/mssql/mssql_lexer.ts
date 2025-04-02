@@ -393,7 +393,10 @@ export class MssqlLexer extends Lexer {
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
 		if (token.keyword) {
 			if (state.mode === Mode.SQL_START) {
-				if (token.keyword === SqlKeywords.CREATE || token.keyword === SqlKeywords.ALTER) {
+				if (
+					token.keyword === SqlKeywords.CREATE ||
+					token.keyword === SqlKeywords.ALTER
+				) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else if (
 					token.keyword === SqlKeywords.IF ||

@@ -1,8 +1,8 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from 'node:url';
 import { describe, test } from "node:test";
-import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
 import { Sqlite3Formatter } from "../../src/sqlite3/sqlite3_formatter.ts";
 import { writeDebugFile } from "../utils/debug.ts";
 
@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test sqlite3 formatter", () => {
-	test("test by file", { concurrency: true }, async t => {
+	test("test by file", { concurrency: true }, async (t) => {
 		const targets = [
 			"alter_table",
 			"analyze",
@@ -38,7 +38,7 @@ describe("test sqlite3 formatter", () => {
 			"select",
 			"update",
 			"vacuum",
-			"unknown",	
+			"unknown",
 		];
 		for (const target of targets) {
 			await t.test(`${target}`, async () => {
@@ -51,9 +51,9 @@ describe("test sqlite3 formatter", () => {
 					"utf8",
 				);
 				const formatted = new Sqlite3Formatter().format(script);
-		
+
 				writeDebugFile(`dump/sqlite3/formatter/${target}.sql`, formatted);
-		
+
 				assert.strictEqual(formatted, expected);
 			});
 		}

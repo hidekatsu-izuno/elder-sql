@@ -29,8 +29,10 @@ export function toJSScript(target: Element | Token | (Element | Token)[]) {
 	if (target instanceof Element) {
 		imports += 'import { Element, Text } from "domhandler"\n';
 	} else {
-		imports += 'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
-		imports += 'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
+		imports +=
+			'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
+		imports +=
+			'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
 	}
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
