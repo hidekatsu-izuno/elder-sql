@@ -76,12 +76,16 @@ export class CstBuilder {
 		}
 	}
 
-	append(child: Element) {
-		appendChild(this.current, child);
+	append(child: Element, context?: Element) {
+		if (context) {
+			appendChild(context, child);
+		} else {
+			appendChild(this.current, child);
+		}
 		return child;
 	}
 
-	token(token: Token) {
+	token(token: Token, context?: Element) {
 		const elem = new Element("token", {
 			type: token.type.name,
 			...(token.keyword != null ? { value: token.keyword.name } : {}),
@@ -109,10 +113,11 @@ export class CstBuilder {
 			}
 			appendChild(elem, skipToken);
 		}
-		if (!this.current) {
-			throw new Error("Parent node is required.");
+		if (context) {
+			appendChild(context, elem);
+		} else {
+			appendChild(this.current, elem);
 		}
-		appendChild(this.current, elem);
 		return token;
 	}
 
