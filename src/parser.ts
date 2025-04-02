@@ -3,12 +3,18 @@ import { appendChild } from "domutils";
 import type { Lexer, Token } from "./lexer.ts";
 import { escapeXml } from "./utils.ts";
 
+export declare type ParserOptions = {
+	[key: string]: string;
+};
+
 export abstract class Parser {
 	lexer: Lexer;
-	options: Record<string, any>;
+	builder: CstBuilder;
+	options: ParserOptions;
 
-	constructor(lexer: Lexer, options: Record<string, any> = {}) {
+	constructor(lexer: Lexer, builder: CstBuilder, options: ParserOptions = {}) {
 		this.lexer = lexer;
+		this.builder = builder;
 		this.options = options;
 	}
 
@@ -103,19 +109,6 @@ export class CstBuilder {
 	}
 
 	token(token: Token, context?: Element) {
-		if (!this.options.token) {
-			return;
-		}
-
-		if (
-			!this.options.marker &&
-			!token.text &&
-			(!this.options.trivia ||
-				(token.preskips.length === 0 && token.postskips.length === 0))
-		) {
-			return;
-		}
-
 		const elem = new Element("token", {
 			type: token.type.name,
 			...(token.keyword != null ? { value: token.keyword.name } : {}),
@@ -147,10 +140,17 @@ export class CstBuilder {
 				appendChild(elem, trivia);
 			}
 		}
-		if (context) {
-			appendChild(context, elem);
-		} else {
-			appendChild(this.current, elem);
+		if (
+			!this.options.token ||
+			this.options.marker || token.text ||
+			(this.options.trivia &&
+				(token.preskips.length !== 0 || token.postskips.length !== 0))
+		) {
+			if (context) {
+				appendChild(context, elem);
+			} else {
+				appendChild(this.current, elem);
+			}
 		}
 		return token;
 	}

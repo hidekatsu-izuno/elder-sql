@@ -9,13 +9,17 @@ export class Sqlite3Parser extends Parser {
 	compileOptions: Set<string>;
 
 	constructor(options: Record<string, any> = {}) {
-		super(options.lexer ?? new Sqlite3Lexer(options), options);
+		super(
+			options.lexer ?? new Sqlite3Lexer(options),
+			options.builder ?? new CstBuilder(options),
+			options,
+		);
 		this.compileOptions = new Set(options.compileOptions || []);
 	}
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-		const b = new CstBuilder();
+		const b = this.builder;
 		const errors = [];
 		const root = b.start("Script");
 		while (r.peek()) {
