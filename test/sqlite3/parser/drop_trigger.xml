@@ -1,0 +1,39 @@
+<node type="Script">
+  <node type="DropTriggerStatement">
+    <token type="Identifier" value="DROP">DROP</token>
+    <token type="Identifier" value="TRIGGER">TRIGGER</token>
+    <node type="ObjectName" value="r_sample">
+      <token type="Identifier">r_sample</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="DropTriggerStatement">
+    <token type="Identifier" value="DROP">DROP</token>
+    <token type="Identifier" value="TRIGGER">TRIGGER</token>
+    <node type="SchemaName" value="main">
+      <token type="Identifier" value="MAIN">main</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="r_sample">
+      <token type="Identifier">r_sample</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="DropTriggerStatement">
+    <token type="Identifier" value="DROP">DROP</token>
+    <token type="Identifier" value="TRIGGER">TRIGGER</token>
+    <node type="IfExistsOption">
+      <token type="Identifier" value="IF">IF</token>
+      <token type="Reserved" value="EXISTS">EXISTS</token>
+    </node>
+    <node type="SchemaName" value="main">
+      <token type="Identifier" value="MAIN">main</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="r_sample">
+      <token type="Identifier">r_sample</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <token type="EoF"></token>
+</node>

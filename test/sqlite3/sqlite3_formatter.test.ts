@@ -46,14 +46,15 @@ describe("test sqlite3 formatter", () => {
 					path.join(__dirname, "scripts", `${target}.sql`),
 					"utf8",
 				);
-				const expected = fs.readFileSync(
-					path.join(__dirname, "formatter", `${target}.sql`),
-					"utf8",
-				);
+
 				const formatted = new Sqlite3Formatter().format(script);
 
 				writeDebugFile(`dump/sqlite3/formatter/${target}.sql`, formatted);
 
+				const expected = fs.readFileSync(
+					path.join(__dirname, "formatter", `${target}.sql`),
+					"utf8",
+				);
 				assert.strictEqual(formatted, expected);
 			});
 		}

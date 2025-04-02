@@ -1,0 +1,757 @@
+<node type="Script">
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="String">'2'</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="NullLiteral">
+                <token type="Reserved" value="NULL">NULL</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <node type="OrConflictClause">
+        <token type="Reserved" value="OR">OR</token>
+        <node type="AbortOption">
+          <token type="Identifier" value="ABORT">ABORT</token>
+        </node>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <token type="LeftParen">(</token>
+      <node type="ColumnList">
+        <node type="ColumnName" value="a">
+          <token type="Identifier">a</token>
+        </node>
+      </node>
+      <token type="RightParen">)</token>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <node type="OrConflictClause">
+        <token type="Reserved" value="OR">OR</token>
+        <node type="FailOption">
+          <token type="Identifier" value="FAIL">FAIL</token>
+        </node>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <token type="Reserved" value="AS">AS</token>
+      <node type="ObjectAlias" value="sample2">
+        <token type="Identifier">sample2</token>
+      </node>
+      <token type="LeftParen">(</token>
+      <node type="ColumnList">
+        <node type="ColumnName" value="a">
+          <token type="Identifier">a</token>
+        </node>
+        <token type="Comma">,</token>
+        <node type="ColumnName" value="b">
+          <token type="Identifier">b</token>
+        </node>
+      </node>
+      <token type="RightParen">)</token>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="Identifier">&quot;2&quot;</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <node type="OrConflictClause">
+        <token type="Reserved" value="OR">OR</token>
+        <node type="IgnoreOption">
+          <token type="Identifier" value="IGNORE">IGNORE</token>
+        </node>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <token type="Reserved" value="AS">AS</token>
+      <node type="ObjectAlias" value="sample2">
+        <token type="Identifier">sample2</token>
+      </node>
+      <token type="LeftParen">(</token>
+      <node type="ColumnList">
+        <node type="ColumnName" value="a">
+          <token type="Identifier">a</token>
+        </node>
+        <token type="Comma">,</token>
+        <node type="ColumnName" value="b">
+          <token type="Identifier">b</token>
+        </node>
+        <token type="Comma">,</token>
+        <node type="ColumnName" value="c">
+          <token type="Identifier">c</token>
+        </node>
+      </node>
+      <token type="RightParen">)</token>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="Identifier">&quot;2&quot;</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="BooleanLiteral" value="TRUE">
+                <token type="Identifier" value="TRUE">TRUE</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+          <token type="Comma">,</token>
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="String">'2'</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="BooleanLiteral" value="FALSE">
+                <token type="Identifier" value="FALSE">FALSE</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <node type="OrConflictClause">
+        <token type="Reserved" value="OR">OR</token>
+        <node type="ReplaceOption">
+          <token type="Identifier" value="REPLACE">REPLACE</token>
+        </node>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="Identifier">&quot;2&quot;</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="NullLiteral">
+                <token type="Reserved" value="NULL">NULL</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+          <token type="Comma">,</token>
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="String">'2'</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="BooleanLiteral" value="TRUE">
+                <token type="Identifier" value="TRUE">TRUE</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+          <token type="Comma">,</token>
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="Identifier">&quot;2&quot;</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="BooleanLiteral" value="FALSE">
+                <token type="Identifier" value="FALSE">FALSE</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <node type="OrConflictClause">
+        <token type="Reserved" value="OR">OR</token>
+        <node type="RollbackOption">
+          <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
+        </node>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="SelectStatement">
+        <node type="SelectClause">
+          <token type="Reserved" value="SELECT">SELECT</token>
+          <node type="SelectColumnList">
+            <node type="SelectColumn">
+              <node type="Expression">
+                <node type="NumericLiteral" value="1">
+                  <token type="Numeric">1</token>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="DefaultValuesOption">
+        <token type="Reserved" value="DEFAULT">DEFAULT</token>
+        <token type="Reserved" value="VALUES">VALUES</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="SelectStatement">
+        <node type="SelectClause">
+          <token type="Reserved" value="SELECT">SELECT</token>
+          <node type="SelectColumnList">
+            <node type="SelectColumn">
+              <node type="Expression">
+                <node type="NumericLiteral" value="1">
+                  <token type="Numeric">1</token>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node type="FromClause">
+            <token type="Reserved" value="FROM">FROM</token>
+            <node type="FromObjectList">
+              <node type="FromObject">
+                <node type="ObjectReference">
+                  <node type="ObjectName" value="sample2">
+                    <token type="Identifier">sample2</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <node type="ReplaceOption">
+        <token type="Identifier" value="REPLACE">REPLACE</token>
+      </node>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <token type="LeftParen">(</token>
+      <node type="ColumnList">
+        <node type="ColumnName" value="a">
+          <token type="Identifier">a</token>
+        </node>
+      </node>
+      <token type="RightParen">)</token>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="WithClause">
+      <token type="Identifier" value="WITH">WITH</token>
+      <node type="CommonTableList">
+        <node type="CommonTable">
+          <node type="ObjectName" value="X">
+            <token type="Identifier">X</token>
+          </node>
+          <token type="Reserved" value="AS">AS</token>
+          <token type="LeftParen">(</token>
+          <node type="SelectStatement">
+            <node type="SelectClause">
+              <token type="Reserved" value="SELECT">SELECT</token>
+              <node type="SelectColumnList">
+                <node type="SelectColumn">
+                  <node type="Expression">
+                    <node type="NumericLiteral" value="1">
+                      <token type="Numeric">1</token>
+                    </node>
+                  </node>
+                  <token type="Reserved" value="AS">AS</token>
+                  <node type="ColumnAlias" value="Y">
+                    <token type="Identifier">Y</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="SelectStatement">
+        <node type="SelectClause">
+          <token type="Reserved" value="SELECT">SELECT</token>
+          <node type="SelectColumnList">
+            <node type="SelectColumn">
+              <node type="Expression">
+                <node type="ColumnReference">
+                  <node type="ColumnName" value="Y">
+                    <token type="Identifier">Y</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node type="FromClause">
+            <token type="Reserved" value="FROM">FROM</token>
+            <node type="FromObjectList">
+              <node type="FromObject">
+                <node type="ObjectReference">
+                  <node type="ObjectName" value="X">
+                    <token type="Identifier">X</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="SelectStatement">
+        <node type="WithClause">
+          <token type="Identifier" value="WITH">WITH</token>
+          <node type="CommonTableList">
+            <node type="CommonTable">
+              <node type="ObjectName" value="X">
+                <token type="Identifier">X</token>
+              </node>
+              <token type="Reserved" value="AS">AS</token>
+              <token type="LeftParen">(</token>
+              <node type="SelectStatement">
+                <node type="SelectClause">
+                  <token type="Reserved" value="SELECT">SELECT</token>
+                  <node type="SelectColumnList">
+                    <node type="SelectColumn">
+                      <node type="Expression">
+                        <node type="NumericLiteral" value="1">
+                          <token type="Numeric">1</token>
+                        </node>
+                      </node>
+                      <token type="Reserved" value="AS">AS</token>
+                      <node type="ColumnAlias" value="Y">
+                        <token type="Identifier">Y</token>
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <token type="RightParen">)</token>
+            </node>
+          </node>
+        </node>
+        <node type="SelectClause">
+          <token type="Reserved" value="SELECT">SELECT</token>
+          <node type="SelectColumnList">
+            <node type="SelectColumn">
+              <node type="Expression">
+                <node type="ColumnReference">
+                  <node type="ColumnName" value="Y">
+                    <token type="Identifier">Y</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node type="FromClause">
+            <token type="Reserved" value="FROM">FROM</token>
+            <node type="FromObjectList">
+              <node type="FromObject">
+                <node type="ObjectReference">
+                  <node type="ObjectName" value="X">
+                    <token type="Identifier">X</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="ValuesClause">
+        <token type="Reserved" value="VALUES">VALUES</token>
+        <node type="ExpressionListGroup">
+          <token type="LeftParen">(</token>
+          <node type="ExpressionList">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="StringLiteral" value="2">
+                <token type="String">'2'</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Expression">
+              <node type="NullLiteral">
+                <token type="Reserved" value="NULL">NULL</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+      <node type="ReturningClause">
+        <token type="Reserved" value="RETURNING">RETURNING</token>
+        <node type="SelectColumnList">
+          <node type="SelectColumn">
+            <node type="AllColumnsOption">
+              <token type="Operator">*</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="SelectStatement">
+        <node type="SelectClause">
+          <token type="Reserved" value="SELECT">SELECT</token>
+          <node type="SelectColumnList">
+            <node type="SelectColumn">
+              <node type="Expression">
+                <node type="ColumnReference">
+                  <node type="ColumnName" value="Y">
+                    <token type="Identifier">Y</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node type="FromClause">
+            <token type="Reserved" value="FROM">FROM</token>
+            <node type="FromObjectList">
+              <node type="FromObject">
+                <node type="ObjectReference">
+                  <node type="ObjectName" value="X">
+                    <token type="Identifier">X</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+      <node type="ReturningClause">
+        <token type="Reserved" value="RETURNING">RETURNING</token>
+        <node type="SelectColumnList">
+          <node type="SelectColumn">
+            <node type="Expression">
+              <node type="ColumnReference">
+                <node type="ColumnName" value="Y">
+                  <token type="Identifier">Y</token>
+                </node>
+              </node>
+            </node>
+          </node>
+          <token type="Comma">,</token>
+          <node type="SelectColumn">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Reserved" value="AS">AS</token>
+            <node type="ColumnAlias" value="Z">
+              <token type="Identifier">Z</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="InsertStatement">
+    <node type="InsertClause">
+      <token type="Reserved" value="INSERT">INSERT</token>
+      <token type="Reserved" value="INTO">INTO</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="DefaultValuesOption">
+        <token type="Reserved" value="DEFAULT">DEFAULT</token>
+        <token type="Reserved" value="VALUES">VALUES</token>
+      </node>
+      <node type="ReturningClause">
+        <token type="Reserved" value="RETURNING">RETURNING</token>
+        <node type="SelectColumnList">
+          <node type="SelectColumn">
+            <node type="Expression">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Reserved" value="AS">AS</token>
+            <node type="ColumnAlias" value="Z">
+              <token type="Identifier">Z</token>
+            </node>
+          </node>
+          <token type="Comma">,</token>
+          <node type="SelectColumn">
+            <node type="AllColumnsOption">
+              <token type="Operator">*</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <token type="EoF"></token>
+</node>

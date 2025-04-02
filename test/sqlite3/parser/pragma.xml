@@ -1,0 +1,126 @@
+<node type="Script">
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="PragmaName" value="analysis_limit">
+      <token type="Identifier">analysis_limit</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="PragmaName" value="analysis_limit">
+      <token type="Identifier">analysis_limit</token>
+    </node>
+    <token type="Operator">=</token>
+    <node type="PragmaValue">
+      <node type="NumericLiteral" value="3">
+        <token type="Numeric">3</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="PragmaName" value="application_id">
+      <token type="Identifier">application_id</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="PragmaName" value="application_id">
+      <token type="Identifier">application_id</token>
+    </node>
+    <token type="Operator">=</token>
+    <node type="PragmaValue">
+      <node type="Expression">
+        <node type="UnaryMinusOperation">
+          <token type="Operator">-</token>
+          <node type="NumericLiteral" value="3">
+            <token type="Numeric">3</token>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="SchemaName" value="Test">
+      <token type="Identifier" value="TEST">Test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="PragmaName" value="auto_vacuum">
+      <token type="Identifier">auto_vacuum</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="SchemaName" value="Test">
+      <token type="Identifier" value="TEST">Test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="PragmaName" value="auto_vacuum">
+      <token type="Identifier">auto_vacuum</token>
+    </node>
+    <token type="Operator">=</token>
+    <node type="PragmaValue">
+      <node type="PragmaLiteral" value="NONE">
+        <token type="Identifier" value="NONE">NONE</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">pragma</token>
+    <node type="PragmaName" value="automatic_index">
+      <token type="Identifier">automatic_index</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">pragma</token>
+    <node type="PragmaName" value="automatic_index">
+      <token type="Identifier">automatic_index</token>
+    </node>
+    <token type="Operator">=</token>
+    <node type="PragmaValue">
+      <node type="PragmaLiteral" value="true">
+        <token type="Identifier" value="TRUE">true</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="PragmaStatement">
+    <token type="Identifier" value="PRAGMA">PRAGMA</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="PragmaName" value="index_info">
+      <token type="Identifier">index_info</token>
+    </node>
+    <token type="LeftParen">(</token>
+    <node type="PragmaArgumentList">
+      <node type="PragmaArgument">
+        <node type="PragmaValue">
+          <node type="StringLiteral" value="test.pk_test">
+            <token type="String">'test.pk_test'</token>
+          </node>
+        </node>
+      </node>
+    </node>
+    <token type="RightParen">)</token>
+  </node>
+  <token type="SemiColon">;</token>
+  <token type="EoF"></token>
+</node>

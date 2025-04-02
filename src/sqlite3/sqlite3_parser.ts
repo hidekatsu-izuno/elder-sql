@@ -1908,7 +1908,7 @@ export class Sqlite3Parser extends Parser {
 				text += ` ${b.token(r.consume()).text}`;
 			}
 			b.value(text);
-			b.end();	
+			b.end();
 		}
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {

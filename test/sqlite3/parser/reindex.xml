@@ -1,0 +1,24 @@
+<node type="Script">
+  <node type="ReindexStatement">
+    <token type="Identifier" value="REINDEX">REINDEX</token>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="ReindexStatement">
+    <token type="Identifier" value="REINDEX">REINDEX</token>
+    <node type="ObjectName" value="test_collation">
+      <token type="Identifier">test_collation</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="ReindexStatement">
+    <token type="Identifier" value="REINDEX">REINDEX</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+  </node>
+  <token type="EoF"></token>
+</node>

@@ -1,0 +1,323 @@
+<node type="Script">
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="RenameToObjectClause">
+      <token type="Identifier" value="RENAME">RENAME</token>
+      <token type="Reserved" value="TO">TO</token>
+      <node type="ObjectName" value="new_table">
+        <token type="Identifier">new_table</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="RenameColumnClause">
+      <token type="Identifier" value="RENAME">RENAME</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="ColumnName" value="old_column">
+        <token type="Identifier">old_column</token>
+      </node>
+      <node type="RenameToColumnClause">
+        <token type="Reserved" value="TO">TO</token>
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="RenameColumnClause">
+      <token type="Identifier" value="RENAME">RENAME</token>
+      <node type="ColumnName" value="old_column">
+        <token type="Identifier">old_column</token>
+      </node>
+      <node type="RenameToColumnClause">
+        <token type="Reserved" value="TO">TO</token>
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+        <node type="ColumnConstraint">
+          <node type="DefaultOption">
+            <token type="Reserved" value="DEFAULT">DEFAULT</token>
+            <node type="Expression">
+              <node type="NullLiteral">
+                <token type="Reserved" value="NULL">NULL</token>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+        <node type="ColumnConstraint">
+          <node type="PrimaryKeyConstraint">
+            <token type="Reserved" value="PRIMARY">PRIMARY</token>
+            <token type="Identifier" value="KEY">KEY</token>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+        <node type="ColumnType">
+          <node type="TypeName" value="TEXT">
+            <token type="Identifier" value="TEXT">TEXT</token>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+        <node type="ColumnType">
+          <node type="TypeName" value="VARING CHARACTER">
+            <token type="Identifier">VARING</token>
+            <token type="Identifier" value="CHARACTER">CHARACTER</token>
+          </node>
+        </node>
+        <node type="ColumnConstraint">
+          <node type="GeneratedColumnOption">
+            <token type="Reserved" value="GENERATED">GENERATED</token>
+            <token type="Reserved" value="ALWAYS">ALWAYS</token>
+            <token type="Reserved" value="AS">AS</token>
+            <token type="LeftParen">(</token>
+            <node type="GeneratedColumn">
+              <node type="Expression">
+                <node type="NumericLiteral" value="1">
+                  <token type="Numeric">1</token>
+                </node>
+              </node>
+            </node>
+            <token type="RightParen">)</token>
+            <node type="StoredOption">
+              <token type="Identifier" value="STORED">STORED</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="AddColumnClause">
+      <token type="Reserved" value="ADD">ADD</token>
+      <node type="TableColumn">
+        <node type="ColumnName" value="new_column">
+          <token type="Identifier">new_column</token>
+        </node>
+        <node type="ColumnType">
+          <node type="TypeName" value="NUMERIC">
+            <token type="Identifier" value="NUMERIC">NUMERIC</token>
+          </node>
+          <token type="LeftParen">(</token>
+          <node type="TypeOptionList">
+            <node type="LengthOption">
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="ScaleOption">
+              <node type="NumericLiteral" value="0">
+                <token type="Numeric">0</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+        <node type="ColumnConstraint">
+          <node type="PrimaryKeyConstraint">
+            <token type="Reserved" value="PRIMARY">PRIMARY</token>
+            <token type="Identifier" value="KEY">KEY</token>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="DropColumnClause">
+      <token type="Identifier" value="DROP">DROP</token>
+      <token type="Identifier" value="COLUMN">COLUMN</token>
+      <node type="ColumnName" value="new_column">
+        <token type="Identifier">new_column</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AlterTableStatement">
+    <token type="Reserved" value="ALTER">ALTER</token>
+    <token type="Reserved" value="TABLE">TABLE</token>
+    <node type="SchemaName" value="test">
+      <token type="Identifier" value="TEST">test</token>
+    </node>
+    <token type="Dot">.</token>
+    <node type="ObjectName" value="sample">
+      <token type="Identifier" value="SAMPLE">sample</token>
+    </node>
+    <node type="DropColumnClause">
+      <token type="Identifier" value="DROP">DROP</token>
+      <node type="ColumnName" value="new_column">
+        <token type="Identifier">new_column</token>
+      </node>
+    </node>
+  </node>
+  <token type="EoF"></token>
+</node>

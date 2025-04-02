@@ -1,0 +1,170 @@
+<node type="Script">
+  <node type="DeleteStatement">
+    <node type="DeleteClause">
+      <token type="Reserved" value="DELETE">DELETE</token>
+      <token type="Reserved" value="FROM">FROM</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="DeleteStatement">
+    <node type="DeleteClause">
+      <token type="Reserved" value="DELETE">DELETE</token>
+      <token type="Reserved" value="FROM">FROM</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="DeleteStatement">
+    <node type="WithClause">
+      <token type="Identifier" value="WITH">WITH</token>
+      <node type="CommonTableList">
+        <node type="CommonTable">
+          <node type="ObjectName" value="X">
+            <token type="Identifier">X</token>
+          </node>
+          <token type="Reserved" value="AS">AS</token>
+          <token type="LeftParen">(</token>
+          <node type="SelectStatement">
+            <node type="SelectClause">
+              <token type="Reserved" value="SELECT">SELECT</token>
+              <node type="SelectColumnList">
+                <node type="SelectColumn">
+                  <node type="Expression">
+                    <node type="NumericLiteral" value="1">
+                      <token type="Numeric">1</token>
+                    </node>
+                  </node>
+                  <token type="Reserved" value="AS">AS</token>
+                  <node type="ColumnAlias" value="Y">
+                    <token type="Identifier">Y</token>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+    <node type="DeleteClause">
+      <token type="Reserved" value="DELETE">DELETE</token>
+      <token type="Reserved" value="FROM">FROM</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="WhereClause">
+        <token type="Reserved" value="WHERE">WHERE</token>
+        <node type="Expression">
+          <node type="EqualOperation">
+            <node type="ColumnReference">
+              <node type="ColumnName" value="x">
+                <token type="Identifier">x</token>
+              </node>
+            </node>
+            <token type="Operator">=</token>
+            <node type="SubqueryExpression">
+              <token type="LeftParen">(</token>
+              <node type="SelectStatement">
+                <node type="SelectClause">
+                  <token type="Reserved" value="SELECT">SELECT</token>
+                  <node type="SelectColumnList">
+                    <node type="SelectColumn">
+                      <node type="Expression">
+                        <node type="ColumnReference">
+                          <node type="ColumnName" value="Y">
+                            <token type="Identifier">Y</token>
+                          </node>
+                        </node>
+                      </node>
+                    </node>
+                  </node>
+                  <node type="FromClause">
+                    <token type="Reserved" value="FROM">FROM</token>
+                    <node type="FromObjectList">
+                      <node type="FromObject">
+                        <node type="ObjectReference">
+                          <node type="ObjectName" value="X">
+                            <token type="Identifier">X</token>
+                          </node>
+                        </node>
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <token type="RightParen">)</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="DeleteStatement">
+    <node type="DeleteClause">
+      <token type="Reserved" value="DELETE">DELETE</token>
+      <token type="Reserved" value="FROM">FROM</token>
+      <node type="SchemaName" value="main">
+        <token type="Identifier" value="MAIN">main</token>
+      </node>
+      <token type="Dot">.</token>
+      <node type="ObjectName" value="sample">
+        <token type="Identifier" value="SAMPLE">sample</token>
+      </node>
+      <node type="WhereClause">
+        <token type="Reserved" value="WHERE">WHERE</token>
+        <node type="Expression">
+          <node type="AndOperation">
+            <node type="EqualOperation">
+              <node type="ColumnReference">
+                <node type="ColumnName" value="x">
+                  <token type="Identifier">x</token>
+                </node>
+              </node>
+              <token type="Operator">=</token>
+              <node type="NumericLiteral" value="3">
+                <token type="Numeric">3</token>
+              </node>
+            </node>
+            <token type="Reserved" value="AND">AND</token>
+            <node type="EqualOperation">
+              <node type="ColumnReference">
+                <node type="ColumnName" value="y">
+                  <token type="Identifier">y</token>
+                </node>
+              </node>
+              <token type="Operator">=</token>
+              <node type="NumericLiteral" value="1">
+                <token type="Numeric">1</token>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+      <node type="ReturningClause">
+        <token type="Reserved" value="RETURNING">RETURNING</token>
+        <node type="SelectColumnList">
+          <node type="SelectColumn">
+            <node type="AllColumnsOption">
+              <token type="Operator">*</token>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <token type="EoF"></token>
+</node>

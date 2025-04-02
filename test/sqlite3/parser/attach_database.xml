@@ -1,0 +1,163 @@
+<node type="Script">
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <token type="Identifier" value="DATABASE">DATABASE</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="StringLiteral" value=":memory:">
+          <token type="String">':memory:'</token>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="mem_db">
+      <token type="Identifier">mem_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <token type="Identifier" value="DATABASE">DATABASE</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="StringLiteral" value="new_database.db">
+          <token type="String">'new_database.db'</token>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="new_db">
+      <token type="Identifier">new_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <token type="Identifier" value="DATABASE">DATABASE</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="FunctionExpression">
+          <node type="ObjectName">
+            <token type="Identifier" value="CONCAT">CONCAT</token>
+          </node>
+          <token type="LeftParen">(</token>
+          <node type="FunctionArgumentList">
+            <node type="Argument">
+              <node type="Expression">
+                <node type="StringLiteral" value="new_database">
+                  <token type="String">'new_database'</token>
+                </node>
+              </node>
+            </node>
+            <token type="Comma">,</token>
+            <node type="Argument">
+              <node type="Expression">
+                <node type="StringLiteral" value=".db">
+                  <token type="String">'.db'</token>
+                </node>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="new_db">
+      <token type="Identifier">new_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <token type="Identifier" value="DATABASE">DATABASE</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="ParenthesesOperation">
+          <token type="LeftParen">(</token>
+          <node type="Expression">
+            <node type="ConcatenateOperation">
+              <node type="ConcatenateOperation">
+                <node type="StringLiteral" value="database_">
+                  <token type="String">'database_'</token>
+                </node>
+                <token type="Operator">||</token>
+                <node type="FunctionExpression">
+                  <node type="ObjectName">
+                    <token type="Identifier" value="STRFTIME">strftime</token>
+                  </node>
+                  <token type="LeftParen">(</token>
+                  <node type="FunctionArgumentList">
+                    <node type="Argument">
+                      <node type="Expression">
+                        <node type="StringLiteral" value="%Y%m%d">
+                          <token type="String">'%Y%m%d'</token>
+                        </node>
+                      </node>
+                    </node>
+                    <token type="Comma">,</token>
+                    <node type="Argument">
+                      <node type="Expression">
+                        <node type="StringLiteral" value="now">
+                          <token type="String">'now'</token>
+                        </node>
+                      </node>
+                    </node>
+                  </node>
+                  <token type="RightParen">)</token>
+                </node>
+              </node>
+              <token type="Operator">||</token>
+              <node type="StringLiteral" value=".db">
+                <token type="String">'.db'</token>
+              </node>
+            </node>
+          </node>
+          <token type="RightParen">)</token>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="new_db">
+      <token type="Identifier">new_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="StringLiteral" value="new_database.db">
+          <token type="String">'new_database.db'</token>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="new_db">
+      <token type="Identifier">new_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <node type="AttachDatabaseStatement">
+    <token type="Identifier" value="ATTACH">ATTACH</token>
+    <node type="Database">
+      <node type="Expression">
+        <node type="ConcatenateOperation">
+          <node type="StringLiteral" value="database_">
+            <token type="String">'database_'</token>
+          </node>
+          <token type="Operator">||</token>
+          <node type="StringLiteral" value=".db">
+            <token type="String">'.db'</token>
+          </node>
+        </node>
+      </node>
+    </node>
+    <token type="Reserved" value="AS">AS</token>
+    <node type="SchemaName" value="new_db">
+      <token type="Identifier">new_db</token>
+    </node>
+  </node>
+  <token type="SemiColon">;</token>
+  <token type="EoF"></token>
+</node>

@@ -1,6 +1,7 @@
 import { Element, Text } from "domhandler";
 import { appendChild } from "domutils";
 import type { Lexer, Token } from "./lexer.ts";
+import { escapeXml } from "./utils.ts";
 
 export abstract class Parser {
 	lexer: Lexer;
@@ -32,14 +33,30 @@ export class AggregateParseError extends Error {
 	}
 }
 
+export declare type CstBuilderOptions = {
+	token?: boolean;
+	trivia?: boolean;
+	marker?: boolean;
+};
+
 const EMPTY_NODE = new Element("node", {});
 export class CstBuilder {
 	root: Element;
 	current: Element;
+	options: {
+		token: boolean;
+		trivia: boolean;
+		marker: boolean;
+	};
 
-	constructor() {
+	constructor(options: CstBuilderOptions = {}) {
 		this.root = EMPTY_NODE;
 		this.current = EMPTY_NODE;
+		this.options = {
+			token: options.token ?? true,
+			trivia: options.trivia ?? true,
+			marker: options.marker ?? true,
+		};
 	}
 
 	start(type: string, value?: string | number | boolean) {
@@ -86,32 +103,49 @@ export class CstBuilder {
 	}
 
 	token(token: Token, context?: Element) {
+		if (!this.options.token) {
+			return;
+		}
+
+		if (
+			!this.options.marker &&
+			!token.text &&
+			(!this.options.trivia ||
+				(token.preskips.length === 0 && token.postskips.length === 0))
+		) {
+			return;
+		}
+
 		const elem = new Element("token", {
 			type: token.type.name,
 			...(token.keyword != null ? { value: token.keyword.name } : {}),
 		});
-		for (const skip of token.preskips) {
-			const skipToken = new Element("trivia", {
-				type: skip.type.name,
-				...(skip.keyword != null ? { value: skip.keyword.name } : {}),
-			});
-			if (skip.text) {
-				appendChild(skipToken, new Text(skip.text));
+		if (this.options.trivia) {
+			for (const skip of token.preskips) {
+				const trivia = new Element("trivia", {
+					type: skip.type.name,
+					...(skip.keyword != null ? { value: skip.keyword.name } : {}),
+				});
+				if (skip.text) {
+					appendChild(trivia, new Text(skip.text));
+				}
+				appendChild(elem, trivia);
 			}
-			appendChild(elem, skipToken);
 		}
 		if (token.text) {
 			appendChild(elem, new Text(token.text));
 		}
-		for (const skip of token.postskips) {
-			const skipToken = new Element("trivia", {
-				type: skip.type.name,
-				...(skip.keyword != null ? { value: skip.keyword.name } : {}),
-			});
-			if (skip.text) {
-				appendChild(skipToken, new Text(skip.text));
+		if (this.options.trivia) {
+			for (const skip of token.postskips) {
+				const trivia = new Element("trivia", {
+					type: skip.type.name,
+					...(skip.keyword != null ? { value: skip.keyword.name } : {}),
+				});
+				if (skip.text) {
+					appendChild(trivia, new Text(skip.text));
+				}
+				appendChild(elem, trivia);
 			}
-			appendChild(elem, skipToken);
 		}
 		if (context) {
 			appendChild(context, elem);
@@ -132,5 +166,44 @@ export class CstBuilder {
 		} else {
 			return this.root;
 		}
+	}
+
+	toString(context?: Element) {
+		return this.traverseToString(context ?? this.current, 0);
+	}
+
+	private traverseToString(elem: Element, depth: number): string {
+		const node = elem.name === "node";
+		const token = elem.name === "token";
+		const trivia = elem.name === "trivia";
+		const marker = token && elem.children.length === 0;
+
+		if (
+			(token && !this.options.token) ||
+			(trivia && !this.options.trivia) ||
+			(marker && !this.options.marker)
+		) {
+			return "";
+		}
+
+		const indent = "  ".repeat(depth);
+
+		let str = "";
+		str += `${node || token ? indent : ""}<${escapeXml(elem.name)}`;
+		const keys = Object.keys(elem.attribs);
+		keys.sort();
+		for (const key of keys) {
+			str += ` ${escapeXml(key)}="${escapeXml(elem.attribs[key])}"`;
+		}
+		str += `>${node ? "\n" : ""}`;
+		for (const child of elem.children) {
+			if (child instanceof Text) {
+				str += escapeXml(child.data, { control: true });
+			} else if (child instanceof Element) {
+				str += this.traverseToString(child, depth + 1);
+			}
+		}
+		str += `${node ? indent : ""}</${escapeXml(elem.name)}>${node || token ? "\n" : ""}`;
+		return str;
 	}
 }

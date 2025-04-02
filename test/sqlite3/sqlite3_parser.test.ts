@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import type { Element } from "domhandler";
-import { AggregateParseError } from "../../src/parser.ts";
+import { AggregateParseError, CstBuilder } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 
@@ -48,7 +48,6 @@ describe("test sqlite3 parser", () => {
 					path.join(__dirname, "scripts", `${target}.sql`),
 					"utf8",
 				);
-				const expected = (await import(`./parser/${target}.ts`)).default;
 				let node: Element;
 				try {
 					node = new Sqlite3Parser().parse(script);
@@ -59,10 +58,15 @@ describe("test sqlite3 parser", () => {
 						throw err;
 					}
 				}
+				const actual = new CstBuilder({ trivia: false }).toString(node);
+				writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actual);
 
-				writeDebugFile(`dump/sqlite3/parser/${target}.ts`, toJSScript(node));
+				const expected = fs.readFileSync(
+					path.join(__dirname, "parser", `${target}.xml`),
+					"utf8",
+				);
 
-				assert.strictEqual(toJSString(node), toJSString(expected));
+				assert.strictEqual(actual, expected);
 			});
 		}
 	});

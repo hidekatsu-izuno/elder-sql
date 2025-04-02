@@ -90,8 +90,9 @@ export function escapeRegExp(text: string) {
 	return text.replace(/[.*+?^=!:${}()|[\]/\\]/g, "\\$&");
 }
 
-export function escapeXml(text: string) {
-	return text.replace(/[&<>"]/g, (m) => {
+export function escapeXml(text: string, options?: { control?: boolean }) {
+	const re = options?.control ? /[&<>"\p{C}]/gu : /[&<>"]/g;
+	return text.replace(re, (m) => {
 		switch (m) {
 			case "&":
 				return "&amp;";
@@ -102,12 +103,12 @@ export function escapeXml(text: string) {
 			case '"':
 				return "&quot;";
 		}
-		return m;
+		return `&#x${m.charCodeAt(0).toString(16)};`;
 	});
 }
 
 export function unescapeXml(text: string) {
-	return text.replace(/&(amp|lt|gt|quot);/g, (m) => {
+	return text.replace(/&(amp|lt|gt|quot|#x[0-9A-Fa-f]+|#[0-9]+);/g, (m) => {
 		switch (m) {
 			case "&amp;":
 				return "&";
@@ -118,7 +119,10 @@ export function unescapeXml(text: string) {
 			case "&quot;":
 				return '"';
 		}
-		return m;
+		const code = m.startsWith("&#x")
+			? Number.parseInt(m.substring(2), 16)
+			: Number.parseInt(m.substring(1), 10);
+		return String.fromCharCode(code);
 	});
 }
 
