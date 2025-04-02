@@ -5,14 +5,6 @@ const acornOption: Options = {
 	ecmaVersion: "latest",
 };
 
-export function apply<T>(target: T, fn: (target: T) => void): T {
-	const ret = fn(target);
-	if (ret !== undefined) {
-		return ret;
-	}
-	return target;
-}
-
 export function lcase(text: string) {
 	return text.toLowerCase();
 }
