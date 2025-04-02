@@ -459,7 +459,10 @@ export class TokenReader {
 	}
 
 	peekIf(
-		...queries: (TokenQuery | { query: TokenQuery; optional: boolean })[]
+		...queries: (
+			| TokenQuery
+			| { query: TokenQuery; min?: number; max?: number }
+		)[]
 	) {
 		if (queries.length === 0) {
 			throw new RangeError("conditions must be at least one.");
@@ -473,9 +476,20 @@ export class TokenReader {
 
 			const token = this.peek(pos);
 			if (typeof query === "object" && query != null && "query" in query) {
-				if (token?.is(query.query)) {
-					pos++;
+				const min = query.min ?? 1;
+				const max = query.max ?? 1;
+				let count = 0;
+				while (count < max) {
+					if (this.peek(pos + count)?.is(query.query)) {
+						count++;
+					} else {
+						break;
+					}
 				}
+				if (count < min) {
+					return false;
+				}
+				pos += count;
 			} else if (token?.is(query)) {
 				pos++;
 			} else {

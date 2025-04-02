@@ -2209,12 +2209,7 @@ export class Sqlite3Parser extends Parser {
 			}
 		}
 
-		if (
-			r.peekIf(
-				{ query: SqlKeywords.NOT, optional: true },
-				SqlKeywords.DEFERRABLE,
-			)
-		) {
+		if (r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.DEFERRABLE)) {
 			if (r.peekIf(SqlKeywords.NOT)) {
 				b.start("NotDeferrableOption");
 				b.token(r.consume());
@@ -2407,10 +2402,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf(
-					{ query: SqlKeywords.NOT, optional: true },
-					SqlKeywords.BETWEEN,
-				)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.BETWEEN)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotBetweenOperation");
@@ -2427,7 +2419,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.IN)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.IN)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotInOperation");
@@ -2487,7 +2479,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.MATCH)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.MATCH)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotMatchOperation");
@@ -2502,7 +2494,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.LIKE)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.LIKE)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotLikeOperation");
@@ -2523,7 +2515,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.REGEXP)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.REGEXP)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotRegexpOperation");
@@ -2538,7 +2530,7 @@ export class Sqlite3Parser extends Parser {
 				current = b.end();
 			} else if (
 				precedence < 4 &&
-				r.peekIf({ query: SqlKeywords.NOT, optional: true }, SqlKeywords.GLOB)
+				r.peekIf({ query: SqlKeywords.NOT, min: 0 }, SqlKeywords.GLOB)
 			) {
 				if (r.peekIf(SqlKeywords.NOT)) {
 					b.start("NotGlobOperation");
