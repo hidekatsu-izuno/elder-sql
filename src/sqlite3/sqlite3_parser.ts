@@ -44,7 +44,7 @@ export class Sqlite3Parser extends Parser {
 				}
 			}
 		}
-		b.end();
+		b.end(root);
 		if (errors.length) {
 			throw new AggregateParseError(
 				root,
@@ -96,7 +96,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private explainStatement(b: CstBuilder, r: TokenReader) {
@@ -116,7 +116,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private statement(b: CstBuilder, r: TokenReader) {
@@ -343,7 +343,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private createViewStatement(b: CstBuilder, r: TokenReader) {
@@ -382,7 +382,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private createTriggerStatement(b: CstBuilder, r: TokenReader) {
@@ -524,7 +524,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private createIndexStatement(b: CstBuilder, r: TokenReader) {
@@ -575,7 +575,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private alterTableStatement(b: CstBuilder, r: TokenReader) {
@@ -632,7 +632,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private dropTableStatement(b: CstBuilder, r: TokenReader) {
@@ -658,7 +658,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private dropViewStatement(b: CstBuilder, r: TokenReader) {
@@ -686,7 +686,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private dropTriggerStatement(b: CstBuilder, r: TokenReader) {
@@ -714,7 +714,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private dropIndexStatement(b: CstBuilder, r: TokenReader) {
@@ -742,7 +742,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private attachDatabaseStatement(b: CstBuilder, r: TokenReader) {
@@ -763,7 +763,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private detachDatabaseStatement(b: CstBuilder, r: TokenReader) {
@@ -781,7 +781,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private analyzeStatement(b: CstBuilder, r: TokenReader) {
@@ -801,7 +801,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private reindexStatement(b: CstBuilder, r: TokenReader) {
@@ -822,7 +822,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private vacuumStatement(b: CstBuilder, r: TokenReader) {
@@ -846,7 +846,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private pragmaStatement(b: CstBuilder, r: TokenReader) {
@@ -881,7 +881,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private beginTransactionStatement(b: CstBuilder, r: TokenReader) {
@@ -910,7 +910,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private savepointStatement(b: CstBuilder, r: TokenReader) {
@@ -924,7 +924,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private releaseSavepointStatement(b: CstBuilder, r: TokenReader) {
@@ -941,7 +941,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private commitTransactionStatement(b: CstBuilder, r: TokenReader) {
@@ -961,7 +961,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private rollbackTransactionStatement(b: CstBuilder, r: TokenReader) {
@@ -984,7 +984,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private insertStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
@@ -1000,11 +1000,97 @@ export class Sqlite3Parser extends Parser {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
+	}
+
+	private updateStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("UpdateStatement");
+		try {
+			if (withClause) {
+				b.append(withClause);
+			}
+			this.updateClause(b, r);
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt);
+			}
+			throw err;
+		}
+		return b.end(stmt);
+	}
+
+	private deleteStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("DeleteStatement");
+		try {
+			if (withClause) {
+				b.append(withClause);
+			}
+			this.deleteClause(b, r);
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt);
+			}
+			throw err;
+		}
+		return b.end(stmt);
+	}
+
+	private selectStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
+		const stmt = b.start("SelectStatement");
+		try {
+			if (withClause) {
+				b.append(withClause);
+			}
+			let current = this.selectClause(b, r);
+			while (
+				!this.compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT") &&
+				!r.peek().eos
+			) {
+				if (r.peekIf(SqlKeywords.UNION)) {
+					b.start("UnionOperation");
+					b.append(current);
+					b.token(r.consume());
+					if (r.peekIf(SqlKeywords.ALL)) {
+						b.start("AllOption");
+						b.token(r.consume());
+						b.end();
+					}
+					this.selectClause(b, r);
+					current = b.end();
+				} else if (r.peekIf(SqlKeywords.INTERSECT)) {
+					b.start("IntersectOperation");
+					b.append(current);
+					b.token(r.consume());
+					this.selectClause(b, r);
+					current = b.end();
+				} else if (r.peekIf(SqlKeywords.EXCEPT)) {
+					b.start("ExceptOperation");
+					b.append(current);
+					b.token(r.consume());
+					this.selectClause(b, r);
+					current = b.end();
+				} else {
+					break;
+				}
+			}
+
+			if (r.peekIf(SqlKeywords.ORDER)) {
+				this.orderByClause(b, r);
+			}
+			if (r.peekIf(SqlKeywords.LIMIT)) {
+				this.limitClause(b, r);
+			}
+		} catch (err) {
+			if (err instanceof ParseError) {
+				this.unknown(b, r, stmt);
+			}
+			throw err;
+		}
+		return b.end(stmt);
 	}
 
 	private insertClause(b: CstBuilder, r: TokenReader) {
-		b.start("InsertClause");
+		const start = b.start("InsertClause");
 		if (r.peekIf(SqlKeywords.REPLACE)) {
 			b.start("ReplaceOption");
 			b.token(r.consume());
@@ -1083,11 +1169,11 @@ export class Sqlite3Parser extends Parser {
 			this.returningClause(b, r);
 		}
 
-		return b.end();
+		return b.end(start);
 	}
 
 	private onConflictClause(b: CstBuilder, r: TokenReader) {
-		b.start("OnConflictClause");
+		const start = b.start("OnConflictClause");
 		b.token(r.consume(SqlKeywords.ON));
 		b.token(r.consume(SqlKeywords.CONFLICT));
 
@@ -1126,27 +1212,11 @@ export class Sqlite3Parser extends Parser {
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
-	}
-
-	private updateStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
-		const stmt = b.start("UpdateStatement");
-		try {
-			if (withClause) {
-				b.append(withClause);
-			}
-			this.updateClause(b, r);
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(b, r, stmt);
-			}
-			throw err;
-		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private updateClause(b: CstBuilder, r: TokenReader) {
-		b.start("UpdateClause");
+		const start = b.start("UpdateClause");
 		b.token(r.consume(SqlKeywords.UPDATE));
 
 		const ident = this.identifier(b, r, "ObjectName");
@@ -1191,11 +1261,11 @@ export class Sqlite3Parser extends Parser {
 			this.limitClause(b, r);
 		}
 
-		return b.end();
+		return b.end(start);
 	}
 
 	private setClause(b: CstBuilder, r: TokenReader) {
-		b.start("SetClause");
+		const start = b.start("SetClause");
 		b.token(r.consume(SqlKeywords.SET));
 		b.start("UpdateColumnList");
 		do {
@@ -1225,27 +1295,11 @@ export class Sqlite3Parser extends Parser {
 		} while (!r.peek().eos);
 		b.end();
 
-		return b.end();
-	}
-
-	private deleteStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
-		const stmt = b.start("DeleteStatement");
-		try {
-			if (withClause) {
-				b.append(withClause);
-			}
-			this.deleteClause(b, r);
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(b, r, stmt);
-			}
-			throw err;
-		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private deleteClause(b: CstBuilder, r: TokenReader) {
-		b.start("DeleteClause");
+		const start = b.start("DeleteClause");
 		b.token(r.consume(SqlKeywords.DELETE));
 		b.token(r.consume(SqlKeywords.FROM));
 		const ident = this.identifier(b, r, "ObjectName");
@@ -1260,65 +1314,11 @@ export class Sqlite3Parser extends Parser {
 		if (r.peekIf(SqlKeywords.RETURNING)) {
 			this.returningClause(b, r);
 		}
-		return b.end();
-	}
-
-	private selectStatement(b: CstBuilder, r: TokenReader, withClause?: Element) {
-		const stmt = b.start("SelectStatement");
-		try {
-			if (withClause) {
-				b.append(withClause);
-			}
-			let current = this.selectClause(b, r);
-			while (
-				!this.compileOptions.has("SQLITE_OMIT_COMPOUND_SELECT") &&
-				!r.peek().eos
-			) {
-				if (r.peekIf(SqlKeywords.UNION)) {
-					b.start("UnionOperation");
-					b.append(current);
-					b.token(r.consume());
-					if (r.peekIf(SqlKeywords.ALL)) {
-						b.start("AllOption");
-						b.token(r.consume());
-						b.end();
-					}
-					this.selectClause(b, r);
-					current = b.end();
-				} else if (r.peekIf(SqlKeywords.INTERSECT)) {
-					b.start("IntersectOperation");
-					b.append(current);
-					b.token(r.consume());
-					this.selectClause(b, r);
-					current = b.end();
-				} else if (r.peekIf(SqlKeywords.EXCEPT)) {
-					b.start("ExceptOperation");
-					b.append(current);
-					b.token(r.consume());
-					this.selectClause(b, r);
-					current = b.end();
-				} else {
-					break;
-				}
-			}
-
-			if (r.peekIf(SqlKeywords.ORDER)) {
-				this.orderByClause(b, r);
-			}
-			if (r.peekIf(SqlKeywords.LIMIT)) {
-				this.limitClause(b, r);
-			}
-		} catch (err) {
-			if (err instanceof ParseError) {
-				this.unknown(b, r, stmt);
-			}
-			throw err;
-		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private selectClause(b: CstBuilder, r: TokenReader) {
-		b.start("SelectClause");
+		const start = b.start("SelectClause");
 
 		if (r.peekIf(SqlKeywords.VALUES)) {
 			b.start("ValuesClause");
@@ -1359,11 +1359,11 @@ export class Sqlite3Parser extends Parser {
 				this.windowClause(b, r);
 			}
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private withClause(b: CstBuilder, r: TokenReader) {
-		b.start("WithClause");
+		const start = b.start("WithClause");
 		b.token(r.consume(SqlKeywords.WITH));
 
 		if (r.peekIf(SqlKeywords.RECURSIVE)) {
@@ -1406,11 +1406,12 @@ export class Sqlite3Parser extends Parser {
 			}
 		} while (!r.peek().eos);
 		b.end();
-		return b.end();
+
+		return b.end(start);
 	}
 
 	private selectColumnList(b: CstBuilder, r: TokenReader) {
-		b.start("SelectColumnList");
+		const start = b.start("SelectColumnList");
 
 		do {
 			b.start("SelectColumn");
@@ -1448,11 +1449,12 @@ export class Sqlite3Parser extends Parser {
 				break;
 			}
 		} while (!r.peek().eos);
-		return b.end();
+
+		return b.end(start);
 	}
 
 	private fromClause(b: CstBuilder, r: TokenReader) {
-		b.start("FromClause");
+		const start = b.start("FromClause");
 		b.token(r.consume(SqlKeywords.FROM));
 		{
 			b.start("FromObjectList");
@@ -1483,11 +1485,11 @@ export class Sqlite3Parser extends Parser {
 			} while (!r.peek().eos);
 			b.end();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private fromObject(b: CstBuilder, r: TokenReader) {
-		b.start("FromObject");
+		const start = b.start("FromObject");
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {
 			b.token(r.consume());
@@ -1538,12 +1540,13 @@ export class Sqlite3Parser extends Parser {
 		} else if (r.peekIf(SqlTokenType.Identifier)) {
 			this.identifier(b, r, "ObjectAlias");
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private joinClause(b: CstBuilder, r: TokenReader) {
+		let start: ReturnType<typeof b.start> | undefined;
 		if (r.peekIf(SqlKeywords.CROSS)) {
-			b.start("CrossJoinClause");
+			start = b.start("CrossJoinClause");
 			b.token(r.consume());
 		} else {
 			let option: ReturnType<typeof b.end> | undefined;
@@ -1553,7 +1556,7 @@ export class Sqlite3Parser extends Parser {
 				option = b.end();
 			}
 			if (r.peekIf(SqlKeywords.LEFT)) {
-				b.start("LeftOuterJoinClause");
+				start = b.start("LeftOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
@@ -1562,7 +1565,7 @@ export class Sqlite3Parser extends Parser {
 					b.token(r.consume());
 				}
 			} else if (r.peekIf(SqlKeywords.RIGHT)) {
-				b.start("RightOuterJoinClause");
+				start = b.start("RightOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
@@ -1571,7 +1574,7 @@ export class Sqlite3Parser extends Parser {
 					b.token(r.consume());
 				}
 			} else if (r.peekIf(SqlKeywords.FULL)) {
-				b.start("FullOuterJoinClause");
+				start = b.start("FullOuterJoinClause");
 				if (option) {
 					b.append(option);
 				}
@@ -1580,7 +1583,7 @@ export class Sqlite3Parser extends Parser {
 					b.token(r.consume());
 				}
 			} else {
-				b.start("InnerJoinClause");
+				start = b.start("InnerJoinClause");
 				if (option) {
 					b.append(option);
 				}
@@ -1606,33 +1609,33 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 		}
 
-		return b.end();
+		return b.end(start);
 	}
 
 	private whereClause(b: CstBuilder, r: TokenReader) {
-		b.start("WhereClause");
+		const start = b.start("WhereClause");
 		b.token(r.consume(SqlKeywords.WHERE));
 		this.expression(b, r);
-		return b.end();
+		return b.end(start);
 	}
 
 	private gropuByClause(b: CstBuilder, r: TokenReader) {
-		b.start("GroupByClause");
+		const start = b.start("GroupByClause");
 		b.token(r.consume(SqlKeywords.GROUP));
 		b.token(r.consume(SqlKeywords.BY));
 		this.expressionList(b, r);
-		return b.end();
+		return b.end(start);
 	}
 
 	private havingClause(b: CstBuilder, r: TokenReader) {
-		b.start("HavingClause");
+		const start = b.start("HavingClause");
 		b.token(r.consume(SqlKeywords.HAVING));
 		this.expression(b, r);
-		return b.end();
+		return b.end(start);
 	}
 
 	private windowClause(b: CstBuilder, r: TokenReader) {
-		b.start("WindowClause");
+		const start = b.start("WindowClause");
 		b.token(r.consume(SqlKeywords.WINDOW));
 		do {
 			this.identifier(b, r, "WindowName");
@@ -1644,11 +1647,11 @@ export class Sqlite3Parser extends Parser {
 				break;
 			}
 		} while (!r.peek().eos);
-		return b.end();
+		return b.end(start);
 	}
 
 	private window(b: CstBuilder, r: TokenReader) {
-		b.start("Window");
+		const start = b.start("Window");
 		if (!r.peekIf(SqlKeywords.PARTITION)) {
 			this.identifier(b, r, "BaseWindowName");
 		}
@@ -1783,11 +1786,11 @@ export class Sqlite3Parser extends Parser {
 			}
 			b.end();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private partitionByClause(b: CstBuilder, r: TokenReader) {
-		b.start("PartitionByClause");
+		const start = b.start("PartitionByClause");
 		b.token(r.consume(SqlKeywords.PARTITION));
 		b.token(r.consume(SqlKeywords.BY));
 		do {
@@ -1798,18 +1801,18 @@ export class Sqlite3Parser extends Parser {
 				break;
 			}
 		} while (!r.peek().eos);
-		return b.end();
+		return b.end(start);
 	}
 
 	private returningClause(b: CstBuilder, r: TokenReader) {
-		b.start("ReturningClause");
+		const start = b.start("ReturningClause");
 		b.token(r.consume(SqlKeywords.RETURNING));
 		this.selectColumnList(b, r);
-		return b.end();
+		return b.end(start);
 	}
 
 	private orderByClause(b: CstBuilder, r: TokenReader) {
-		b.start("OrderByClause");
+		const start = b.start("OrderByClause");
 		b.token(r.consume(SqlKeywords.ORDER));
 		b.token(r.consume(SqlKeywords.BY));
 
@@ -1835,11 +1838,11 @@ export class Sqlite3Parser extends Parser {
 			}
 		} while (!r.peek().eos);
 		b.end();
-		return b.end();
+		return b.end(start);
 	}
 
 	private limitClause(b: CstBuilder, r: TokenReader) {
-		b.start("LimitClause");
+		const start = b.start("LimitClause");
 		b.token(r.consume(SqlKeywords.LIMIT));
 		const node = this.expression(b, r);
 		if (r.peekIf(SqlKeywords.OFFSET)) {
@@ -1866,11 +1869,11 @@ export class Sqlite3Parser extends Parser {
 			b.append(node);
 			b.end();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private tableColumn(b: CstBuilder, r: TokenReader) {
-		b.start("TableColumn");
+		const start = b.start("TableColumn");
 		this.identifier(b, r, "ColumnName");
 		if (r.peekIf(SqlTokenType.Identifier)) {
 			this.columnType(b, r);
@@ -1892,19 +1895,21 @@ export class Sqlite3Parser extends Parser {
 		) {
 			this.columnConstraint(b, r);
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private columnType(b: CstBuilder, r: TokenReader) {
-		b.start("ColumnType");
+		const start = b.start("ColumnType");
 
-		const node = b.start("TypeName");
-		let text = b.token(r.consume()).text;
-		while (r.peekIf(SqlTokenType.Identifier)) {
-			text += ` ${b.token(r.consume()).text}`;
+		{
+			const node = b.start("TypeName");
+			let text = b.token(r.consume()).text;
+			while (r.peekIf(SqlTokenType.Identifier)) {
+				text += ` ${b.token(r.consume()).text}`;
+			}
+			b.value(text);
+			b.end();	
 		}
-		b.value(text);
-		b.end();
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {
 			b.token(r.consume());
@@ -1925,11 +1930,11 @@ export class Sqlite3Parser extends Parser {
 			b.end();
 			b.token(r.consume(SqlTokenType.RightParen));
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private columnConstraint(b: CstBuilder, r: TokenReader) {
-		b.start("ColumnConstraint");
+		const start = b.start("ColumnConstraint");
 		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ConstraintName");
@@ -2052,11 +2057,11 @@ export class Sqlite3Parser extends Parser {
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private tableConstraint(b: CstBuilder, r: TokenReader) {
-		b.start("TableConstraint");
+		const start = b.start("TableConstraint");
 		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
 			this.identifier(b, r, "ConstraintName");
@@ -2133,11 +2138,11 @@ export class Sqlite3Parser extends Parser {
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private referencesClause(b: CstBuilder, r: TokenReader) {
-		b.start("ReferencesClause");
+		const start = b.start("ReferencesClause");
 		b.token(r.consume());
 		this.identifier(b, r, "ObjectName");
 		if (r.peekIf(SqlTokenType.LeftParen)) {
@@ -2231,7 +2236,7 @@ export class Sqlite3Parser extends Parser {
 			}
 			b.end();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private conflictAction(b: CstBuilder, r: TokenReader) {
@@ -2261,7 +2266,7 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private pragmaValue(b: CstBuilder, r: TokenReader) {
-		b.start("PragmaValue");
+		const start = b.start("PragmaValue");
 		if (r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("+"))) {
 			b.start("Expression");
 			b.start("UnaryPlusOperation");
@@ -2287,11 +2292,11 @@ export class Sqlite3Parser extends Parser {
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private expressionList(b: CstBuilder, r: TokenReader) {
-		b.start("ExpressionList");
+		const start = b.start("ExpressionList");
 		do {
 			this.expression(b, r);
 			if (r.peekIf(SqlTokenType.Comma)) {
@@ -2300,7 +2305,7 @@ export class Sqlite3Parser extends Parser {
 				break;
 			}
 		} while (!r.peek().eos);
-		return b.end();
+		return b.end(start);
 	}
 
 	private expression(b: CstBuilder, r: TokenReader, precedence = 0) {
@@ -2941,7 +2946,7 @@ export class Sqlite3Parser extends Parser {
 	}
 
 	private sortColumn(b: CstBuilder, r: TokenReader) {
-		b.start("SortColumn");
+		const start = b.start("SortColumn");
 		this.expression(b, r);
 		if (r.peekIf(SqlKeywords.COLLATE)) {
 			b.token(r.consume());
@@ -2956,11 +2961,11 @@ export class Sqlite3Parser extends Parser {
 			b.token(r.consume());
 			b.end();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private columnList(b: CstBuilder, r: TokenReader) {
-		b.start("ColumnList");
+		const start = b.start("ColumnList");
 		do {
 			this.identifier(b, r, "ColumnName");
 			if (r.peekIf(SqlTokenType.Comma)) {
@@ -2969,11 +2974,11 @@ export class Sqlite3Parser extends Parser {
 				break;
 			}
 		} while (!r.peek().eos);
-		return b.end();
+		return b.end(start);
 	}
 
 	private columnReference(b: CstBuilder, r: TokenReader) {
-		b.start("ColumnReference");
+		const start = b.start("ColumnReference");
 		const ident1 = this.identifier(b, r, "ColumnName");
 		if (r.peekIf(SqlTokenType.Dot)) {
 			b.token(r.consume());
@@ -2986,27 +2991,27 @@ export class Sqlite3Parser extends Parser {
 				this.identifier(b, r, "ColumnName");
 			}
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private identifier(b: CstBuilder, r: TokenReader, name: string) {
-		b.start(name);
+		const start = b.start(name);
 		if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 			b.value(dequote(b.token(r.consume()).text));
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private numericLiteral(b: CstBuilder, r: TokenReader) {
-		b.start("NumericLiteral");
+		const start = b.start("NumericLiteral");
 		b.value(b.token(r.consume(SqlTokenType.Numeric)).text.toLowerCase());
-		return b.end();
+		return b.end(start);
 	}
 
 	private stringLiteral(b: CstBuilder, r: TokenReader) {
-		b.start("StringLiteral");
+		const start = b.start("StringLiteral");
 		if (
 			r.peekIf((token) => token.is(SqlTokenType.Identifier) && token.is(/^"/))
 		) {
@@ -3014,24 +3019,24 @@ export class Sqlite3Parser extends Parser {
 		} else {
 			b.value(dequote(b.token(r.consume(SqlTokenType.String)).text));
 		}
-		return b.end();
+		return b.end(start);
 	}
 
 	private blobLiteral(b: CstBuilder, r: TokenReader) {
-		b.start("BlobLiteral");
+		const start = b.start("BlobLiteral");
 		const token = r.consume(SqlTokenType.Blob);
 		b.token(token);
 		b.value(token.text.substring(2, token.text.length - 1).toUpperCase());
-		return b.end();
+		return b.end(start);
 	}
 
 	private booleanLiteral(b: CstBuilder, r: TokenReader) {
-		b.start("BooleanLiteral");
+		const start = b.start("BooleanLiteral");
 		if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			b.value(b.token(r.consume()).text.toUpperCase());
 		} else {
 			throw r.createParseError();
 		}
-		return b.end();
+		return b.end(start);
 	}
 }

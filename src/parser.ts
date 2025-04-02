@@ -121,7 +121,10 @@ export class CstBuilder {
 		return token;
 	}
 
-	end() {
+	end(start?: Element) {
+		if (start && start !== this.current) {
+			throw new Error("Start and end elements do not match");
+		}
 		if (this.current.parent instanceof Element) {
 			const current = this.current;
 			this.current = this.current.parent;
