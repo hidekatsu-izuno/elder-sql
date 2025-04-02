@@ -61,9 +61,13 @@ function transformAst(context) {
 				ts.isStringLiteral(node) &&
 				node.text.endsWith(".ts") &&
 				node.parent &&
-				((ts.isImportDeclaration(node.parent) && node.parent.moduleSpecifier === node) ||
-					(ts.isExportDeclaration(node.parent) && node.parent.moduleSpecifier === node) ||
-					(ts.isCallExpression(node.parent) && node.parent.expression.kind === ts.SyntaxKind.ImportKeyword && node.parent.arguments[0] === node))
+				((ts.isImportDeclaration(node.parent) &&
+					node.parent.moduleSpecifier === node) ||
+					(ts.isExportDeclaration(node.parent) &&
+						node.parent.moduleSpecifier === node) ||
+					(ts.isCallExpression(node.parent) &&
+						node.parent.expression.kind === ts.SyntaxKind.ImportKeyword &&
+						node.parent.arguments[0] === node))
 			) {
 				return context.factory.createStringLiteral(
 					node.text.replace(/\.ts$/, ".js"),
