@@ -1,6 +1,6 @@
 {
 	"name": "elder-sql",
-	"version": "0.1.0-alpha.13",
+	"version": "0.1.0-alpha.14",
 	"description": "Database connection library of a elder style.",
 	"type": "module",
 	"main": "./lib/index.js",
@@ -41,7 +41,9 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": ["sql"],
+	"keywords": [
+		"sql"
+	],
 	"exports": {
 		".": {
 			"import": {
