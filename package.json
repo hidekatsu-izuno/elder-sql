@@ -11,13 +11,14 @@
 		"build": "tspc --build --clean && tspc -p ./tsconfig.mjs.json && tspc -p ./tsconfig.cjs.json",
 		"test": "node --test --disable-warning=ExperimentalWarning --experimental-strip-types",
 		"biome:check": "biome check --write",
-		"version.major": "npm run build && commit-and-tag-version --release-as major",
-		"version.major.alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
-		"version.minor": "npm run build && commit-and-tag-version --release-as minor",
-		"version.minor.alpha": "npm run build && commit-and-tag-version --release-as minor --prerelease alpha",
-		"version.patch": "npm run build && commit-and-tag-version --release-as patch",
+		"version:major": "npm run build && commit-and-tag-version --release-as major",
+		"version:major:alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
+		"version:minor": "npm run build && commit-and-tag-version --release-as minor",
+		"version:minor:alpha": "npm run build && commit-and-tag-version --release-as minor --prerelease alpha",
+		"version:patch": "npm run build && commit-and-tag-version --release-as patch",
+		"version:patch:alpha": "npm run build && commit-and-tag-version --release-as patch --prerelease alpha",
 		"release": "git push --follow-tags origin main && npm publish",
-		"release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
+		"release:alpha": "git push --follow-tags origin main && npm publish --tag alpha"
 	},
 	"files": [
 		"bin/",
@@ -116,16 +117,14 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@tsconfig/recommended": "^1.0.8",
-		"@types/node": "^22.13.14",
+		"@types/node": "^22.13.17",
 		"@types/semver": "^7.7.0",
 		"commit-and-tag-version": "^12.5.0",
 		"ts-patch": "^3.3.0",
-		"typescript": "^5.8.2",
-		"typescript-transform-paths": "^3.5.5"
+		"typescript": "^5.8.2"
 	},
 	"dependencies": {
 		"acorn": "^8.14.1",
-		"cheerio": "^1.0.0",
 		"css-select": "^5.1.0",
 		"semver": "^7.7.1"
 	}

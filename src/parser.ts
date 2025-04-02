@@ -1,5 +1,5 @@
 import { Element, Text } from "domhandler";
-import { appendChild, replaceElement } from "domutils";
+import { appendChild } from "domutils";
 import type { Lexer, Token } from "./lexer.ts";
 
 export abstract class Parser {
