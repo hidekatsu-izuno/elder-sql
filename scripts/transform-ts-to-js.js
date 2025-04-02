@@ -49,7 +49,21 @@ function transformAst(context) {
     /* Transformer Function */
     return (sourceFile) => {
         function visit(node) {
-            if (ts.isStringLiteral(node) && node.text.endsWith(".ts")) {
+            if (ts.isStringLiteral(node)
+                && node.text.endsWith(".ts")
+                && node.parent 
+                && (
+                    ts.isImportDeclaration(node.parent)
+                    || ts.isExportDeclaration(node.parent)
+                    || (
+                        ts.isCallExpression(node.parent)
+                        && (
+                            node.parent.expression.kind === ts.SyntaxKind.ImportKeyword
+                            || node.parent.expression.text === "require"
+                        )
+                    )
+                )
+            ) {
                 return context.factory.createStringLiteral(node.text.replace(/\.ts$/, '.js'));
             } else {
                 return ts.visitEachChild(node, visit, context);
