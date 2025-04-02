@@ -3,10 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import type { Element } from "domhandler";
-import { AggregateParseError, CstBuilder } from "../../src/parser.ts";
+import { AggregateParseError, DomhandlerCstBuilder } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
-import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
+import { writeDebugFile } from "../utils/debug.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +47,7 @@ describe("test sqlite3 parser", () => {
 					path.join(__dirname, "scripts", `${target}.sql`),
 					"utf8",
 				);
-				let node: Element;
+				let node: ReturnType<typeof Sqlite3Parser.prototype.parse>;
 				try {
 					node = new Sqlite3Parser().parse(script);
 				} catch (err) {
@@ -58,7 +57,9 @@ describe("test sqlite3 parser", () => {
 						throw err;
 					}
 				}
-				const actual = new CstBuilder({ trivia: false }).toString(node);
+				const actual = new DomhandlerCstBuilder({ trivia: false }).toString(
+					node,
+				);
 				writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actual);
 
 				const expected = fs.readFileSync(

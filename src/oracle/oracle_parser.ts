@@ -1,6 +1,10 @@
 import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.ts";
-import { AggregateParseError, CstBuilder, Parser } from "../parser.ts";
+import {
+	AggregateParseError,
+	DomhandlerCstBuilder,
+	Parser,
+} from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { OracleLexer } from "./oracle_lexer.ts";
@@ -12,7 +16,7 @@ export class OracleParser extends Parser {
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-		const b = new CstBuilder();
+		const b = new DomhandlerCstBuilder();
 		const errors = [];
 		b.start("Script");
 		while (r.peek()) {
@@ -57,7 +61,7 @@ export class OracleParser extends Parser {
 		return root;
 	}
 
-	private explainStatement(b: CstBuilder, r: TokenReader) {
+	private explainStatement(b: DomhandlerCstBuilder, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
 			b.token(r.consume(SqlKeywords.EXPLAIN));
@@ -78,7 +82,7 @@ export class OracleParser extends Parser {
 		return b.end();
 	}
 
-	private statement(b: CstBuilder, r: TokenReader) {
+	private statement(b: DomhandlerCstBuilder, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
@@ -147,7 +151,7 @@ export class OracleParser extends Parser {
 		return stmt;
 	}
 
-	private unknown(b: CstBuilder, r: TokenReader, base: Element) {
+	private unknown(b: DomhandlerCstBuilder, r: TokenReader, base: Element) {
 		while (b.current !== b.root && b.current !== base) {
 			b.end();
 		}
@@ -167,7 +171,7 @@ export class OracleParser extends Parser {
 		return node;
 	}
 
-	private command(b: CstBuilder, r: TokenReader) {
+	private command(b: DomhandlerCstBuilder, r: TokenReader) {
 		const stmt = b.start("CommandStatement");
 		try {
 			b.start("CommandName");

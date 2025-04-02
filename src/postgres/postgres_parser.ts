@@ -1,6 +1,10 @@
 import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.ts";
-import { AggregateParseError, CstBuilder, Parser } from "../parser.ts";
+import {
+	AggregateParseError,
+	DomhandlerCstBuilder,
+	Parser,
+} from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { PostgresLexer } from "./postgres_lexer.ts";
@@ -12,7 +16,7 @@ export class PostgresParser extends Parser {
 
 	parseTokens(tokens: Token[]) {
 		const r = new TokenReader(tokens);
-		const b = new CstBuilder();
+		const b = new DomhandlerCstBuilder();
 		const errors = [];
 		b.start("Script");
 		while (r.peek()) {
@@ -57,7 +61,7 @@ export class PostgresParser extends Parser {
 		return root;
 	}
 
-	private explainStatement(b: CstBuilder, r: TokenReader) {
+	private explainStatement(b: DomhandlerCstBuilder, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
 			b.token(r.consume(SqlKeywords.EXPLAIN));
@@ -169,7 +173,7 @@ export class PostgresParser extends Parser {
 		return b.end();
 	}
 
-	private statement(b: CstBuilder, r: TokenReader) {
+	private statement(b: DomhandlerCstBuilder, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
@@ -235,7 +239,7 @@ export class PostgresParser extends Parser {
 		return stmt;
 	}
 
-	private unknown(b: CstBuilder, r: TokenReader, base: Element) {
+	private unknown(b: DomhandlerCstBuilder, r: TokenReader, base: Element) {
 		while (b.current !== b.root && b.current !== base) {
 			b.end();
 		}
@@ -255,7 +259,7 @@ export class PostgresParser extends Parser {
 		return node;
 	}
 
-	private command(b: CstBuilder, r: TokenReader) {
+	private command(b: DomhandlerCstBuilder, r: TokenReader) {
 		const stmt = b.start("CommandStatement");
 		try {
 			b.start("CommandName");
@@ -280,7 +284,7 @@ export class PostgresParser extends Parser {
 		return b.end();
 	}
 
-	private identifier(b: CstBuilder, r: TokenReader, name: string) {
+	private identifier(b: DomhandlerCstBuilder, r: TokenReader, name: string) {
 		b.start(name);
 		if (r.peekIf(SqlTokenType.Identifier)) {
 			b.value(dequote(b.token(r.consume()).text));
@@ -290,7 +294,7 @@ export class PostgresParser extends Parser {
 		return b.end();
 	}
 
-	private booleanLiteral(b: CstBuilder, r: TokenReader) {
+	private booleanLiteral(b: DomhandlerCstBuilder, r: TokenReader) {
 		b.start("BooleanLiteral");
 		if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			const token = r.consume();

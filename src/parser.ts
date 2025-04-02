@@ -7,12 +7,16 @@ export declare type ParserOptions = {
 	[key: string]: string;
 };
 
-export abstract class Parser {
+export abstract class Parser<CstNode> {
 	lexer: Lexer;
-	builder: CstBuilder;
+	builder: CstBuilder<CstNode>;
 	options: ParserOptions;
 
-	constructor(lexer: Lexer, builder: CstBuilder, options: ParserOptions = {}) {
+	constructor(
+		lexer: Lexer,
+		builder: CstBuilder<CstNode>,
+		options: ParserOptions = {},
+	) {
 		this.lexer = lexer;
 		this.builder = builder;
 		this.options = options;
@@ -25,14 +29,14 @@ export abstract class Parser {
 		return this.parseTokens(tokens);
 	}
 
-	abstract parseTokens(tokens: Token[]): Element;
+	abstract parseTokens(tokens: Token[]): CstNode;
 }
 
-export class AggregateParseError extends Error {
-	node: Element;
+export class AggregateParseError<CstNode> extends Error {
+	node: CstNode;
 	errors: Error[];
 
-	constructor(node: Element, errors: Error[], message: string) {
+	constructor(node: CstNode, errors: Error[], message: string) {
 		super(message);
 		this.node = node;
 		this.errors = errors;
@@ -45,8 +49,20 @@ export declare type CstBuilderOptions = {
 	marker?: boolean;
 };
 
+export interface CstBuilder<CstNode> {
+	root: CstNode;
+	current: CstNode;
+	start(type: string, value?: string | number | boolean): CstNode;
+	type(type: string, context?: CstNode): string;
+	value(value: string | number | boolean, context?: CstNode): string;
+	append(child: CstNode, context?: CstNode): CstNode;
+	token(token: Token, context?: CstNode): Token;
+	end(start?: CstNode): CstNode;
+	toString(context?: CstNode): string;
+}
+
 const EMPTY_NODE = new Element("node", {});
-export class CstBuilder {
+export class DomhandlerCstBuilder implements CstBuilder<Element> {
 	root: Element;
 	current: Element;
 	options: {
@@ -142,7 +158,8 @@ export class CstBuilder {
 		}
 		if (
 			!this.options.token ||
-			this.options.marker || token.text ||
+			this.options.marker ||
+			token.text ||
 			(this.options.trivia &&
 				(token.preskips.length !== 0 || token.postskips.length !== 0))
 		) {
