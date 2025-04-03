@@ -36,18 +36,18 @@ export declare type ResolvedColumn = {
 	precision?: number;
 };
 
-export abstract class Resolver {
-	parser: Parser;
+export abstract class Resolver<CstNode = Element> {
+	parser: Parser<CstNode>;
 	options: ResolverOptions = {};
 
-	constructor(parser: Parser, options: ResolverOptions = {}) {
+	constructor(parser: Parser<CstNode>, options: ResolverOptions = {}) {
 		this.parser = parser;
 		this.options = options;
 	}
 
-	resolve(query: string | Element, filename?: string): ResolvedColumn[] {
+	resolve(query: string | CstNode, filename?: string): ResolvedColumn[] {
 		const node =
-			query instanceof Element ? query : this.parser.parse(query, filename);
+			typeof query === "string" ? this.parser.parse(query, filename) : query;
 		const statement = this.findStatement(node);
 		if (!statement) {
 			throw new TypeError("Statement node is not found.");
@@ -60,15 +60,16 @@ export abstract class Resolver {
 		return columns;
 	}
 
-	protected abstract extractNode(statement: Element): FromObject | undefined;
+	protected abstract extractNode(statement: CstNode): FromObject | undefined;
 
-	private findStatement(elem: Element): Element | undefined {
-		if (/(\\s|^)Statement(\\s|$)/.test(elem.attribs.class)) {
+	private findStatement(elem: CstNode): CstNode | undefined {
+		const el = elem as Element;
+		if (/(\\s|^)Statement(\\s|$)/.test(el.attribs.class)) {
 			return elem;
 		} else {
-			for (const child of elem.childNodes) {
+			for (const child of el.childNodes) {
 				if (child instanceof Element) {
-					const result = this.findStatement(child);
+					const result = this.findStatement(child as CstNode);
 					if (result) {
 						return result;
 					}

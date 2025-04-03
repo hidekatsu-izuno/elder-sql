@@ -28,14 +28,14 @@ export declare type FormatterOptions = {
 };
 
 export abstract class Formatter {
-	parser: Parser;
+	parser: Parser<Element>;
 	private patterns = new Array<FormatPattern>();
 	options: FormatterOptions;
 
 	private cache: Record<string, ReturnType<typeof compile<Node, Element>>> = {};
 
 	constructor(
-		parser: Parser,
+		parser: Parser<Element>,
 		patterns: FormatPattern[],
 		options: FormatterOptions = {},
 	) {
@@ -61,7 +61,9 @@ export abstract class Formatter {
 		}
 
 		const out = new FormatWriter(this.options);
-		this.formatElement(node, out);
+		if (node) {
+			this.formatElement(node, out);
+		}
 		return out.toString();
 	}
 

@@ -1,24 +1,13 @@
 {
-	"extends": "@tsconfig/recommended/tsconfig.json",
+	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"newLine": "LF",
-		"outDir": "./module/",
-		"target": "ES2018",
-		"sourceMap": true,
-		"declaration": true,
-		"declarationMap": true,
-		"erasableSyntaxOnly": true,
-		"paths": {
-			"@/*": ["./src/*"]
-		},
+		"emitDeclarationOnly": true,
+		"allowImportingTsExtensions": false,
 		"plugins": [
 			{
 				"transform": "./scripts/transform-ts-to-js.js",
 				"transformProgram": true
 			}
 		]
-	},
-	"include": ["./src/**/*"]
+	}
 }
