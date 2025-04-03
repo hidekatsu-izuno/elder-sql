@@ -9,7 +9,7 @@
 	"scripts": {
 		"prepare": "ts-patch install -s",
 		"build": "tspc --build --clean && tspc -p ./tsconfig.mjs.json && tspc -p ./tsconfig.cjs.json",
-		"test": "node --test --disable-warning=ExperimentalWarning --experimental-strip-types",
+		"test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
 		"biome:check": "biome check --write",
 		"version:major": "npm run build && commit-and-tag-version --release-as major",
 		"version:major:alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
@@ -115,15 +115,13 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@tsconfig/recommended": "^1.0.8",
-		"@types/node": "^22.13.17",
-		"@types/semver": "^7.7.0",
+		"@types/node": "^22.14.0",
 		"commit-and-tag-version": "^12.5.0",
 		"ts-patch": "^3.3.0",
 		"typescript": "^5.8.2"
 	},
 	"dependencies": {
 		"acorn": "^8.14.1",
-		"css-select": "^5.1.0",
-		"semver": "^7.7.1"
+		"css-select": "^5.1.0"
 	}
 }

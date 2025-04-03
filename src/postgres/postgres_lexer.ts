@@ -1,11 +1,4 @@
-import {
-	type Keyword,
-	Lexer,
-	type LexerOptions,
-	SourceLocation,
-	Token,
-	TokenType,
-} from "../lexer.ts";
+import { Lexer, type LexerOptions, SourceLocation, Token } from "../lexer.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 const keywords = new SqlKeywords();

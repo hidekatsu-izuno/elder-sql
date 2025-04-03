@@ -28,7 +28,7 @@ describe("test postgres lexer", () => {
 				writeDebugFile(`dump/postgres/lexer/${target}.ts`, toJSScript(tokens));
 
 				const expected = (await import(`./lexer/${target}.ts`)).default;
-				assert.strictEqual(toJSString(tokens), toJSString(expected));
+				assert.deepEqual(tokens, expected);
 			});
 		}
 	});

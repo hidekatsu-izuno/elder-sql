@@ -163,6 +163,7 @@ export class SqlKeywords extends KeywordMap {
 	static BEGINNING = new Keyword("BEGINNING", { ignoreCase: true });
 	static BENCHMARK = new Keyword("BENCHMARK", { ignoreCase: true });
 	static BEQUEATH = new Keyword("BEQUEATH", { ignoreCase: true });
+	static BERNOULLI = new Keyword("BERNOULLI", { ignoreCase: true });
 	static BETWEEN = new Keyword("BETWEEN", { ignoreCase: true });
 	static BFILE = new Keyword("BFILE", { ignoreCase: true });
 	static BIGFILE = new Keyword("BIGFILE", { ignoreCase: true });
@@ -728,6 +729,7 @@ export class SqlKeywords extends KeywordMap {
 	static GROUPS = new Keyword("GROUPS", { ignoreCase: true });
 	static GROUP_CONCAT = new Keyword("GROUP_CONCAT", { ignoreCase: true });
 	static GROUP_ID = new Keyword("GROUP_ID", { ignoreCase: true });
+	static GTIDS = new Keyword("GTIDS", { ignoreCase: true });
 	static GUARANTEE = new Keyword("GUARANTEE", { ignoreCase: true });
 	static GUARD = new Keyword("GUARD", { ignoreCase: true });
 	static H = new Keyword("H", { ignoreCase: true });
@@ -1552,6 +1554,7 @@ export class SqlKeywords extends KeywordMap {
 	});
 	static PARITY = new Keyword("PARITY", { ignoreCase: true });
 	static PARSE = new Keyword("PARSE", { ignoreCase: true });
+	static PARSE_TREE = new Keyword("PARSE_TREE", { ignoreCase: true });
 	static PARSER = new Keyword("PARSER", { ignoreCase: true });
 	static PARSE_GCOL_EXPR = new Keyword("PARSE_GCOL_EXPR", { ignoreCase: true });
 	static PARSE_IDENT = new Keyword("PARSE_IDENT", { ignoreCase: true });
@@ -1795,6 +1798,7 @@ export class SqlKeywords extends KeywordMap {
 	static PUBLIC = new Keyword("PUBLIC", { ignoreCase: true });
 	static PUBLICATION = new Keyword("PUBLICATION", { ignoreCase: true });
 	static PURGE = new Keyword("PURGE", { ignoreCase: true });
+	static QUALIFY = new Keyword("QUALIFY", { ignoreCase: true });
 	static QUARTER = new Keyword("QUARTER", { ignoreCase: true });
 	static QUARTERS = new Keyword("QUARTERS", { ignoreCase: true });
 	static QUERY = new Keyword("QUERY", { ignoreCase: true });
@@ -1975,6 +1979,7 @@ export class SqlKeywords extends KeywordMap {
 	static RULE = new Keyword("RULE", { ignoreCase: true });
 	static RULES = new Keyword("RULES", { ignoreCase: true });
 	static RUNNING = new Keyword("RUNNING", { ignoreCase: true });
+	static S3 = new Keyword("S3", { ignoreCase: true });
 	static SALT = new Keyword("SALT", { ignoreCase: true });
 	static SAMPLE = new Keyword("SAMPLE", { ignoreCase: true });
 	static SAVE = new Keyword("SAVE", { ignoreCase: true });
@@ -2630,6 +2635,7 @@ export class SqlKeywords extends KeywordMap {
 	static VAR_POP = new Keyword("VAR_POP", { ignoreCase: true });
 	static VAR_SAMP = new Keyword("VAR_SAMP", { ignoreCase: true });
 	static VCPU = new Keyword("VCPU", { ignoreCase: true });
+	static VECTOR = new Keyword("VECTOR", { ignoreCase: true });
 	static VERBOSE = new Keyword("VERBOSE", { ignoreCase: true });
 	static VERIFY = new Keyword("VERIFY", { ignoreCase: true });
 	static VERSION = new Keyword("VERSION", { ignoreCase: true });

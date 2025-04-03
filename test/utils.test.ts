@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { bquote, dequote, dquote, squote } from "../src/utils.ts";
+import {
+	bquote,
+	compareVersion,
+	dequote,
+	dquote,
+	squote,
+} from "../src/utils.ts";
 
 describe("test utils", () => {
 	test("test squote", async () => {
@@ -37,5 +43,16 @@ describe("test utils", () => {
 		assert.strictEqual(dequote("q'{test's value}'"), "test's value");
 		assert.strictEqual(dequote("NQ'(test's value)'"), "test's value");
 		assert.strictEqual(dequote("nq'#test's value#'"), "test's value");
+	});
+
+	test("test compareVersion", async () => {
+		assert.strictEqual(compareVersion("0", "1"), -1);
+		assert.strictEqual(compareVersion("0.1", "1"), -1);
+		assert.strictEqual(compareVersion("1.0.1-alpha.1", "1.0.1-beta"), -1);
+		assert.strictEqual(compareVersion("1.0.0", "1"), 0);
+		assert.strictEqual(compareVersion("1.0.0", "1+x"), 0);
+		assert.strictEqual(compareVersion("1", "0"), 1);
+		assert.strictEqual(compareVersion("1.0.1", "1"), 1);
+		assert.strictEqual(compareVersion("1.0.1-beta.1", "1.0.1-beta"), 1);
 	});
 });

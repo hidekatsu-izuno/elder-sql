@@ -1,4 +1,3 @@
-import semver from "semver";
 import {
 	type Keyword,
 	Lexer,
@@ -6,7 +5,7 @@ import {
 	type Token,
 } from "../lexer.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
-import { escapeRegExp } from "../utils.ts";
+import { compareVersion, escapeRegExp } from "../utils.ts";
 
 const keywords = new SqlKeywords();
 keywords.options(SqlKeywords.ACCESSIBLE).reserved = true;
@@ -129,8 +128,6 @@ keywords.options(SqlKeywords.LONGBLOB).reserved = true;
 keywords.options(SqlKeywords.LONGTEXT).reserved = true;
 keywords.options(SqlKeywords.LOOP).reserved = true;
 keywords.options(SqlKeywords.LOW_PRIORITY).reserved = true;
-keywords.options(SqlKeywords.MASTER_BIND).reserved = true;
-keywords.options(SqlKeywords.MASTER_SSL_VERIFY_SERVER_CERT).reserved = true;
 keywords.options(SqlKeywords.MATCH).reserved = true;
 keywords.options(SqlKeywords.MAXVALUE).reserved = true;
 keywords.options(SqlKeywords.MEDIUMBLOB).reserved = true;
@@ -385,22 +382,37 @@ export class MysqlLexer extends Lexer {
 			let newKeywords: SqlKeywords | undefined;
 			if (
 				options.package === "mysql" &&
-				semver.satisfies("<8.0.0", options.version || "0")
+				compareVersion(options.version, "8") < 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
 				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;
 				newKeywords.options(SqlKeywords.DES_KEY_FILE).reserved = true;
-				newKeywords.options(SqlKeywords.ANALYSE).reserved = true;
 				newKeywords.options(SqlKeywords.MASTER_SERVER_ID).reserved = true;
+				newKeywords.options(SqlKeywords.MASTER_BIND).reserved = true;
+				newKeywords.options(
+					SqlKeywords.MASTER_SSL_VERIFY_SERVER_CERT,
+				).reserved = true;
 				newKeywords.options(SqlKeywords.PARSE_GCOL_EXPR).reserved = true;
 				newKeywords.options(SqlKeywords.REDOFILE).reserved = true;
 				newKeywords.options(SqlKeywords.SQL_CACHE).reserved = true;
 			}
 			if (
 				options.package === "mysql" &&
-				semver.satisfies(">=8.0.1", options.version || "0")
+				compareVersion(options.version, "8.4") < 0
+			) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.MASTER_BIND).reserved = true;
+				newKeywords.options(
+					SqlKeywords.MASTER_SSL_VERIFY_SERVER_CERT,
+				).reserved = true;
+			}
+			if (
+				options.package === "mysql" &&
+				compareVersion(options.version, "8.0.1") >= 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
@@ -413,7 +425,7 @@ export class MysqlLexer extends Lexer {
 			}
 			if (
 				options.package === "mysql" &&
-				semver.satisfies(">=8.0.2", options.version || "0")
+				compareVersion(options.version, "8.0.2") >= 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
@@ -437,7 +449,7 @@ export class MysqlLexer extends Lexer {
 			}
 			if (
 				options.package === "mysql" &&
-				semver.satisfies(">=8.0.3", options.version || "0")
+				compareVersion(options.version, "8.0.3") >= 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
@@ -446,7 +458,7 @@ export class MysqlLexer extends Lexer {
 			}
 			if (
 				options.package === "mysql" &&
-				semver.satisfies(">=8.0.4", options.version || "0")
+				compareVersion(options.version, "8.0.4") >= 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
@@ -456,12 +468,42 @@ export class MysqlLexer extends Lexer {
 			}
 			if (
 				options.package === "mysql" &&
-				semver.satisfies(">=8.0.14", options.version || "0")
+				compareVersion(options.version, "8.0.14") >= 0
 			) {
 				if (!newKeywords) {
 					newKeywords = new SqlKeywords(keywords);
 				}
 				newKeywords.options(SqlKeywords.LATERAL).reserved = true;
+			}
+			if (
+				options.package === "mysql" &&
+				compareVersion(options.version, "8.4") >= 0
+			) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.MANUAL).reserved = true;
+				newKeywords.options(SqlKeywords.PARALLEL).reserved = true;
+				newKeywords.options(SqlKeywords.QUALIFY).reserved = true;
+				newKeywords.options(SqlKeywords.TABLESAMPLE).reserved = true;
+			}
+			if (
+				options.package === "mysql" &&
+				compareVersion(options.version, "9") >= 0
+			) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.VECTOR).reserved = true;
+			}
+			if (
+				options.package === "mysql" &&
+				compareVersion(options.version, "9.2") >= 0
+			) {
+				if (!newKeywords) {
+					newKeywords = new SqlKeywords(keywords);
+				}
+				newKeywords.options(SqlKeywords.LIBRARY).reserved = true;
 			}
 			this.options.keywords = newKeywords ? newKeywords : keywords;
 		}
@@ -485,7 +527,7 @@ export class MysqlLexer extends Lexer {
 				m &&
 				(!m[1] ||
 					!this.options.version ||
-					semver.gte(this.options.version, this.toSemverString(m[1])))
+					compareVersion(this.options.version, this.toSemverString(m[1])) >= 0)
 			) {
 				const start = (m[1] ? m[1].length : 0) + 3;
 				const tokens = this.sublex(

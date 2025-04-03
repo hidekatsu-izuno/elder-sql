@@ -84,7 +84,7 @@ CREATE TABLE distributors (
 WITH (fillfactor=70);
 
 CREATE TABLE array_int (
-    vector  int[][]
+    vector_data  int[][]
 );
 
 CREATE TABLE circles (

@@ -2621,7 +2621,7 @@ export default [
 		],
 		location: new SourceLocation(1940, 86, 24),
 	}),
-	new Token(SqlTokenType.Identifier, "vector", {
+	new Token(SqlTokenType.Identifier, "vector_data", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
 				location: new SourceLocation(1942, 87, 1),
@@ -2633,3393 +2633,3393 @@ export default [
 		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "  ", {
-				location: new SourceLocation(1952, 87, 11),
+				location: new SourceLocation(1957, 87, 16),
 			}),
 		],
-		location: new SourceLocation(1954, 87, 13),
+		location: new SourceLocation(1959, 87, 18),
 	}),
 	new Token(SqlTokenType.LeftBracket, "[", {
-		location: new SourceLocation(1957, 87, 16),
+		location: new SourceLocation(1962, 87, 21),
 	}),
 	new Token(SqlTokenType.RightBracket, "]", {
-		location: new SourceLocation(1958, 87, 17),
+		location: new SourceLocation(1963, 87, 22),
 	}),
 	new Token(SqlTokenType.LeftBracket, "[", {
-		location: new SourceLocation(1959, 87, 18),
+		location: new SourceLocation(1964, 87, 23),
 	}),
 	new Token(SqlTokenType.RightBracket, "]", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(1961, 87, 20),
+				location: new SourceLocation(1966, 87, 25),
 			}),
 		],
-		location: new SourceLocation(1960, 87, 19),
+		location: new SourceLocation(1965, 87, 24),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(1962, 88, 1),
+		location: new SourceLocation(1967, 88, 1),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(1964, 88, 3),
+				location: new SourceLocation(1969, 88, 3),
 			}),
 		],
-		location: new SourceLocation(1963, 88, 2),
+		location: new SourceLocation(1968, 88, 2),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(1965, 89, 1),
+				location: new SourceLocation(1970, 89, 1),
 			}),
 		],
-		location: new SourceLocation(1966, 90, 1),
+		location: new SourceLocation(1971, 90, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(1972, 90, 7),
+				location: new SourceLocation(1977, 90, 7),
 			}),
 		],
-		location: new SourceLocation(1973, 90, 8),
+		location: new SourceLocation(1978, 90, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "circles", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(1978, 90, 13),
+				location: new SourceLocation(1983, 90, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(1986, 90, 21),
+				location: new SourceLocation(1991, 90, 21),
 			}),
 		],
-		location: new SourceLocation(1979, 90, 14),
+		location: new SourceLocation(1984, 90, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(1988, 90, 23),
+				location: new SourceLocation(1993, 90, 23),
 			}),
 		],
-		location: new SourceLocation(1987, 90, 22),
+		location: new SourceLocation(1992, 90, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "c", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(1989, 91, 1),
+				location: new SourceLocation(1994, 91, 1),
 			}),
 		],
-		location: new SourceLocation(1993, 91, 5),
+		location: new SourceLocation(1998, 91, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "circle", {
 		keyword: SqlKeywords.CIRCLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(1994, 91, 6),
+				location: new SourceLocation(1999, 91, 6),
 			}),
 		],
-		location: new SourceLocation(1995, 91, 7),
+		location: new SourceLocation(2000, 91, 7),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2002, 91, 14),
+				location: new SourceLocation(2007, 91, 14),
 			}),
 		],
-		location: new SourceLocation(2001, 91, 13),
+		location: new SourceLocation(2006, 91, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "EXCLUDE", {
 		keyword: SqlKeywords.EXCLUDE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2003, 92, 1),
+				location: new SourceLocation(2008, 92, 1),
 			}),
 		],
-		location: new SourceLocation(2007, 92, 5),
+		location: new SourceLocation(2012, 92, 5),
 	}),
 	new Token(SqlTokenType.Reserved, "USING", {
 		keyword: SqlKeywords.USING,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2014, 92, 12),
+				location: new SourceLocation(2019, 92, 12),
 			}),
 		],
-		location: new SourceLocation(2015, 92, 13),
+		location: new SourceLocation(2020, 92, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "gist", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2020, 92, 18),
+				location: new SourceLocation(2025, 92, 18),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2025, 92, 23),
+				location: new SourceLocation(2030, 92, 23),
 			}),
 		],
-		location: new SourceLocation(2021, 92, 19),
+		location: new SourceLocation(2026, 92, 19),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2026, 92, 24),
+		location: new SourceLocation(2031, 92, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "c", {
-		location: new SourceLocation(2027, 92, 25),
+		location: new SourceLocation(2032, 92, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2028, 92, 26),
+				location: new SourceLocation(2033, 92, 26),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2033, 92, 31),
+				location: new SourceLocation(2038, 92, 31),
 			}),
 		],
-		location: new SourceLocation(2029, 92, 27),
+		location: new SourceLocation(2034, 92, 27),
 	}),
 	new Token(SqlTokenType.Operator, "&&", {
-		location: new SourceLocation(2034, 92, 32),
+		location: new SourceLocation(2039, 92, 32),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2037, 92, 35),
+				location: new SourceLocation(2042, 92, 35),
 			}),
 		],
-		location: new SourceLocation(2036, 92, 34),
+		location: new SourceLocation(2041, 92, 34),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2038, 93, 1),
+		location: new SourceLocation(2043, 93, 1),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2040, 93, 3),
+				location: new SourceLocation(2045, 93, 3),
 			}),
 		],
-		location: new SourceLocation(2039, 93, 2),
+		location: new SourceLocation(2044, 93, 2),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2041, 94, 1),
+				location: new SourceLocation(2046, 94, 1),
 			}),
 		],
-		location: new SourceLocation(2042, 95, 1),
+		location: new SourceLocation(2047, 95, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2048, 95, 7),
+				location: new SourceLocation(2053, 95, 7),
 			}),
 		],
-		location: new SourceLocation(2049, 95, 8),
+		location: new SourceLocation(2054, 95, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cinemas", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2054, 95, 13),
+				location: new SourceLocation(2059, 95, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2062, 95, 21),
+				location: new SourceLocation(2067, 95, 21),
 			}),
 		],
-		location: new SourceLocation(2055, 95, 14),
+		location: new SourceLocation(2060, 95, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2064, 95, 23),
+				location: new SourceLocation(2069, 95, 23),
 			}),
 		],
-		location: new SourceLocation(2063, 95, 22),
+		location: new SourceLocation(2068, 95, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "id", {
 		keyword: SqlKeywords.ID,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "        ", {
-				location: new SourceLocation(2065, 96, 1),
+				location: new SourceLocation(2070, 96, 1),
 			}),
 		],
-		location: new SourceLocation(2073, 96, 9),
+		location: new SourceLocation(2078, 96, 9),
 	}),
 	new Token(SqlTokenType.Identifier, "serial", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2075, 96, 11),
+				location: new SourceLocation(2080, 96, 11),
 			}),
 		],
-		location: new SourceLocation(2076, 96, 12),
+		location: new SourceLocation(2081, 96, 12),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2083, 96, 19),
+				location: new SourceLocation(2088, 96, 19),
 			}),
 		],
-		location: new SourceLocation(2082, 96, 18),
+		location: new SourceLocation(2087, 96, 18),
 	}),
 	new Token(SqlTokenType.Identifier, "name", {
 		keyword: SqlKeywords.NAME,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "        ", {
-				location: new SourceLocation(2084, 97, 1),
+				location: new SourceLocation(2089, 97, 1),
 			}),
 		],
-		location: new SourceLocation(2092, 97, 9),
+		location: new SourceLocation(2097, 97, 9),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
 		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2096, 97, 13),
+				location: new SourceLocation(2101, 97, 13),
 			}),
 		],
-		location: new SourceLocation(2097, 97, 14),
+		location: new SourceLocation(2102, 97, 14),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2102, 97, 19),
+				location: new SourceLocation(2107, 97, 19),
 			}),
 		],
-		location: new SourceLocation(2101, 97, 18),
+		location: new SourceLocation(2106, 97, 18),
 	}),
 	new Token(SqlTokenType.Identifier, "location", {
 		keyword: SqlKeywords.LOCATION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "        ", {
-				location: new SourceLocation(2103, 98, 1),
+				location: new SourceLocation(2108, 98, 1),
 			}),
 		],
-		location: new SourceLocation(2111, 98, 9),
+		location: new SourceLocation(2116, 98, 9),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
 		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2119, 98, 17),
+				location: new SourceLocation(2124, 98, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2124, 98, 22),
+				location: new SourceLocation(2129, 98, 22),
 			}),
 		],
-		location: new SourceLocation(2120, 98, 18),
+		location: new SourceLocation(2125, 98, 18),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2125, 99, 1),
+		location: new SourceLocation(2130, 99, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "TABLESPACE", {
 		keyword: SqlKeywords.TABLESPACE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2126, 99, 2),
+				location: new SourceLocation(2131, 99, 2),
 			}),
 		],
-		location: new SourceLocation(2127, 99, 3),
+		location: new SourceLocation(2132, 99, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "diskvol1", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2137, 99, 13),
+				location: new SourceLocation(2142, 99, 13),
 			}),
 		],
-		location: new SourceLocation(2138, 99, 14),
+		location: new SourceLocation(2143, 99, 14),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2147, 99, 23),
+				location: new SourceLocation(2152, 99, 23),
 			}),
 		],
-		location: new SourceLocation(2146, 99, 22),
+		location: new SourceLocation(2151, 99, 22),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2148, 100, 1),
+				location: new SourceLocation(2153, 100, 1),
 			}),
 		],
-		location: new SourceLocation(2149, 101, 1),
+		location: new SourceLocation(2154, 101, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "TYPE", {
 		keyword: SqlKeywords.TYPE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2155, 101, 7),
+				location: new SourceLocation(2160, 101, 7),
 			}),
 		],
-		location: new SourceLocation(2156, 101, 8),
+		location: new SourceLocation(2161, 101, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "employee_type", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2160, 101, 12),
+				location: new SourceLocation(2165, 101, 12),
 			}),
 		],
-		location: new SourceLocation(2161, 101, 13),
+		location: new SourceLocation(2166, 101, 13),
 	}),
 	new Token(SqlTokenType.Reserved, "AS", {
 		keyword: SqlKeywords.AS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2174, 101, 26),
+				location: new SourceLocation(2179, 101, 26),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2177, 101, 29),
+				location: new SourceLocation(2182, 101, 29),
 			}),
 		],
-		location: new SourceLocation(2175, 101, 27),
+		location: new SourceLocation(2180, 101, 27),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2178, 101, 30),
+		location: new SourceLocation(2183, 101, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "name", {
 		keyword: SqlKeywords.NAME,
-		location: new SourceLocation(2179, 101, 31),
+		location: new SourceLocation(2184, 101, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
 		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2183, 101, 35),
+				location: new SourceLocation(2188, 101, 35),
 			}),
 		],
-		location: new SourceLocation(2184, 101, 36),
+		location: new SourceLocation(2189, 101, 36),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(2188, 101, 40),
+		location: new SourceLocation(2193, 101, 40),
 	}),
 	new Token(SqlTokenType.Identifier, "salary", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2189, 101, 41),
+				location: new SourceLocation(2194, 101, 41),
 			}),
 		],
-		location: new SourceLocation(2190, 101, 42),
+		location: new SourceLocation(2195, 101, 42),
 	}),
 	new Token(SqlTokenType.Identifier, "numeric", {
 		keyword: SqlKeywords.NUMERIC,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2196, 101, 48),
+				location: new SourceLocation(2201, 101, 48),
 			}),
 		],
-		location: new SourceLocation(2197, 101, 49),
+		location: new SourceLocation(2202, 101, 49),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2204, 101, 56),
+		location: new SourceLocation(2209, 101, 56),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2206, 101, 58),
+				location: new SourceLocation(2211, 101, 58),
 			}),
 		],
-		location: new SourceLocation(2205, 101, 57),
+		location: new SourceLocation(2210, 101, 57),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2207, 102, 1),
+				location: new SourceLocation(2212, 102, 1),
 			}),
 		],
-		location: new SourceLocation(2208, 103, 1),
+		location: new SourceLocation(2213, 103, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2214, 103, 7),
+				location: new SourceLocation(2219, 103, 7),
 			}),
 		],
-		location: new SourceLocation(2215, 103, 8),
+		location: new SourceLocation(2220, 103, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "employees", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2220, 103, 13),
+				location: new SourceLocation(2225, 103, 13),
 			}),
 		],
-		location: new SourceLocation(2221, 103, 14),
+		location: new SourceLocation(2226, 103, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2230, 103, 23),
+				location: new SourceLocation(2235, 103, 23),
 			}),
 		],
-		location: new SourceLocation(2231, 103, 24),
+		location: new SourceLocation(2236, 103, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "employee_type", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2233, 103, 26),
+				location: new SourceLocation(2238, 103, 26),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2247, 103, 40),
+				location: new SourceLocation(2252, 103, 40),
 			}),
 		],
-		location: new SourceLocation(2234, 103, 27),
+		location: new SourceLocation(2239, 103, 27),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2249, 103, 42),
+				location: new SourceLocation(2254, 103, 42),
 			}),
 		],
-		location: new SourceLocation(2248, 103, 41),
+		location: new SourceLocation(2253, 103, 41),
 	}),
 	new Token(SqlTokenType.Reserved, "PRIMARY", {
 		keyword: SqlKeywords.PRIMARY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2250, 104, 1),
+				location: new SourceLocation(2255, 104, 1),
 			}),
 		],
-		location: new SourceLocation(2254, 104, 5),
+		location: new SourceLocation(2259, 104, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "KEY", {
 		keyword: SqlKeywords.KEY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2261, 104, 12),
+				location: new SourceLocation(2266, 104, 12),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2265, 104, 16),
+				location: new SourceLocation(2270, 104, 16),
 			}),
 		],
-		location: new SourceLocation(2262, 104, 13),
+		location: new SourceLocation(2267, 104, 13),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2266, 104, 17),
+		location: new SourceLocation(2271, 104, 17),
 	}),
 	new Token(SqlTokenType.Identifier, "name", {
 		keyword: SqlKeywords.NAME,
-		location: new SourceLocation(2267, 104, 18),
+		location: new SourceLocation(2272, 104, 18),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2271, 104, 22),
+		location: new SourceLocation(2276, 104, 22),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2273, 104, 24),
+				location: new SourceLocation(2278, 104, 24),
 			}),
 		],
-		location: new SourceLocation(2272, 104, 23),
+		location: new SourceLocation(2277, 104, 23),
 	}),
 	new Token(SqlTokenType.Identifier, "salary", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2274, 105, 1),
+				location: new SourceLocation(2279, 105, 1),
 			}),
 		],
-		location: new SourceLocation(2278, 105, 5),
+		location: new SourceLocation(2283, 105, 5),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2284, 105, 11),
+				location: new SourceLocation(2289, 105, 11),
 			}),
 		],
-		location: new SourceLocation(2285, 105, 12),
+		location: new SourceLocation(2290, 105, 12),
 	}),
 	new Token(SqlTokenType.Identifier, "OPTIONS", {
 		keyword: SqlKeywords.OPTIONS,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2289, 105, 16),
+				location: new SourceLocation(2294, 105, 16),
 			}),
 		],
-		location: new SourceLocation(2290, 105, 17),
+		location: new SourceLocation(2295, 105, 17),
 	}),
 	new Token(SqlTokenType.Reserved, "DEFAULT", {
 		keyword: SqlKeywords.DEFAULT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2297, 105, 24),
+				location: new SourceLocation(2302, 105, 24),
 			}),
 		],
-		location: new SourceLocation(2298, 105, 25),
+		location: new SourceLocation(2303, 105, 25),
 	}),
 	new Token(SqlTokenType.Numeric, "1000", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2305, 105, 32),
+				location: new SourceLocation(2310, 105, 32),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2310, 105, 37),
+				location: new SourceLocation(2315, 105, 37),
 			}),
 		],
-		location: new SourceLocation(2306, 105, 33),
+		location: new SourceLocation(2311, 105, 33),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2311, 106, 1),
+		location: new SourceLocation(2316, 106, 1),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2313, 106, 3),
+				location: new SourceLocation(2318, 106, 3),
 			}),
 		],
-		location: new SourceLocation(2312, 106, 2),
+		location: new SourceLocation(2317, 106, 2),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2314, 107, 1),
+				location: new SourceLocation(2319, 107, 1),
 			}),
 		],
-		location: new SourceLocation(2315, 108, 1),
+		location: new SourceLocation(2320, 108, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2321, 108, 7),
+				location: new SourceLocation(2326, 108, 7),
 			}),
 		],
-		location: new SourceLocation(2322, 108, 8),
+		location: new SourceLocation(2327, 108, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2327, 108, 13),
+				location: new SourceLocation(2332, 108, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2339, 108, 25),
+				location: new SourceLocation(2344, 108, 25),
 			}),
 		],
-		location: new SourceLocation(2328, 108, 14),
+		location: new SourceLocation(2333, 108, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2341, 108, 27),
+				location: new SourceLocation(2346, 108, 27),
 			}),
 		],
-		location: new SourceLocation(2340, 108, 26),
+		location: new SourceLocation(2345, 108, 26),
 	}),
 	new Token(SqlTokenType.Identifier, "logdate", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2342, 109, 1),
+				location: new SourceLocation(2347, 109, 1),
 			}),
 		],
-		location: new SourceLocation(2346, 109, 5),
+		location: new SourceLocation(2351, 109, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "date", {
 		keyword: SqlKeywords.DATE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "         ", {
-				location: new SourceLocation(2353, 109, 12),
+				location: new SourceLocation(2358, 109, 12),
 			}),
 		],
-		location: new SourceLocation(2362, 109, 21),
+		location: new SourceLocation(2367, 109, 21),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2366, 109, 25),
+				location: new SourceLocation(2371, 109, 25),
 			}),
 		],
-		location: new SourceLocation(2367, 109, 26),
+		location: new SourceLocation(2372, 109, 26),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2370, 109, 29),
+				location: new SourceLocation(2375, 109, 29),
 			}),
 		],
-		location: new SourceLocation(2371, 109, 30),
+		location: new SourceLocation(2376, 109, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2376, 109, 35),
+				location: new SourceLocation(2381, 109, 35),
 			}),
 		],
-		location: new SourceLocation(2375, 109, 34),
+		location: new SourceLocation(2380, 109, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "peaktemp", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2377, 110, 1),
+				location: new SourceLocation(2382, 110, 1),
 			}),
 		],
-		location: new SourceLocation(2381, 110, 5),
+		location: new SourceLocation(2386, 110, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
 		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "        ", {
-				location: new SourceLocation(2389, 110, 13),
+				location: new SourceLocation(2394, 110, 13),
 			}),
 		],
-		location: new SourceLocation(2397, 110, 21),
+		location: new SourceLocation(2402, 110, 21),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2401, 110, 25),
+				location: new SourceLocation(2406, 110, 25),
 			}),
 		],
-		location: new SourceLocation(2400, 110, 24),
+		location: new SourceLocation(2405, 110, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "unitsales", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2402, 111, 1),
+				location: new SourceLocation(2407, 111, 1),
 			}),
 		],
-		location: new SourceLocation(2406, 111, 5),
+		location: new SourceLocation(2411, 111, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
 		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "       ", {
-				location: new SourceLocation(2415, 111, 14),
+				location: new SourceLocation(2420, 111, 14),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2425, 111, 24),
+				location: new SourceLocation(2430, 111, 24),
 			}),
 		],
-		location: new SourceLocation(2422, 111, 21),
+		location: new SourceLocation(2427, 111, 21),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2426, 112, 1),
+		location: new SourceLocation(2431, 112, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2427, 112, 2),
+				location: new SourceLocation(2432, 112, 2),
 			}),
 		],
-		location: new SourceLocation(2428, 112, 3),
+		location: new SourceLocation(2433, 112, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "BY", {
 		keyword: SqlKeywords.BY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2437, 112, 12),
+				location: new SourceLocation(2442, 112, 12),
 			}),
 		],
-		location: new SourceLocation(2438, 112, 13),
+		location: new SourceLocation(2443, 112, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "RANGE", {
 		keyword: SqlKeywords.RANGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2440, 112, 15),
+				location: new SourceLocation(2445, 112, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2446, 112, 21),
+				location: new SourceLocation(2451, 112, 21),
 			}),
 		],
-		location: new SourceLocation(2441, 112, 16),
+		location: new SourceLocation(2446, 112, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2447, 112, 22),
+		location: new SourceLocation(2452, 112, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "logdate", {
-		location: new SourceLocation(2448, 112, 23),
+		location: new SourceLocation(2453, 112, 23),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2455, 112, 30),
+		location: new SourceLocation(2460, 112, 30),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2457, 112, 32),
+				location: new SourceLocation(2462, 112, 32),
 			}),
 		],
-		location: new SourceLocation(2456, 112, 31),
+		location: new SourceLocation(2461, 112, 31),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2458, 113, 1),
+				location: new SourceLocation(2463, 113, 1),
 			}),
 		],
-		location: new SourceLocation(2459, 114, 1),
+		location: new SourceLocation(2464, 114, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2465, 114, 7),
+				location: new SourceLocation(2470, 114, 7),
 			}),
 		],
-		location: new SourceLocation(2466, 114, 8),
+		location: new SourceLocation(2471, 114, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_year_month", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2471, 114, 13),
+				location: new SourceLocation(2476, 114, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2494, 114, 36),
+				location: new SourceLocation(2499, 114, 36),
 			}),
 		],
-		location: new SourceLocation(2472, 114, 14),
+		location: new SourceLocation(2477, 114, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2496, 114, 38),
+				location: new SourceLocation(2501, 114, 38),
 			}),
 		],
-		location: new SourceLocation(2495, 114, 37),
+		location: new SourceLocation(2500, 114, 37),
 	}),
 	new Token(SqlTokenType.Identifier, "logdate", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2497, 115, 1),
+				location: new SourceLocation(2502, 115, 1),
 			}),
 		],
-		location: new SourceLocation(2501, 115, 5),
+		location: new SourceLocation(2506, 115, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "date", {
 		keyword: SqlKeywords.DATE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "         ", {
-				location: new SourceLocation(2508, 115, 12),
+				location: new SourceLocation(2513, 115, 12),
 			}),
 		],
-		location: new SourceLocation(2517, 115, 21),
+		location: new SourceLocation(2522, 115, 21),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2521, 115, 25),
+				location: new SourceLocation(2526, 115, 25),
 			}),
 		],
-		location: new SourceLocation(2522, 115, 26),
+		location: new SourceLocation(2527, 115, 26),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2525, 115, 29),
+				location: new SourceLocation(2530, 115, 29),
 			}),
 		],
-		location: new SourceLocation(2526, 115, 30),
+		location: new SourceLocation(2531, 115, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2531, 115, 35),
+				location: new SourceLocation(2536, 115, 35),
 			}),
 		],
-		location: new SourceLocation(2530, 115, 34),
+		location: new SourceLocation(2535, 115, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "peaktemp", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2532, 116, 1),
+				location: new SourceLocation(2537, 116, 1),
 			}),
 		],
-		location: new SourceLocation(2536, 116, 5),
+		location: new SourceLocation(2541, 116, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
 		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "        ", {
-				location: new SourceLocation(2544, 116, 13),
+				location: new SourceLocation(2549, 116, 13),
 			}),
 		],
-		location: new SourceLocation(2552, 116, 21),
+		location: new SourceLocation(2557, 116, 21),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2556, 116, 25),
+				location: new SourceLocation(2561, 116, 25),
 			}),
 		],
-		location: new SourceLocation(2555, 116, 24),
+		location: new SourceLocation(2560, 116, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "unitsales", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2557, 117, 1),
+				location: new SourceLocation(2562, 117, 1),
 			}),
 		],
-		location: new SourceLocation(2561, 117, 5),
+		location: new SourceLocation(2566, 117, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "int", {
 		keyword: SqlKeywords.INT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "       ", {
-				location: new SourceLocation(2570, 117, 14),
+				location: new SourceLocation(2575, 117, 14),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2580, 117, 24),
+				location: new SourceLocation(2585, 117, 24),
 			}),
 		],
-		location: new SourceLocation(2577, 117, 21),
+		location: new SourceLocation(2582, 117, 21),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2581, 118, 1),
+		location: new SourceLocation(2586, 118, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2582, 118, 2),
+				location: new SourceLocation(2587, 118, 2),
 			}),
 		],
-		location: new SourceLocation(2583, 118, 3),
+		location: new SourceLocation(2588, 118, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "BY", {
 		keyword: SqlKeywords.BY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2592, 118, 12),
+				location: new SourceLocation(2597, 118, 12),
 			}),
 		],
-		location: new SourceLocation(2593, 118, 13),
+		location: new SourceLocation(2598, 118, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "RANGE", {
 		keyword: SqlKeywords.RANGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2595, 118, 15),
+				location: new SourceLocation(2600, 118, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2601, 118, 21),
+				location: new SourceLocation(2606, 118, 21),
 			}),
 		],
-		location: new SourceLocation(2596, 118, 16),
+		location: new SourceLocation(2601, 118, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2602, 118, 22),
+		location: new SourceLocation(2607, 118, 22),
 	}),
 	new Token(SqlTokenType.Identifier, "EXTRACT", {
 		keyword: SqlKeywords.EXTRACT,
-		location: new SourceLocation(2603, 118, 23),
+		location: new SourceLocation(2608, 118, 23),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2610, 118, 30),
+		location: new SourceLocation(2615, 118, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "YEAR", {
 		keyword: SqlKeywords.YEAR,
-		location: new SourceLocation(2611, 118, 31),
+		location: new SourceLocation(2616, 118, 31),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2615, 118, 35),
+				location: new SourceLocation(2620, 118, 35),
 			}),
 		],
-		location: new SourceLocation(2616, 118, 36),
+		location: new SourceLocation(2621, 118, 36),
 	}),
 	new Token(SqlTokenType.Identifier, "logdate", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2620, 118, 40),
+				location: new SourceLocation(2625, 118, 40),
 			}),
 		],
-		location: new SourceLocation(2621, 118, 41),
+		location: new SourceLocation(2626, 118, 41),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2628, 118, 48),
+		location: new SourceLocation(2633, 118, 48),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(2629, 118, 49),
+		location: new SourceLocation(2634, 118, 49),
 	}),
 	new Token(SqlTokenType.Identifier, "EXTRACT", {
 		keyword: SqlKeywords.EXTRACT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2630, 118, 50),
+				location: new SourceLocation(2635, 118, 50),
 			}),
 		],
-		location: new SourceLocation(2631, 118, 51),
+		location: new SourceLocation(2636, 118, 51),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2638, 118, 58),
+		location: new SourceLocation(2643, 118, 58),
 	}),
 	new Token(SqlTokenType.Identifier, "MONTH", {
 		keyword: SqlKeywords.MONTH,
-		location: new SourceLocation(2639, 118, 59),
+		location: new SourceLocation(2644, 118, 59),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2644, 118, 64),
+				location: new SourceLocation(2649, 118, 64),
 			}),
 		],
-		location: new SourceLocation(2645, 118, 65),
+		location: new SourceLocation(2650, 118, 65),
 	}),
 	new Token(SqlTokenType.Identifier, "logdate", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2649, 118, 69),
+				location: new SourceLocation(2654, 118, 69),
 			}),
 		],
-		location: new SourceLocation(2650, 118, 70),
+		location: new SourceLocation(2655, 118, 70),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2657, 118, 77),
+		location: new SourceLocation(2662, 118, 77),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2658, 118, 78),
+		location: new SourceLocation(2663, 118, 78),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2660, 118, 80),
+				location: new SourceLocation(2665, 118, 80),
 			}),
 		],
-		location: new SourceLocation(2659, 118, 79),
+		location: new SourceLocation(2664, 118, 79),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2661, 119, 1),
+				location: new SourceLocation(2666, 119, 1),
 			}),
 		],
-		location: new SourceLocation(2662, 120, 1),
+		location: new SourceLocation(2667, 120, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2668, 120, 7),
+				location: new SourceLocation(2673, 120, 7),
 			}),
 		],
-		location: new SourceLocation(2669, 120, 8),
+		location: new SourceLocation(2674, 120, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cities", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2674, 120, 13),
+				location: new SourceLocation(2679, 120, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2681, 120, 20),
+				location: new SourceLocation(2686, 120, 20),
 			}),
 		],
-		location: new SourceLocation(2675, 120, 14),
+		location: new SourceLocation(2680, 120, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2683, 120, 22),
+				location: new SourceLocation(2688, 120, 22),
 			}),
 		],
-		location: new SourceLocation(2682, 120, 21),
+		location: new SourceLocation(2687, 120, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "city_id", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2684, 121, 1),
+				location: new SourceLocation(2689, 121, 1),
 			}),
 		],
-		location: new SourceLocation(2688, 121, 5),
+		location: new SourceLocation(2693, 121, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "bigserial", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "      ", {
-				location: new SourceLocation(2695, 121, 12),
+				location: new SourceLocation(2700, 121, 12),
 			}),
 		],
-		location: new SourceLocation(2701, 121, 18),
+		location: new SourceLocation(2706, 121, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2710, 121, 27),
+				location: new SourceLocation(2715, 121, 27),
 			}),
 		],
-		location: new SourceLocation(2711, 121, 28),
+		location: new SourceLocation(2716, 121, 28),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2714, 121, 31),
+				location: new SourceLocation(2719, 121, 31),
 			}),
 		],
-		location: new SourceLocation(2715, 121, 32),
+		location: new SourceLocation(2720, 121, 32),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2720, 121, 37),
+				location: new SourceLocation(2725, 121, 37),
 			}),
 		],
-		location: new SourceLocation(2719, 121, 36),
+		location: new SourceLocation(2724, 121, 36),
 	}),
 	new Token(SqlTokenType.Identifier, "name", {
 		keyword: SqlKeywords.NAME,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2721, 122, 1),
+				location: new SourceLocation(2726, 122, 1),
 			}),
 		],
-		location: new SourceLocation(2725, 122, 5),
+		location: new SourceLocation(2730, 122, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
 		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "         ", {
-				location: new SourceLocation(2729, 122, 9),
+				location: new SourceLocation(2734, 122, 9),
 			}),
 		],
-		location: new SourceLocation(2738, 122, 18),
+		location: new SourceLocation(2743, 122, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2742, 122, 22),
+				location: new SourceLocation(2747, 122, 22),
 			}),
 		],
-		location: new SourceLocation(2743, 122, 23),
+		location: new SourceLocation(2748, 122, 23),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2746, 122, 26),
+				location: new SourceLocation(2751, 122, 26),
 			}),
 		],
-		location: new SourceLocation(2747, 122, 27),
+		location: new SourceLocation(2752, 122, 27),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2752, 122, 32),
+				location: new SourceLocation(2757, 122, 32),
 			}),
 		],
-		location: new SourceLocation(2751, 122, 31),
+		location: new SourceLocation(2756, 122, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "population", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2753, 123, 1),
+				location: new SourceLocation(2758, 123, 1),
 			}),
 		],
-		location: new SourceLocation(2757, 123, 5),
+		location: new SourceLocation(2762, 123, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "bigint", {
 		keyword: SqlKeywords.BIGINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "   ", {
-				location: new SourceLocation(2767, 123, 15),
+				location: new SourceLocation(2772, 123, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2776, 123, 24),
+				location: new SourceLocation(2781, 123, 24),
 			}),
 		],
-		location: new SourceLocation(2770, 123, 18),
+		location: new SourceLocation(2775, 123, 18),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2777, 124, 1),
+		location: new SourceLocation(2782, 124, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2778, 124, 2),
+				location: new SourceLocation(2783, 124, 2),
 			}),
 		],
-		location: new SourceLocation(2779, 124, 3),
+		location: new SourceLocation(2784, 124, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "BY", {
 		keyword: SqlKeywords.BY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2788, 124, 12),
+				location: new SourceLocation(2793, 124, 12),
 			}),
 		],
-		location: new SourceLocation(2789, 124, 13),
+		location: new SourceLocation(2794, 124, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "LIST", {
 		keyword: SqlKeywords.LIST,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2791, 124, 15),
+				location: new SourceLocation(2796, 124, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2796, 124, 20),
+				location: new SourceLocation(2801, 124, 20),
 			}),
 		],
-		location: new SourceLocation(2792, 124, 16),
+		location: new SourceLocation(2797, 124, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2797, 124, 21),
+		location: new SourceLocation(2802, 124, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "left", {
 		keyword: SqlKeywords.LEFT,
-		location: new SourceLocation(2798, 124, 22),
+		location: new SourceLocation(2803, 124, 22),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2802, 124, 26),
+		location: new SourceLocation(2807, 124, 26),
 	}),
 	new Token(SqlTokenType.Identifier, "lower", {
 		keyword: SqlKeywords.LOWER,
-		location: new SourceLocation(2803, 124, 27),
+		location: new SourceLocation(2808, 124, 27),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2808, 124, 32),
+		location: new SourceLocation(2813, 124, 32),
 	}),
 	new Token(SqlTokenType.Identifier, "name", {
 		keyword: SqlKeywords.NAME,
-		location: new SourceLocation(2809, 124, 33),
+		location: new SourceLocation(2814, 124, 33),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2813, 124, 37),
+		location: new SourceLocation(2818, 124, 37),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(2814, 124, 38),
+		location: new SourceLocation(2819, 124, 38),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2815, 124, 39),
+				location: new SourceLocation(2820, 124, 39),
 			}),
 		],
-		location: new SourceLocation(2816, 124, 40),
+		location: new SourceLocation(2821, 124, 40),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2817, 124, 41),
+		location: new SourceLocation(2822, 124, 41),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2818, 124, 42),
+		location: new SourceLocation(2823, 124, 42),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2820, 124, 44),
+				location: new SourceLocation(2825, 124, 44),
 			}),
 		],
-		location: new SourceLocation(2819, 124, 43),
+		location: new SourceLocation(2824, 124, 43),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2821, 125, 1),
+				location: new SourceLocation(2826, 125, 1),
 			}),
 		],
-		location: new SourceLocation(2822, 126, 1),
+		location: new SourceLocation(2827, 126, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2828, 126, 7),
+				location: new SourceLocation(2833, 126, 7),
 			}),
 		],
-		location: new SourceLocation(2829, 126, 8),
+		location: new SourceLocation(2834, 126, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "orders", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2834, 126, 13),
+				location: new SourceLocation(2839, 126, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2841, 126, 20),
+				location: new SourceLocation(2846, 126, 20),
 			}),
 		],
-		location: new SourceLocation(2835, 126, 14),
+		location: new SourceLocation(2840, 126, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2843, 126, 22),
+				location: new SourceLocation(2848, 126, 22),
 			}),
 		],
-		location: new SourceLocation(2842, 126, 21),
+		location: new SourceLocation(2847, 126, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "order_id", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2844, 127, 1),
+				location: new SourceLocation(2849, 127, 1),
 			}),
 		],
-		location: new SourceLocation(2848, 127, 5),
+		location: new SourceLocation(2853, 127, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "bigint", {
 		keyword: SqlKeywords.BIGINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "     ", {
-				location: new SourceLocation(2856, 127, 13),
+				location: new SourceLocation(2861, 127, 13),
 			}),
 		],
-		location: new SourceLocation(2861, 127, 18),
+		location: new SourceLocation(2866, 127, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2867, 127, 24),
+				location: new SourceLocation(2872, 127, 24),
 			}),
 		],
-		location: new SourceLocation(2868, 127, 25),
+		location: new SourceLocation(2873, 127, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2871, 127, 28),
+				location: new SourceLocation(2876, 127, 28),
 			}),
 		],
-		location: new SourceLocation(2872, 127, 29),
+		location: new SourceLocation(2877, 127, 29),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2877, 127, 34),
+				location: new SourceLocation(2882, 127, 34),
 			}),
 		],
-		location: new SourceLocation(2876, 127, 33),
+		location: new SourceLocation(2881, 127, 33),
 	}),
 	new Token(SqlTokenType.Identifier, "cust_id", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2878, 128, 1),
+				location: new SourceLocation(2883, 128, 1),
 			}),
 		],
-		location: new SourceLocation(2882, 128, 5),
+		location: new SourceLocation(2887, 128, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "bigint", {
 		keyword: SqlKeywords.BIGINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "      ", {
-				location: new SourceLocation(2889, 128, 12),
+				location: new SourceLocation(2894, 128, 12),
 			}),
 		],
-		location: new SourceLocation(2895, 128, 18),
+		location: new SourceLocation(2900, 128, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "not", {
 		keyword: SqlKeywords.NOT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2901, 128, 24),
+				location: new SourceLocation(2906, 128, 24),
 			}),
 		],
-		location: new SourceLocation(2902, 128, 25),
+		location: new SourceLocation(2907, 128, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "null", {
 		keyword: SqlKeywords.NULL,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2905, 128, 28),
+				location: new SourceLocation(2910, 128, 28),
 			}),
 		],
-		location: new SourceLocation(2906, 128, 29),
+		location: new SourceLocation(2911, 128, 29),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2911, 128, 34),
+				location: new SourceLocation(2916, 128, 34),
 			}),
 		],
-		location: new SourceLocation(2910, 128, 33),
+		location: new SourceLocation(2915, 128, 33),
 	}),
 	new Token(SqlTokenType.Identifier, "status", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(2912, 129, 1),
+				location: new SourceLocation(2917, 129, 1),
 			}),
 		],
-		location: new SourceLocation(2916, 129, 5),
+		location: new SourceLocation(2921, 129, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "text", {
 		keyword: SqlKeywords.TEXT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "       ", {
-				location: new SourceLocation(2922, 129, 11),
+				location: new SourceLocation(2927, 129, 11),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2933, 129, 22),
+				location: new SourceLocation(2938, 129, 22),
 			}),
 		],
-		location: new SourceLocation(2929, 129, 18),
+		location: new SourceLocation(2934, 129, 18),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2934, 130, 1),
+		location: new SourceLocation(2939, 130, 1),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2935, 130, 2),
+				location: new SourceLocation(2940, 130, 2),
 			}),
 		],
-		location: new SourceLocation(2936, 130, 3),
+		location: new SourceLocation(2941, 130, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "BY", {
 		keyword: SqlKeywords.BY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2945, 130, 12),
+				location: new SourceLocation(2950, 130, 12),
 			}),
 		],
-		location: new SourceLocation(2946, 130, 13),
+		location: new SourceLocation(2951, 130, 13),
 	}),
 	new Token(SqlTokenType.Identifier, "HASH", {
 		keyword: SqlKeywords.HASH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2948, 130, 15),
+				location: new SourceLocation(2953, 130, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2953, 130, 20),
+				location: new SourceLocation(2958, 130, 20),
 			}),
 		],
-		location: new SourceLocation(2949, 130, 16),
+		location: new SourceLocation(2954, 130, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(2954, 130, 21),
+		location: new SourceLocation(2959, 130, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "order_id", {
-		location: new SourceLocation(2955, 130, 22),
+		location: new SourceLocation(2960, 130, 22),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(2963, 130, 30),
+		location: new SourceLocation(2968, 130, 30),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2965, 130, 32),
+				location: new SourceLocation(2970, 130, 32),
 			}),
 		],
-		location: new SourceLocation(2964, 130, 31),
+		location: new SourceLocation(2969, 130, 31),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(2966, 131, 1),
+				location: new SourceLocation(2971, 131, 1),
 			}),
 		],
-		location: new SourceLocation(2967, 132, 1),
+		location: new SourceLocation(2972, 132, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2973, 132, 7),
+				location: new SourceLocation(2978, 132, 7),
 			}),
 		],
-		location: new SourceLocation(2974, 132, 8),
+		location: new SourceLocation(2979, 132, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_y2016m07", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(2979, 132, 13),
+				location: new SourceLocation(2984, 132, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3000, 132, 34),
+				location: new SourceLocation(3005, 132, 34),
 			}),
 		],
-		location: new SourceLocation(2980, 132, 14),
+		location: new SourceLocation(2985, 132, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3001, 133, 1),
+				location: new SourceLocation(3006, 133, 1),
 			}),
 		],
-		location: new SourceLocation(3005, 133, 5),
+		location: new SourceLocation(3010, 133, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3014, 133, 14),
+				location: new SourceLocation(3019, 133, 14),
 			}),
 		],
-		location: new SourceLocation(3015, 133, 15),
+		location: new SourceLocation(3020, 133, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3017, 133, 17),
+				location: new SourceLocation(3022, 133, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3029, 133, 29),
+				location: new SourceLocation(3034, 133, 29),
 			}),
 		],
-		location: new SourceLocation(3018, 133, 18),
+		location: new SourceLocation(3023, 133, 18),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3031, 133, 31),
+				location: new SourceLocation(3036, 133, 31),
 			}),
 		],
-		location: new SourceLocation(3030, 133, 30),
+		location: new SourceLocation(3035, 133, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "unitsales", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3032, 134, 1),
+				location: new SourceLocation(3037, 134, 1),
 			}),
 		],
-		location: new SourceLocation(3036, 134, 5),
+		location: new SourceLocation(3041, 134, 5),
 	}),
 	new Token(SqlTokenType.Reserved, "DEFAULT", {
 		keyword: SqlKeywords.DEFAULT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3045, 134, 14),
+				location: new SourceLocation(3050, 134, 14),
 			}),
 		],
-		location: new SourceLocation(3046, 134, 15),
+		location: new SourceLocation(3051, 134, 15),
 	}),
 	new Token(SqlTokenType.Numeric, "0", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3053, 134, 22),
+				location: new SourceLocation(3058, 134, 22),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3055, 134, 24),
+				location: new SourceLocation(3060, 134, 24),
 			}),
 		],
-		location: new SourceLocation(3054, 134, 23),
+		location: new SourceLocation(3059, 134, 23),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3056, 135, 1),
+		location: new SourceLocation(3061, 135, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3057, 135, 2),
+				location: new SourceLocation(3062, 135, 2),
 			}),
 		],
-		location: new SourceLocation(3058, 135, 3),
+		location: new SourceLocation(3063, 135, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3061, 135, 6),
+				location: new SourceLocation(3066, 135, 6),
 			}),
 		],
-		location: new SourceLocation(3062, 135, 7),
+		location: new SourceLocation(3067, 135, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3068, 135, 13),
+				location: new SourceLocation(3073, 135, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3073, 135, 18),
+				location: new SourceLocation(3078, 135, 18),
 			}),
 		],
-		location: new SourceLocation(3069, 135, 14),
+		location: new SourceLocation(3074, 135, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3074, 135, 19),
+		location: new SourceLocation(3079, 135, 19),
 	}),
 	new Token(SqlTokenType.String, "'2016-07-01'", {
-		location: new SourceLocation(3075, 135, 20),
+		location: new SourceLocation(3080, 135, 20),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3087, 135, 32),
+		location: new SourceLocation(3092, 135, 32),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3088, 135, 33),
+				location: new SourceLocation(3093, 135, 33),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3091, 135, 36),
+				location: new SourceLocation(3096, 135, 36),
 			}),
 		],
-		location: new SourceLocation(3089, 135, 34),
+		location: new SourceLocation(3094, 135, 34),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3092, 135, 37),
+		location: new SourceLocation(3097, 135, 37),
 	}),
 	new Token(SqlTokenType.String, "'2016-08-01'", {
-		location: new SourceLocation(3093, 135, 38),
+		location: new SourceLocation(3098, 135, 38),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3105, 135, 50),
+		location: new SourceLocation(3110, 135, 50),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3107, 135, 52),
+				location: new SourceLocation(3112, 135, 52),
 			}),
 		],
-		location: new SourceLocation(3106, 135, 51),
+		location: new SourceLocation(3111, 135, 51),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3108, 136, 1),
+				location: new SourceLocation(3113, 136, 1),
 			}),
 		],
-		location: new SourceLocation(3109, 137, 1),
+		location: new SourceLocation(3114, 137, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3115, 137, 7),
+				location: new SourceLocation(3120, 137, 7),
 			}),
 		],
-		location: new SourceLocation(3116, 137, 8),
+		location: new SourceLocation(3121, 137, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_ym_older", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3121, 137, 13),
+				location: new SourceLocation(3126, 137, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3142, 137, 34),
+				location: new SourceLocation(3147, 137, 34),
 			}),
 		],
-		location: new SourceLocation(3122, 137, 14),
+		location: new SourceLocation(3127, 137, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3143, 138, 1),
+				location: new SourceLocation(3148, 138, 1),
 			}),
 		],
-		location: new SourceLocation(3147, 138, 5),
+		location: new SourceLocation(3152, 138, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3156, 138, 14),
+				location: new SourceLocation(3161, 138, 14),
 			}),
 		],
-		location: new SourceLocation(3157, 138, 15),
+		location: new SourceLocation(3162, 138, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_year_month", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3159, 138, 17),
+				location: new SourceLocation(3164, 138, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3182, 138, 40),
+				location: new SourceLocation(3187, 138, 40),
 			}),
 		],
-		location: new SourceLocation(3160, 138, 18),
+		location: new SourceLocation(3165, 138, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3183, 139, 1),
+				location: new SourceLocation(3188, 139, 1),
 			}),
 		],
-		location: new SourceLocation(3187, 139, 5),
+		location: new SourceLocation(3192, 139, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3190, 139, 8),
+				location: new SourceLocation(3195, 139, 8),
 			}),
 		],
-		location: new SourceLocation(3191, 139, 9),
+		location: new SourceLocation(3196, 139, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3197, 139, 15),
+				location: new SourceLocation(3202, 139, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3202, 139, 20),
+				location: new SourceLocation(3207, 139, 20),
 			}),
 		],
-		location: new SourceLocation(3198, 139, 16),
+		location: new SourceLocation(3203, 139, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3203, 139, 21),
+		location: new SourceLocation(3208, 139, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "MINVALUE", {
 		keyword: SqlKeywords.MINVALUE,
-		location: new SourceLocation(3204, 139, 22),
+		location: new SourceLocation(3209, 139, 22),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3212, 139, 30),
+		location: new SourceLocation(3217, 139, 30),
 	}),
 	new Token(SqlTokenType.Identifier, "MINVALUE", {
 		keyword: SqlKeywords.MINVALUE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3213, 139, 31),
+				location: new SourceLocation(3218, 139, 31),
 			}),
 		],
-		location: new SourceLocation(3214, 139, 32),
+		location: new SourceLocation(3219, 139, 32),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3222, 139, 40),
+		location: new SourceLocation(3227, 139, 40),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3223, 139, 41),
+				location: new SourceLocation(3228, 139, 41),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3226, 139, 44),
+				location: new SourceLocation(3231, 139, 44),
 			}),
 		],
-		location: new SourceLocation(3224, 139, 42),
+		location: new SourceLocation(3229, 139, 42),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3227, 139, 45),
+		location: new SourceLocation(3232, 139, 45),
 	}),
 	new Token(SqlTokenType.Numeric, "2016", {
-		location: new SourceLocation(3228, 139, 46),
+		location: new SourceLocation(3233, 139, 46),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3232, 139, 50),
+		location: new SourceLocation(3237, 139, 50),
 	}),
 	new Token(SqlTokenType.Numeric, "11", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3233, 139, 51),
+				location: new SourceLocation(3238, 139, 51),
 			}),
 		],
-		location: new SourceLocation(3234, 139, 52),
+		location: new SourceLocation(3239, 139, 52),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3236, 139, 54),
+		location: new SourceLocation(3241, 139, 54),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3238, 139, 56),
+				location: new SourceLocation(3243, 139, 56),
 			}),
 		],
-		location: new SourceLocation(3237, 139, 55),
+		location: new SourceLocation(3242, 139, 55),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3239, 140, 1),
+				location: new SourceLocation(3244, 140, 1),
 			}),
 		],
-		location: new SourceLocation(3240, 141, 1),
+		location: new SourceLocation(3245, 141, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3246, 141, 7),
+				location: new SourceLocation(3251, 141, 7),
 			}),
 		],
-		location: new SourceLocation(3247, 141, 8),
+		location: new SourceLocation(3252, 141, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_ym_y2016m11", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3252, 141, 13),
+				location: new SourceLocation(3257, 141, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3276, 141, 37),
+				location: new SourceLocation(3281, 141, 37),
 			}),
 		],
-		location: new SourceLocation(3253, 141, 14),
+		location: new SourceLocation(3258, 141, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3277, 142, 1),
+				location: new SourceLocation(3282, 142, 1),
 			}),
 		],
-		location: new SourceLocation(3281, 142, 5),
+		location: new SourceLocation(3286, 142, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3290, 142, 14),
+				location: new SourceLocation(3295, 142, 14),
 			}),
 		],
-		location: new SourceLocation(3291, 142, 15),
+		location: new SourceLocation(3296, 142, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_year_month", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3293, 142, 17),
+				location: new SourceLocation(3298, 142, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3316, 142, 40),
+				location: new SourceLocation(3321, 142, 40),
 			}),
 		],
-		location: new SourceLocation(3294, 142, 18),
+		location: new SourceLocation(3299, 142, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3317, 143, 1),
+				location: new SourceLocation(3322, 143, 1),
 			}),
 		],
-		location: new SourceLocation(3321, 143, 5),
+		location: new SourceLocation(3326, 143, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3324, 143, 8),
+				location: new SourceLocation(3329, 143, 8),
 			}),
 		],
-		location: new SourceLocation(3325, 143, 9),
+		location: new SourceLocation(3330, 143, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3331, 143, 15),
+				location: new SourceLocation(3336, 143, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3336, 143, 20),
+				location: new SourceLocation(3341, 143, 20),
 			}),
 		],
-		location: new SourceLocation(3332, 143, 16),
+		location: new SourceLocation(3337, 143, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3337, 143, 21),
+		location: new SourceLocation(3342, 143, 21),
 	}),
 	new Token(SqlTokenType.Numeric, "2016", {
-		location: new SourceLocation(3338, 143, 22),
+		location: new SourceLocation(3343, 143, 22),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3342, 143, 26),
+		location: new SourceLocation(3347, 143, 26),
 	}),
 	new Token(SqlTokenType.Numeric, "11", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3343, 143, 27),
+				location: new SourceLocation(3348, 143, 27),
 			}),
 		],
-		location: new SourceLocation(3344, 143, 28),
+		location: new SourceLocation(3349, 143, 28),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3346, 143, 30),
+		location: new SourceLocation(3351, 143, 30),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3347, 143, 31),
+				location: new SourceLocation(3352, 143, 31),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3350, 143, 34),
+				location: new SourceLocation(3355, 143, 34),
 			}),
 		],
-		location: new SourceLocation(3348, 143, 32),
+		location: new SourceLocation(3353, 143, 32),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3351, 143, 35),
+		location: new SourceLocation(3356, 143, 35),
 	}),
 	new Token(SqlTokenType.Numeric, "2016", {
-		location: new SourceLocation(3352, 143, 36),
+		location: new SourceLocation(3357, 143, 36),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3356, 143, 40),
+		location: new SourceLocation(3361, 143, 40),
 	}),
 	new Token(SqlTokenType.Numeric, "12", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3357, 143, 41),
+				location: new SourceLocation(3362, 143, 41),
 			}),
 		],
-		location: new SourceLocation(3358, 143, 42),
+		location: new SourceLocation(3363, 143, 42),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3360, 143, 44),
+		location: new SourceLocation(3365, 143, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3362, 143, 46),
+				location: new SourceLocation(3367, 143, 46),
 			}),
 		],
-		location: new SourceLocation(3361, 143, 45),
+		location: new SourceLocation(3366, 143, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3363, 144, 1),
+				location: new SourceLocation(3368, 144, 1),
 			}),
 		],
-		location: new SourceLocation(3364, 145, 1),
+		location: new SourceLocation(3369, 145, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3370, 145, 7),
+				location: new SourceLocation(3375, 145, 7),
 			}),
 		],
-		location: new SourceLocation(3371, 145, 8),
+		location: new SourceLocation(3376, 145, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_ym_y2016m12", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3376, 145, 13),
+				location: new SourceLocation(3381, 145, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3400, 145, 37),
+				location: new SourceLocation(3405, 145, 37),
 			}),
 		],
-		location: new SourceLocation(3377, 145, 14),
+		location: new SourceLocation(3382, 145, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3401, 146, 1),
+				location: new SourceLocation(3406, 146, 1),
 			}),
 		],
-		location: new SourceLocation(3405, 146, 5),
+		location: new SourceLocation(3410, 146, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3414, 146, 14),
+				location: new SourceLocation(3419, 146, 14),
 			}),
 		],
-		location: new SourceLocation(3415, 146, 15),
+		location: new SourceLocation(3420, 146, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_year_month", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3417, 146, 17),
+				location: new SourceLocation(3422, 146, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3440, 146, 40),
+				location: new SourceLocation(3445, 146, 40),
 			}),
 		],
-		location: new SourceLocation(3418, 146, 18),
+		location: new SourceLocation(3423, 146, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3441, 147, 1),
+				location: new SourceLocation(3446, 147, 1),
 			}),
 		],
-		location: new SourceLocation(3445, 147, 5),
+		location: new SourceLocation(3450, 147, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3448, 147, 8),
+				location: new SourceLocation(3453, 147, 8),
 			}),
 		],
-		location: new SourceLocation(3449, 147, 9),
+		location: new SourceLocation(3454, 147, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3455, 147, 15),
+				location: new SourceLocation(3460, 147, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3460, 147, 20),
+				location: new SourceLocation(3465, 147, 20),
 			}),
 		],
-		location: new SourceLocation(3456, 147, 16),
+		location: new SourceLocation(3461, 147, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3461, 147, 21),
+		location: new SourceLocation(3466, 147, 21),
 	}),
 	new Token(SqlTokenType.Numeric, "2016", {
-		location: new SourceLocation(3462, 147, 22),
+		location: new SourceLocation(3467, 147, 22),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3466, 147, 26),
+		location: new SourceLocation(3471, 147, 26),
 	}),
 	new Token(SqlTokenType.Numeric, "12", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3467, 147, 27),
+				location: new SourceLocation(3472, 147, 27),
 			}),
 		],
-		location: new SourceLocation(3468, 147, 28),
+		location: new SourceLocation(3473, 147, 28),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3470, 147, 30),
+		location: new SourceLocation(3475, 147, 30),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3471, 147, 31),
+				location: new SourceLocation(3476, 147, 31),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3474, 147, 34),
+				location: new SourceLocation(3479, 147, 34),
 			}),
 		],
-		location: new SourceLocation(3472, 147, 32),
+		location: new SourceLocation(3477, 147, 32),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3475, 147, 35),
+		location: new SourceLocation(3480, 147, 35),
 	}),
 	new Token(SqlTokenType.Numeric, "2017", {
-		location: new SourceLocation(3476, 147, 36),
+		location: new SourceLocation(3481, 147, 36),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3480, 147, 40),
+		location: new SourceLocation(3485, 147, 40),
 	}),
 	new Token(SqlTokenType.Numeric, "01", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3481, 147, 41),
+				location: new SourceLocation(3486, 147, 41),
 			}),
 		],
-		location: new SourceLocation(3482, 147, 42),
+		location: new SourceLocation(3487, 147, 42),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3484, 147, 44),
+		location: new SourceLocation(3489, 147, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3486, 147, 46),
+				location: new SourceLocation(3491, 147, 46),
 			}),
 		],
-		location: new SourceLocation(3485, 147, 45),
+		location: new SourceLocation(3490, 147, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3487, 148, 1),
+				location: new SourceLocation(3492, 148, 1),
 			}),
 		],
-		location: new SourceLocation(3488, 149, 1),
+		location: new SourceLocation(3493, 149, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3494, 149, 7),
+				location: new SourceLocation(3499, 149, 7),
 			}),
 		],
-		location: new SourceLocation(3495, 149, 8),
+		location: new SourceLocation(3500, 149, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_ym_y2017m01", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3500, 149, 13),
+				location: new SourceLocation(3505, 149, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3524, 149, 37),
+				location: new SourceLocation(3529, 149, 37),
 			}),
 		],
-		location: new SourceLocation(3501, 149, 14),
+		location: new SourceLocation(3506, 149, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3525, 150, 1),
+				location: new SourceLocation(3530, 150, 1),
 			}),
 		],
-		location: new SourceLocation(3529, 150, 5),
+		location: new SourceLocation(3534, 150, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3538, 150, 14),
+				location: new SourceLocation(3543, 150, 14),
 			}),
 		],
-		location: new SourceLocation(3539, 150, 15),
+		location: new SourceLocation(3544, 150, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "measurement_year_month", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3541, 150, 17),
+				location: new SourceLocation(3546, 150, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3564, 150, 40),
+				location: new SourceLocation(3569, 150, 40),
 			}),
 		],
-		location: new SourceLocation(3542, 150, 18),
+		location: new SourceLocation(3547, 150, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3565, 151, 1),
+				location: new SourceLocation(3570, 151, 1),
 			}),
 		],
-		location: new SourceLocation(3569, 151, 5),
+		location: new SourceLocation(3574, 151, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3572, 151, 8),
+				location: new SourceLocation(3577, 151, 8),
 			}),
 		],
-		location: new SourceLocation(3573, 151, 9),
+		location: new SourceLocation(3578, 151, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3579, 151, 15),
+				location: new SourceLocation(3584, 151, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3584, 151, 20),
+				location: new SourceLocation(3589, 151, 20),
 			}),
 		],
-		location: new SourceLocation(3580, 151, 16),
+		location: new SourceLocation(3585, 151, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3585, 151, 21),
+		location: new SourceLocation(3590, 151, 21),
 	}),
 	new Token(SqlTokenType.Numeric, "2017", {
-		location: new SourceLocation(3586, 151, 22),
+		location: new SourceLocation(3591, 151, 22),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3590, 151, 26),
+		location: new SourceLocation(3595, 151, 26),
 	}),
 	new Token(SqlTokenType.Numeric, "01", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3591, 151, 27),
+				location: new SourceLocation(3596, 151, 27),
 			}),
 		],
-		location: new SourceLocation(3592, 151, 28),
+		location: new SourceLocation(3597, 151, 28),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3594, 151, 30),
+		location: new SourceLocation(3599, 151, 30),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3595, 151, 31),
+				location: new SourceLocation(3600, 151, 31),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3598, 151, 34),
+				location: new SourceLocation(3603, 151, 34),
 			}),
 		],
-		location: new SourceLocation(3596, 151, 32),
+		location: new SourceLocation(3601, 151, 32),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3599, 151, 35),
+		location: new SourceLocation(3604, 151, 35),
 	}),
 	new Token(SqlTokenType.Numeric, "2017", {
-		location: new SourceLocation(3600, 151, 36),
+		location: new SourceLocation(3605, 151, 36),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3604, 151, 40),
+		location: new SourceLocation(3609, 151, 40),
 	}),
 	new Token(SqlTokenType.Numeric, "02", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3605, 151, 41),
+				location: new SourceLocation(3610, 151, 41),
 			}),
 		],
-		location: new SourceLocation(3606, 151, 42),
+		location: new SourceLocation(3611, 151, 42),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3608, 151, 44),
+		location: new SourceLocation(3613, 151, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3610, 151, 46),
+				location: new SourceLocation(3615, 151, 46),
 			}),
 		],
-		location: new SourceLocation(3609, 151, 45),
+		location: new SourceLocation(3614, 151, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3611, 152, 1),
+				location: new SourceLocation(3616, 152, 1),
 			}),
 		],
-		location: new SourceLocation(3612, 153, 1),
+		location: new SourceLocation(3617, 153, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3618, 153, 7),
+				location: new SourceLocation(3623, 153, 7),
 			}),
 		],
-		location: new SourceLocation(3619, 153, 8),
+		location: new SourceLocation(3624, 153, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cities_ab", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3624, 153, 13),
+				location: new SourceLocation(3629, 153, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3634, 153, 23),
+				location: new SourceLocation(3639, 153, 23),
 			}),
 		],
-		location: new SourceLocation(3625, 153, 14),
+		location: new SourceLocation(3630, 153, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3635, 154, 1),
+				location: new SourceLocation(3640, 154, 1),
 			}),
 		],
-		location: new SourceLocation(3639, 154, 5),
+		location: new SourceLocation(3644, 154, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3648, 154, 14),
+				location: new SourceLocation(3653, 154, 14),
 			}),
 		],
-		location: new SourceLocation(3649, 154, 15),
+		location: new SourceLocation(3654, 154, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "cities", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3651, 154, 17),
+				location: new SourceLocation(3656, 154, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3658, 154, 24),
+				location: new SourceLocation(3663, 154, 24),
 			}),
 		],
-		location: new SourceLocation(3652, 154, 18),
+		location: new SourceLocation(3657, 154, 18),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3660, 154, 26),
+				location: new SourceLocation(3665, 154, 26),
 			}),
 		],
-		location: new SourceLocation(3659, 154, 25),
+		location: new SourceLocation(3664, 154, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "CONSTRAINT", {
 		keyword: SqlKeywords.CONSTRAINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3661, 155, 1),
+				location: new SourceLocation(3666, 155, 1),
 			}),
 		],
-		location: new SourceLocation(3665, 155, 5),
+		location: new SourceLocation(3670, 155, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "city_id_nonzero", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3675, 155, 15),
+				location: new SourceLocation(3680, 155, 15),
 			}),
 		],
-		location: new SourceLocation(3676, 155, 16),
+		location: new SourceLocation(3681, 155, 16),
 	}),
 	new Token(SqlTokenType.Reserved, "CHECK", {
 		keyword: SqlKeywords.CHECK,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3691, 155, 31),
+				location: new SourceLocation(3696, 155, 31),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3697, 155, 37),
+				location: new SourceLocation(3702, 155, 37),
 			}),
 		],
-		location: new SourceLocation(3692, 155, 32),
+		location: new SourceLocation(3697, 155, 32),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3698, 155, 38),
+		location: new SourceLocation(3703, 155, 38),
 	}),
 	new Token(SqlTokenType.Identifier, "city_id", {
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3706, 155, 46),
+				location: new SourceLocation(3711, 155, 46),
 			}),
 		],
-		location: new SourceLocation(3699, 155, 39),
+		location: new SourceLocation(3704, 155, 39),
 	}),
 	new Token(SqlTokenType.Operator, "!=", {
-		location: new SourceLocation(3707, 155, 47),
+		location: new SourceLocation(3712, 155, 47),
 	}),
 	new Token(SqlTokenType.Numeric, "0", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3709, 155, 49),
+				location: new SourceLocation(3714, 155, 49),
 			}),
 		],
-		location: new SourceLocation(3710, 155, 50),
+		location: new SourceLocation(3715, 155, 50),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3712, 155, 52),
+				location: new SourceLocation(3717, 155, 52),
 			}),
 		],
-		location: new SourceLocation(3711, 155, 51),
+		location: new SourceLocation(3716, 155, 51),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3713, 156, 1),
+		location: new SourceLocation(3718, 156, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3714, 156, 2),
+				location: new SourceLocation(3719, 156, 2),
 			}),
 		],
-		location: new SourceLocation(3715, 156, 3),
+		location: new SourceLocation(3720, 156, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3718, 156, 6),
+				location: new SourceLocation(3723, 156, 6),
 			}),
 		],
-		location: new SourceLocation(3719, 156, 7),
+		location: new SourceLocation(3724, 156, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "IN", {
 		keyword: SqlKeywords.IN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3725, 156, 13),
+				location: new SourceLocation(3730, 156, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3728, 156, 16),
+				location: new SourceLocation(3733, 156, 16),
 			}),
 		],
-		location: new SourceLocation(3726, 156, 14),
+		location: new SourceLocation(3731, 156, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3729, 156, 17),
+		location: new SourceLocation(3734, 156, 17),
 	}),
 	new Token(SqlTokenType.String, "'a'", {
-		location: new SourceLocation(3730, 156, 18),
+		location: new SourceLocation(3735, 156, 18),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3733, 156, 21),
+		location: new SourceLocation(3738, 156, 21),
 	}),
 	new Token(SqlTokenType.String, "'b'", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3734, 156, 22),
+				location: new SourceLocation(3739, 156, 22),
 			}),
 		],
-		location: new SourceLocation(3735, 156, 23),
+		location: new SourceLocation(3740, 156, 23),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3738, 156, 26),
+		location: new SourceLocation(3743, 156, 26),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3740, 156, 28),
+				location: new SourceLocation(3745, 156, 28),
 			}),
 		],
-		location: new SourceLocation(3739, 156, 27),
+		location: new SourceLocation(3744, 156, 27),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3741, 157, 1),
+				location: new SourceLocation(3746, 157, 1),
 			}),
 		],
-		location: new SourceLocation(3742, 158, 1),
+		location: new SourceLocation(3747, 158, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3748, 158, 7),
+				location: new SourceLocation(3753, 158, 7),
 			}),
 		],
-		location: new SourceLocation(3749, 158, 8),
+		location: new SourceLocation(3754, 158, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cities_ab", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3754, 158, 13),
+				location: new SourceLocation(3759, 158, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3764, 158, 23),
+				location: new SourceLocation(3769, 158, 23),
 			}),
 		],
-		location: new SourceLocation(3755, 158, 14),
+		location: new SourceLocation(3760, 158, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3765, 159, 1),
+				location: new SourceLocation(3770, 159, 1),
 			}),
 		],
-		location: new SourceLocation(3769, 159, 5),
+		location: new SourceLocation(3774, 159, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3778, 159, 14),
+				location: new SourceLocation(3783, 159, 14),
 			}),
 		],
-		location: new SourceLocation(3779, 159, 15),
+		location: new SourceLocation(3784, 159, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "cities", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3781, 159, 17),
+				location: new SourceLocation(3786, 159, 17),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3788, 159, 24),
+				location: new SourceLocation(3793, 159, 24),
 			}),
 		],
-		location: new SourceLocation(3782, 159, 18),
+		location: new SourceLocation(3787, 159, 18),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3790, 159, 26),
+				location: new SourceLocation(3795, 159, 26),
 			}),
 		],
-		location: new SourceLocation(3789, 159, 25),
+		location: new SourceLocation(3794, 159, 25),
 	}),
 	new Token(SqlTokenType.Reserved, "CONSTRAINT", {
 		keyword: SqlKeywords.CONSTRAINT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3791, 160, 1),
+				location: new SourceLocation(3796, 160, 1),
 			}),
 		],
-		location: new SourceLocation(3795, 160, 5),
+		location: new SourceLocation(3800, 160, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "city_id_nonzero", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3805, 160, 15),
+				location: new SourceLocation(3810, 160, 15),
 			}),
 		],
-		location: new SourceLocation(3806, 160, 16),
+		location: new SourceLocation(3811, 160, 16),
 	}),
 	new Token(SqlTokenType.Reserved, "CHECK", {
 		keyword: SqlKeywords.CHECK,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3821, 160, 31),
+				location: new SourceLocation(3826, 160, 31),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3827, 160, 37),
+				location: new SourceLocation(3832, 160, 37),
 			}),
 		],
-		location: new SourceLocation(3822, 160, 32),
+		location: new SourceLocation(3827, 160, 32),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3828, 160, 38),
+		location: new SourceLocation(3833, 160, 38),
 	}),
 	new Token(SqlTokenType.Identifier, "city_id", {
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3836, 160, 46),
+				location: new SourceLocation(3841, 160, 46),
 			}),
 		],
-		location: new SourceLocation(3829, 160, 39),
+		location: new SourceLocation(3834, 160, 39),
 	}),
 	new Token(SqlTokenType.Operator, "!=", {
-		location: new SourceLocation(3837, 160, 47),
+		location: new SourceLocation(3842, 160, 47),
 	}),
 	new Token(SqlTokenType.Numeric, "0", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3839, 160, 49),
+				location: new SourceLocation(3844, 160, 49),
 			}),
 		],
-		location: new SourceLocation(3840, 160, 50),
+		location: new SourceLocation(3845, 160, 50),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3842, 160, 52),
+				location: new SourceLocation(3847, 160, 52),
 			}),
 		],
-		location: new SourceLocation(3841, 160, 51),
+		location: new SourceLocation(3846, 160, 51),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3843, 161, 1),
+		location: new SourceLocation(3848, 161, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3844, 161, 2),
+				location: new SourceLocation(3849, 161, 2),
 			}),
 		],
-		location: new SourceLocation(3845, 161, 3),
+		location: new SourceLocation(3850, 161, 3),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3848, 161, 6),
+				location: new SourceLocation(3853, 161, 6),
 			}),
 		],
-		location: new SourceLocation(3849, 161, 7),
+		location: new SourceLocation(3854, 161, 7),
 	}),
 	new Token(SqlTokenType.Reserved, "IN", {
 		keyword: SqlKeywords.IN,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3855, 161, 13),
+				location: new SourceLocation(3860, 161, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3858, 161, 16),
+				location: new SourceLocation(3863, 161, 16),
 			}),
 		],
-		location: new SourceLocation(3856, 161, 14),
+		location: new SourceLocation(3861, 161, 14),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3859, 161, 17),
+		location: new SourceLocation(3864, 161, 17),
 	}),
 	new Token(SqlTokenType.String, "'a'", {
-		location: new SourceLocation(3860, 161, 18),
+		location: new SourceLocation(3865, 161, 18),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(3863, 161, 21),
+		location: new SourceLocation(3868, 161, 21),
 	}),
 	new Token(SqlTokenType.String, "'b'", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3864, 161, 22),
+				location: new SourceLocation(3869, 161, 22),
 			}),
 		],
-		location: new SourceLocation(3865, 161, 23),
+		location: new SourceLocation(3870, 161, 23),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3868, 161, 26),
+		location: new SourceLocation(3873, 161, 26),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3869, 161, 27),
+				location: new SourceLocation(3874, 161, 27),
 			}),
 		],
-		location: new SourceLocation(3870, 161, 28),
+		location: new SourceLocation(3875, 161, 28),
 	}),
 	new Token(SqlTokenType.Identifier, "BY", {
 		keyword: SqlKeywords.BY,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3879, 161, 37),
+				location: new SourceLocation(3884, 161, 37),
 			}),
 		],
-		location: new SourceLocation(3880, 161, 38),
+		location: new SourceLocation(3885, 161, 38),
 	}),
 	new Token(SqlTokenType.Identifier, "RANGE", {
 		keyword: SqlKeywords.RANGE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3882, 161, 40),
+				location: new SourceLocation(3887, 161, 40),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3888, 161, 46),
+				location: new SourceLocation(3893, 161, 46),
 			}),
 		],
-		location: new SourceLocation(3883, 161, 41),
+		location: new SourceLocation(3888, 161, 41),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3889, 161, 47),
+		location: new SourceLocation(3894, 161, 47),
 	}),
 	new Token(SqlTokenType.Identifier, "population", {
-		location: new SourceLocation(3890, 161, 48),
+		location: new SourceLocation(3895, 161, 48),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3900, 161, 58),
+		location: new SourceLocation(3905, 161, 58),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3902, 161, 60),
+				location: new SourceLocation(3907, 161, 60),
 			}),
 		],
-		location: new SourceLocation(3901, 161, 59),
+		location: new SourceLocation(3906, 161, 59),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3903, 162, 1),
+				location: new SourceLocation(3908, 162, 1),
 			}),
 		],
-		location: new SourceLocation(3904, 163, 1),
+		location: new SourceLocation(3909, 163, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3910, 163, 7),
+				location: new SourceLocation(3915, 163, 7),
 			}),
 		],
-		location: new SourceLocation(3911, 163, 8),
+		location: new SourceLocation(3916, 163, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cities_ab_10000_to_100000", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3916, 163, 13),
+				location: new SourceLocation(3921, 163, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(3942, 163, 39),
+				location: new SourceLocation(3947, 163, 39),
 			}),
 		],
-		location: new SourceLocation(3917, 163, 14),
+		location: new SourceLocation(3922, 163, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(3943, 164, 1),
+				location: new SourceLocation(3948, 164, 1),
 			}),
 		],
-		location: new SourceLocation(3947, 164, 5),
+		location: new SourceLocation(3952, 164, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3956, 164, 14),
+				location: new SourceLocation(3961, 164, 14),
 			}),
 		],
-		location: new SourceLocation(3957, 164, 15),
+		location: new SourceLocation(3962, 164, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "cities_ab", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3959, 164, 17),
+				location: new SourceLocation(3964, 164, 17),
 			}),
 		],
-		location: new SourceLocation(3960, 164, 18),
+		location: new SourceLocation(3965, 164, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3969, 164, 27),
+				location: new SourceLocation(3974, 164, 27),
 			}),
 		],
-		location: new SourceLocation(3970, 164, 28),
+		location: new SourceLocation(3975, 164, 28),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3973, 164, 31),
+				location: new SourceLocation(3978, 164, 31),
 			}),
 		],
-		location: new SourceLocation(3974, 164, 32),
+		location: new SourceLocation(3979, 164, 32),
 	}),
 	new Token(SqlTokenType.Reserved, "FROM", {
 		keyword: SqlKeywords.FROM,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3980, 164, 38),
+				location: new SourceLocation(3985, 164, 38),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3985, 164, 43),
+				location: new SourceLocation(3990, 164, 43),
 			}),
 		],
-		location: new SourceLocation(3981, 164, 39),
+		location: new SourceLocation(3986, 164, 39),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3986, 164, 44),
+		location: new SourceLocation(3991, 164, 44),
 	}),
 	new Token(SqlTokenType.Numeric, "10000", {
-		location: new SourceLocation(3987, 164, 45),
+		location: new SourceLocation(3992, 164, 45),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(3992, 164, 50),
+		location: new SourceLocation(3997, 164, 50),
 	}),
 	new Token(SqlTokenType.Reserved, "TO", {
 		keyword: SqlKeywords.TO,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3993, 164, 51),
+				location: new SourceLocation(3998, 164, 51),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(3996, 164, 54),
+				location: new SourceLocation(4001, 164, 54),
 			}),
 		],
-		location: new SourceLocation(3994, 164, 52),
+		location: new SourceLocation(3999, 164, 52),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(3997, 164, 55),
+		location: new SourceLocation(4002, 164, 55),
 	}),
 	new Token(SqlTokenType.Numeric, "100000", {
-		location: new SourceLocation(3998, 164, 56),
+		location: new SourceLocation(4003, 164, 56),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(4004, 164, 62),
+		location: new SourceLocation(4009, 164, 62),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4006, 164, 64),
+				location: new SourceLocation(4011, 164, 64),
 			}),
 		],
-		location: new SourceLocation(4005, 164, 63),
+		location: new SourceLocation(4010, 164, 63),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4007, 165, 1),
+				location: new SourceLocation(4012, 165, 1),
 			}),
 		],
-		location: new SourceLocation(4008, 166, 1),
+		location: new SourceLocation(4013, 166, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4014, 166, 7),
+				location: new SourceLocation(4019, 166, 7),
 			}),
 		],
-		location: new SourceLocation(4015, 166, 8),
+		location: new SourceLocation(4020, 166, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "orders_p1", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4020, 166, 13),
+				location: new SourceLocation(4025, 166, 13),
 			}),
 		],
-		location: new SourceLocation(4021, 166, 14),
+		location: new SourceLocation(4026, 166, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4030, 166, 23),
+				location: new SourceLocation(4035, 166, 23),
 			}),
 		],
-		location: new SourceLocation(4031, 166, 24),
+		location: new SourceLocation(4036, 166, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4040, 166, 33),
+				location: new SourceLocation(4045, 166, 33),
 			}),
 		],
-		location: new SourceLocation(4041, 166, 34),
+		location: new SourceLocation(4046, 166, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "orders", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4043, 166, 36),
+				location: new SourceLocation(4048, 166, 36),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4050, 166, 43),
+				location: new SourceLocation(4055, 166, 43),
 			}),
 		],
-		location: new SourceLocation(4044, 166, 37),
+		location: new SourceLocation(4049, 166, 37),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(4051, 167, 1),
+				location: new SourceLocation(4056, 167, 1),
 			}),
 		],
-		location: new SourceLocation(4055, 167, 5),
+		location: new SourceLocation(4060, 167, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4058, 167, 8),
+				location: new SourceLocation(4063, 167, 8),
 			}),
 		],
-		location: new SourceLocation(4059, 167, 9),
+		location: new SourceLocation(4064, 167, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4065, 167, 15),
+				location: new SourceLocation(4070, 167, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4070, 167, 20),
+				location: new SourceLocation(4075, 167, 20),
 			}),
 		],
-		location: new SourceLocation(4066, 167, 16),
+		location: new SourceLocation(4071, 167, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(4071, 167, 21),
+		location: new SourceLocation(4076, 167, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "MODULUS", {
-		location: new SourceLocation(4072, 167, 22),
+		location: new SourceLocation(4077, 167, 22),
 	}),
 	new Token(SqlTokenType.Numeric, "4", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4079, 167, 29),
+				location: new SourceLocation(4084, 167, 29),
 			}),
 		],
-		location: new SourceLocation(4080, 167, 30),
+		location: new SourceLocation(4085, 167, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(4081, 167, 31),
+		location: new SourceLocation(4086, 167, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "REMAINDER", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4082, 167, 32),
+				location: new SourceLocation(4087, 167, 32),
 			}),
 		],
-		location: new SourceLocation(4083, 167, 33),
+		location: new SourceLocation(4088, 167, 33),
 	}),
 	new Token(SqlTokenType.Numeric, "0", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4092, 167, 42),
+				location: new SourceLocation(4097, 167, 42),
 			}),
 		],
-		location: new SourceLocation(4093, 167, 43),
+		location: new SourceLocation(4098, 167, 43),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(4094, 167, 44),
+		location: new SourceLocation(4099, 167, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4096, 167, 46),
+				location: new SourceLocation(4101, 167, 46),
 			}),
 		],
-		location: new SourceLocation(4095, 167, 45),
+		location: new SourceLocation(4100, 167, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
-		location: new SourceLocation(4097, 168, 1),
+		location: new SourceLocation(4102, 168, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4103, 168, 7),
+				location: new SourceLocation(4108, 168, 7),
 			}),
 		],
-		location: new SourceLocation(4104, 168, 8),
+		location: new SourceLocation(4109, 168, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "orders_p2", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4109, 168, 13),
+				location: new SourceLocation(4114, 168, 13),
 			}),
 		],
-		location: new SourceLocation(4110, 168, 14),
+		location: new SourceLocation(4115, 168, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4119, 168, 23),
+				location: new SourceLocation(4124, 168, 23),
 			}),
 		],
-		location: new SourceLocation(4120, 168, 24),
+		location: new SourceLocation(4125, 168, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4129, 168, 33),
+				location: new SourceLocation(4134, 168, 33),
 			}),
 		],
-		location: new SourceLocation(4130, 168, 34),
+		location: new SourceLocation(4135, 168, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "orders", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4132, 168, 36),
+				location: new SourceLocation(4137, 168, 36),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4139, 168, 43),
+				location: new SourceLocation(4144, 168, 43),
 			}),
 		],
-		location: new SourceLocation(4133, 168, 37),
+		location: new SourceLocation(4138, 168, 37),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(4140, 169, 1),
+				location: new SourceLocation(4145, 169, 1),
 			}),
 		],
-		location: new SourceLocation(4144, 169, 5),
+		location: new SourceLocation(4149, 169, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4147, 169, 8),
+				location: new SourceLocation(4152, 169, 8),
 			}),
 		],
-		location: new SourceLocation(4148, 169, 9),
+		location: new SourceLocation(4153, 169, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4154, 169, 15),
+				location: new SourceLocation(4159, 169, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4159, 169, 20),
+				location: new SourceLocation(4164, 169, 20),
 			}),
 		],
-		location: new SourceLocation(4155, 169, 16),
+		location: new SourceLocation(4160, 169, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(4160, 169, 21),
+		location: new SourceLocation(4165, 169, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "MODULUS", {
-		location: new SourceLocation(4161, 169, 22),
+		location: new SourceLocation(4166, 169, 22),
 	}),
 	new Token(SqlTokenType.Numeric, "4", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4168, 169, 29),
+				location: new SourceLocation(4173, 169, 29),
 			}),
 		],
-		location: new SourceLocation(4169, 169, 30),
+		location: new SourceLocation(4174, 169, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(4170, 169, 31),
+		location: new SourceLocation(4175, 169, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "REMAINDER", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4171, 169, 32),
+				location: new SourceLocation(4176, 169, 32),
 			}),
 		],
-		location: new SourceLocation(4172, 169, 33),
+		location: new SourceLocation(4177, 169, 33),
 	}),
 	new Token(SqlTokenType.Numeric, "1", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4181, 169, 42),
+				location: new SourceLocation(4186, 169, 42),
 			}),
 		],
-		location: new SourceLocation(4182, 169, 43),
+		location: new SourceLocation(4187, 169, 43),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(4183, 169, 44),
+		location: new SourceLocation(4188, 169, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4185, 169, 46),
+				location: new SourceLocation(4190, 169, 46),
 			}),
 		],
-		location: new SourceLocation(4184, 169, 45),
+		location: new SourceLocation(4189, 169, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
-		location: new SourceLocation(4186, 170, 1),
+		location: new SourceLocation(4191, 170, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4192, 170, 7),
+				location: new SourceLocation(4197, 170, 7),
 			}),
 		],
-		location: new SourceLocation(4193, 170, 8),
+		location: new SourceLocation(4198, 170, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "orders_p3", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4198, 170, 13),
+				location: new SourceLocation(4203, 170, 13),
 			}),
 		],
-		location: new SourceLocation(4199, 170, 14),
+		location: new SourceLocation(4204, 170, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4208, 170, 23),
+				location: new SourceLocation(4213, 170, 23),
 			}),
 		],
-		location: new SourceLocation(4209, 170, 24),
+		location: new SourceLocation(4214, 170, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4218, 170, 33),
+				location: new SourceLocation(4223, 170, 33),
 			}),
 		],
-		location: new SourceLocation(4219, 170, 34),
+		location: new SourceLocation(4224, 170, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "orders", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4221, 170, 36),
+				location: new SourceLocation(4226, 170, 36),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4228, 170, 43),
+				location: new SourceLocation(4233, 170, 43),
 			}),
 		],
-		location: new SourceLocation(4222, 170, 37),
+		location: new SourceLocation(4227, 170, 37),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(4229, 171, 1),
+				location: new SourceLocation(4234, 171, 1),
 			}),
 		],
-		location: new SourceLocation(4233, 171, 5),
+		location: new SourceLocation(4238, 171, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4236, 171, 8),
+				location: new SourceLocation(4241, 171, 8),
 			}),
 		],
-		location: new SourceLocation(4237, 171, 9),
+		location: new SourceLocation(4242, 171, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4243, 171, 15),
+				location: new SourceLocation(4248, 171, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4248, 171, 20),
+				location: new SourceLocation(4253, 171, 20),
 			}),
 		],
-		location: new SourceLocation(4244, 171, 16),
+		location: new SourceLocation(4249, 171, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(4249, 171, 21),
+		location: new SourceLocation(4254, 171, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "MODULUS", {
-		location: new SourceLocation(4250, 171, 22),
+		location: new SourceLocation(4255, 171, 22),
 	}),
 	new Token(SqlTokenType.Numeric, "4", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4257, 171, 29),
+				location: new SourceLocation(4262, 171, 29),
 			}),
 		],
-		location: new SourceLocation(4258, 171, 30),
+		location: new SourceLocation(4263, 171, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(4259, 171, 31),
+		location: new SourceLocation(4264, 171, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "REMAINDER", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4260, 171, 32),
+				location: new SourceLocation(4265, 171, 32),
 			}),
 		],
-		location: new SourceLocation(4261, 171, 33),
+		location: new SourceLocation(4266, 171, 33),
 	}),
 	new Token(SqlTokenType.Numeric, "2", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4270, 171, 42),
+				location: new SourceLocation(4275, 171, 42),
 			}),
 		],
-		location: new SourceLocation(4271, 171, 43),
+		location: new SourceLocation(4276, 171, 43),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(4272, 171, 44),
+		location: new SourceLocation(4277, 171, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4274, 171, 46),
+				location: new SourceLocation(4279, 171, 46),
 			}),
 		],
-		location: new SourceLocation(4273, 171, 45),
+		location: new SourceLocation(4278, 171, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
-		location: new SourceLocation(4275, 172, 1),
+		location: new SourceLocation(4280, 172, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4281, 172, 7),
+				location: new SourceLocation(4286, 172, 7),
 			}),
 		],
-		location: new SourceLocation(4282, 172, 8),
+		location: new SourceLocation(4287, 172, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "orders_p4", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4287, 172, 13),
+				location: new SourceLocation(4292, 172, 13),
 			}),
 		],
-		location: new SourceLocation(4288, 172, 14),
+		location: new SourceLocation(4293, 172, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4297, 172, 23),
+				location: new SourceLocation(4302, 172, 23),
 			}),
 		],
-		location: new SourceLocation(4298, 172, 24),
+		location: new SourceLocation(4303, 172, 24),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4307, 172, 33),
+				location: new SourceLocation(4312, 172, 33),
 			}),
 		],
-		location: new SourceLocation(4308, 172, 34),
+		location: new SourceLocation(4313, 172, 34),
 	}),
 	new Token(SqlTokenType.Identifier, "orders", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4310, 172, 36),
+				location: new SourceLocation(4315, 172, 36),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4317, 172, 43),
+				location: new SourceLocation(4322, 172, 43),
 			}),
 		],
-		location: new SourceLocation(4311, 172, 37),
+		location: new SourceLocation(4316, 172, 37),
 	}),
 	new Token(SqlTokenType.Reserved, "FOR", {
 		keyword: SqlKeywords.FOR,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(4318, 173, 1),
+				location: new SourceLocation(4323, 173, 1),
 			}),
 		],
-		location: new SourceLocation(4322, 173, 5),
+		location: new SourceLocation(4327, 173, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "VALUES", {
 		keyword: SqlKeywords.VALUES,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4325, 173, 8),
+				location: new SourceLocation(4330, 173, 8),
 			}),
 		],
-		location: new SourceLocation(4326, 173, 9),
+		location: new SourceLocation(4331, 173, 9),
 	}),
 	new Token(SqlTokenType.Reserved, "WITH", {
 		keyword: SqlKeywords.WITH,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4332, 173, 15),
+				location: new SourceLocation(4337, 173, 15),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4337, 173, 20),
+				location: new SourceLocation(4342, 173, 20),
 			}),
 		],
-		location: new SourceLocation(4333, 173, 16),
+		location: new SourceLocation(4338, 173, 16),
 	}),
 	new Token(SqlTokenType.LeftParen, "(", {
-		location: new SourceLocation(4338, 173, 21),
+		location: new SourceLocation(4343, 173, 21),
 	}),
 	new Token(SqlTokenType.Identifier, "MODULUS", {
-		location: new SourceLocation(4339, 173, 22),
+		location: new SourceLocation(4344, 173, 22),
 	}),
 	new Token(SqlTokenType.Numeric, "4", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4346, 173, 29),
+				location: new SourceLocation(4351, 173, 29),
 			}),
 		],
-		location: new SourceLocation(4347, 173, 30),
+		location: new SourceLocation(4352, 173, 30),
 	}),
 	new Token(SqlTokenType.Comma, ",", {
-		location: new SourceLocation(4348, 173, 31),
+		location: new SourceLocation(4353, 173, 31),
 	}),
 	new Token(SqlTokenType.Identifier, "REMAINDER", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4349, 173, 32),
+				location: new SourceLocation(4354, 173, 32),
 			}),
 		],
-		location: new SourceLocation(4350, 173, 33),
+		location: new SourceLocation(4355, 173, 33),
 	}),
 	new Token(SqlTokenType.Numeric, "3", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4359, 173, 42),
+				location: new SourceLocation(4364, 173, 42),
 			}),
 		],
-		location: new SourceLocation(4360, 173, 43),
+		location: new SourceLocation(4365, 173, 43),
 	}),
 	new Token(SqlTokenType.RightParen, ")", {
-		location: new SourceLocation(4361, 173, 44),
+		location: new SourceLocation(4366, 173, 44),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4363, 173, 46),
+				location: new SourceLocation(4368, 173, 46),
 			}),
 		],
-		location: new SourceLocation(4362, 173, 45),
+		location: new SourceLocation(4367, 173, 45),
 	}),
 	new Token(SqlTokenType.Reserved, "CREATE", {
 		keyword: SqlKeywords.CREATE,
 		preskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4364, 174, 1),
+				location: new SourceLocation(4369, 174, 1),
 			}),
 		],
-		location: new SourceLocation(4365, 175, 1),
+		location: new SourceLocation(4370, 175, 1),
 	}),
 	new Token(SqlTokenType.Reserved, "TABLE", {
 		keyword: SqlKeywords.TABLE,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4371, 175, 7),
+				location: new SourceLocation(4376, 175, 7),
 			}),
 		],
-		location: new SourceLocation(4372, 175, 8),
+		location: new SourceLocation(4377, 175, 8),
 	}),
 	new Token(SqlTokenType.Identifier, "cities_partdef", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4377, 175, 13),
+				location: new SourceLocation(4382, 175, 13),
 			}),
 		],
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4392, 175, 28),
+				location: new SourceLocation(4397, 175, 28),
 			}),
 		],
-		location: new SourceLocation(4378, 175, 14),
+		location: new SourceLocation(4383, 175, 14),
 	}),
 	new Token(SqlTokenType.Identifier, "PARTITION", {
 		keyword: SqlKeywords.PARTITION,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, "    ", {
-				location: new SourceLocation(4393, 176, 1),
+				location: new SourceLocation(4398, 176, 1),
 			}),
 		],
-		location: new SourceLocation(4397, 176, 5),
+		location: new SourceLocation(4402, 176, 5),
 	}),
 	new Token(SqlTokenType.Identifier, "OF", {
 		keyword: SqlKeywords.OF,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4406, 176, 14),
+				location: new SourceLocation(4411, 176, 14),
 			}),
 		],
-		location: new SourceLocation(4407, 176, 15),
+		location: new SourceLocation(4412, 176, 15),
 	}),
 	new Token(SqlTokenType.Identifier, "cities", {
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4409, 176, 17),
+				location: new SourceLocation(4414, 176, 17),
 			}),
 		],
-		location: new SourceLocation(4410, 176, 18),
+		location: new SourceLocation(4415, 176, 18),
 	}),
 	new Token(SqlTokenType.Reserved, "DEFAULT", {
 		keyword: SqlKeywords.DEFAULT,
 		preskips: [
 			new Token(SqlTokenType.WhiteSpace, " ", {
-				location: new SourceLocation(4416, 176, 24),
+				location: new SourceLocation(4421, 176, 24),
 			}),
 		],
-		location: new SourceLocation(4417, 176, 25),
+		location: new SourceLocation(4422, 176, 25),
 	}),
 	new Token(SqlTokenType.SemiColon, ";", {
 		eos: true,
 		postskips: [
 			new Token(SqlTokenType.LineBreak, "\n", {
-				location: new SourceLocation(4425, 176, 33),
+				location: new SourceLocation(4430, 176, 33),
 			}),
 		],
-		location: new SourceLocation(4424, 176, 32),
+		location: new SourceLocation(4429, 176, 32),
 	}),
 	new Token(SqlTokenType.EoF, "", {
 		eos: true,
-		location: new SourceLocation(4426, 177, 1),
+		location: new SourceLocation(4431, 177, 1),
 	}),
 ];

@@ -107,6 +107,55 @@ export function escapeXml(text: string, options?: { control?: boolean }) {
 	});
 }
 
+export function compareVersion(version1 = "0", version2 = "0") {
+	const v1 = toVersionObject(version1);
+	const v2 = toVersionObject(version2);
+	for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+		if (v1[i] == null || v2[i] == null) {
+			return v1[i] == null ? (v2[i] == null ? 0 : -1) : 1;
+		}
+		if (typeof v1[i] === typeof v2[i]) {
+			if (v1[i] !== v2[i]) {
+				return v1[i] < v2[i] ? -1 : 1;
+			}
+		} else {
+			return typeof v1[i] === "number" ? -1 : 1;
+		}
+	}
+	return 0;
+}
+
+function toVersionObject(text: string) {
+	const cparts =
+		/^([0-9]+(?:\.[0-9]+)*)(?:-([^.+]+(?:\.[^.+]+)*))?(?:\+.+)?$/.exec(text);
+	if (!cparts) {
+		throw new Error(`Invalid version number: ${text}`);
+	}
+
+	const vparts = [];
+	const nparts = cparts[1].split(".");
+	let hex = "0x";
+	for (let i = 0; i < 6; i++) {
+		if (i < nparts.length) {
+			hex += Number.parseInt(nparts[i], 10).toString(16).padStart(2, "0");
+		} else {
+			hex += "00";
+		}
+	}
+	vparts.push(Number.parseInt(hex, 16));
+	if (cparts[2]) {
+		const sparts = cparts[2].split(".");
+		for (let i = 0; i < 6; i++) {
+			if (/^[0-9]+$/.test(sparts[i])) {
+				vparts.push(Number.parseInt(sparts[i], 10));
+			} else {
+				vparts.push(sparts[i]);
+			}
+		}
+	}
+	return vparts;
+}
+
 export function unescapeXml(text: string) {
 	return text.replace(/&(amp|lt|gt|quot|#x[0-9A-Fa-f]+|#[0-9]+);/g, (m) => {
 		switch (m) {
