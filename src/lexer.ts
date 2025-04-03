@@ -523,14 +523,24 @@ export class TokenReader {
 			let start = end;
 			while (start >= 0) {
 				const text = this.tokens[start].toString();
-				if (start === 0 || text.indexOf("\n") !== -1) {
+				const linebreak = text.indexOf("\n");
+				if (start === 0) {
 					break;
+				} else if (linebreak !== -1) {
+					if (end - start > 3) {
+						break;
+					}
 				}
 				start--;
 			}
 			let line = "";
 			for (let i = start; i <= end; i++) {
-				line += this.tokens[i].toString();
+				const text = this.tokens[i].toString();
+				if (i === start) {
+					line += text.replace(/^.*\n/, "");
+				} else {
+					line += text;
+				}
 			}
 			message = `Unexpected token: ${token.text}\n${line.replace(/\r?\n/g, "\u21B5\n")}\u261C`;
 		}
