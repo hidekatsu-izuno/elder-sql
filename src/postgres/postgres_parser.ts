@@ -22,7 +22,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 	parseTokens(tokens: Token[], b: CstBuilder<CstNode>) {
 		const r = new TokenReader(tokens);
 		const errors = [];
-		b.start("Script");
+		const root = b.start("Script");
 		while (r.peek()) {
 			try {
 				if (
@@ -49,10 +49,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 				}
 			}
 		}
-		const root = b.end();
-		if (root !== b.root) {
-			throw new Error("The current position is invalid.");
-		}
+		b.end(root);
 
 		if (errors.length) {
 			throw new AggregateParseError(
@@ -61,8 +58,6 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
-
-		return root;
 	}
 
 	private explainStatement(b: CstBuilder<CstNode>, r: TokenReader) {
@@ -174,7 +169,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 			}
 			throw err;
 		}
-		return b.end();
+		return b.end(stmt);
 	}
 
 	private statement(b: CstBuilder<CstNode>, r: TokenReader) {

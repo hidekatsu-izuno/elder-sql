@@ -61,8 +61,6 @@ export class OracleParser<CstNode = Element> extends Parser<CstNode> {
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
-
-		return root;
 	}
 
 	private explainStatement(b: CstBuilder<CstNode>, r: TokenReader) {

@@ -522,10 +522,8 @@ export class TokenReader {
 			const end = Math.min(this.pos, this.tokens.length - 1);
 			let start = end;
 			while (start >= 0) {
-				if (start === 0 || this.tokens[start].toString().indexOf("\n") !== -1) {
-					if (start === end) {
-						start = Math.max(start - 3, 0);
-					}
+				const text = this.tokens[start].toString();
+				if (start === 0 || text.indexOf("\n") !== -1) {
 					break;
 				}
 				start--;

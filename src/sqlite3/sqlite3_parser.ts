@@ -60,7 +60,6 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 				`${errors.length} error found\n${errors.map((e) => e.message).join("\n")}`,
 			);
 		}
-		return root;
 	}
 
 	private unknown(b: CstBuilder<CstNode>, r: TokenReader, base: CstNode) {
