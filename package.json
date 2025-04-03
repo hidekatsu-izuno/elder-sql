@@ -114,7 +114,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@tsconfig/recommended": "^1.0.8",
 		"@types/node": "^22.14.0",
 		"commit-and-tag-version": "^12.5.0",
 		"ts-patch": "^3.3.0",
