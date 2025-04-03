@@ -8,17 +8,17 @@ export declare type ParserOptions = {
 };
 
 export abstract class Parser<CstNode> {
-	lexer: Lexer;
-	builder: CstBuilder<CstNode>;
-	options: ParserOptions;
+	private lexer: Lexer;
+	private builderFactory: () => CstBuilder<CstNode>;
+	private options: ParserOptions;
 
 	constructor(
-		lexer: Lexer,
-		builder: CstBuilder<CstNode>,
-		options: ParserOptions = {},
+		lexer: typeof this.lexer,
+		builderFactory: typeof this.builderFactory,
+		options: typeof this.options = {},
 	) {
 		this.lexer = lexer;
-		this.builder = builder;
+		this.builderFactory = builderFactory;
 		this.options = options;
 	}
 
@@ -26,10 +26,12 @@ export abstract class Parser<CstNode> {
 		const tokens = Array.isArray(script)
 			? script
 			: this.lexer.lex(script, filename);
-		return this.parseTokens(tokens);
+		const builder = this.builderFactory();
+		this.parseTokens(tokens, builder);
+		return builder.root;
 	}
 
-	abstract parseTokens(tokens: Token[]): CstNode;
+	abstract parseTokens(tokens: Token[], builder: CstBuilder<CstNode>): void;
 }
 
 export class AggregateParseError<CstNode> extends Error {

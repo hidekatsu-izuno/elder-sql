@@ -1,3 +1,4 @@
+import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.ts";
 import {
 	AggregateParseError,
@@ -9,21 +10,20 @@ import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { Sqlite3Lexer } from "./sqlite3_lexer.ts";
 
-export class Sqlite3Parser<CstNode> extends Parser<CstNode> {
+export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 	compileOptions: Set<string>;
 
 	constructor(options: Record<string, any> = {}) {
 		super(
 			options.lexer ?? new Sqlite3Lexer(options),
-			options.builder ?? new DomhandlerCstBuilder(options),
+			options.builderFactory ?? (() => new DomhandlerCstBuilder(options)),
 			options,
 		);
 		this.compileOptions = new Set(options.compileOptions || []);
 	}
 
-	parseTokens(tokens: Token[]) {
+	parseTokens(tokens: Token[], b: CstBuilder<CstNode>) {
 		const r = new TokenReader(tokens);
-		const b = this.builder;
 		const errors = [];
 		const root = b.start("Script");
 		while (r.peek()) {

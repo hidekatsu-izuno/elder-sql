@@ -2,6 +2,7 @@ import type { Element } from "domhandler";
 import { ParseError, type Token, TokenReader } from "../lexer.ts";
 import {
 	AggregateParseError,
+	type CstBuilder,
 	DomhandlerCstBuilder,
 	Parser,
 } from "../parser.ts";
@@ -9,14 +10,17 @@ import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { OracleLexer } from "./oracle_lexer.ts";
 
-export class OracleParser extends Parser {
+export class OracleParser<CstNode = Element> extends Parser<CstNode> {
 	constructor(options: Record<string, any> = {}) {
-		super(options.lexer ?? new OracleLexer(options), options);
+		super(
+			options.lexer ?? new OracleLexer(options),
+			options.builderFactory ?? (() => new DomhandlerCstBuilder(options)),
+			options,
+		);
 	}
 
-	parseTokens(tokens: Token[]) {
+	parseTokens(tokens: Token[], b: CstBuilder<CstNode>) {
 		const r = new TokenReader(tokens);
-		const b = new DomhandlerCstBuilder();
 		const errors = [];
 		b.start("Script");
 		while (r.peek()) {
@@ -61,7 +65,7 @@ export class OracleParser extends Parser {
 		return root;
 	}
 
-	private explainStatement(b: DomhandlerCstBuilder, r: TokenReader) {
+	private explainStatement(b: CstBuilder<CstNode>, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
 			b.token(r.consume(SqlKeywords.EXPLAIN));
@@ -82,7 +86,7 @@ export class OracleParser extends Parser {
 		return b.end();
 	}
 
-	private statement(b: DomhandlerCstBuilder, r: TokenReader) {
+	private statement(b: CstBuilder<CstNode>, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
@@ -151,10 +155,8 @@ export class OracleParser extends Parser {
 		return stmt;
 	}
 
-	private unknown(b: DomhandlerCstBuilder, r: TokenReader, base: Element) {
-		while (b.current !== b.root && b.current !== base) {
-			b.end();
-		}
+	private unknown(b: CstBuilder<CstNode>, r: TokenReader, base: CstNode) {
+		b.current = base;
 		let node: ReturnType<typeof b.end> | undefined;
 		if (!r.peek().eos) {
 			b.start("Unknown");
@@ -163,15 +165,11 @@ export class OracleParser extends Parser {
 			}
 			node = b.end();
 		}
-		if (base.parent) {
-			while (b.current !== b.root && b.current !== base.parent) {
-				b.end();
-			}
-		}
+		b.current = b.root;
 		return node;
 	}
 
-	private command(b: DomhandlerCstBuilder, r: TokenReader) {
+	private command(b: CstBuilder<CstNode>, r: TokenReader) {
 		const stmt = b.start("CommandStatement");
 		try {
 			b.start("CommandName");

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
+import type { Element } from "domhandler";
 import { AggregateParseError, DomhandlerCstBuilder } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { writeDebugFile } from "../utils/debug.ts";
@@ -47,7 +48,7 @@ describe("test sqlite3 parser", () => {
 					path.join(__dirname, "scripts", `${target}.sql`),
 					"utf8",
 				);
-				let node: ReturnType<typeof Sqlite3Parser.prototype.parse>;
+				let node: Element;
 				try {
 					node = new Sqlite3Parser().parse(script);
 				} catch (err) {
