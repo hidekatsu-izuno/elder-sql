@@ -2,7 +2,6 @@ import { Element } from "domhandler";
 import { textContent } from "domutils";
 import {
 	FromObject,
-	ResolvedColumn,
 	Resolver,
 	type ResolverOptions,
 } from "../resolver.ts";
