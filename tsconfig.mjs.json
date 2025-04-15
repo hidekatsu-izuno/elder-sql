@@ -3,11 +3,5 @@
 	"compilerOptions": {
 		"emitDeclarationOnly": false,
 		"allowImportingTsExtensions": false,
-		"plugins": [
-			{
-				"transform": "./scripts/transform-ts-to-js.js",
-				"transformProgram": true
-			}
-		]
 	}
 }

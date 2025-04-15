@@ -13,6 +13,7 @@
 		"emitDeclarationOnly": true,
 		"erasableSyntaxOnly": true,
 		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
 		"paths": {
 			"@/*": ["./src/*"]
 		}
