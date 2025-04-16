@@ -1,10 +1,6 @@
 import { Element } from "domhandler";
 import { textContent } from "domutils";
-import {
-	FromObject,
-	Resolver,
-	type ResolverOptions,
-} from "../resolver.ts";
+import { FromObject, Resolver, type ResolverOptions } from "../resolver.ts";
 import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
 export class Sqlite3Resolver extends Resolver {

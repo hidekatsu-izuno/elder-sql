@@ -10,26 +10,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test postgres lexer", () => {
-	test("test by file", { concurrency: true }, async (t) => {
-		const targets = [
-			"create_function",
-			"create_procedure",
-			"create_table",
-			"select",
-		];
-		for (const target of targets) {
-			await t.test(`${target}`, async () => {
-				const script = fs.readFileSync(
-					path.join(__dirname, "scripts", `${target}.sql`),
-					"utf8",
-				);
-				const tokens = new PostgresLexer().lex(script);
+	for (const target of [
+		"create_function",
+		"create_procedure",
+		"create_table",
+		"select",
+	]) {
+		test(`test for ${target}`, async () => {
+			const script = fs.readFileSync(
+				path.join(__dirname, "scripts", `${target}.sql`),
+				"utf8",
+			);
+			const tokens = new PostgresLexer().lex(script);
 
-				writeDebugFile(`dump/postgres/lexer/${target}.ts`, toJSScript(tokens));
+			writeDebugFile(`dump/postgres/lexer/${target}.ts`, toJSScript(tokens));
 
-				const expected = (await import(`./lexer/${target}.ts`)).default;
-				assert.deepEqual(tokens, expected);
-			});
-		}
-	});
+			const expected = (await import(`./lexer/${target}.ts`)).default;
+			assert.deepEqual(tokens, expected);
+		});
+	}
 });

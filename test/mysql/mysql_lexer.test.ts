@@ -10,23 +10,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test mysql lexer", () => {
-	test("test by file", { concurrency: true }, async (t) => {
-		const targets = ["version_comment"];
-		for (const target of targets) {
-			await t.test(`${target}`, async () => {
-				const script = fs.readFileSync(
-					path.join(__dirname, "scripts", `${target}.sql`),
-					"utf8",
-				);
-				const tokens = new MysqlLexer({
-					version: "5.7.0",
-				}).lex(script);
+	for (const target of ["version_comment"]) {
+		test(`test by ${target}`, async () => {
+			const script = fs.readFileSync(
+				path.join(__dirname, "scripts", `${target}.sql`),
+				"utf8",
+			);
+			const tokens = new MysqlLexer({
+				version: "5.7.0",
+			}).lex(script);
 
-				writeDebugFile(`dump/mysql/lexer/${target}.ts`, toJSScript(tokens));
+			writeDebugFile(`dump/mysql/lexer/${target}.ts`, toJSScript(tokens));
 
-				const expected = (await import(`./lexer/${target}.ts`)).default;
-				assert.strictEqual(toJSString(tokens), toJSString(expected));
-			});
-		}
-	});
+			const expected = (await import(`./lexer/${target}.ts`)).default;
+			assert.strictEqual(toJSString(tokens), toJSString(expected));
+		});
+	}
 });

@@ -9,7 +9,7 @@
 	"scripts": {
 		"build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
 		"test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
-		"biome:check": "biome check --write",
+		"format": "biome check --write",
 		"version:major": "npm run build && commit-and-tag-version --release-as major",
 		"version:major:alpha": "npm run build && commit-and-tag-version --release-as major --prerelease alpha",
 		"version:minor": "npm run build && commit-and-tag-version --release-as minor",
@@ -40,9 +40,7 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": [
-		"sql"
-	],
+	"keywords": ["sql"],
 	"exports": {
 		".": {
 			"import": {

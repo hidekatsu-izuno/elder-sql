@@ -12,64 +12,59 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe("test sqlite3 parser", () => {
-	test("test by file", { concurrency: true }, async (t) => {
-		const targets = [
-			"alter_table",
-			"analyze",
-			"attach_database",
-			"begin_transaction",
-			"command",
-			"commit_transaction",
-			"create_index",
-			"create_table",
-			"create_trigger",
-			"create_view",
-			"delete",
-			"detach_database",
-			"drop_index",
-			"drop_table",
-			"drop_trigger",
-			"drop_view",
-			"explain",
-			"insert",
-			"pragma",
-			"reindex",
-			"release_savepoint",
-			"rollback_transaction",
-			"savepoint",
-			"select",
-			"update",
-			"vacuum",
-			"unknown",
-		];
-		for (const target of targets) {
-			await t.test(`${target}`, async () => {
-				const script = fs.readFileSync(
-					path.join(__dirname, "scripts", `${target}.sql`),
-					"utf8",
-				);
-				let node: Element;
-				try {
-					node = new Sqlite3Parser().parse(script);
-				} catch (err) {
-					if (target === "unknown" && err instanceof AggregateParseError) {
-						node = err.node;
-					} else {
-						throw err;
-					}
+	for (const target of [
+		"alter_table",
+		"analyze",
+		"attach_database",
+		"begin_transaction",
+		"command",
+		"commit_transaction",
+		"create_index",
+		"create_table",
+		"create_trigger",
+		"create_view",
+		"delete",
+		"detach_database",
+		"drop_index",
+		"drop_table",
+		"drop_trigger",
+		"drop_view",
+		"explain",
+		"insert",
+		"pragma",
+		"reindex",
+		"release_savepoint",
+		"rollback_transaction",
+		"savepoint",
+		"select",
+		"update",
+		"vacuum",
+		"unknown",
+	]) {
+		test(`test for ${target}`, () => {
+			const script = fs.readFileSync(
+				path.join(__dirname, "scripts", `${target}.sql`),
+				"utf8",
+			);
+			let node: Element;
+			try {
+				node = new Sqlite3Parser().parse(script);
+			} catch (err) {
+				if (target === "unknown" && err instanceof AggregateParseError) {
+					node = err.node;
+				} else {
+					throw err;
 				}
-				const actual = new DomhandlerCstBuilder({ trivia: false }).toString(
-					node,
-				);
-				writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actual);
+			}
+			const actual = new DomhandlerCstBuilder({ trivia: false }).toString(node);
+			writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actual);
 
-				const expected = fs.readFileSync(
-					path.join(__dirname, "parser", `${target}.xml`),
-					"utf8",
-				);
+			const expected = fs.readFileSync(
+				path.join(__dirname, "parser", `${target}.xml`),
+				"utf8",
+			);
 
-				assert.strictEqual(actual, expected);
-			});
-		}
-	});
+			assert.strictEqual(actual, expected);
+		});
+	}
 });
