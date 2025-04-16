@@ -7,8 +7,7 @@
 	"module": "./module/index.js",
 	"types": "./module/index.d.ts",
 	"scripts": {
-		"prepare": "ts-patch install -s",
-		"build": "tspc --build --clean && tspc -p ./tsconfig.mjs.json && tspc -p ./tsconfig.cjs.json",
+		"build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
 		"test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
 		"biome:check": "biome check --write",
 		"version:major": "npm run build && commit-and-tag-version --release-as major",
@@ -117,7 +116,6 @@
 		"@biomejs/biome": "1.9.4",
 		"@types/node": "^22.14.0",
 		"commit-and-tag-version": "^12.5.0",
-		"ts-patch": "^3.3.0",
 		"typescript": "^5.8.2"
 	},
 	"dependencies": {
