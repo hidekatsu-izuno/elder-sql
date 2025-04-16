@@ -3,9 +3,9 @@
 	"version": "0.1.0-alpha.15",
 	"description": "Database connection library of a elder style.",
 	"type": "module",
-	"main": "./lib/index.js",
-	"module": "./module/index.js",
-	"types": "./module/index.d.ts",
+	"main": "./cjs/index.js",
+	"module": "./mjs/index.js",
+	"types": "./mjs/index.d.ts",
 	"scripts": {
 		"build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
 		"test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
@@ -20,15 +20,15 @@
 	},
 	"files": [
 		"bin/",
-		"lib/",
-		"module/",
+		"cjs/",
+		"mjs/",
 		"src/",
 		"LICENSE",
 		"package.json",
 		"README.md"
 	],
 	"bin": {
-		"esql": "./lib/cli.js"
+		"esql": "./cjs/cli.js"
 	},
 	"repository": {
 		"type": "git",
@@ -44,69 +44,69 @@
 	"exports": {
 		".": {
 			"import": {
-				"types": "./module/index.d.ts",
-				"default": "./module/index.js"
+				"types": "./mjs/index.d.ts",
+				"default": "./mjs/index.js"
 			},
 			"require": {
-				"types": "./lib/index.d.ts",
-				"default": "./lib/index.js"
+				"types": "./cjs/index.d.ts",
+				"default": "./cjs/index.js"
 			},
-			"default": "./lib/index.js"
+			"default": "./cjs/index.js"
 		},
 		"./mssql": {
 			"import": {
-				"types": "./module/mssql/index.d.ts",
-				"default": "./module/mssql/index.js"
+				"types": "./mjs/mssql/index.d.ts",
+				"default": "./mjs/mssql/index.js"
 			},
 			"require": {
-				"types": "./lib/mssql/index.d.ts",
-				"default": "./lib/mssql/index.js"
+				"types": "./cjs/mssql/index.d.ts",
+				"default": "./cjs/mssql/index.js"
 			},
-			"default": "./lib/mssql/index.js"
+			"default": "./cjs/mssql/index.js"
 		},
 		"./mysql": {
 			"import": {
-				"types": "./module/mysql/index.d.ts",
-				"default": "./module/mysql/index.js"
+				"types": "./mjs/mysql/index.d.ts",
+				"default": "./mjs/mysql/index.js"
 			},
 			"require": {
-				"types": "./lib/mysql/index.d.ts",
-				"default": "./lib/mysql/index.js"
+				"types": "./cjs/mysql/index.d.ts",
+				"default": "./cjs/mysql/index.js"
 			},
-			"default": "./lib/mysql/index.js"
+			"default": "./cjs/mysql/index.js"
 		},
 		"./oracle": {
 			"import": {
-				"types": "./module/oracle/index.d.ts",
-				"default": "./module/oracle/index.js"
+				"types": "./mjs/oracle/index.d.ts",
+				"default": "./mjs/oracle/index.js"
 			},
 			"require": {
-				"types": "./lib/oracle/index.d.ts",
-				"default": "./lib/oracle/index.js"
+				"types": "./cjs/oracle/index.d.ts",
+				"default": "./cjs/oracle/index.js"
 			},
-			"default": "./lib/oracle/index.js"
+			"default": "./cjs/oracle/index.js"
 		},
 		"./postgres": {
 			"import": {
-				"types": "./module/postgres/index.d.ts",
-				"default": "./module/postgres/index.js"
+				"types": "./mjs/postgres/index.d.ts",
+				"default": "./mjs/postgres/index.js"
 			},
 			"require": {
-				"types": "./lib/postgres/index.d.ts",
-				"default": "./lib/postgres/index.js"
+				"types": "./cjs/postgres/index.d.ts",
+				"default": "./cjs/postgres/index.js"
 			},
-			"default": "./lib/postgres/index.js"
+			"default": "./cjs/postgres/index.js"
 		},
 		"./sqlite3": {
 			"import": {
-				"types": "./module/sqlite3/index.d.ts",
-				"default": "./module/sqlite3/index.js"
+				"types": "./mjs/sqlite3/index.d.ts",
+				"default": "./mjs/sqlite3/index.js"
 			},
 			"require": {
-				"types": "./lib/sqlite3/index.d.ts",
-				"default": "./lib/sqlite3/index.js"
+				"types": "./cjs/sqlite3/index.d.ts",
+				"default": "./cjs/sqlite3/index.js"
 			},
-			"default": "./lib/sqlite3/index.js"
+			"default": "./cjs/sqlite3/index.js"
 		},
 		"./package.json": "./package.json"
 	},
