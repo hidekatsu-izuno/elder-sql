@@ -23,7 +23,7 @@ suite("test mysql lexer", () => {
 			writeDebugFile(`dump/mysql/lexer/${target}.ts`, toJSScript(tokens));
 
 			const expected = (await import(`./lexer/${target}.ts`)).default;
-			assert.strictEqual(toJSString(tokens), toJSString(expected));
+			assert.equal(toJSString(tokens), toJSString(expected));
 		});
 	}
 });

@@ -26,7 +26,7 @@ suite("test compiler", () => {
 			if (target === "select") {
 				// fs.writeFileSync("temp.txt", result.js);
 			}
-			assert.strictEqual(result.js, expected);
+			assert.equal(result.js, expected);
 		});
 	}
 });

@@ -10,49 +10,49 @@ import {
 
 suite("test utils", () => {
 	test("test squote", async () => {
-		assert.strictEqual(squote("test"), "'test'");
-		assert.strictEqual(squote("test's value"), "'test''s value'");
+		assert.equal(squote("test"), "'test'");
+		assert.equal(squote("test's value"), "'test''s value'");
 	});
 
 	test("test dquote", async () => {
-		assert.strictEqual(dquote("test"), '"test"');
-		assert.strictEqual(dquote('test"s value'), '"test""s value"');
+		assert.equal(dquote("test"), '"test"');
+		assert.equal(dquote('test"s value'), '"test""s value"');
 	});
 
 	test("test bquote", async () => {
-		assert.strictEqual(bquote("test"), "`test`");
-		assert.strictEqual(bquote("test`s value"), "`test``s value`");
+		assert.equal(bquote("test"), "`test`");
+		assert.equal(bquote("test`s value"), "`test``s value`");
 	});
 
 	test("test dequote", async () => {
-		assert.strictEqual(dequote("test"), "test");
-		assert.strictEqual(dequote("test's value"), "test's value");
-		assert.strictEqual(dequote("'test'"), "test");
-		assert.strictEqual(dequote("'test''s value'"), "test's value");
-		assert.strictEqual(dequote('"test"'), "test");
-		assert.strictEqual(dequote('"test""s value"'), 'test"s value');
-		assert.strictEqual(dequote("`test`"), "test");
-		assert.strictEqual(dequote("`test``s value`"), "test`s value");
-		assert.strictEqual(dequote("N'test'"), "test");
-		assert.strictEqual(dequote("n'test''s value'"), "test's value");
-		assert.strictEqual(dequote('N"test"'), "test");
-		assert.strictEqual(dequote('n"test""s value"'), 'test"s value');
-		assert.strictEqual(dequote("$$test's value$$"), "test's value");
-		assert.strictEqual(dequote("$body$test's value$body$"), "test's value");
-		assert.strictEqual(dequote("Q'[test's value]'"), "test's value");
-		assert.strictEqual(dequote("q'{test's value}'"), "test's value");
-		assert.strictEqual(dequote("NQ'(test's value)'"), "test's value");
-		assert.strictEqual(dequote("nq'#test's value#'"), "test's value");
+		assert.equal(dequote("test"), "test");
+		assert.equal(dequote("test's value"), "test's value");
+		assert.equal(dequote("'test'"), "test");
+		assert.equal(dequote("'test''s value'"), "test's value");
+		assert.equal(dequote('"test"'), "test");
+		assert.equal(dequote('"test""s value"'), 'test"s value');
+		assert.equal(dequote("`test`"), "test");
+		assert.equal(dequote("`test``s value`"), "test`s value");
+		assert.equal(dequote("N'test'"), "test");
+		assert.equal(dequote("n'test''s value'"), "test's value");
+		assert.equal(dequote('N"test"'), "test");
+		assert.equal(dequote('n"test""s value"'), 'test"s value');
+		assert.equal(dequote("$$test's value$$"), "test's value");
+		assert.equal(dequote("$body$test's value$body$"), "test's value");
+		assert.equal(dequote("Q'[test's value]'"), "test's value");
+		assert.equal(dequote("q'{test's value}'"), "test's value");
+		assert.equal(dequote("NQ'(test's value)'"), "test's value");
+		assert.equal(dequote("nq'#test's value#'"), "test's value");
 	});
 
 	test("test compareVersion", async () => {
-		assert.strictEqual(compareVersion("0", "1"), -1);
-		assert.strictEqual(compareVersion("0.1", "1"), -1);
-		assert.strictEqual(compareVersion("1.0.1-alpha.1", "1.0.1-beta"), -1);
-		assert.strictEqual(compareVersion("1.0.0", "1"), 0);
-		assert.strictEqual(compareVersion("1.0.0", "1+x"), 0);
-		assert.strictEqual(compareVersion("1", "0"), 1);
-		assert.strictEqual(compareVersion("1.0.1", "1"), 1);
-		assert.strictEqual(compareVersion("1.0.1-beta.1", "1.0.1-beta"), 1);
+		assert.equal(compareVersion("0", "1"), -1);
+		assert.equal(compareVersion("0.1", "1"), -1);
+		assert.equal(compareVersion("1.0.1-alpha.1", "1.0.1-beta"), -1);
+		assert.equal(compareVersion("1.0.0", "1"), 0);
+		assert.equal(compareVersion("1.0.0", "1+x"), 0);
+		assert.equal(compareVersion("1", "0"), 1);
+		assert.equal(compareVersion("1.0.1", "1"), 1);
+		assert.equal(compareVersion("1.0.1-beta.1", "1.0.1-beta"), 1);
 	});
 });

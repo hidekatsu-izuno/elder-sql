@@ -64,7 +64,7 @@ suite("test sqlite3 parser", () => {
 				"utf8",
 			);
 
-			assert.strictEqual(actual, expected);
+			assert.equal(actual, expected);
 		});
 	}
 });

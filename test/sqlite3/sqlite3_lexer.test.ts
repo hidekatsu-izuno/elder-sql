@@ -49,7 +49,7 @@ suite("test sqlite3 lexer", () => {
 			writeDebugFile(`dump/sqlite3/lexer/${target}.ts`, toJSScript(tokens));
 
 			const expected = (await import(`./lexer/${target}.ts`)).default;
-			assert.strictEqual(toJSString(tokens), toJSString(expected));
+			assert.equal(toJSString(tokens), toJSString(expected));
 		});
 	}
 });

@@ -21,7 +21,7 @@ suite("test oracle lexer", () => {
 			writeDebugFile(`dump/oracle/lexer/${target}.ts`, toJSScript(tokens));
 
 			const expected = (await import(`./lexer/${target}.ts`)).default;
-			assert.strictEqual(toJSString(tokens), toJSString(expected));
+			assert.equal(toJSString(tokens), toJSString(expected));
 		});
 	}
 });

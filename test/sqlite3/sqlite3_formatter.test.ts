@@ -53,7 +53,7 @@ suite("test sqlite3 formatter", () => {
 				path.join(__dirname, "formatter", `${target}.sql`),
 				"utf8",
 			);
-			assert.strictEqual(formatted, expected);
+			assert.equal(formatted, expected);
 		});
 	}
 });
