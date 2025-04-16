@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { describe, test } from "node:test";
+import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { Sqlite3Formatter } from "../../src/sqlite3/sqlite3_formatter.ts";
 import { writeDebugFile } from "../utils/debug.ts";
@@ -9,7 +9,7 @@ import { writeDebugFile } from "../utils/debug.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe("test sqlite3 formatter", () => {
+suite("test sqlite3 formatter", () => {
 	for (const target of [
 		"alter_table",
 		"analyze",

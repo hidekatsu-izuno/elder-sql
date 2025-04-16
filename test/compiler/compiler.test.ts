@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { describe, test } from "node:test";
+import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { ElderSqlCompiler } from "../../src/compiler.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe("test compiler", () => {
+suite("test compiler", () => {
 	for (const target of ["select"]) {
 		test(`test for ${target}`, async () => {
 			const script = fs.readFileSync(

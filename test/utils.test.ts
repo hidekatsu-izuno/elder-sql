@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, test } from "node:test";
+import { suite, test } from "node:test";
 import {
 	bquote,
 	compareVersion,
@@ -8,7 +8,7 @@ import {
 	squote,
 } from "../src/utils.ts";
 
-describe("test utils", () => {
+suite("test utils", () => {
 	test("test squote", async () => {
 		assert.strictEqual(squote("test"), "'test'");
 		assert.strictEqual(squote("test's value"), "'test''s value'");

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { describe, test } from "node:test";
+import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { OracleLexer } from "../../src/oracle/oracle_lexer.ts";
 import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
@@ -9,7 +9,7 @@ import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe("test oracle lexer", () => {
+suite("test oracle lexer", () => {
 	for (const target of ["select", "create_package"]) {
 		test(`test for ${target}`, async () => {
 			const script = fs.readFileSync(
