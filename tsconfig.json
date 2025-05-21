@@ -13,10 +13,7 @@
 		"erasableSyntaxOnly": true,
 		"allowImportingTsExtensions": true,
 		"rewriteRelativeImportExtensions": true,
-		"verbatimModuleSyntax": true,
-		"paths": {
-			"@/*": ["./src/*"]
-		}
+		"verbatimModuleSyntax": true
 	},
 	"include": ["./src/**/*"]
 }

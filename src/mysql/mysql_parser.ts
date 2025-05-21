@@ -3,12 +3,12 @@ import { ParseError, type Token, TokenReader } from "../lexer.ts";
 import {
 	AggregateParseError,
 	type CstBuilder,
-	DomhandlerCstBuilder,
 	Parser,
 } from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { MysqlLexer } from "./mysql_lexer.ts";
+import { DomhandlerCstBuilder } from "../cst/domhandler_cst_builder.ts"
 
 export class OracleParser<CstNode = Element> extends Parser<CstNode> {
 	constructor(options: Record<string, any> = {}) {

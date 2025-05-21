@@ -4,9 +4,10 @@ import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import type { Element } from "domhandler";
-import { AggregateParseError, DomhandlerCstBuilder } from "../../src/parser.ts";
+import { AggregateParseError } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { writeDebugFile } from "../utils/debug.ts";
+import { DomhandlerCstBuilder } from "../../src/cst/domhandler_cst_builder.ts"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
