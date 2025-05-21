@@ -1,15 +1,17 @@
 import type { CstBuilder, CstBuilderOptions } from "../parser.ts"
-import type { Token } from "../lexer.ts"
+import { TokenType, type Token } from "../lexer.ts"
 
-interface Element {
-    parent?: Element,
-    name: string,
+export type Header = {
+    tag: string,
     type: string,
-    value?: string,
-    children?: (Element | string)[],
+    value?: string | number | boolean
+};
+export interface Element extends Array<Header | Element | string> {
+    parent?: Element,
+    0: Header,
 }
 
-const EMPTY_NODE: Element = { name: "node", type: "" };
+const EMPTY_NODE: Element = [{ tag: "node", type: "" }];
 export class JsonCstBuilder implements CstBuilder<Element> {
     root: Element;
     current: Element;
@@ -30,15 +32,17 @@ export class JsonCstBuilder implements CstBuilder<Element> {
     }
 
     start(type: string, value?: string | number | boolean) {
-        const elem: Element = {
-            name: "node",
+        const elem: Element = [{
+            tag: "node",
             type,
-            ...(value != null ? { value: value.toString() } : {}),
-        };
+        }];
+        if (value != null) {
+            elem[0].value = value;
+        }
         if (this.current === EMPTY_NODE) {
             this.root = elem;
         } else {
-            (this.current.children ??= []).push(elem);
+            this.current.push(elem);
             elem.parent = this.current;
         }
         this.current = elem;
@@ -47,69 +51,75 @@ export class JsonCstBuilder implements CstBuilder<Element> {
 
     type(type: string, context?: Element) {
         if (context) {
-            context.type = type;
-            return context.type;
+            context[0].type = type;
+            return context[0].type;
         } else {
-            this.current.type = type;
-            return this.current.type;
+            this.current[0].type = type;
+            return this.current[0].type;
         }
     }
 
     value(value: string | number | boolean, context?: Element) {
         if (context) {
-            context.value = value.toString();
-            return context.value;
+            context[0].value = value.toString();
+            return context[0].value;
         } else {
-            this.current.value = value.toString();
-            return this.current.value;
+            this.current[0].value = value.toString();
+            return this.current[0].value;
         }
     }
 
     append(child: Element, context?: Element) {
         if (context) {
-            (context.children ??= []).push(child);
+            context.push(child);
             child.parent = context;
         } else {
-            (this.current.children ??= []).push(child);
+            this.current.push(child);
             child.parent = this.current;
         }
         return child;
     }
 
     token(token: Token, context?: Element) {
-        const elem: Element = {
-            name: "token",
+        const elem: Element = [{
+            tag: "token",
             type: token.type.name,
-            ...(token.keyword != null ? { value: token.keyword.name } : {}),
-        };
+        }];
+        if (token.type === TokenType.Reserved && token.keyword != null) {
+            elem[0].value = token.keyword.name;
+        }
         if (this.options.trivia) {
             for (const skip of token.preskips) {
-                const trivia: Element = {
-                    name: "trivia",
+                const trivia: Element = [{
+                    tag: "trivia",
                     type: skip.type.name,
-                    ...(skip.keyword != null ? { value: skip.keyword.name } : {}),
-                };
-                if (skip.text) {
-                    (trivia.children ??= []).push(skip.text);
+                }];
+                if (skip.type === TokenType.Reserved && skip.keyword != null) {
+                    trivia[0].value = skip.keyword.name;
                 }
-                (elem.children ??= []).push(trivia);
+                if (skip.text) {
+                    trivia.push(skip.text);
+                }
+                elem.push(trivia);
                 trivia.parent = elem;
             }
         }
         if (token.text) {
-            (elem.children ??= []).push(token.text);
+            elem.push(token.text);
         }
         if (this.options.trivia) {
             for (const skip of token.postskips) {
-                const trivia: Element = {
-                    name: "trivia",
+                const trivia: Element = [{
+                    tag: "trivia",
                     type: skip.type.name,
-                    ...(skip.keyword != null ? { value: skip.keyword.name } : {}),
-                };
-                if (skip.text) {
-                    (trivia.children ??= []).push(skip.text);
+                }];
+                if (skip.type === TokenType.Reserved && skip.keyword != null) {
+                    elem[0].value = skip.keyword.name;
                 }
-                (elem.children ??= []).push(trivia);
+                if (skip.text) {
+                    trivia.push(skip.text);
+                }
+                elem.push(trivia);
                 trivia.parent = elem;
             }
         }
@@ -121,10 +131,10 @@ export class JsonCstBuilder implements CstBuilder<Element> {
                 (token.preskips.length !== 0 || token.postskips.length !== 0))
         ) {
             if (context) {
-                (context.children ??= []).push(elem);
+                context.push(elem);
                 elem.parent = context;
             } else {
-                (this.current.children ??= []).push(elem);
+                this.current.push(elem);
                 elem.parent = this.current;
             }
         }
@@ -135,7 +145,7 @@ export class JsonCstBuilder implements CstBuilder<Element> {
         if (start && start !== this.current) {
             throw new Error("Start and end elements do not match");
         }
-        if (this.current.parent instanceof Element) {
+        if (this.current.parent) {
             const current = this.current;
             this.current = this.current.parent;
             return current;
@@ -146,40 +156,54 @@ export class JsonCstBuilder implements CstBuilder<Element> {
 
     toString(context?: Element) {
         const options = this.options;
-        function filter(src: Element) {
-            const dest: Element = {
-                name: src.name,
-                type: src.type,
-            };
-            if (src.value) {
-                dest.value = src.value;
+        let out = "";
+        function print(elem: Element, indent: number) {
+            for (let i = 0; i < indent; i++) {
+                out += "\t";
             }
-            if (src.children) {
-                dest.children = [];
-                for (const child of src.children) {
-                    if (child != null && typeof child === "object") {
-                        const token = child.name === "token";
-                        const trivia = child.name === "trivia";
-                        const marker = token && (child.children?.length ?? 0) === 0;
-                        if (
-                            (token && !options.token) ||
-                            (trivia && !options.trivia) ||
-                            (marker && !options.marker)
-                        ) {
-                            continue;
-                        }
-                        return filter(child);
-                    } else {
-                        return child;
+            out += "[{ \"tag\": " + JSON.stringify(elem[0].tag) 
+                + ", \"type\": " + JSON.stringify(elem[0].type);
+            if (elem[0].value != null) {
+                out += ", \"value\": " + JSON.stringify(elem[0].value);
+            }
+            out += " }";
+            for (let i = 1; i < elem.length; i++) {
+                const child = elem[i];
+                if (Array.isArray(child)) {
+                    const token = child[0].tag === "token";
+                    const trivia = child[0].tag === "trivia";
+                    const marker = token && child.length <= 1;
+                    if (
+                        (token && !options.token) ||
+                        (trivia && !options.trivia) ||
+                        (marker && !options.marker)
+                    ) {
+                        continue;
                     }
+                    out += ",\n";
+                    print(child, indent + 1);
+                } else {
+                    out += ",";
+                    if (elem[0].tag === "node") {
+                        out += "\n";
+                        for (let i = 0; i < indent + 1; i++) {
+                            out += "\t";
+                        }
+                    } else {
+                        out += " ";
+                    }
+                    out += JSON.stringify(child);
                 }
             }
-            return dest;
-        } 
-        return JSON.stringify(
-            filter(context ?? this.current),
-            ["name", "value", "children"],
-            "  ",
-        );
+            if (elem[0].tag === "node") {
+                out += "\n";
+                for (let i = 0; i < indent; i++) {
+                    out += "\t";
+                }
+            }
+            out += "]";
+        }
+        print(context ?? this.current, 0);
+        return out;
     }
 }

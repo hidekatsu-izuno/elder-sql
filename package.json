@@ -40,7 +40,9 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": ["sql"],
+	"keywords": [
+		"sql"
+	],
 	"exports": {
 		".": {
 			"import": {
@@ -118,6 +120,7 @@
 	},
 	"dependencies": {
 		"acorn": "^8.14.1",
+		"cheerio": "^1.0.0",
 		"css-select": "^5.1.0"
 	}
 }

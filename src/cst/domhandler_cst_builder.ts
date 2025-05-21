@@ -2,7 +2,7 @@ import { Element, Text } from "domhandler";
 import { appendChild } from "domutils";
 import { escapeXml } from "../utils.ts"
 import type { CstBuilder, CstBuilderOptions } from "../parser.ts"
-import type { Token } from "../lexer.ts"
+import { TokenType, type Token } from "../lexer.ts"
 
 const EMPTY_NODE = new Element("node", {});
 export class DomhandlerCstBuilder implements CstBuilder<Element> {
@@ -70,13 +70,13 @@ export class DomhandlerCstBuilder implements CstBuilder<Element> {
 	token(token: Token, context?: Element) {
 		const elem = new Element("token", {
 			type: token.type.name,
-			...(token.keyword != null ? { value: token.keyword.name } : {}),
+			...(token.type === TokenType.Reserved && token.keyword != null ? { value: token.keyword.name } : {}),
 		});
 		if (this.options.trivia) {
 			for (const skip of token.preskips) {
 				const trivia = new Element("trivia", {
 					type: skip.type.name,
-					...(skip.keyword != null ? { value: skip.keyword.name } : {}),
+					...(skip.type === TokenType.Reserved && skip.keyword != null ? { value: skip.keyword.name } : {}),
 				});
 				if (skip.text) {
 					appendChild(trivia, new Text(skip.text));
@@ -91,7 +91,7 @@ export class DomhandlerCstBuilder implements CstBuilder<Element> {
 			for (const skip of token.postskips) {
 				const trivia = new Element("trivia", {
 					type: skip.type.name,
-					...(skip.keyword != null ? { value: skip.keyword.name } : {}),
+					...(skip.type === TokenType.Reserved && skip.keyword != null ? { value: skip.keyword.name } : {}),
 				});
 				if (skip.text) {
 					appendChild(trivia, new Text(skip.text));
