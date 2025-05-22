@@ -61,10 +61,7 @@ suite("test sqlite3 parser", () => {
 				}
 			}
 			const actualXml = CstBuilder.toXMLString(actual, { trivia: false });
-			writeDebugFile(
-				`dump/sqlite3/parser/${target}.xml`,
-				actualXml,
-			);
+			writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actualXml);
 
 			const actualJson = CstBuilder.toJSONString(actual, { trivia: false });
 			writeDebugFile(

@@ -36,10 +36,8 @@ export abstract class Formatter {
 	private patterns = new Array<FormatPattern>();
 	options: FormatterOptions;
 
-	private cache: Record<
-		string,
-		ReturnType<typeof compile<CstNode, CstNode>>
-	> = {};
+	private cache: Record<string, ReturnType<typeof compile<CstNode, CstNode>>> =
+		{};
 
 	constructor(
 		parser: Parser,
@@ -128,7 +126,7 @@ export abstract class Formatter {
 				const child = node[i];
 				if (Array.isArray(child)) {
 					this.formatElement(child, out);
-				} else if (child) {
+				} else {
 					out.write(child.toString(), false);
 				}
 			}
@@ -154,7 +152,7 @@ export abstract class Formatter {
 				} else {
 					text += this.concatNode(child, out);
 				}
-			} else if (child) {
+			} else {
 				text += child.toString();
 			}
 		}
@@ -302,7 +300,7 @@ class FormatWriter {
 	}
 }
 
-type Adapter = NonNullable<(Options<CstNode, CstNode>)["adapter"]>;
+type Adapter = NonNullable<Options<CstNode, CstNode>["adapter"]>;
 
 class CstNodeAdapter implements Adapter {
 	isTag(node: CstNode): node is CstNode {
@@ -323,7 +321,7 @@ class CstNodeAdapter implements Adapter {
 	}
 
 	getAttributeValue(elem: CstNode, name: string) {
-		return ((elem[1] as any)?.[name])?.toString();
+		return (elem[1] as any)?.[name]?.toString();
 	}
 
 	getChildren(node: CstNode): CstNode[] {
@@ -351,7 +349,7 @@ class CstNodeAdapter implements Adapter {
 			for (let i = 2; i < node.parent.length; i++) {
 				const child = node.parent[i];
 				if (Array.isArray(child)) {
-					result.push(child)
+					result.push(child);
 				}
 			}
 		}

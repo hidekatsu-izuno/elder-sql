@@ -1,5 +1,4 @@
-import { Element } from "domhandler";
-import type { Parser } from "./parser.ts";
+import type { CstNode, Parser } from "./parser.ts";
 
 export declare type ResolverOptions = {
 	global?: FromObject[];
@@ -36,11 +35,11 @@ export declare type ResolvedColumn = {
 	precision?: number;
 };
 
-export abstract class Resolver<CstNode = Element> {
-	parser: Parser<CstNode>;
+export abstract class Resolver {
+	parser: Parser;
 	options: ResolverOptions = {};
 
-	constructor(parser: Parser<CstNode>, options: ResolverOptions = {}) {
+	constructor(parser: Parser, options: ResolverOptions = {}) {
 		this.parser = parser;
 		this.options = options;
 	}
@@ -63,13 +62,13 @@ export abstract class Resolver<CstNode = Element> {
 	protected abstract extractNode(statement: CstNode): FromObject | undefined;
 
 	private findStatement(elem: CstNode): CstNode | undefined {
-		const el = elem as Element;
-		if (/(\\s|^)Statement(\\s|$)/.test(el.attribs.class)) {
+		if (/(\\s|^)Statement(\\s|$)/.test(elem[1].type)) {
 			return elem;
 		} else {
-			for (const child of el.childNodes) {
-				if (child instanceof Element) {
-					const result = this.findStatement(child as CstNode);
+			for (let i = 2; i < elem.length; i++) {
+				const child = elem[i];
+				if (Array.isArray(child)) {
+					const result = this.findStatement(child);
 					if (result) {
 						return result;
 					}

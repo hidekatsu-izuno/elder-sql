@@ -1,6 +1,6 @@
-import { Element } from "domhandler";
-import { textContent } from "domutils";
-import { FromObject, Resolver, type ResolverOptions } from "../resolver.ts";
+import type { CstNode } from "../parser.ts";
+import type { FromObject, ResolverOptions } from "../resolver.ts";
+import { Resolver } from "../resolver.ts";
 import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
 export class Sqlite3Resolver extends Resolver {
@@ -8,18 +8,22 @@ export class Sqlite3Resolver extends Resolver {
 		super(options.parser ?? new Sqlite3Parser(options), options);
 	}
 
-	protected extractNode(statement: Element) {
+	protected extractNode(statement: CstNode): FromObject | undefined {
+		return;
+	}
+	/*
+	protected extractNode(statement: CstNode) {
 		let fo: FromObject | undefined;
-		if (statement.attribs.type === "SelectStatement") {
+		if (statement[1].type === "SelectStatement") {
 			fo = this.extractSelectStatement(statement);
-		} else if (statement.attribs.type === "InsertStatement") {
-		} else if (statement.attribs.type === "UpdateStatement") {
-		} else if (statement.attribs.type === "DeleteStatement") {
+		} else if (statement[1].type === "InsertStatement") {
+		} else if (statement[1].type === "UpdateStatement") {
+		} else if (statement[1].type === "DeleteStatement") {
 		}
 		return fo;
 	}
 
-	private extractSelectStatement(elem: Element) {
+	private extractSelectStatement(elem: CstNode) {
 		const fos = [];
 		const fo = new FromObject("query");
 		for (const child of findElementAll(
@@ -141,33 +145,5 @@ export class Sqlite3Resolver extends Resolver {
 		}
 		const expr = findElementFirst(elem, "Expression");
 	}
-}
-
-function findElementFirst(
-	elem: Element,
-	...names: string[]
-): Element | undefined {
-	for (const child of elem.childNodes) {
-		if (child instanceof Element && child.tagName === names[0]) {
-			const result =
-				names.length > 1 ? findElementFirst(child, ...names.slice(1)) : child;
-			if (result) {
-				return result;
-			}
-		}
-	}
-}
-
-function findElementAll(elem: Element, ...names: string[]) {
-	const results = new Array<Element>();
-	for (const child of elem.childNodes) {
-		if (child instanceof Element && child.tagName === names[0]) {
-			if (names.length > 1) {
-				results.push(...findElementAll(child, ...names.slice(1)));
-			} else {
-				results.push(child);
-			}
-		}
-	}
-	return results;
+*/
 }

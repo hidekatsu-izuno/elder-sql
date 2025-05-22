@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Element, Text } from "domhandler";
 import type { Token } from "../../src/lexer.ts";
 
 export function getRootDir() {
@@ -24,21 +23,16 @@ export function writeDebugFile(
 	fs.writeFileSync(filePath, data);
 }
 
-export function toJSScript(target: Element | Token | (Element | Token)[]) {
+export function toJSScript(target: Token | Token[]) {
 	let imports = "";
-	if (target instanceof Element) {
-		imports += 'import { Element, Text } from "domhandler"\n';
-	} else {
-		imports +=
-			'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
-		imports +=
-			'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
-	}
+	imports += 'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
+	imports +=
+		'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
 
 export function toJSString(
-	target: Element | Token | (Element | Token)[],
+	target: Token | Token[],
 	options: {
 		space?: number;
 	} = {},
@@ -57,36 +51,6 @@ export function toJSString(
 			index++;
 		}
 		text += `\n${" ".repeat(space * 2)}]`;
-	} else if (target instanceof Element) {
-		text += `${" ".repeat(space * 2)}new Element(${JSON.stringify(target.name)}, `;
-		text += JSON.stringify(target.attribs || {}, (_, v) => {
-			if (!Array.isArray(v) && v !== null && typeof v === "object") {
-				return Object.keys(v)
-					.sort()
-					.reduce((r, k) => {
-						r[k] = v[k];
-						return r;
-					}, {});
-			} else {
-				return v;
-			}
-		});
-		if (target.children.length === 1 && target.children[0] instanceof Text) {
-			text += `, [new Text(${JSON.stringify(target.children[0].data)})])`;
-		} else if (target.children.length > 0) {
-			text += ", [\n";
-			for (const child of target.children) {
-				if (child instanceof Element) {
-					const ctext = toJSString(child, { space: space + 1 }).trimStart();
-					text += `${" ".repeat((space + 1) * 2)}${ctext},\n`;
-				} else if (child instanceof Text) {
-					text += `${" ".repeat((space + 1) * 2)}new Text(${JSON.stringify(child.data)}),\n`;
-				}
-			}
-			text += `${" ".repeat(space * 2)}])`;
-		} else {
-			text += ")";
-		}
 	} else {
 		text += `${" ".repeat(space * 2)}new Token(`;
 		text += `SqlTokenType.${target.type.name}`;

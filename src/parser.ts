@@ -48,7 +48,7 @@ export type CstAttributes = {
 	value?: string | number | boolean;
 };
 
-export interface CstNode extends Array<CstAttributes | CstNode | string | undefined> {
+export interface CstNode extends Array<CstAttributes | CstNode | string> {
 	parent?: CstNode;
 	0: string;
 	1: CstAttributes;
@@ -102,15 +102,15 @@ export class CstBuilder {
 	}
 
 	append(child: CstNode, context?: CstNode) {
-        const current = context ?? this.current;
-        if (child.parent) {
-            const index = child.parent.indexOf(child);
-            if (index !== -1) {
-                child.parent.splice(index, 1);
-            }
-        }
-        current.push(child);
-        child.parent = current;
+		const current = context ?? this.current;
+		if (child.parent) {
+			const index = child.parent.indexOf(child);
+			if (index !== -1) {
+				child.parent.splice(index, 1);
+			}
+		}
+		current.push(child);
+		child.parent = current;
 		return child;
 	}
 
@@ -207,7 +207,7 @@ export class CstBuilder {
 					}
 					out += ",\n";
 					print(child, indent + 1);
-				} else if (child) {
+				} else {
 					out += ",";
 					if (elem[0] === "node") {
 						out += "\n";
@@ -258,7 +258,7 @@ export class CstBuilder {
 					}
 					out += "\n";
 					print(child, indent + 1);
-				} else if (child) {
+				} else {
 					if (elem[0] === "node") {
 						out += "\n";
 						for (let i = 0; i < indent + 1; i++) {
@@ -297,7 +297,7 @@ export class CstBuilder {
 						continue;
 					}
 					print(child, indent + 1);
-				} else if (child) {
+				} else {
 					out += child.toString();
 				}
 			}

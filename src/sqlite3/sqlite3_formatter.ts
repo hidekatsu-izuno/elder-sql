@@ -137,11 +137,12 @@ export class Sqlite3Formatter extends Formatter {
 				},
 				{
 					pattern: [
-						"[type=ColumnConstraint]", 
+						"[type=ColumnConstraint]",
 						"[type=Expression] [type=AndOperation] > node:first-of-type",
 						"[type=Expression] [type=OrOperation] > node:first-of-type",
 					].join(","),
-					after: "softbreak" },
+					after: "softbreak",
+				},
 				{
 					pattern:
 						":is([type=UnaryPlusOperation], [type=UnaryMinusOperation]) > [type=Operator]",
