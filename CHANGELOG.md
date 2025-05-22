@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.0-alpha.16](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.15...v0.1.0-alpha.16) (2025-05-22)
+
 ## [0.1.0-alpha.15](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.14...v0.1.0-alpha.15) (2025-04-03)
 
 ## [0.1.0-alpha.14](https://github.com/hidekatsu-izuno/elder-sql/compare/v0.1.0-alpha.13...v0.1.0-alpha.14) (2025-04-02)
