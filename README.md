@@ -2,7 +2,7 @@
 
 <!--
 npm run test
-npm run biome:check
+npm run format
 npm run version:minor:alpha
 npm run release:alpha
 -->
