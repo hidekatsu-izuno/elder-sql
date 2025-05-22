@@ -82,21 +82,4 @@ suite("test sqlite3 parser", () => {
 			assert.equal(actualJson, expectedJson);
 		});
 	}
-
-	test("perforance test", () => {
-		let time1 = Date.now();
-		CstBuilder.parseJSON(
-			readFileSync(`dump/sqlite3/parser/select.json`, { encoding: "utf8" }),
-		);
-		time1 = Date.now() - time1;
-
-		let time2 = Date.now();
-		cheerio.load(
-			readFileSync(`dump/sqlite3/parser/select.xml`, { encoding: "utf8" }),
-			{ xml: true },
-		);
-		time2 = Date.now() - time2;
-
-		assert.equal(time1, time2);
-	});
 });
