@@ -1,0 +1,88 @@
+["node", { "type": "Script" },
+	["node", { "type": "CommandStatement" },
+		["node", { "type": "CommandName", "value": ".print" },
+			["token", { "type": "Command" }, ".print"]
+		],
+		["node", { "type": "CommandArgumentList" },
+			["node", { "type": "CommandArgument", "value": "test" },
+				["token", { "type": "Identifier" }, "test"]
+			]
+		]
+	],
+	["node", { "type": "SelectStatement" },
+		["node", { "type": "SelectClause" },
+			["token", { "type": "Reserved" }, "select"],
+			["node", { "type": "SelectColumnList" },
+				["node", { "type": "SelectColumn" },
+					["node", { "type": "Expression" },
+						["node", { "type": "NumericLiteral", "value": "1" },
+							["token", { "type": "Numeric" }, "1"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "SelectStatement" },
+		["node", { "type": "SelectClause" },
+			["token", { "type": "Reserved" }, "select"],
+			["node", { "type": "SelectColumnList" },
+				["node", { "type": "SelectColumn" },
+					["node", { "type": "Expression" },
+						["node", { "type": "AddOperation" },
+							["node", { "type": "NumericLiteral", "value": "2" },
+								["token", { "type": "Numeric" }, "2"]
+							],
+							["token", { "type": "Operator" }, "+"],
+							["node", { "type": "ColumnReference" },
+								["node", { "type": "ObjectName", "value": "x" },
+									["token", { "type": "Identifier" }, "x"]
+								],
+								["token", { "type": "Dot" }, "."],
+								["node", { "type": "ColumnName", "value": "print" },
+									["token", { "type": "Identifier" }, "print"]
+								]
+							]
+						]
+					],
+					["node", { "type": "ColumnAlias", "value": "test" },
+						["token", { "type": "Identifier" }, "test"]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "SelectStatement" },
+		["node", { "type": "SelectClause" },
+			["token", { "type": "Reserved" }, "select"],
+			["node", { "type": "SelectColumnList" },
+				["node", { "type": "SelectColumn" },
+					["node", { "type": "Expression" },
+						["node", { "type": "NumericLiteral", "value": "3" },
+							["token", { "type": "Numeric" }, "3"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "Delimiter" }, "/"],
+	["node", { "type": "SelectStatement" },
+		["node", { "type": "SelectClause" },
+			["token", { "type": "Reserved" }, "select"],
+			["node", { "type": "SelectColumnList" },
+				["node", { "type": "SelectColumn" },
+					["node", { "type": "Expression" },
+						["node", { "type": "NumericLiteral", "value": "4" },
+							["token", { "type": "Numeric" }, "4"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "Delimiter" }, "GO"],
+	["token", { "type": "EoF" }]
+]

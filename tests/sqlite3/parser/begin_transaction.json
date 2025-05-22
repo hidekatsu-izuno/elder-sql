@@ -1,0 +1,56 @@
+["node", { "type": "Script" },
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "DeferredOption" },
+			["token", { "type": "Identifier" }, "DEFERRED"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "ImmediateOption" },
+			["token", { "type": "Identifier" }, "IMMEDIATE"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "ExclusiveOption" },
+			["token", { "type": "Identifier" }, "EXCLUSIVE"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "DeferredOption" },
+			["token", { "type": "Identifier" }, "DEFERRED"]
+		],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "ImmediateOption" },
+			["token", { "type": "Identifier" }, "IMMEDIATE"]
+		],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "BeginTransactionStatement" },
+		["token", { "type": "Identifier" }, "BEGIN"],
+		["node", { "type": "ExclusiveOption" },
+			["token", { "type": "Identifier" }, "EXCLUSIVE"]
+		],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "EoF" }]
+]

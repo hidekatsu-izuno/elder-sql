@@ -132,11 +132,16 @@ export class Sqlite3Formatter extends Formatter {
 						"[type=OrderByClause]",
 						"[type=LimitClause]",
 						"[type=ReturningClause]",
-						"[type=Expression] :is([type=AndOperation] > [value=AND], [type=OrOperation] > [value=OR])",
 					].join(","),
 					before: "softbreak",
 				},
-				{ pattern: "[type=ColumnConstraint]", after: "softbreak" },
+				{
+					pattern: [
+						"[type=ColumnConstraint]", 
+						"[type=Expression] [type=AndOperation] > node:first-of-type",
+						"[type=Expression] [type=OrOperation] > node:first-of-type",
+					].join(","),
+					after: "softbreak" },
 				{
 					pattern:
 						":is([type=UnaryPlusOperation], [type=UnaryMinusOperation]) > [type=Operator]",

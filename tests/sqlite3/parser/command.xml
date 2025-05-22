@@ -1,88 +1,88 @@
 <node type="Script">
-  <node type="CommandStatement">
-    <node type="CommandName" value=".print">
-      <token type="Command">.print</token>
-    </node>
-    <node type="CommandArgumentList">
-      <node type="CommandArgument" value="test">
-        <token type="Identifier">test</token>
-      </node>
-    </node>
-  </node>
-  <node type="SelectStatement">
-    <node type="SelectClause">
-      <token type="Reserved" value="SELECT">select</token>
-      <node type="SelectColumnList">
-        <node type="SelectColumn">
-          <node type="Expression">
-            <node type="NumericLiteral" value="1">
-              <token type="Numeric">1</token>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="SelectStatement">
-    <node type="SelectClause">
-      <token type="Reserved" value="SELECT">select</token>
-      <node type="SelectColumnList">
-        <node type="SelectColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="NumericLiteral" value="2">
-                <token type="Numeric">2</token>
-              </node>
-              <token type="Operator">+</token>
-              <node type="ColumnReference">
-                <node type="ObjectName" value="x">
-                  <token type="Identifier">x</token>
-                </node>
-                <token type="Dot">.</token>
-                <node type="ColumnName" value="print">
-                  <token type="Identifier" value="PRINT">print</token>
-                </node>
-              </node>
-            </node>
-          </node>
-          <node type="ColumnAlias" value="test">
-            <token type="Identifier" value="TEST">test</token>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="SelectStatement">
-    <node type="SelectClause">
-      <token type="Reserved" value="SELECT">select</token>
-      <node type="SelectColumnList">
-        <node type="SelectColumn">
-          <node type="Expression">
-            <node type="NumericLiteral" value="3">
-              <token type="Numeric">3</token>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="Delimiter">/</token>
-  <node type="SelectStatement">
-    <node type="SelectClause">
-      <token type="Reserved" value="SELECT">select</token>
-      <node type="SelectColumnList">
-        <node type="SelectColumn">
-          <node type="Expression">
-            <node type="NumericLiteral" value="4">
-              <token type="Numeric">4</token>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="Delimiter">GO</token>
-  <token type="EoF"></token>
+	<node type="CommandStatement">
+		<node type="CommandName" value=".print">
+			<token type="Command">.print</token>
+		</node>
+		<node type="CommandArgumentList">
+			<node type="CommandArgument" value="test">
+				<token type="Identifier">test</token>
+			</node>
+		</node>
+	</node>
+	<node type="SelectStatement">
+		<node type="SelectClause">
+			<token type="Reserved">select</token>
+			<node type="SelectColumnList">
+				<node type="SelectColumn">
+					<node type="Expression">
+						<node type="NumericLiteral" value="1">
+							<token type="Numeric">1</token>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="SelectStatement">
+		<node type="SelectClause">
+			<token type="Reserved">select</token>
+			<node type="SelectColumnList">
+				<node type="SelectColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="NumericLiteral" value="2">
+								<token type="Numeric">2</token>
+							</node>
+							<token type="Operator">+</token>
+							<node type="ColumnReference">
+								<node type="ObjectName" value="x">
+									<token type="Identifier">x</token>
+								</node>
+								<token type="Dot">.</token>
+								<node type="ColumnName" value="print">
+									<token type="Identifier">print</token>
+								</node>
+							</node>
+						</node>
+					</node>
+					<node type="ColumnAlias" value="test">
+						<token type="Identifier">test</token>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="SelectStatement">
+		<node type="SelectClause">
+			<token type="Reserved">select</token>
+			<node type="SelectColumnList">
+				<node type="SelectColumn">
+					<node type="Expression">
+						<node type="NumericLiteral" value="3">
+							<token type="Numeric">3</token>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="Delimiter">/</token>
+	<node type="SelectStatement">
+		<node type="SelectClause">
+			<token type="Reserved">select</token>
+			<node type="SelectColumnList">
+				<node type="SelectColumn">
+					<node type="Expression">
+						<node type="NumericLiteral" value="4">
+							<token type="Numeric">4</token>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="Delimiter">GO</token>
+	<token type="EoF"></token>
 </node>

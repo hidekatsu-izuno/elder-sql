@@ -1,0 +1,464 @@
+["node", { "type": "Script" },
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "table_1" },
+			["token", { "type": "Identifier" }, "table_1"]
+		],
+		["token", { "type": "LeftParen" }, "("],
+		["node", { "type": "TableColumnList" },
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "text_column" },
+					["token", { "type": "Identifier" }, "text_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "TEXT" },
+						["token", { "type": "Identifier" }, "TEXT"]
+					]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "NotNullConstraint" },
+						["token", { "type": "Reserved" }, "NOT"],
+						["token", { "type": "Reserved" }, "NULL"]
+					]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "PrimaryKeyConstraint" },
+						["token", { "type": "Reserved" }, "PRIMARY"],
+						["token", { "type": "Identifier" }, "KEY"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "num_column" },
+					["token", { "type": "Identifier" }, "num_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
+						["token", { "type": "Identifier" }, "NUMERIC"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "int_column" },
+					["token", { "type": "Identifier" }, "int_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
+						["token", { "type": "Identifier" }, "INTEGER"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "real_column" },
+					["token", { "type": "Identifier" }, "real_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
+						["token", { "type": "Identifier" }, "INTEGER"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "blob_column" },
+					["token", { "type": "Identifier" }, "blob_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "BLOB" },
+						["token", { "type": "Identifier" }, "BLOB"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "no_affinity_column" },
+					["token", { "type": "Identifier" }, "no_affinity_column"]
+				]
+			]
+		],
+		["token", { "type": "RightParen" }, ")"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["node", { "type": "TemporaryOption" },
+			["token", { "type": "Identifier" }, "temp"]
+		],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "ObjectName", "value": "table_2" },
+			["token", { "type": "Identifier" }, "table_2"]
+		],
+		["token", { "type": "LeftParen" }, "("],
+		["node", { "type": "TableColumnList" },
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "text_column" },
+					["token", { "type": "Identifier" }, "\"text_column\""]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "TEXT" },
+						["token", { "type": "Identifier" }, "TEXT"]
+					]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "NotNullConstraint" },
+						["token", { "type": "Reserved" }, "NOT"],
+						["token", { "type": "Reserved" }, "NULL"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "num_column" },
+					["token", { "type": "Identifier" }, "[num_column]"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
+						["token", { "type": "Identifier" }, "NUMERIC"]
+					]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "NotNullConstraint" },
+						["token", { "type": "Reserved" }, "NOT"],
+						["token", { "type": "Reserved" }, "NULL"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "int_column" },
+					["token", { "type": "Identifier" }, "`int_column`"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
+						["token", { "type": "Identifier" }, "INTEGER"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "real_column" },
+					["token", { "type": "Identifier" }, "\"real_column\""]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
+						["token", { "type": "Identifier" }, "INTEGER"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "blob_column" },
+					["token", { "type": "Identifier" }, "[blob_column]"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "BLOB" },
+						["token", { "type": "Identifier" }, "BLOB"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "no_affinity_column" },
+					["token", { "type": "Identifier" }, "`no_affinity_column`"]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableConstraint" },
+				["node", { "type": "PrimaryKeyConstraint" },
+					["token", { "type": "Reserved" }, "PRIMARY"],
+					["token", { "type": "Identifier" }, "KEY"],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "SortColumnList" },
+						["node", { "type": "SortColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "text_column" },
+										["token", { "type": "Identifier" }, "text_column"]
+									]
+								]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "SortColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "num_column" },
+										["token", { "type": "Identifier" }, "num_column"]
+									]
+								]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		],
+		["token", { "type": "RightParen" }, ")"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["node", { "type": "TemporaryOption" },
+			["token", { "type": "Reserved" }, "temporary"]
+		],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "ObjectName", "value": "table_3" },
+			["token", { "type": "Identifier" }, "table_3"]
+		],
+		["token", { "type": "LeftParen" }, "("],
+		["node", { "type": "TableColumnList" },
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "col_1" },
+					["token", { "type": "Identifier" }, "col_1"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "TEXT" },
+						["token", { "type": "Identifier" }, "TEXT"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "col_2" },
+					["token", { "type": "Identifier" }, "col_2"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
+						["token", { "type": "Identifier" }, "NUMERIC"]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableConstraint" },
+				["token", { "type": "Reserved" }, "CONSTRAINT"],
+				["node", { "type": "ConstraintName", "value": "c_001" },
+					["token", { "type": "Identifier" }, "c_001"]
+				],
+				["node", { "type": "UniqueConstraint" },
+					["token", { "type": "Reserved" }, "UNIQUE"],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "SortColumnList" },
+						["node", { "type": "SortColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "col_1" },
+										["token", { "type": "Identifier" }, "col_1"]
+									]
+								]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "SortColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "col_2" },
+										["token", { "type": "Identifier" }, "col_2"]
+									]
+								]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"],
+					["node", { "type": "OnConflictClause" },
+						["token", { "type": "Reserved" }, "ON"],
+						["token", { "type": "Identifier" }, "CONFLICT"],
+						["node", { "type": "RollbackOption" },
+							["token", { "type": "Identifier" }, "ROLLBACK"]
+						]
+					]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableConstraint" },
+				["token", { "type": "Reserved" }, "CONSTRAINT"],
+				["node", { "type": "ConstraintName", "value": "c_002" },
+					["token", { "type": "Identifier" }, "c_002"]
+				],
+				["node", { "type": "CheckConstraint" },
+					["token", { "type": "Reserved" }, "CHECK"],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "Expression" },
+						["node", { "type": "GreaterThanOperation" },
+							["node", { "type": "AddOperation" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "col_1" },
+										["token", { "type": "Identifier" }, "col_1"]
+									]
+								],
+								["token", { "type": "Operator" }, "+"],
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "col_2" },
+										["token", { "type": "Identifier" }, "col_2"]
+									]
+								]
+							],
+							["token", { "type": "Operator" }, ">"],
+							["node", { "type": "NumericLiteral", "value": "0" },
+								["token", { "type": "Numeric" }, "0"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			],
+			["token", { "type": "Comma" }, ","],
+			["node", { "type": "TableConstraint" },
+				["token", { "type": "Reserved" }, "CONSTRAINT"],
+				["node", { "type": "ConstraintName", "value": "c_003" },
+					["token", { "type": "Identifier" }, "c_003"]
+				],
+				["node", { "type": "ForeignKeyConstraint" },
+					["token", { "type": "Reserved" }, "FOREIGN"],
+					["token", { "type": "Identifier" }, "KEY"],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ColumnList" },
+						["node", { "type": "ColumnName", "value": "col_1" },
+							["token", { "type": "Identifier" }, "col_1"]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "ColumnName", "value": "col_2" },
+							["token", { "type": "Identifier" }, "col_2"]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"],
+					["node", { "type": "ReferencesClause" },
+						["token", { "type": "Reserved" }, "REFERENCES"],
+						["node", { "type": "ObjectName", "value": "table_1" },
+							["token", { "type": "Identifier" }, "table_1"]
+						],
+						["token", { "type": "LeftParen" }, "("],
+						["node", { "type": "ColumnList" },
+							["node", { "type": "ColumnName", "value": "text_column" },
+								["token", { "type": "Identifier" }, "text_column"]
+							],
+							["token", { "type": "Comma" }, ","],
+							["node", { "type": "ColumnName", "value": "num_column" },
+								["token", { "type": "Identifier" }, "num_column"]
+							]
+						],
+						["token", { "type": "RightParen" }, ")"],
+						["node", { "type": "OnDeleteClause" },
+							["token", { "type": "Reserved" }, "ON"],
+							["token", { "type": "Reserved" }, "DELETE"],
+							["node", { "type": "SetNullOption" },
+								["token", { "type": "Reserved" }, "SET"],
+								["token", { "type": "Reserved" }, "NULL"]
+							]
+						],
+						["node", { "type": "MatchClause" },
+							["token", { "type": "Identifier" }, "MATCH"],
+							["node", { "type": "SimpleOption" },
+								["token", { "type": "Identifier" }, "SIMPLE"]
+							]
+						],
+						["node", { "type": "OnUpdateClause" },
+							["token", { "type": "Reserved" }, "ON"],
+							["token", { "type": "Reserved" }, "UPDATE"],
+							["node", { "type": "CascadeOption" },
+								["token", { "type": "Identifier" }, "CASCADE"]
+							]
+						],
+						["node", { "type": "NotDeferrableOption" },
+							["token", { "type": "Reserved" }, "NOT"],
+							["token", { "type": "Reserved" }, "DEFERRABLE"],
+							["node", { "type": "InitiallyDeferredOption" },
+								["token", { "type": "Identifier" }, "INITIALLY"],
+								["token", { "type": "Identifier" }, "DEFERRED"]
+							]
+						]
+					]
+				]
+			]
+		],
+		["token", { "type": "RightParen" }, ")"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["node", { "type": "VirtualOption" },
+			["token", { "type": "Identifier" }, "VIRTUAL"]
+		],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "ObjectName", "value": "tablename" },
+			["token", { "type": "Identifier" }, "tablename"]
+		],
+		["node", { "type": "UsingModuleClause" },
+			["token", { "type": "Reserved" }, "USING"],
+			["node", { "type": "ModuleName", "value": "modulename" },
+				["token", { "type": "Identifier" }, "modulename"]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["node", { "type": "VirtualOption" },
+			["token", { "type": "Identifier" }, "VIRTUAL"]
+		],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "temp" },
+			["token", { "type": "Identifier" }, "temp"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "t1" },
+			["token", { "type": "Identifier" }, "t1"]
+		],
+		["node", { "type": "UsingModuleClause" },
+			["token", { "type": "Reserved" }, "USING"],
+			["node", { "type": "ModuleName", "value": "csv" },
+				["token", { "type": "Identifier" }, "csv"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ModuleArgumentList" },
+				["node", { "type": "ModuleArgument" },
+					["token", { "type": "Identifier" }, "filename"],
+					["token", { "type": "Operator" }, "="],
+					["token", { "type": "String" }, "'thefile.csv'"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CreateTableStatement" },
+		["token", { "type": "Reserved" }, "CREATE"],
+		["node", { "type": "VirtualOption" },
+			["token", { "type": "Identifier" }, "VIRTUAL"]
+		],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "ObjectName", "value": "email" },
+			["token", { "type": "Identifier" }, "email"]
+		],
+		["node", { "type": "UsingModuleClause" },
+			["token", { "type": "Reserved" }, "USING"],
+			["node", { "type": "ModuleName", "value": "fts5" },
+				["token", { "type": "Identifier" }, "fts5"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ModuleArgumentList" },
+				["node", { "type": "ModuleArgument" },
+					["token", { "type": "Identifier" }, "sender"]
+				],
+				["token", { "type": "Comma" }, ","],
+				["node", { "type": "ModuleArgument" },
+					["token", { "type": "Identifier" }, "title"]
+				],
+				["token", { "type": "Comma" }, ","],
+				["node", { "type": "ModuleArgument" },
+					["token", { "type": "Identifier" }, "body"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoF" }]
+]

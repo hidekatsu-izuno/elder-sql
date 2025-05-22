@@ -1,34 +1,34 @@
 <node type="Script">
-  <node type="SelectStatement">
-    <node type="SelectClause">
-      <token type="Reserved" value="SELECT">SELECT</token>
-      <node type="SelectColumnList">
-        <node type="SelectColumn">
-          <node type="Expression">
-          </node>
-        </node>
-      </node>
-    </node>
-    <node type="Unknown">
-      <token type="Reserved" value="UPDATE">UPDATE</token>
-      <token type="Reserved" value="SELECT">select</token>
-      <token type="Numeric">1</token>
-      <token type="Numeric">2</token>
-      <token type="Numeric">3</token>
-      <token type="Reserved" value="CREATE">CREATE</token>
-      <token type="Reserved" value="TABLE">TABLE</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="Unknown">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="BindVariable">@aaa</token>
-    <token type="Error">@</token>
-    <token type="Reserved" value="FROM">FROM</token>
-    <token type="Error">#</token>
-    <token type="Error">#</token>
-    <token type="Error">#</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <token type="EoF"></token>
+	<node type="SelectStatement">
+		<node type="SelectClause">
+			<token type="Reserved">SELECT</token>
+			<node type="SelectColumnList">
+				<node type="SelectColumn">
+					<node type="Expression">
+					</node>
+				</node>
+			</node>
+		</node>
+		<node type="Unknown">
+			<token type="Reserved">UPDATE</token>
+			<token type="Reserved">select</token>
+			<token type="Numeric">1</token>
+			<token type="Numeric">2</token>
+			<token type="Numeric">3</token>
+			<token type="Reserved">CREATE</token>
+			<token type="Reserved">TABLE</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="Unknown">
+		<token type="Reserved">CREATE</token>
+		<token type="BindVariable">@aaa</token>
+		<token type="Error">@</token>
+		<token type="Reserved">FROM</token>
+		<token type="Error">#</token>
+		<token type="Error">#</token>
+		<token type="Error">#</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<token type="EoF"></token>
 </node>

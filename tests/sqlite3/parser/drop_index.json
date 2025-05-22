@@ -1,0 +1,39 @@
+["node", { "type": "Script" },
+	["node", { "type": "DropIndexStatement" },
+		["token", { "type": "Identifier" }, "DROP"],
+		["token", { "type": "Reserved" }, "INDEX"],
+		["node", { "type": "ObjectName", "value": "i_sample" },
+			["token", { "type": "Identifier" }, "i_sample"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "DropIndexStatement" },
+		["token", { "type": "Identifier" }, "DROP"],
+		["token", { "type": "Reserved" }, "INDEX"],
+		["node", { "type": "SchemaName", "value": "main" },
+			["token", { "type": "Identifier" }, "main"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "i_sample" },
+			["token", { "type": "Identifier" }, "i_sample"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "DropIndexStatement" },
+		["token", { "type": "Identifier" }, "DROP"],
+		["token", { "type": "Reserved" }, "INDEX"],
+		["node", { "type": "IfExists" },
+			["token", { "type": "Identifier" }, "IF"],
+			["token", { "type": "Reserved" }, "EXISTS"]
+		],
+		["node", { "type": "SchemaName", "value": "main" },
+			["token", { "type": "Identifier" }, "main"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "i_sample" },
+			["token", { "type": "Identifier" }, "i_sample"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoF" }]
+]

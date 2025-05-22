@@ -1,39 +1,39 @@
 <node type="Script">
-  <node type="DropTableStatement">
-    <token type="Identifier" value="DROP">DROP</token>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="ObjectName" value="t_sample">
-      <token type="Identifier">t_sample</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="DropTableStatement">
-    <token type="Identifier" value="DROP">DROP</token>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="t_sample">
-      <token type="Identifier">t_sample</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="DropTableStatement">
-    <token type="Identifier" value="DROP">DROP</token>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="IfExistsOption">
-      <token type="Identifier" value="IF">IF</token>
-      <token type="Reserved" value="EXISTS">EXISTS</token>
-    </node>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="t_sample">
-      <token type="Identifier">t_sample</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <token type="EoF"></token>
+	<node type="DropTableStatement">
+		<token type="Identifier">DROP</token>
+		<token type="Reserved">TABLE</token>
+		<node type="ObjectName" value="t_sample">
+			<token type="Identifier">t_sample</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="DropTableStatement">
+		<token type="Identifier">DROP</token>
+		<token type="Reserved">TABLE</token>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="t_sample">
+			<token type="Identifier">t_sample</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="DropTableStatement">
+		<token type="Identifier">DROP</token>
+		<token type="Reserved">TABLE</token>
+		<node type="IfExistsOption">
+			<token type="Identifier">IF</token>
+			<token type="Reserved">EXISTS</token>
+		</node>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="t_sample">
+			<token type="Identifier">t_sample</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<token type="EoF"></token>
 </node>

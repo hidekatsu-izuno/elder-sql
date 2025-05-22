@@ -1,464 +1,464 @@
 <node type="Script">
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="SchemaName" value="test">
-      <token type="Identifier" value="TEST">test</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="table_1">
-      <token type="Identifier">table_1</token>
-    </node>
-    <token type="LeftParen">(</token>
-    <node type="TableColumnList">
-      <node type="TableColumn">
-        <node type="ColumnName" value="text_column">
-          <token type="Identifier">text_column</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="TEXT">
-            <token type="Identifier" value="TEXT">TEXT</token>
-          </node>
-        </node>
-        <node type="ColumnConstraint">
-          <node type="NotNullConstraint">
-            <token type="Reserved" value="NOT">NOT</token>
-            <token type="Reserved" value="NULL">NULL</token>
-          </node>
-        </node>
-        <node type="ColumnConstraint">
-          <node type="PrimaryKeyConstraint">
-            <token type="Reserved" value="PRIMARY">PRIMARY</token>
-            <token type="Identifier" value="KEY">KEY</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="num_column">
-          <token type="Identifier">num_column</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="NUMERIC">
-            <token type="Identifier" value="NUMERIC">NUMERIC</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="int_column">
-          <token type="Identifier">int_column</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="INTEGER">
-            <token type="Identifier" value="INTEGER">INTEGER</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="real_column">
-          <token type="Identifier">real_column</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="INTEGER">
-            <token type="Identifier" value="INTEGER">INTEGER</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="blob_column">
-          <token type="Identifier">blob_column</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="BLOB">
-            <token type="Identifier" value="BLOB">BLOB</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="no_affinity_column">
-          <token type="Identifier">no_affinity_column</token>
-        </node>
-      </node>
-    </node>
-    <token type="RightParen">)</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="TemporaryOption">
-      <token type="Identifier" value="TEMP">temp</token>
-    </node>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="ObjectName" value="table_2">
-      <token type="Identifier">table_2</token>
-    </node>
-    <token type="LeftParen">(</token>
-    <node type="TableColumnList">
-      <node type="TableColumn">
-        <node type="ColumnName" value="text_column">
-          <token type="Identifier">&quot;text_column&quot;</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="TEXT">
-            <token type="Identifier" value="TEXT">TEXT</token>
-          </node>
-        </node>
-        <node type="ColumnConstraint">
-          <node type="NotNullConstraint">
-            <token type="Reserved" value="NOT">NOT</token>
-            <token type="Reserved" value="NULL">NULL</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="num_column">
-          <token type="Identifier">[num_column]</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="NUMERIC">
-            <token type="Identifier" value="NUMERIC">NUMERIC</token>
-          </node>
-        </node>
-        <node type="ColumnConstraint">
-          <node type="NotNullConstraint">
-            <token type="Reserved" value="NOT">NOT</token>
-            <token type="Reserved" value="NULL">NULL</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="int_column">
-          <token type="Identifier">`int_column`</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="INTEGER">
-            <token type="Identifier" value="INTEGER">INTEGER</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="real_column">
-          <token type="Identifier">&quot;real_column&quot;</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="INTEGER">
-            <token type="Identifier" value="INTEGER">INTEGER</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="blob_column">
-          <token type="Identifier">[blob_column]</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="BLOB">
-            <token type="Identifier" value="BLOB">BLOB</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="no_affinity_column">
-          <token type="Identifier">`no_affinity_column`</token>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableConstraint">
-        <node type="PrimaryKeyConstraint">
-          <token type="Reserved" value="PRIMARY">PRIMARY</token>
-          <token type="Identifier" value="KEY">KEY</token>
-          <token type="LeftParen">(</token>
-          <node type="SortColumnList">
-            <node type="SortColumn">
-              <node type="Expression">
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="text_column">
-                    <token type="Identifier">text_column</token>
-                  </node>
-                </node>
-              </node>
-            </node>
-            <token type="Comma">,</token>
-            <node type="SortColumn">
-              <node type="Expression">
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="num_column">
-                    <token type="Identifier">num_column</token>
-                  </node>
-                </node>
-              </node>
-            </node>
-          </node>
-          <token type="RightParen">)</token>
-        </node>
-      </node>
-    </node>
-    <token type="RightParen">)</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="TemporaryOption">
-      <token type="Reserved" value="TEMPORARY">temporary</token>
-    </node>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="ObjectName" value="table_3">
-      <token type="Identifier">table_3</token>
-    </node>
-    <token type="LeftParen">(</token>
-    <node type="TableColumnList">
-      <node type="TableColumn">
-        <node type="ColumnName" value="col_1">
-          <token type="Identifier">col_1</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="TEXT">
-            <token type="Identifier" value="TEXT">TEXT</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableColumn">
-        <node type="ColumnName" value="col_2">
-          <token type="Identifier">col_2</token>
-        </node>
-        <node type="ColumnType">
-          <node type="TypeName" value="NUMERIC">
-            <token type="Identifier" value="NUMERIC">NUMERIC</token>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableConstraint">
-        <token type="Reserved" value="CONSTRAINT">CONSTRAINT</token>
-        <node type="ConstraintName" value="c_001">
-          <token type="Identifier">c_001</token>
-        </node>
-        <node type="UniqueConstraint">
-          <token type="Reserved" value="UNIQUE">UNIQUE</token>
-          <token type="LeftParen">(</token>
-          <node type="SortColumnList">
-            <node type="SortColumn">
-              <node type="Expression">
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="col_1">
-                    <token type="Identifier">col_1</token>
-                  </node>
-                </node>
-              </node>
-            </node>
-            <token type="Comma">,</token>
-            <node type="SortColumn">
-              <node type="Expression">
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="col_2">
-                    <token type="Identifier">col_2</token>
-                  </node>
-                </node>
-              </node>
-            </node>
-          </node>
-          <token type="RightParen">)</token>
-          <node type="OnConflictClause">
-            <token type="Reserved" value="ON">ON</token>
-            <token type="Identifier" value="CONFLICT">CONFLICT</token>
-            <node type="RollbackOption">
-              <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableConstraint">
-        <token type="Reserved" value="CONSTRAINT">CONSTRAINT</token>
-        <node type="ConstraintName" value="c_002">
-          <token type="Identifier">c_002</token>
-        </node>
-        <node type="CheckConstraint">
-          <token type="Reserved" value="CHECK">CHECK</token>
-          <token type="LeftParen">(</token>
-          <node type="Expression">
-            <node type="GreaterThanOperation">
-              <node type="AddOperation">
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="col_1">
-                    <token type="Identifier">col_1</token>
-                  </node>
-                </node>
-                <token type="Operator">+</token>
-                <node type="ColumnReference">
-                  <node type="ColumnName" value="col_2">
-                    <token type="Identifier">col_2</token>
-                  </node>
-                </node>
-              </node>
-              <token type="Operator">&gt;</token>
-              <node type="NumericLiteral" value="0">
-                <token type="Numeric">0</token>
-              </node>
-            </node>
-          </node>
-          <token type="RightParen">)</token>
-        </node>
-      </node>
-      <token type="Comma">,</token>
-      <node type="TableConstraint">
-        <token type="Reserved" value="CONSTRAINT">CONSTRAINT</token>
-        <node type="ConstraintName" value="c_003">
-          <token type="Identifier">c_003</token>
-        </node>
-        <node type="ForeignKeyConstraint">
-          <token type="Reserved" value="FOREIGN">FOREIGN</token>
-          <token type="Identifier" value="KEY">KEY</token>
-          <token type="LeftParen">(</token>
-          <node type="ColumnList">
-            <node type="ColumnName" value="col_1">
-              <token type="Identifier">col_1</token>
-            </node>
-            <token type="Comma">,</token>
-            <node type="ColumnName" value="col_2">
-              <token type="Identifier">col_2</token>
-            </node>
-          </node>
-          <token type="RightParen">)</token>
-          <node type="ReferencesClause">
-            <token type="Reserved" value="REFERENCES">REFERENCES</token>
-            <node type="ObjectName" value="table_1">
-              <token type="Identifier">table_1</token>
-            </node>
-            <token type="LeftParen">(</token>
-            <node type="ColumnList">
-              <node type="ColumnName" value="text_column">
-                <token type="Identifier">text_column</token>
-              </node>
-              <token type="Comma">,</token>
-              <node type="ColumnName" value="num_column">
-                <token type="Identifier">num_column</token>
-              </node>
-            </node>
-            <token type="RightParen">)</token>
-            <node type="OnDeleteClause">
-              <token type="Reserved" value="ON">ON</token>
-              <token type="Reserved" value="DELETE">DELETE</token>
-              <node type="SetNullOption">
-                <token type="Reserved" value="SET">SET</token>
-                <token type="Reserved" value="NULL">NULL</token>
-              </node>
-            </node>
-            <node type="MatchClause">
-              <token type="Identifier" value="MATCH">MATCH</token>
-              <node type="SimpleOption">
-                <token type="Identifier" value="SIMPLE">SIMPLE</token>
-              </node>
-            </node>
-            <node type="OnUpdateClause">
-              <token type="Reserved" value="ON">ON</token>
-              <token type="Reserved" value="UPDATE">UPDATE</token>
-              <node type="CascadeOption">
-                <token type="Identifier" value="CASCADE">CASCADE</token>
-              </node>
-            </node>
-            <node type="NotDeferrableOption">
-              <token type="Reserved" value="NOT">NOT</token>
-              <token type="Reserved" value="DEFERRABLE">DEFERRABLE</token>
-              <node type="InitiallyDeferredOption">
-                <token type="Identifier" value="INITIALLY">INITIALLY</token>
-                <token type="Identifier" value="DEFERRED">DEFERRED</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-    <token type="RightParen">)</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="VirtualOption">
-      <token type="Identifier" value="VIRTUAL">VIRTUAL</token>
-    </node>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="ObjectName" value="tablename">
-      <token type="Identifier">tablename</token>
-    </node>
-    <node type="UsingModuleClause">
-      <token type="Reserved" value="USING">USING</token>
-      <node type="ModuleName" value="modulename">
-        <token type="Identifier">modulename</token>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="VirtualOption">
-      <token type="Identifier" value="VIRTUAL">VIRTUAL</token>
-    </node>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="SchemaName" value="temp">
-      <token type="Identifier" value="TEMP">temp</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="t1">
-      <token type="Identifier">t1</token>
-    </node>
-    <node type="UsingModuleClause">
-      <token type="Reserved" value="USING">USING</token>
-      <node type="ModuleName" value="csv">
-        <token type="Identifier">csv</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="ModuleArgumentList">
-        <node type="ModuleArgument">
-          <token type="Identifier">filename</token>
-          <token type="Operator">=</token>
-          <token type="String">'thefile.csv'</token>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateTableStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="VirtualOption">
-      <token type="Identifier" value="VIRTUAL">VIRTUAL</token>
-    </node>
-    <token type="Reserved" value="TABLE">TABLE</token>
-    <node type="ObjectName" value="email">
-      <token type="Identifier">email</token>
-    </node>
-    <node type="UsingModuleClause">
-      <token type="Reserved" value="USING">USING</token>
-      <node type="ModuleName" value="fts5">
-        <token type="Identifier">fts5</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="ModuleArgumentList">
-        <node type="ModuleArgument">
-          <token type="Identifier">sender</token>
-        </node>
-        <token type="Comma">,</token>
-        <node type="ModuleArgument">
-          <token type="Identifier">title</token>
-        </node>
-        <token type="Comma">,</token>
-        <node type="ModuleArgument">
-          <token type="Identifier" value="BODY">body</token>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <token type="EoF"></token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<token type="Reserved">TABLE</token>
+		<node type="SchemaName" value="test">
+			<token type="Identifier">test</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="table_1">
+			<token type="Identifier">table_1</token>
+		</node>
+		<token type="LeftParen">(</token>
+		<node type="TableColumnList">
+			<node type="TableColumn">
+				<node type="ColumnName" value="text_column">
+					<token type="Identifier">text_column</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="TEXT">
+						<token type="Identifier">TEXT</token>
+					</node>
+				</node>
+				<node type="ColumnConstraint">
+					<node type="NotNullConstraint">
+						<token type="Reserved">NOT</token>
+						<token type="Reserved">NULL</token>
+					</node>
+				</node>
+				<node type="ColumnConstraint">
+					<node type="PrimaryKeyConstraint">
+						<token type="Reserved">PRIMARY</token>
+						<token type="Identifier">KEY</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="num_column">
+					<token type="Identifier">num_column</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="NUMERIC">
+						<token type="Identifier">NUMERIC</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="int_column">
+					<token type="Identifier">int_column</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="INTEGER">
+						<token type="Identifier">INTEGER</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="real_column">
+					<token type="Identifier">real_column</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="INTEGER">
+						<token type="Identifier">INTEGER</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="blob_column">
+					<token type="Identifier">blob_column</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="BLOB">
+						<token type="Identifier">BLOB</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="no_affinity_column">
+					<token type="Identifier">no_affinity_column</token>
+				</node>
+			</node>
+		</node>
+		<token type="RightParen">)</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="TemporaryOption">
+			<token type="Identifier">temp</token>
+		</node>
+		<token type="Reserved">TABLE</token>
+		<node type="ObjectName" value="table_2">
+			<token type="Identifier">table_2</token>
+		</node>
+		<token type="LeftParen">(</token>
+		<node type="TableColumnList">
+			<node type="TableColumn">
+				<node type="ColumnName" value="text_column">
+					<token type="Identifier">&quot;text_column&quot;</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="TEXT">
+						<token type="Identifier">TEXT</token>
+					</node>
+				</node>
+				<node type="ColumnConstraint">
+					<node type="NotNullConstraint">
+						<token type="Reserved">NOT</token>
+						<token type="Reserved">NULL</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="num_column">
+					<token type="Identifier">[num_column]</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="NUMERIC">
+						<token type="Identifier">NUMERIC</token>
+					</node>
+				</node>
+				<node type="ColumnConstraint">
+					<node type="NotNullConstraint">
+						<token type="Reserved">NOT</token>
+						<token type="Reserved">NULL</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="int_column">
+					<token type="Identifier">`int_column`</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="INTEGER">
+						<token type="Identifier">INTEGER</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="real_column">
+					<token type="Identifier">&quot;real_column&quot;</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="INTEGER">
+						<token type="Identifier">INTEGER</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="blob_column">
+					<token type="Identifier">[blob_column]</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="BLOB">
+						<token type="Identifier">BLOB</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="no_affinity_column">
+					<token type="Identifier">`no_affinity_column`</token>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableConstraint">
+				<node type="PrimaryKeyConstraint">
+					<token type="Reserved">PRIMARY</token>
+					<token type="Identifier">KEY</token>
+					<token type="LeftParen">(</token>
+					<node type="SortColumnList">
+						<node type="SortColumn">
+							<node type="Expression">
+								<node type="ColumnReference">
+									<node type="ColumnName" value="text_column">
+										<token type="Identifier">text_column</token>
+									</node>
+								</node>
+							</node>
+						</node>
+						<token type="Comma">,</token>
+						<node type="SortColumn">
+							<node type="Expression">
+								<node type="ColumnReference">
+									<node type="ColumnName" value="num_column">
+										<token type="Identifier">num_column</token>
+									</node>
+								</node>
+							</node>
+						</node>
+					</node>
+					<token type="RightParen">)</token>
+				</node>
+			</node>
+		</node>
+		<token type="RightParen">)</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="TemporaryOption">
+			<token type="Reserved">temporary</token>
+		</node>
+		<token type="Reserved">TABLE</token>
+		<node type="ObjectName" value="table_3">
+			<token type="Identifier">table_3</token>
+		</node>
+		<token type="LeftParen">(</token>
+		<node type="TableColumnList">
+			<node type="TableColumn">
+				<node type="ColumnName" value="col_1">
+					<token type="Identifier">col_1</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="TEXT">
+						<token type="Identifier">TEXT</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableColumn">
+				<node type="ColumnName" value="col_2">
+					<token type="Identifier">col_2</token>
+				</node>
+				<node type="ColumnType">
+					<node type="TypeName" value="NUMERIC">
+						<token type="Identifier">NUMERIC</token>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableConstraint">
+				<token type="Reserved">CONSTRAINT</token>
+				<node type="ConstraintName" value="c_001">
+					<token type="Identifier">c_001</token>
+				</node>
+				<node type="UniqueConstraint">
+					<token type="Reserved">UNIQUE</token>
+					<token type="LeftParen">(</token>
+					<node type="SortColumnList">
+						<node type="SortColumn">
+							<node type="Expression">
+								<node type="ColumnReference">
+									<node type="ColumnName" value="col_1">
+										<token type="Identifier">col_1</token>
+									</node>
+								</node>
+							</node>
+						</node>
+						<token type="Comma">,</token>
+						<node type="SortColumn">
+							<node type="Expression">
+								<node type="ColumnReference">
+									<node type="ColumnName" value="col_2">
+										<token type="Identifier">col_2</token>
+									</node>
+								</node>
+							</node>
+						</node>
+					</node>
+					<token type="RightParen">)</token>
+					<node type="OnConflictClause">
+						<token type="Reserved">ON</token>
+						<token type="Identifier">CONFLICT</token>
+						<node type="RollbackOption">
+							<token type="Identifier">ROLLBACK</token>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableConstraint">
+				<token type="Reserved">CONSTRAINT</token>
+				<node type="ConstraintName" value="c_002">
+					<token type="Identifier">c_002</token>
+				</node>
+				<node type="CheckConstraint">
+					<token type="Reserved">CHECK</token>
+					<token type="LeftParen">(</token>
+					<node type="Expression">
+						<node type="GreaterThanOperation">
+							<node type="AddOperation">
+								<node type="ColumnReference">
+									<node type="ColumnName" value="col_1">
+										<token type="Identifier">col_1</token>
+									</node>
+								</node>
+								<token type="Operator">+</token>
+								<node type="ColumnReference">
+									<node type="ColumnName" value="col_2">
+										<token type="Identifier">col_2</token>
+									</node>
+								</node>
+							</node>
+							<token type="Operator">&gt;</token>
+							<node type="NumericLiteral" value="0">
+								<token type="Numeric">0</token>
+							</node>
+						</node>
+					</node>
+					<token type="RightParen">)</token>
+				</node>
+			</node>
+			<token type="Comma">,</token>
+			<node type="TableConstraint">
+				<token type="Reserved">CONSTRAINT</token>
+				<node type="ConstraintName" value="c_003">
+					<token type="Identifier">c_003</token>
+				</node>
+				<node type="ForeignKeyConstraint">
+					<token type="Reserved">FOREIGN</token>
+					<token type="Identifier">KEY</token>
+					<token type="LeftParen">(</token>
+					<node type="ColumnList">
+						<node type="ColumnName" value="col_1">
+							<token type="Identifier">col_1</token>
+						</node>
+						<token type="Comma">,</token>
+						<node type="ColumnName" value="col_2">
+							<token type="Identifier">col_2</token>
+						</node>
+					</node>
+					<token type="RightParen">)</token>
+					<node type="ReferencesClause">
+						<token type="Reserved">REFERENCES</token>
+						<node type="ObjectName" value="table_1">
+							<token type="Identifier">table_1</token>
+						</node>
+						<token type="LeftParen">(</token>
+						<node type="ColumnList">
+							<node type="ColumnName" value="text_column">
+								<token type="Identifier">text_column</token>
+							</node>
+							<token type="Comma">,</token>
+							<node type="ColumnName" value="num_column">
+								<token type="Identifier">num_column</token>
+							</node>
+						</node>
+						<token type="RightParen">)</token>
+						<node type="OnDeleteClause">
+							<token type="Reserved">ON</token>
+							<token type="Reserved">DELETE</token>
+							<node type="SetNullOption">
+								<token type="Reserved">SET</token>
+								<token type="Reserved">NULL</token>
+							</node>
+						</node>
+						<node type="MatchClause">
+							<token type="Identifier">MATCH</token>
+							<node type="SimpleOption">
+								<token type="Identifier">SIMPLE</token>
+							</node>
+						</node>
+						<node type="OnUpdateClause">
+							<token type="Reserved">ON</token>
+							<token type="Reserved">UPDATE</token>
+							<node type="CascadeOption">
+								<token type="Identifier">CASCADE</token>
+							</node>
+						</node>
+						<node type="NotDeferrableOption">
+							<token type="Reserved">NOT</token>
+							<token type="Reserved">DEFERRABLE</token>
+							<node type="InitiallyDeferredOption">
+								<token type="Identifier">INITIALLY</token>
+								<token type="Identifier">DEFERRED</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+		<token type="RightParen">)</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="VirtualOption">
+			<token type="Identifier">VIRTUAL</token>
+		</node>
+		<token type="Reserved">TABLE</token>
+		<node type="ObjectName" value="tablename">
+			<token type="Identifier">tablename</token>
+		</node>
+		<node type="UsingModuleClause">
+			<token type="Reserved">USING</token>
+			<node type="ModuleName" value="modulename">
+				<token type="Identifier">modulename</token>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="VirtualOption">
+			<token type="Identifier">VIRTUAL</token>
+		</node>
+		<token type="Reserved">TABLE</token>
+		<node type="SchemaName" value="temp">
+			<token type="Identifier">temp</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="t1">
+			<token type="Identifier">t1</token>
+		</node>
+		<node type="UsingModuleClause">
+			<token type="Reserved">USING</token>
+			<node type="ModuleName" value="csv">
+				<token type="Identifier">csv</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="ModuleArgumentList">
+				<node type="ModuleArgument">
+					<token type="Identifier">filename</token>
+					<token type="Operator">=</token>
+					<token type="String">'thefile.csv'</token>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateTableStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="VirtualOption">
+			<token type="Identifier">VIRTUAL</token>
+		</node>
+		<token type="Reserved">TABLE</token>
+		<node type="ObjectName" value="email">
+			<token type="Identifier">email</token>
+		</node>
+		<node type="UsingModuleClause">
+			<token type="Reserved">USING</token>
+			<node type="ModuleName" value="fts5">
+				<token type="Identifier">fts5</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="ModuleArgumentList">
+				<node type="ModuleArgument">
+					<token type="Identifier">sender</token>
+				</node>
+				<token type="Comma">,</token>
+				<node type="ModuleArgument">
+					<token type="Identifier">title</token>
+				</node>
+				<token type="Comma">,</token>
+				<node type="ModuleArgument">
+					<token type="Identifier">body</token>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<token type="EoF"></token>
 </node>

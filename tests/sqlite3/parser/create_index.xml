@@ -1,416 +1,416 @@
 <node type="Script">
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="a">
-                <token type="Identifier">a</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="a">
-                <token type="Identifier">a</token>
-              </node>
-            </node>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="b">
-                <token type="Identifier">b</token>
-              </node>
-            </node>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="c">
-                <token type="Identifier">c</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="a">
-                <token type="Identifier">a</token>
-              </node>
-            </node>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="b">
-                <token type="Identifier">b</token>
-              </node>
-            </node>
-          </node>
-          <node type="AscOption">
-            <token type="Identifier" value="ASC">ASC</token>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="c">
-                <token type="Identifier">c</token>
-              </node>
-            </node>
-          </node>
-          <node type="DescOption">
-            <token type="Identifier" value="DESC">DESC</token>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="IfNotExistsOption">
-      <token type="Identifier" value="IF">IF</token>
-      <token type="Reserved" value="NOT">NOT</token>
-      <token type="Reserved" value="EXISTS">EXISTS</token>
-    </node>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-              <token type="Operator">+</token>
-              <node type="NumericLiteral" value="1">
-                <token type="Numeric">1</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-    <node type="WhereClause">
-      <token type="Reserved" value="WHERE">WHERE</token>
-      <node type="Expression">
-        <node type="EqualOperation">
-          <node type="ColumnReference">
-            <node type="ColumnName" value="a">
-              <token type="Identifier">a</token>
-            </node>
-          </node>
-          <token type="Operator">=</token>
-          <node type="NumericLiteral" value="1">
-            <token type="Numeric">1</token>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="UniqueOption">
-      <token type="Reserved" value="UNIQUE">UNIQUE</token>
-    </node>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-              <token type="Operator">+</token>
-              <node type="NumericLiteral" value="1">
-                <token type="Numeric">1</token>
-              </node>
-            </node>
-          </node>
-          <node type="AscOption">
-            <token type="Identifier" value="ASC">ASC</token>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="b">
-                  <token type="Identifier">b</token>
-                </node>
-              </node>
-              <token type="Operator">+</token>
-              <node type="NumericLiteral" value="1">
-                <token type="Numeric">1</token>
-              </node>
-            </node>
-          </node>
-          <node type="DescOption">
-            <token type="Identifier" value="DESC">DESC</token>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="ColumnReference">
-              <node type="ColumnName" value="c">
-                <token type="Identifier">c</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="UniqueOption">
-      <token type="Reserved" value="UNIQUE">UNIQUE</token>
-    </node>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="IfNotExistsOption">
-      <token type="Identifier" value="IF">IF</token>
-      <token type="Reserved" value="NOT">NOT</token>
-      <token type="Reserved" value="EXISTS">EXISTS</token>
-    </node>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="CollateOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-              <token type="Reserved" value="COLLATE">COLLATE</token>
-              <node type="CollationName" value="test">
-                <token type="Identifier" value="TEST">test</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-    <node type="WhereClause">
-      <token type="Reserved" value="WHERE">WHERE</token>
-      <node type="Expression">
-        <node type="EqualOperation">
-          <node type="ColumnReference">
-            <node type="ColumnName" value="a">
-              <token type="Identifier">a</token>
-            </node>
-          </node>
-          <token type="Operator">=</token>
-          <node type="NumericLiteral" value="1">
-            <token type="Numeric">1</token>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="CreateIndexStatement">
-    <token type="Reserved" value="CREATE">CREATE</token>
-    <node type="UniqueOption">
-      <token type="Reserved" value="UNIQUE">UNIQUE</token>
-    </node>
-    <token type="Reserved" value="INDEX">INDEX</token>
-    <node type="IfNotExistsOption">
-      <token type="Identifier" value="IF">IF</token>
-      <token type="Reserved" value="NOT">NOT</token>
-      <token type="Reserved" value="EXISTS">EXISTS</token>
-    </node>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="ix_sample">
-      <token type="Identifier">ix_sample</token>
-    </node>
-    <node type="IndexOnClause">
-      <token type="Reserved" value="ON">ON</token>
-      <node type="ObjectName" value="sample">
-        <token type="Identifier" value="SAMPLE">sample</token>
-      </node>
-      <token type="LeftParen">(</token>
-      <node type="SortColumnList">
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-              <token type="Operator">+</token>
-              <node type="CollateOperation">
-                <node type="NumericLiteral" value="1">
-                  <token type="Numeric">1</token>
-                </node>
-                <token type="Reserved" value="COLLATE">COLLATE</token>
-                <node type="CollationName" value="test">
-                  <token type="Identifier" value="TEST">test</token>
-                </node>
-              </node>
-            </node>
-          </node>
-        </node>
-        <token type="Comma">,</token>
-        <node type="SortColumn">
-          <node type="Expression">
-            <node type="AddOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="b">
-                  <token type="Identifier">b</token>
-                </node>
-              </node>
-              <token type="Operator">+</token>
-              <node type="CollateOperation">
-                <node type="NumericLiteral" value="1">
-                  <token type="Numeric">1</token>
-                </node>
-                <token type="Reserved" value="COLLATE">COLLATE</token>
-                <node type="CollationName" value="test">
-                  <token type="Identifier" value="TEST">test</token>
-                </node>
-              </node>
-            </node>
-          </node>
-          <node type="AscOption">
-            <token type="Identifier" value="ASC">ASC</token>
-          </node>
-        </node>
-      </node>
-      <token type="RightParen">)</token>
-    </node>
-    <node type="WhereClause">
-      <token type="Reserved" value="WHERE">WHERE</token>
-      <node type="Expression">
-        <node type="EqualOperation">
-          <node type="ColumnReference">
-            <node type="ColumnName" value="a">
-              <token type="Identifier">a</token>
-            </node>
-          </node>
-          <token type="Operator">=</token>
-          <node type="NumericLiteral" value="1">
-            <token type="Numeric">1</token>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="EoF"></token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<token type="Reserved">INDEX</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="a">
+								<token type="Identifier">a</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<token type="Reserved">INDEX</token>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="a">
+								<token type="Identifier">a</token>
+							</node>
+						</node>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="b">
+								<token type="Identifier">b</token>
+							</node>
+						</node>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="c">
+								<token type="Identifier">c</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<token type="Reserved">INDEX</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="a">
+								<token type="Identifier">a</token>
+							</node>
+						</node>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="b">
+								<token type="Identifier">b</token>
+							</node>
+						</node>
+					</node>
+					<node type="AscOption">
+						<token type="Identifier">ASC</token>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="c">
+								<token type="Identifier">c</token>
+							</node>
+						</node>
+					</node>
+					<node type="DescOption">
+						<token type="Identifier">DESC</token>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<token type="Reserved">INDEX</token>
+		<node type="IfNotExistsOption">
+			<token type="Identifier">IF</token>
+			<token type="Reserved">NOT</token>
+			<token type="Reserved">EXISTS</token>
+		</node>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+							<token type="Operator">+</token>
+							<node type="NumericLiteral" value="1">
+								<token type="Numeric">1</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+		<node type="WhereClause">
+			<token type="Reserved">WHERE</token>
+			<node type="Expression">
+				<node type="EqualOperation">
+					<node type="ColumnReference">
+						<node type="ColumnName" value="a">
+							<token type="Identifier">a</token>
+						</node>
+					</node>
+					<token type="Operator">=</token>
+					<node type="NumericLiteral" value="1">
+						<token type="Numeric">1</token>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="UniqueOption">
+			<token type="Reserved">UNIQUE</token>
+		</node>
+		<token type="Reserved">INDEX</token>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+							<token type="Operator">+</token>
+							<node type="NumericLiteral" value="1">
+								<token type="Numeric">1</token>
+							</node>
+						</node>
+					</node>
+					<node type="AscOption">
+						<token type="Identifier">ASC</token>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="b">
+									<token type="Identifier">b</token>
+								</node>
+							</node>
+							<token type="Operator">+</token>
+							<node type="NumericLiteral" value="1">
+								<token type="Numeric">1</token>
+							</node>
+						</node>
+					</node>
+					<node type="DescOption">
+						<token type="Identifier">DESC</token>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="ColumnReference">
+							<node type="ColumnName" value="c">
+								<token type="Identifier">c</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="UniqueOption">
+			<token type="Reserved">UNIQUE</token>
+		</node>
+		<token type="Reserved">INDEX</token>
+		<node type="IfNotExistsOption">
+			<token type="Identifier">IF</token>
+			<token type="Reserved">NOT</token>
+			<token type="Reserved">EXISTS</token>
+		</node>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="CollateOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+							<token type="Reserved">COLLATE</token>
+							<node type="CollationName" value="test">
+								<token type="Identifier">test</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+		<node type="WhereClause">
+			<token type="Reserved">WHERE</token>
+			<node type="Expression">
+				<node type="EqualOperation">
+					<node type="ColumnReference">
+						<node type="ColumnName" value="a">
+							<token type="Identifier">a</token>
+						</node>
+					</node>
+					<token type="Operator">=</token>
+					<node type="NumericLiteral" value="1">
+						<token type="Numeric">1</token>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="CreateIndexStatement">
+		<token type="Reserved">CREATE</token>
+		<node type="UniqueOption">
+			<token type="Reserved">UNIQUE</token>
+		</node>
+		<token type="Reserved">INDEX</token>
+		<node type="IfNotExistsOption">
+			<token type="Identifier">IF</token>
+			<token type="Reserved">NOT</token>
+			<token type="Reserved">EXISTS</token>
+		</node>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="ix_sample">
+			<token type="Identifier">ix_sample</token>
+		</node>
+		<node type="IndexOnClause">
+			<token type="Reserved">ON</token>
+			<node type="ObjectName" value="sample">
+				<token type="Identifier">sample</token>
+			</node>
+			<token type="LeftParen">(</token>
+			<node type="SortColumnList">
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+							<token type="Operator">+</token>
+							<node type="CollateOperation">
+								<node type="NumericLiteral" value="1">
+									<token type="Numeric">1</token>
+								</node>
+								<token type="Reserved">COLLATE</token>
+								<node type="CollationName" value="test">
+									<token type="Identifier">test</token>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+				<token type="Comma">,</token>
+				<node type="SortColumn">
+					<node type="Expression">
+						<node type="AddOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="b">
+									<token type="Identifier">b</token>
+								</node>
+							</node>
+							<token type="Operator">+</token>
+							<node type="CollateOperation">
+								<node type="NumericLiteral" value="1">
+									<token type="Numeric">1</token>
+								</node>
+								<token type="Reserved">COLLATE</token>
+								<node type="CollationName" value="test">
+									<token type="Identifier">test</token>
+								</node>
+							</node>
+						</node>
+					</node>
+					<node type="AscOption">
+						<token type="Identifier">ASC</token>
+					</node>
+				</node>
+			</node>
+			<token type="RightParen">)</token>
+		</node>
+		<node type="WhereClause">
+			<token type="Reserved">WHERE</token>
+			<node type="Expression">
+				<node type="EqualOperation">
+					<node type="ColumnReference">
+						<node type="ColumnName" value="a">
+							<token type="Identifier">a</token>
+						</node>
+					</node>
+					<token type="Operator">=</token>
+					<node type="NumericLiteral" value="1">
+						<token type="Numeric">1</token>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="EoF"></token>
 </node>

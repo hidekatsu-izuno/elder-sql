@@ -1,20 +1,20 @@
 <node type="Script">
-  <node type="AnalyzeStatement">
-    <token type="Identifier" value="ANALYZE">analyze</token>
-    <node type="ObjectName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="AnalyzeStatement">
-    <token type="Identifier" value="ANALYZE">ANALYZE</token>
-    <node type="SchemaName" value="main">
-      <token type="Identifier" value="MAIN">main</token>
-    </node>
-    <token type="Dot">.</token>
-    <node type="ObjectName" value="test">
-      <token type="Identifier" value="TEST">test</token>
-    </node>
-  </node>
-  <token type="EoF"></token>
+	<node type="AnalyzeStatement">
+		<token type="Identifier">analyze</token>
+		<node type="ObjectName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="AnalyzeStatement">
+		<token type="Identifier">ANALYZE</token>
+		<node type="SchemaName" value="main">
+			<token type="Identifier">main</token>
+		</node>
+		<token type="Dot">.</token>
+		<node type="ObjectName" value="test">
+			<token type="Identifier">test</token>
+		</node>
+	</node>
+	<token type="EoF"></token>
 </node>

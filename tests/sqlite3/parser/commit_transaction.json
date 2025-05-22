@@ -1,0 +1,20 @@
+["node", { "type": "Script" },
+	["node", { "type": "CommitTransactionStatement" },
+		["token", { "type": "Reserved" }, "COMMIT"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CommitTransactionStatement" },
+		["token", { "type": "Reserved" }, "COMMIT"],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CommitTransactionStatement" },
+		["token", { "type": "Identifier" }, "END"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "CommitTransactionStatement" },
+		["token", { "type": "Identifier" }, "END"],
+		["token", { "type": "Reserved" }, "TRANSACTION"]
+	],
+	["token", { "type": "EoF" }]
+]

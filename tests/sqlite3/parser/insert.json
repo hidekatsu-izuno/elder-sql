@@ -1,0 +1,757 @@
+["node", { "type": "Script" },
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "String" }, "'2'"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "NullLiteral" },
+								["token", { "type": "Reserved" }, "NULL"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["node", { "type": "OrConflictClause" },
+				["token", { "type": "Reserved" }, "OR"],
+				["node", { "type": "AbortOption" },
+					["token", { "type": "Identifier" }, "ABORT"]
+				]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ColumnList" },
+				["node", { "type": "ColumnName", "value": "a" },
+					["token", { "type": "Identifier" }, "a"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["node", { "type": "OrConflictClause" },
+				["token", { "type": "Reserved" }, "OR"],
+				["node", { "type": "FailOption" },
+					["token", { "type": "Identifier" }, "FAIL"]
+				]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["token", { "type": "Reserved" }, "AS"],
+			["node", { "type": "ObjectAlias", "value": "sample2" },
+				["token", { "type": "Identifier" }, "sample2"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ColumnList" },
+				["node", { "type": "ColumnName", "value": "a" },
+					["token", { "type": "Identifier" }, "a"]
+				],
+				["token", { "type": "Comma" }, ","],
+				["node", { "type": "ColumnName", "value": "b" },
+					["token", { "type": "Identifier" }, "b"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "Identifier" }, "\"2\""]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["node", { "type": "OrConflictClause" },
+				["token", { "type": "Reserved" }, "OR"],
+				["node", { "type": "IgnoreOption" },
+					["token", { "type": "Identifier" }, "IGNORE"]
+				]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["token", { "type": "Reserved" }, "AS"],
+			["node", { "type": "ObjectAlias", "value": "sample2" },
+				["token", { "type": "Identifier" }, "sample2"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ColumnList" },
+				["node", { "type": "ColumnName", "value": "a" },
+					["token", { "type": "Identifier" }, "a"]
+				],
+				["token", { "type": "Comma" }, ","],
+				["node", { "type": "ColumnName", "value": "b" },
+					["token", { "type": "Identifier" }, "b"]
+				],
+				["token", { "type": "Comma" }, ","],
+				["node", { "type": "ColumnName", "value": "c" },
+					["token", { "type": "Identifier" }, "c"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "Identifier" }, "\"2\""]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "BooleanLiteral", "value": "TRUE" },
+								["token", { "type": "Identifier" }, "TRUE"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"],
+					["token", { "type": "Comma" }, ","],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "String" }, "'2'"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "BooleanLiteral", "value": "FALSE" },
+								["token", { "type": "Identifier" }, "FALSE"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["node", { "type": "OrConflictClause" },
+				["token", { "type": "Reserved" }, "OR"],
+				["node", { "type": "ReplaceOption" },
+					["token", { "type": "Identifier" }, "REPLACE"]
+				]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "Identifier" }, "\"2\""]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "NullLiteral" },
+								["token", { "type": "Reserved" }, "NULL"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"],
+					["token", { "type": "Comma" }, ","],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "String" }, "'2'"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "BooleanLiteral", "value": "TRUE" },
+								["token", { "type": "Identifier" }, "TRUE"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"],
+					["token", { "type": "Comma" }, ","],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "Identifier" }, "\"2\""]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "BooleanLiteral", "value": "FALSE" },
+								["token", { "type": "Identifier" }, "FALSE"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["node", { "type": "OrConflictClause" },
+				["token", { "type": "Reserved" }, "OR"],
+				["node", { "type": "RollbackOption" },
+					["token", { "type": "Identifier" }, "ROLLBACK"]
+				]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "SelectStatement" },
+				["node", { "type": "SelectClause" },
+					["token", { "type": "Reserved" }, "SELECT"],
+					["node", { "type": "SelectColumnList" },
+						["node", { "type": "SelectColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "NumericLiteral", "value": "1" },
+									["token", { "type": "Numeric" }, "1"]
+								]
+							]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "DefaultValuesOption" },
+				["token", { "type": "Reserved" }, "DEFAULT"],
+				["token", { "type": "Reserved" }, "VALUES"]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "SelectStatement" },
+				["node", { "type": "SelectClause" },
+					["token", { "type": "Reserved" }, "SELECT"],
+					["node", { "type": "SelectColumnList" },
+						["node", { "type": "SelectColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "NumericLiteral", "value": "1" },
+									["token", { "type": "Numeric" }, "1"]
+								]
+							]
+						]
+					],
+					["node", { "type": "FromClause" },
+						["token", { "type": "Reserved" }, "FROM"],
+						["node", { "type": "FromObjectList" },
+							["node", { "type": "FromObject" },
+								["node", { "type": "ObjectReference" },
+									["node", { "type": "ObjectName", "value": "sample2" },
+										["token", { "type": "Identifier" }, "sample2"]
+									]
+								]
+							]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["node", { "type": "ReplaceOption" },
+				["token", { "type": "Identifier" }, "REPLACE"]
+			],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["token", { "type": "LeftParen" }, "("],
+			["node", { "type": "ColumnList" },
+				["node", { "type": "ColumnName", "value": "a" },
+					["token", { "type": "Identifier" }, "a"]
+				]
+			],
+			["token", { "type": "RightParen" }, ")"],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "WithClause" },
+			["token", { "type": "Identifier" }, "WITH"],
+			["node", { "type": "CommonTableList" },
+				["node", { "type": "CommonTable" },
+					["node", { "type": "ObjectName", "value": "X" },
+						["token", { "type": "Identifier" }, "X"]
+					],
+					["token", { "type": "Reserved" }, "AS"],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "SelectStatement" },
+						["node", { "type": "SelectClause" },
+							["token", { "type": "Reserved" }, "SELECT"],
+							["node", { "type": "SelectColumnList" },
+								["node", { "type": "SelectColumn" },
+									["node", { "type": "Expression" },
+										["node", { "type": "NumericLiteral", "value": "1" },
+											["token", { "type": "Numeric" }, "1"]
+										]
+									],
+									["token", { "type": "Reserved" }, "AS"],
+									["node", { "type": "ColumnAlias", "value": "Y" },
+										["token", { "type": "Identifier" }, "Y"]
+									]
+								]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		],
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "SelectStatement" },
+				["node", { "type": "SelectClause" },
+					["token", { "type": "Reserved" }, "SELECT"],
+					["node", { "type": "SelectColumnList" },
+						["node", { "type": "SelectColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "Y" },
+										["token", { "type": "Identifier" }, "Y"]
+									]
+								]
+							]
+						]
+					],
+					["node", { "type": "FromClause" },
+						["token", { "type": "Reserved" }, "FROM"],
+						["node", { "type": "FromObjectList" },
+							["node", { "type": "FromObject" },
+								["node", { "type": "ObjectReference" },
+									["node", { "type": "ObjectName", "value": "X" },
+										["token", { "type": "Identifier" }, "X"]
+									]
+								]
+							]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "SelectStatement" },
+				["node", { "type": "WithClause" },
+					["token", { "type": "Identifier" }, "WITH"],
+					["node", { "type": "CommonTableList" },
+						["node", { "type": "CommonTable" },
+							["node", { "type": "ObjectName", "value": "X" },
+								["token", { "type": "Identifier" }, "X"]
+							],
+							["token", { "type": "Reserved" }, "AS"],
+							["token", { "type": "LeftParen" }, "("],
+							["node", { "type": "SelectStatement" },
+								["node", { "type": "SelectClause" },
+									["token", { "type": "Reserved" }, "SELECT"],
+									["node", { "type": "SelectColumnList" },
+										["node", { "type": "SelectColumn" },
+											["node", { "type": "Expression" },
+												["node", { "type": "NumericLiteral", "value": "1" },
+													["token", { "type": "Numeric" }, "1"]
+												]
+											],
+											["token", { "type": "Reserved" }, "AS"],
+											["node", { "type": "ColumnAlias", "value": "Y" },
+												["token", { "type": "Identifier" }, "Y"]
+											]
+										]
+									]
+								]
+							],
+							["token", { "type": "RightParen" }, ")"]
+						]
+					]
+				],
+				["node", { "type": "SelectClause" },
+					["token", { "type": "Reserved" }, "SELECT"],
+					["node", { "type": "SelectColumnList" },
+						["node", { "type": "SelectColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "Y" },
+										["token", { "type": "Identifier" }, "Y"]
+									]
+								]
+							]
+						]
+					],
+					["node", { "type": "FromClause" },
+						["token", { "type": "Reserved" }, "FROM"],
+						["node", { "type": "FromObjectList" },
+							["node", { "type": "FromObject" },
+								["node", { "type": "ObjectReference" },
+									["node", { "type": "ObjectName", "value": "X" },
+										["token", { "type": "Identifier" }, "X"]
+									]
+								]
+							]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "ValuesClause" },
+				["token", { "type": "Reserved" }, "VALUES"],
+				["node", { "type": "ExpressionListGroup" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "ExpressionList" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "StringLiteral", "value": "2" },
+								["token", { "type": "String" }, "'2'"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Expression" },
+							["node", { "type": "NullLiteral" },
+								["token", { "type": "Reserved" }, "NULL"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			],
+			["node", { "type": "ReturningClause" },
+				["token", { "type": "Reserved" }, "RETURNING"],
+				["node", { "type": "SelectColumnList" },
+					["node", { "type": "SelectColumn" },
+						["node", { "type": "AllColumnsOption" },
+							["token", { "type": "Operator" }, "*"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "SchemaName", "value": "main" },
+				["token", { "type": "Identifier" }, "main"]
+			],
+			["token", { "type": "Dot" }, "."],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "SelectStatement" },
+				["node", { "type": "SelectClause" },
+					["token", { "type": "Reserved" }, "SELECT"],
+					["node", { "type": "SelectColumnList" },
+						["node", { "type": "SelectColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "ColumnReference" },
+									["node", { "type": "ColumnName", "value": "Y" },
+										["token", { "type": "Identifier" }, "Y"]
+									]
+								]
+							]
+						]
+					],
+					["node", { "type": "FromClause" },
+						["token", { "type": "Reserved" }, "FROM"],
+						["node", { "type": "FromObjectList" },
+							["node", { "type": "FromObject" },
+								["node", { "type": "ObjectReference" },
+									["node", { "type": "ObjectName", "value": "X" },
+										["token", { "type": "Identifier" }, "X"]
+									]
+								]
+							]
+						]
+					]
+				]
+			],
+			["node", { "type": "ReturningClause" },
+				["token", { "type": "Reserved" }, "RETURNING"],
+				["node", { "type": "SelectColumnList" },
+					["node", { "type": "SelectColumn" },
+						["node", { "type": "Expression" },
+							["node", { "type": "ColumnReference" },
+								["node", { "type": "ColumnName", "value": "Y" },
+									["token", { "type": "Identifier" }, "Y"]
+								]
+							]
+						]
+					],
+					["token", { "type": "Comma" }, ","],
+					["node", { "type": "SelectColumn" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Reserved" }, "AS"],
+						["node", { "type": "ColumnAlias", "value": "Z" },
+							["token", { "type": "Identifier" }, "Z"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "InsertStatement" },
+		["node", { "type": "InsertClause" },
+			["token", { "type": "Reserved" }, "INSERT"],
+			["token", { "type": "Reserved" }, "INTO"],
+			["node", { "type": "ObjectName", "value": "sample" },
+				["token", { "type": "Identifier" }, "sample"]
+			],
+			["node", { "type": "DefaultValuesOption" },
+				["token", { "type": "Reserved" }, "DEFAULT"],
+				["token", { "type": "Reserved" }, "VALUES"]
+			],
+			["node", { "type": "ReturningClause" },
+				["token", { "type": "Reserved" }, "RETURNING"],
+				["node", { "type": "SelectColumnList" },
+					["node", { "type": "SelectColumn" },
+						["node", { "type": "Expression" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Reserved" }, "AS"],
+						["node", { "type": "ColumnAlias", "value": "Z" },
+							["token", { "type": "Identifier" }, "Z"]
+						]
+					],
+					["token", { "type": "Comma" }, ","],
+					["node", { "type": "SelectColumn" },
+						["node", { "type": "AllColumnsOption" },
+							["token", { "type": "Operator" }, "*"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoF" }]
+]

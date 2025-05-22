@@ -1,25 +1,17 @@
-import type { Element } from "domhandler";
-import { ParseError, type Token, TokenReader } from "../lexer.ts";
-import {
-	AggregateParseError,
-	type CstBuilder,
-	Parser,
-} from "../parser.ts";
+import type { Token } from "../lexer.ts";
+import { ParseError, TokenReader } from "../lexer.ts";
+import type { CstBuilder, CstNode } from "../parser.ts";
+import { AggregateParseError, Parser } from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { PostgresLexer } from "./postgres_lexer.ts";
-import { DomhandlerCstBuilder } from "../cst/domhandler_cst_builder.ts"
 
-export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
+export class PostgresParser extends Parser {
 	constructor(options: Record<string, any> = {}) {
-		super(
-			options.lexer ?? new PostgresLexer(options),
-			options.builderFactory ?? (() => new DomhandlerCstBuilder(options)),
-			options,
-		);
+		super(options.lexer ?? new PostgresLexer(options), options);
 	}
 
-	parseTokens(tokens: Token[], b: CstBuilder<CstNode>) {
+	parseTokens(tokens: Token[], b: CstBuilder) {
 		const r = new TokenReader(tokens);
 		const errors = [];
 		const root = b.start("Script");
@@ -60,7 +52,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		}
 	}
 
-	private explainStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private explainStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
 			b.token(r.consume(SqlKeywords.EXPLAIN));
@@ -172,7 +164,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private statement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private statement(b: CstBuilder, r: TokenReader) {
 		let stmt: unknown;
 		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
@@ -238,7 +230,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		return stmt;
 	}
 
-	private unknown(b: CstBuilder<CstNode>, r: TokenReader, base: CstNode) {
+	private unknown(b: CstBuilder, r: TokenReader, base: CstNode) {
 		b.current = base;
 		let node: ReturnType<typeof b.end> | undefined;
 		if (!r.peek().eos) {
@@ -252,7 +244,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		return node;
 	}
 
-	private command(b: CstBuilder<CstNode>, r: TokenReader) {
+	private command(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CommandStatement");
 		try {
 			b.start("CommandName");
@@ -277,7 +269,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		return b.end();
 	}
 
-	private identifier(b: CstBuilder<CstNode>, r: TokenReader, name: string) {
+	private identifier(b: CstBuilder, r: TokenReader, name: string) {
 		b.start(name);
 		if (r.peekIf(SqlTokenType.Identifier)) {
 			b.value(dequote(b.token(r.consume()).text));
@@ -287,7 +279,7 @@ export class PostgresParser<CstNode = Element> extends Parser<CstNode> {
 		return b.end();
 	}
 
-	private booleanLiteral(b: CstBuilder<CstNode>, r: TokenReader) {
+	private booleanLiteral(b: CstBuilder, r: TokenReader) {
 		b.start("BooleanLiteral");
 		if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			const token = r.consume();

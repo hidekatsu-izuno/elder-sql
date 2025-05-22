@@ -1,0 +1,20 @@
+["node", { "type": "Script" },
+	["node", { "type": "AnalyzeStatement" },
+		["token", { "type": "Identifier" }, "analyze"],
+		["node", { "type": "ObjectName", "value": "main" },
+			["token", { "type": "Identifier" }, "main"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AnalyzeStatement" },
+		["token", { "type": "Identifier" }, "ANALYZE"],
+		["node", { "type": "SchemaName", "value": "main" },
+			["token", { "type": "Identifier" }, "main"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		]
+	],
+	["token", { "type": "EoF" }]
+]

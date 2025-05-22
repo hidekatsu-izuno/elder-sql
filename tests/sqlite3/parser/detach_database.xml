@@ -1,17 +1,17 @@
 <node type="Script">
-  <node type="DetachDatabaseStatement">
-    <token type="Identifier" value="DETACH">DETACH</token>
-    <token type="Identifier" value="DATABASE">DATABASE</token>
-    <node type="SchemaName" value="mem_db">
-      <token type="Identifier">mem_db</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="DetachDatabaseStatement">
-    <token type="Identifier" value="DETACH">DETACH</token>
-    <node type="SchemaName" value="new_db">
-      <token type="Identifier">new_db</token>
-    </node>
-  </node>
-  <token type="EoF"></token>
+	<node type="DetachDatabaseStatement">
+		<token type="Identifier">DETACH</token>
+		<token type="Identifier">DATABASE</token>
+		<node type="SchemaName" value="mem_db">
+			<token type="Identifier">mem_db</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="DetachDatabaseStatement">
+		<token type="Identifier">DETACH</token>
+		<node type="SchemaName" value="new_db">
+			<token type="Identifier">new_db</token>
+		</node>
+	</node>
+	<token type="EoF"></token>
 </node>

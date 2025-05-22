@@ -1,31 +1,31 @@
 <node type="Script">
-  <node type="RollbackTransactionStatement">
-    <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="RollbackTransactionStatement">
-    <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="RollbackTransactionStatement">
-    <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-    <token type="Reserved" value="TO">TO</token>
-    <node type="SavepointName" value="sect1">
-      <token type="Identifier">sect1</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="RollbackTransactionStatement">
-    <token type="Identifier" value="ROLLBACK">ROLLBACK</token>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-    <token type="Reserved" value="TO">TO</token>
-    <token type="Identifier" value="SAVEPOINT">SAVEPOINT</token>
-    <node type="SavepointName" value="sect1">
-      <token type="Identifier">sect1</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <token type="EoF"></token>
+	<node type="RollbackTransactionStatement">
+		<token type="Identifier">ROLLBACK</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="RollbackTransactionStatement">
+		<token type="Identifier">ROLLBACK</token>
+		<token type="Reserved">TRANSACTION</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="RollbackTransactionStatement">
+		<token type="Identifier">ROLLBACK</token>
+		<token type="Reserved">TRANSACTION</token>
+		<token type="Reserved">TO</token>
+		<node type="SavepointName" value="sect1">
+			<token type="Identifier">sect1</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="RollbackTransactionStatement">
+		<token type="Identifier">ROLLBACK</token>
+		<token type="Reserved">TRANSACTION</token>
+		<token type="Reserved">TO</token>
+		<token type="Identifier">SAVEPOINT</token>
+		<node type="SavepointName" value="sect1">
+			<token type="Identifier">sect1</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<token type="EoF"></token>
 </node>

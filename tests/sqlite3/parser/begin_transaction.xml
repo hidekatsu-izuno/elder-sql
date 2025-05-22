@@ -1,56 +1,56 @@
 <node type="Script">
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="DeferredOption">
-      <token type="Identifier" value="DEFERRED">DEFERRED</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="ImmediateOption">
-      <token type="Identifier" value="IMMEDIATE">IMMEDIATE</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="ExclusiveOption">
-      <token type="Identifier" value="EXCLUSIVE">EXCLUSIVE</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="DeferredOption">
-      <token type="Identifier" value="DEFERRED">DEFERRED</token>
-    </node>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="ImmediateOption">
-      <token type="Identifier" value="IMMEDIATE">IMMEDIATE</token>
-    </node>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="BeginTransactionStatement">
-    <token type="Identifier" value="BEGIN">BEGIN</token>
-    <node type="ExclusiveOption">
-      <token type="Identifier" value="EXCLUSIVE">EXCLUSIVE</token>
-    </node>
-    <token type="Reserved" value="TRANSACTION">TRANSACTION</token>
-  </node>
-  <token type="EoF"></token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<token type="Reserved">TRANSACTION</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="DeferredOption">
+			<token type="Identifier">DEFERRED</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="ImmediateOption">
+			<token type="Identifier">IMMEDIATE</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="ExclusiveOption">
+			<token type="Identifier">EXCLUSIVE</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="DeferredOption">
+			<token type="Identifier">DEFERRED</token>
+		</node>
+		<token type="Reserved">TRANSACTION</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="ImmediateOption">
+			<token type="Identifier">IMMEDIATE</token>
+		</node>
+		<token type="Reserved">TRANSACTION</token>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="BeginTransactionStatement">
+		<token type="Identifier">BEGIN</token>
+		<node type="ExclusiveOption">
+			<token type="Identifier">EXCLUSIVE</token>
+		</node>
+		<token type="Reserved">TRANSACTION</token>
+	</node>
+	<token type="EoF"></token>
 </node>

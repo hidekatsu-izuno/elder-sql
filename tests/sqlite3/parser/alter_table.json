@@ -1,0 +1,323 @@
+["node", { "type": "Script" },
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "RenameToObjectClause" },
+			["token", { "type": "Identifier" }, "RENAME"],
+			["token", { "type": "Reserved" }, "TO"],
+			["node", { "type": "ObjectName", "value": "new_table" },
+				["token", { "type": "Identifier" }, "new_table"]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "RenameColumnClause" },
+			["token", { "type": "Identifier" }, "RENAME"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "ColumnName", "value": "old_column" },
+				["token", { "type": "Identifier" }, "old_column"]
+			],
+			["node", { "type": "RenameToColumnClause" },
+				["token", { "type": "Reserved" }, "TO"],
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "RenameColumnClause" },
+			["token", { "type": "Identifier" }, "RENAME"],
+			["node", { "type": "ColumnName", "value": "old_column" },
+				["token", { "type": "Identifier" }, "old_column"]
+			],
+			["node", { "type": "RenameToColumnClause" },
+				["token", { "type": "Reserved" }, "TO"],
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "DefaultOption" },
+						["token", { "type": "Reserved" }, "DEFAULT"],
+						["node", { "type": "Expression" },
+							["node", { "type": "NullLiteral" },
+								["token", { "type": "Reserved" }, "NULL"]
+							]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "PrimaryKeyConstraint" },
+						["token", { "type": "Reserved" }, "PRIMARY"],
+						["token", { "type": "Identifier" }, "KEY"]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "TEXT" },
+						["token", { "type": "Identifier" }, "TEXT"]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "VARING CHARACTER" },
+						["token", { "type": "Identifier" }, "VARING"],
+						["token", { "type": "Identifier" }, "CHARACTER"]
+					]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "GeneratedColumnOption" },
+						["token", { "type": "Reserved" }, "GENERATED"],
+						["token", { "type": "Reserved" }, "ALWAYS"],
+						["token", { "type": "Reserved" }, "AS"],
+						["token", { "type": "LeftParen" }, "("],
+						["node", { "type": "GeneratedColumn" },
+							["node", { "type": "Expression" },
+								["node", { "type": "NumericLiteral", "value": "1" },
+									["token", { "type": "Numeric" }, "1"]
+								]
+							]
+						],
+						["token", { "type": "RightParen" }, ")"],
+						["node", { "type": "StoredOption" },
+							["token", { "type": "Identifier" }, "STORED"]
+						]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "AddColumnClause" },
+			["token", { "type": "Reserved" }, "ADD"],
+			["node", { "type": "TableColumn" },
+				["node", { "type": "ColumnName", "value": "new_column" },
+					["token", { "type": "Identifier" }, "new_column"]
+				],
+				["node", { "type": "ColumnType" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
+						["token", { "type": "Identifier" }, "NUMERIC"]
+					],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "TypeOptionList" },
+						["node", { "type": "LengthOption" },
+							["node", { "type": "NumericLiteral", "value": "1" },
+								["token", { "type": "Numeric" }, "1"]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "ScaleOption" },
+							["node", { "type": "NumericLiteral", "value": "0" },
+								["token", { "type": "Numeric" }, "0"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				],
+				["node", { "type": "ColumnConstraint" },
+					["node", { "type": "PrimaryKeyConstraint" },
+						["token", { "type": "Reserved" }, "PRIMARY"],
+						["token", { "type": "Identifier" }, "KEY"]
+					]
+				]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "DropColumnClause" },
+			["token", { "type": "Identifier" }, "DROP"],
+			["token", { "type": "Identifier" }, "COLUMN"],
+			["node", { "type": "ColumnName", "value": "new_column" },
+				["token", { "type": "Identifier" }, "new_column"]
+			]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AlterTableStatement" },
+		["token", { "type": "Reserved" }, "ALTER"],
+		["token", { "type": "Reserved" }, "TABLE"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		],
+		["node", { "type": "DropColumnClause" },
+			["token", { "type": "Identifier" }, "DROP"],
+			["node", { "type": "ColumnName", "value": "new_column" },
+				["token", { "type": "Identifier" }, "new_column"]
+			]
+		]
+	],
+	["token", { "type": "EoF" }]
+]

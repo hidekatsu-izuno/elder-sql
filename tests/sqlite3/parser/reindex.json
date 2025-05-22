@@ -1,0 +1,24 @@
+["node", { "type": "Script" },
+	["node", { "type": "ReindexStatement" },
+		["token", { "type": "Identifier" }, "REINDEX"]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "ReindexStatement" },
+		["token", { "type": "Identifier" }, "REINDEX"],
+		["node", { "type": "ObjectName", "value": "test_collation" },
+			["token", { "type": "Identifier" }, "test_collation"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "ReindexStatement" },
+		["token", { "type": "Identifier" }, "REINDEX"],
+		["node", { "type": "SchemaName", "value": "test" },
+			["token", { "type": "Identifier" }, "test"]
+		],
+		["token", { "type": "Dot" }, "."],
+		["node", { "type": "ObjectName", "value": "sample" },
+			["token", { "type": "Identifier" }, "sample"]
+		]
+	],
+	["token", { "type": "EoF" }]
+]

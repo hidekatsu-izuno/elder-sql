@@ -1,153 +1,153 @@
 <node type="Script">
-  <node type="ExplainStatement">
-    <token type="Identifier" value="EXPLAIN">EXPLAIN</token>
-    <node type="SelectStatement">
-      <node type="SelectClause">
-        <token type="Reserved" value="SELECT">SELECT</token>
-        <node type="SelectColumnList">
-          <node type="SelectColumn">
-            <node type="Expression">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-            </node>
-          </node>
-          <token type="Comma">,</token>
-          <node type="SelectColumn">
-            <node type="Expression">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="b">
-                  <token type="Identifier">b</token>
-                </node>
-              </node>
-            </node>
-          </node>
-        </node>
-        <node type="FromClause">
-          <token type="Reserved" value="FROM">FROM</token>
-          <node type="FromObjectList">
-            <node type="FromObject">
-              <node type="ObjectReference">
-                <node type="ObjectName" value="t1">
-                  <token type="Identifier">t1</token>
-                </node>
-              </node>
-            </node>
-          </node>
-        </node>
-        <node type="WhereClause">
-          <token type="Reserved" value="WHERE">WHERE</token>
-          <node type="Expression">
-            <node type="EqualOperation">
-              <node type="ColumnReference">
-                <node type="ColumnName" value="a">
-                  <token type="Identifier">a</token>
-                </node>
-              </node>
-              <token type="Operator">=</token>
-              <node type="NumericLiteral" value="1">
-                <token type="Numeric">1</token>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="ExplainStatement">
-    <token type="Identifier" value="EXPLAIN">EXPLAIN</token>
-    <node type="QueryPlanOption">
-      <token type="Identifier" value="QUERY">QUERY</token>
-      <token type="Identifier" value="PLAN">PLAN</token>
-    </node>
-    <node type="SelectStatement">
-      <node type="SelectClause">
-        <token type="Reserved" value="SELECT">SELECT</token>
-        <node type="SelectColumnList">
-          <node type="SelectColumn">
-            <node type="AllColumnsOption">
-              <node type="SchemaName" value="t1">
-                <token type="Identifier">t1</token>
-              </node>
-              <token type="Dot">.</token>
-              <token type="Operator">*</token>
-            </node>
-          </node>
-          <token type="Comma">,</token>
-          <node type="SelectColumn">
-            <node type="AllColumnsOption">
-              <node type="SchemaName" value="t2">
-                <token type="Identifier">t2</token>
-              </node>
-              <token type="Dot">.</token>
-              <token type="Operator">*</token>
-            </node>
-          </node>
-        </node>
-        <node type="FromClause">
-          <token type="Reserved" value="FROM">FROM</token>
-          <node type="FromObjectList">
-            <node type="FromObject">
-              <node type="ObjectReference">
-                <node type="ObjectName" value="t1">
-                  <token type="Identifier">t1</token>
-                </node>
-              </node>
-            </node>
-            <token type="Comma">,</token>
-            <node type="FromObject">
-              <node type="ObjectReference">
-                <node type="ObjectName" value="t2">
-                  <token type="Identifier">t2</token>
-                </node>
-              </node>
-            </node>
-          </node>
-        </node>
-        <node type="WhereClause">
-          <token type="Reserved" value="WHERE">WHERE</token>
-          <node type="Expression">
-            <node type="AndOperation">
-              <node type="EqualOperation">
-                <node type="ColumnReference">
-                  <node type="ObjectName" value="t1">
-                    <token type="Identifier">t1</token>
-                  </node>
-                  <token type="Dot">.</token>
-                  <node type="ColumnName" value="a">
-                    <token type="Identifier">a</token>
-                  </node>
-                </node>
-                <token type="Operator">=</token>
-                <node type="NumericLiteral" value="1">
-                  <token type="Numeric">1</token>
-                </node>
-              </node>
-              <token type="Reserved" value="AND">AND</token>
-              <node type="GreaterThanOperation">
-                <node type="ColumnReference">
-                  <node type="ObjectName" value="t1">
-                    <token type="Identifier">t1</token>
-                  </node>
-                  <token type="Dot">.</token>
-                  <node type="ColumnName" value="b">
-                    <token type="Identifier">b</token>
-                  </node>
-                </node>
-                <token type="Operator">&gt;</token>
-                <node type="NumericLiteral" value="2">
-                  <token type="Numeric">2</token>
-                </node>
-              </node>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <token type="EoF"></token>
+	<node type="ExplainStatement">
+		<token type="Identifier">EXPLAIN</token>
+		<node type="SelectStatement">
+			<node type="SelectClause">
+				<token type="Reserved">SELECT</token>
+				<node type="SelectColumnList">
+					<node type="SelectColumn">
+						<node type="Expression">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+						</node>
+					</node>
+					<token type="Comma">,</token>
+					<node type="SelectColumn">
+						<node type="Expression">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="b">
+									<token type="Identifier">b</token>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+				<node type="FromClause">
+					<token type="Reserved">FROM</token>
+					<node type="FromObjectList">
+						<node type="FromObject">
+							<node type="ObjectReference">
+								<node type="ObjectName" value="t1">
+									<token type="Identifier">t1</token>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+				<node type="WhereClause">
+					<token type="Reserved">WHERE</token>
+					<node type="Expression">
+						<node type="EqualOperation">
+							<node type="ColumnReference">
+								<node type="ColumnName" value="a">
+									<token type="Identifier">a</token>
+								</node>
+							</node>
+							<token type="Operator">=</token>
+							<node type="NumericLiteral" value="1">
+								<token type="Numeric">1</token>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="ExplainStatement">
+		<token type="Identifier">EXPLAIN</token>
+		<node type="QueryPlanOption">
+			<token type="Identifier">QUERY</token>
+			<token type="Identifier">PLAN</token>
+		</node>
+		<node type="SelectStatement">
+			<node type="SelectClause">
+				<token type="Reserved">SELECT</token>
+				<node type="SelectColumnList">
+					<node type="SelectColumn">
+						<node type="AllColumnsOption">
+							<node type="SchemaName" value="t1">
+								<token type="Identifier">t1</token>
+							</node>
+							<token type="Dot">.</token>
+							<token type="Operator">*</token>
+						</node>
+					</node>
+					<token type="Comma">,</token>
+					<node type="SelectColumn">
+						<node type="AllColumnsOption">
+							<node type="SchemaName" value="t2">
+								<token type="Identifier">t2</token>
+							</node>
+							<token type="Dot">.</token>
+							<token type="Operator">*</token>
+						</node>
+					</node>
+				</node>
+				<node type="FromClause">
+					<token type="Reserved">FROM</token>
+					<node type="FromObjectList">
+						<node type="FromObject">
+							<node type="ObjectReference">
+								<node type="ObjectName" value="t1">
+									<token type="Identifier">t1</token>
+								</node>
+							</node>
+						</node>
+						<token type="Comma">,</token>
+						<node type="FromObject">
+							<node type="ObjectReference">
+								<node type="ObjectName" value="t2">
+									<token type="Identifier">t2</token>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+				<node type="WhereClause">
+					<token type="Reserved">WHERE</token>
+					<node type="Expression">
+						<node type="AndOperation">
+							<node type="EqualOperation">
+								<node type="ColumnReference">
+									<node type="ObjectName" value="t1">
+										<token type="Identifier">t1</token>
+									</node>
+									<token type="Dot">.</token>
+									<node type="ColumnName" value="a">
+										<token type="Identifier">a</token>
+									</node>
+								</node>
+								<token type="Operator">=</token>
+								<node type="NumericLiteral" value="1">
+									<token type="Numeric">1</token>
+								</node>
+							</node>
+							<token type="Reserved">AND</token>
+							<node type="GreaterThanOperation">
+								<node type="ColumnReference">
+									<node type="ObjectName" value="t1">
+										<token type="Identifier">t1</token>
+									</node>
+									<token type="Dot">.</token>
+									<node type="ColumnName" value="b">
+										<token type="Identifier">b</token>
+									</node>
+								</node>
+								<token type="Operator">&gt;</token>
+								<node type="NumericLiteral" value="2">
+									<token type="Numeric">2</token>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<token type="EoF"></token>
 </node>

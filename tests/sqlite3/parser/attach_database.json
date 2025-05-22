@@ -1,0 +1,163 @@
+["node", { "type": "Script" },
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["token", { "type": "Identifier" }, "DATABASE"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "StringLiteral", "value": ":memory:" },
+					["token", { "type": "String" }, "':memory:'"]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "mem_db" },
+			["token", { "type": "Identifier" }, "mem_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["token", { "type": "Identifier" }, "DATABASE"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "StringLiteral", "value": "new_database.db" },
+					["token", { "type": "String" }, "'new_database.db'"]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "new_db" },
+			["token", { "type": "Identifier" }, "new_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["token", { "type": "Identifier" }, "DATABASE"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "FunctionExpression" },
+					["node", { "type": "ObjectName" },
+						["token", { "type": "Identifier" }, "CONCAT"]
+					],
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "FunctionArgumentList" },
+						["node", { "type": "Argument" },
+							["node", { "type": "Expression" },
+								["node", { "type": "StringLiteral", "value": "new_database" },
+									["token", { "type": "String" }, "'new_database'"]
+								]
+							]
+						],
+						["token", { "type": "Comma" }, ","],
+						["node", { "type": "Argument" },
+							["node", { "type": "Expression" },
+								["node", { "type": "StringLiteral", "value": ".db" },
+									["token", { "type": "String" }, "'.db'"]
+								]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "new_db" },
+			["token", { "type": "Identifier" }, "new_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["token", { "type": "Identifier" }, "DATABASE"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "ParenthesesOperation" },
+					["token", { "type": "LeftParen" }, "("],
+					["node", { "type": "Expression" },
+						["node", { "type": "ConcatenateOperation" },
+							["node", { "type": "ConcatenateOperation" },
+								["node", { "type": "StringLiteral", "value": "database_" },
+									["token", { "type": "String" }, "'database_'"]
+								],
+								["token", { "type": "Operator" }, "||"],
+								["node", { "type": "FunctionExpression" },
+									["node", { "type": "ObjectName" },
+										["token", { "type": "Identifier" }, "strftime"]
+									],
+									["token", { "type": "LeftParen" }, "("],
+									["node", { "type": "FunctionArgumentList" },
+										["node", { "type": "Argument" },
+											["node", { "type": "Expression" },
+												["node", { "type": "StringLiteral", "value": "%Y%m%d" },
+													["token", { "type": "String" }, "'%Y%m%d'"]
+												]
+											]
+										],
+										["token", { "type": "Comma" }, ","],
+										["node", { "type": "Argument" },
+											["node", { "type": "Expression" },
+												["node", { "type": "StringLiteral", "value": "now" },
+													["token", { "type": "String" }, "'now'"]
+												]
+											]
+										]
+									],
+									["token", { "type": "RightParen" }, ")"]
+								]
+							],
+							["token", { "type": "Operator" }, "||"],
+							["node", { "type": "StringLiteral", "value": ".db" },
+								["token", { "type": "String" }, "'.db'"]
+							]
+						]
+					],
+					["token", { "type": "RightParen" }, ")"]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "new_db" },
+			["token", { "type": "Identifier" }, "new_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "StringLiteral", "value": "new_database.db" },
+					["token", { "type": "String" }, "'new_database.db'"]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "new_db" },
+			["token", { "type": "Identifier" }, "new_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["node", { "type": "AttachDatabaseStatement" },
+		["token", { "type": "Identifier" }, "ATTACH"],
+		["node", { "type": "Database" },
+			["node", { "type": "Expression" },
+				["node", { "type": "ConcatenateOperation" },
+					["node", { "type": "StringLiteral", "value": "database_" },
+						["token", { "type": "String" }, "'database_'"]
+					],
+					["token", { "type": "Operator" }, "||"],
+					["node", { "type": "StringLiteral", "value": ".db" },
+						["token", { "type": "String" }, "'.db'"]
+					]
+				]
+			]
+		],
+		["token", { "type": "Reserved" }, "AS"],
+		["node", { "type": "SchemaName", "value": "new_db" },
+			["token", { "type": "Identifier" }, "new_db"]
+		]
+	],
+	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoF" }]
+]

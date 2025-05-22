@@ -1,8 +1,12 @@
 import { EOL } from "node:os";
+import type { Options } from "css-select";
 import { compile } from "css-select";
-import { Element, type Node, Text } from "domhandler";
-import { textContent } from "domutils";
-import { AggregateParseError, type Parser } from "./parser.ts";
+import {
+	AggregateParseError,
+	CstBuilder,
+	type CstNode,
+	type Parser,
+} from "./parser.ts";
 
 export declare type FormatActionType =
 	| "reset"
@@ -28,14 +32,17 @@ export declare type FormatterOptions = {
 };
 
 export abstract class Formatter {
-	parser: Parser<Element>;
+	parser: Parser;
 	private patterns = new Array<FormatPattern>();
 	options: FormatterOptions;
 
-	private cache: Record<string, ReturnType<typeof compile<Node, Element>>> = {};
+	private cache: Record<
+		string,
+		ReturnType<typeof compile<CstNode, CstNode>>
+	> = {};
 
 	constructor(
-		parser: Parser<Element>,
+		parser: Parser,
 		patterns: FormatPattern[],
 		options: FormatterOptions = {},
 	) {
@@ -44,9 +51,9 @@ export abstract class Formatter {
 		this.options = options;
 	}
 
-	format(script: string | Element, filename?: string): string {
-		let node: Element | undefined;
-		if (script instanceof Element) {
+	format(script: string | CstNode, filename?: string): string {
+		let node: CstNode | undefined;
+		if (Array.isArray(script)) {
 			node = script;
 		} else {
 			try {
@@ -67,13 +74,16 @@ export abstract class Formatter {
 		return out.toString();
 	}
 
-	private formatElement(node: Element, out: FormatWriter) {
+	private formatElement(node: CstNode, out: FormatWriter) {
 		let before: FormatActionType | FormatActionType[] | undefined;
 		let after: FormatActionType | FormatActionType[] | undefined;
 		for (const item of this.patterns) {
 			let query = this.cache[item.pattern];
 			if (!query) {
-				query = compile<Node, Element>(item.pattern, { xmlMode: true });
+				query = compile<CstNode, CstNode>(item.pattern, {
+					xmlMode: true,
+					adapter: new CstNodeAdapter(),
+				});
 				this.cache[item.pattern] = query;
 			}
 			if (query(node)) {
@@ -92,36 +102,34 @@ export abstract class Formatter {
 				out.control(before);
 			}
 		}
-		if (node.attribs.type === "LineComment") {
-			out.write(textContent(node), true);
+		if (node[1].type === "LineComment") {
+			out.write(CstBuilder.toTextString(node), true);
 			out.control("softbreak");
 		} else if (
-			node.attribs.type === "BlockComment" ||
-			node.attribs.type === "HintComment"
+			node[1].type === "BlockComment" ||
+			node[1].type === "HintComment"
 		) {
-			const segments = textContent(node).split(/\r\n?|\n/g);
+			const segments = CstBuilder.toTextString(node).split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
 				if (i > 0) {
 					out.control("break");
 				}
 				out.write(segments[i], true);
 			}
-		} else if (
-			node.attribs.type === "WhiteSpace" ||
-			node.attribs.type === "LineBreak"
-		) {
+		} else if (node[1].type === "WhiteSpace" || node[1].type === "LineBreak") {
 			// no handle
-		} else if (node.attribs.type === "EoF") {
+		} else if (node[1].type === "EoF") {
 			out.write("", false);
-		} else if (node.attribs.type === "Unknown") {
+		} else if (node[1].type === "Unknown") {
 			out.write(this.concatNode(node, out).trim(), false);
 			out.control("break");
 		} else {
-			for (const child of node.children) {
-				if (child instanceof Element) {
+			for (let i = 2; i < node.length; i++) {
+				const child = node[i];
+				if (Array.isArray(child)) {
 					this.formatElement(child, out);
-				} else if (child instanceof Text) {
-					out.write(child.data, false);
+				} else if (child) {
+					out.write(child.toString(), false);
 				}
 			}
 		}
@@ -136,17 +144,18 @@ export abstract class Formatter {
 		}
 	}
 
-	private concatNode(node: Element, out: FormatWriter) {
+	private concatNode(node: CstNode, out: FormatWriter) {
 		let text = "";
-		for (const child of node.children) {
-			if (child instanceof Element) {
-				if (child.attribs.type === "LineBreak") {
+		for (let i = 2; i < node.length; i++) {
+			const child = node[i];
+			if (Array.isArray(child)) {
+				if (child[1].type === "LineBreak") {
 					text += out.eol;
 				} else {
 					text += this.concatNode(child, out);
 				}
-			} else if (child instanceof Text) {
-				text += child.data;
+			} else if (child) {
+				text += child.toString();
 			}
 		}
 		return text;
@@ -290,5 +299,121 @@ class FormatWriter {
 		}
 
 		this.depth = depth;
+	}
+}
+
+type Adapter = NonNullable<(Options<CstNode, CstNode>)["adapter"]>;
+
+class CstNodeAdapter implements Adapter {
+	isTag(node: CstNode): node is CstNode {
+		return Array.isArray(node);
+	}
+
+	existsOne(test: (elem: CstNode) => boolean, elems: CstNode[]) {
+		for (const elem of elems) {
+			if (test(elem)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	hasAttrib(elem: CstNode, name: string): boolean {
+		return name in elem[1];
+	}
+
+	getAttributeValue(elem: CstNode, name: string) {
+		return ((elem[1] as any)?.[name])?.toString();
+	}
+
+	getChildren(node: CstNode): CstNode[] {
+		const result: CstNode[] = [];
+		for (let i = 2; i < node.length; i++) {
+			const child = node[i];
+			if (Array.isArray(child)) {
+				result.push(child);
+			}
+		}
+		return result;
+	}
+
+	getName(node: CstNode): string {
+		return node[0];
+	}
+
+	getParent(node: CstNode): CstNode | null {
+		return node.parent ?? null;
+	}
+
+	getSiblings(node: CstNode): CstNode[] {
+		const result: CstNode[] = [];
+		if (node.parent) {
+			for (let i = 2; i < node.parent.length; i++) {
+				const child = node.parent[i];
+				if (Array.isArray(child)) {
+					result.push(child)
+				}
+			}
+		}
+		return result;
+	}
+
+	getText(node: CstNode): string {
+		let str = "";
+		for (let i = 2; i < node.length; i++) {
+			const child = node[i];
+			if (Array.isArray(child)) {
+				str += this.getText(child);
+			}
+		}
+		return str;
+	}
+
+	removeSubsets(nodes: CstNode[]): CstNode[] {
+		return Array.from(new Set(nodes));
+	}
+
+	findAll(test: (node: CstNode) => boolean, nodes: CstNode[]): CstNode[] {
+		const result: CstNode[] = [];
+		function traverse(current: CstNode) {
+			if (test(current)) {
+				result.push(current);
+			}
+			for (let i = 2; i < current.length; i++) {
+				const child = current[i];
+				if (Array.isArray(child)) {
+					traverse(child);
+				}
+			}
+		}
+		for (const node of nodes) {
+			traverse(node);
+		}
+		return result;
+	}
+
+	findOne(test: (node: CstNode) => boolean, nodes: CstNode[]): CstNode | null {
+		function traverse(current: CstNode): CstNode | null {
+			if (test(current)) {
+				return current;
+			}
+			for (let i = 2; i < current.length; i++) {
+				const child = current[i];
+				if (Array.isArray(child)) {
+					const result = traverse(child);
+					if (result != null) {
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+		for (const node of nodes) {
+			const result = traverse(node);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
 	}
 }

@@ -1,28 +1,20 @@
-import type { Element } from "domhandler";
-import { ParseError, type Token, TokenReader } from "../lexer.ts";
-import {
-	AggregateParseError,
-	type CstBuilder,
-	Parser,
-} from "../parser.ts";
+import type { Token } from "../lexer.ts";
+import { ParseError, TokenReader } from "../lexer.ts";
+import type { CstBuilder, CstNode } from "../parser.ts";
+import { AggregateParseError, Parser } from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { Sqlite3Lexer } from "./sqlite3_lexer.ts";
-import { DomhandlerCstBuilder } from "../cst/domhandler_cst_builder.ts"
 
-export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
+export class Sqlite3Parser extends Parser {
 	compileOptions: Set<string>;
 
 	constructor(options: Record<string, any> = {}) {
-		super(
-			options.lexer ?? new Sqlite3Lexer(options),
-			options.builderFactory ?? (() => new DomhandlerCstBuilder(options)),
-			options,
-		);
+		super(options.lexer ?? new Sqlite3Lexer(options), options);
 		this.compileOptions = new Set(options.compileOptions || []);
 	}
 
-	parseTokens(tokens: Token[], b: CstBuilder<CstNode>) {
+	parseTokens(tokens: Token[], b: CstBuilder) {
 		const r = new TokenReader(tokens);
 		const errors = [];
 		const root = b.start("Script");
@@ -62,7 +54,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		}
 	}
 
-	private unknown(b: CstBuilder<CstNode>, r: TokenReader, base: CstNode) {
+	private unknown(b: CstBuilder, r: TokenReader, base: CstNode) {
 		b.current = base;
 		let node: ReturnType<typeof b.end> | undefined;
 		if (!r.peek().eos) {
@@ -76,7 +68,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return node;
 	}
 
-	private command(b: CstBuilder<CstNode>, r: TokenReader) {
+	private command(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CommandStatement");
 		try {
 			b.start("CommandName");
@@ -100,7 +92,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private explainStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private explainStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ExplainStatement");
 		try {
 			b.token(r.consume(SqlKeywords.EXPLAIN));
@@ -120,7 +112,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private statement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private statement(b: CstBuilder, r: TokenReader) {
 		let stmt: CstNode | undefined;
 		if (r.peekIf(SqlKeywords.CREATE)) {
 			const mark = r.pos;
@@ -225,7 +217,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return stmt;
 	}
 
-	private createTableStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private createTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateTableStatement");
 		try {
 			b.token(r.consume(SqlKeywords.CREATE));
@@ -347,7 +339,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private createViewStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private createViewStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateViewStatement");
 		try {
 			b.token(r.consume(SqlKeywords.CREATE));
@@ -386,7 +378,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private createTriggerStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private createTriggerStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateTriggerStatement");
 		try {
 			b.token(r.consume(SqlKeywords.CREATE));
@@ -528,7 +520,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private createIndexStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private createIndexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CreateIndexStatement");
 		try {
 			b.token(r.consume(SqlKeywords.CREATE));
@@ -579,7 +571,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private alterTableStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private alterTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AlterTableStatement");
 		try {
 			b.token(r.consume(SqlKeywords.ALTER));
@@ -636,7 +628,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private dropTableStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private dropTableStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropTableStatement");
 		try {
 			b.token(r.consume(SqlKeywords.DROP));
@@ -662,7 +654,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private dropViewStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private dropViewStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropViewStatement");
 		try {
 			b.token(r.consume(SqlKeywords.DROP));
@@ -690,7 +682,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private dropTriggerStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private dropTriggerStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropTriggerStatement");
 		try {
 			b.token(r.consume(SqlKeywords.DROP));
@@ -718,7 +710,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private dropIndexStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private dropIndexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DropIndexStatement");
 		try {
 			b.token(r.consume(SqlKeywords.DROP));
@@ -746,7 +738,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private attachDatabaseStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private attachDatabaseStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AttachDatabaseStatement");
 		try {
 			b.token(r.consume(SqlKeywords.ATTACH));
@@ -767,7 +759,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private detachDatabaseStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private detachDatabaseStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("DetachDatabaseStatement");
 		try {
 			b.token(r.consume(SqlKeywords.DETACH));
@@ -785,7 +777,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private analyzeStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private analyzeStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("AnalyzeStatement");
 		try {
 			b.token(r.consume(SqlKeywords.ANALYZE));
@@ -805,7 +797,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private reindexStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private reindexStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ReindexStatement");
 		try {
 			b.token(r.consume(SqlKeywords.REINDEX));
@@ -826,7 +818,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private vacuumStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private vacuumStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("VacuumStatement");
 		try {
 			b.token(r.consume(SqlKeywords.VACUUM));
@@ -850,7 +842,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private pragmaStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private pragmaStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("PragmaStatement");
 		try {
 			b.token(r.consume(SqlKeywords.PRAGMA));
@@ -885,7 +877,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private beginTransactionStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private beginTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("BeginTransactionStatement");
 		try {
 			b.token(r.consume(SqlKeywords.BEGIN));
@@ -914,7 +906,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private savepointStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private savepointStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("SavepointStatement");
 		try {
 			b.token(r.consume(SqlKeywords.SAVEPOINT));
@@ -928,7 +920,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private releaseSavepointStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private releaseSavepointStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("ReleaseSavepointStatement");
 		try {
 			b.token(r.consume(SqlKeywords.RELEASE));
@@ -945,7 +937,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private commitTransactionStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private commitTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("CommitTransactionStatement");
 		try {
 			if (r.peekIf(SqlKeywords.END)) {
@@ -965,7 +957,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private rollbackTransactionStatement(b: CstBuilder<CstNode>, r: TokenReader) {
+	private rollbackTransactionStatement(b: CstBuilder, r: TokenReader) {
 		const stmt = b.start("RollbackTransactionStatement");
 		try {
 			b.token(r.consume(SqlKeywords.ROLLBACK));
@@ -988,11 +980,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private insertStatement(
-		b: CstBuilder<CstNode>,
-		r: TokenReader,
-		withClause?: CstNode,
-	) {
+	private insertStatement(b: CstBuilder, r: TokenReader, withClause?: CstNode) {
 		const stmt = b.start("InsertStatement");
 		try {
 			if (withClause) {
@@ -1008,11 +996,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private updateStatement(
-		b: CstBuilder<CstNode>,
-		r: TokenReader,
-		withClause?: CstNode,
-	) {
+	private updateStatement(b: CstBuilder, r: TokenReader, withClause?: CstNode) {
 		const stmt = b.start("UpdateStatement");
 		try {
 			if (withClause) {
@@ -1028,11 +1012,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private deleteStatement(
-		b: CstBuilder<CstNode>,
-		r: TokenReader,
-		withClause?: CstNode,
-	) {
+	private deleteStatement(b: CstBuilder, r: TokenReader, withClause?: CstNode) {
 		const stmt = b.start("DeleteStatement");
 		try {
 			if (withClause) {
@@ -1048,11 +1028,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private selectStatement(
-		b: CstBuilder<CstNode>,
-		r: TokenReader,
-		withClause?: CstNode,
-	) {
+	private selectStatement(b: CstBuilder, r: TokenReader, withClause?: CstNode) {
 		const stmt = b.start("SelectStatement");
 		try {
 			if (withClause) {
@@ -1106,7 +1082,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(stmt);
 	}
 
-	private insertClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private insertClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("InsertClause");
 		if (r.peekIf(SqlKeywords.REPLACE)) {
 			b.start("ReplaceOption");
@@ -1189,7 +1165,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private onConflictClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private onConflictClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("OnConflictClause");
 		b.token(r.consume(SqlKeywords.ON));
 		b.token(r.consume(SqlKeywords.CONFLICT));
@@ -1232,7 +1208,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private updateClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private updateClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("UpdateClause");
 		b.token(r.consume(SqlKeywords.UPDATE));
 
@@ -1281,7 +1257,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private setClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private setClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("SetClause");
 		b.token(r.consume(SqlKeywords.SET));
 		b.start("UpdateColumnList");
@@ -1315,7 +1291,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private deleteClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private deleteClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("DeleteClause");
 		b.token(r.consume(SqlKeywords.DELETE));
 		b.token(r.consume(SqlKeywords.FROM));
@@ -1334,7 +1310,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private selectClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private selectClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("SelectClause");
 
 		if (r.peekIf(SqlKeywords.VALUES)) {
@@ -1379,7 +1355,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private withClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private withClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("WithClause");
 		b.token(r.consume(SqlKeywords.WITH));
 
@@ -1427,7 +1403,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private selectColumnList(b: CstBuilder<CstNode>, r: TokenReader) {
+	private selectColumnList(b: CstBuilder, r: TokenReader) {
 		const start = b.start("SelectColumnList");
 
 		do {
@@ -1470,7 +1446,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private fromClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private fromClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("FromClause");
 		b.token(r.consume(SqlKeywords.FROM));
 		{
@@ -1505,7 +1481,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private fromObject(b: CstBuilder<CstNode>, r: TokenReader) {
+	private fromObject(b: CstBuilder, r: TokenReader) {
 		const start = b.start("FromObject");
 
 		if (r.peekIf(SqlTokenType.LeftParen)) {
@@ -1560,7 +1536,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private joinClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private joinClause(b: CstBuilder, r: TokenReader) {
 		let start: ReturnType<typeof b.start> | undefined;
 		if (r.peekIf(SqlKeywords.CROSS)) {
 			start = b.start("CrossJoinClause");
@@ -1629,14 +1605,14 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private whereClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private whereClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("WhereClause");
 		b.token(r.consume(SqlKeywords.WHERE));
 		this.expression(b, r);
 		return b.end(start);
 	}
 
-	private gropuByClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private gropuByClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("GroupByClause");
 		b.token(r.consume(SqlKeywords.GROUP));
 		b.token(r.consume(SqlKeywords.BY));
@@ -1644,14 +1620,14 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private havingClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private havingClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("HavingClause");
 		b.token(r.consume(SqlKeywords.HAVING));
 		this.expression(b, r);
 		return b.end(start);
 	}
 
-	private windowClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private windowClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("WindowClause");
 		b.token(r.consume(SqlKeywords.WINDOW));
 		do {
@@ -1667,7 +1643,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private window(b: CstBuilder<CstNode>, r: TokenReader) {
+	private window(b: CstBuilder, r: TokenReader) {
 		const start = b.start("Window");
 		if (!r.peekIf(SqlKeywords.PARTITION)) {
 			this.identifier(b, r, "BaseWindowName");
@@ -1806,7 +1782,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private partitionByClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private partitionByClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("PartitionByClause");
 		b.token(r.consume(SqlKeywords.PARTITION));
 		b.token(r.consume(SqlKeywords.BY));
@@ -1821,14 +1797,14 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private returningClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private returningClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ReturningClause");
 		b.token(r.consume(SqlKeywords.RETURNING));
 		this.selectColumnList(b, r);
 		return b.end(start);
 	}
 
-	private orderByClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private orderByClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("OrderByClause");
 		b.token(r.consume(SqlKeywords.ORDER));
 		b.token(r.consume(SqlKeywords.BY));
@@ -1858,7 +1834,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private limitClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private limitClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("LimitClause");
 		b.token(r.consume(SqlKeywords.LIMIT));
 		const node = this.expression(b, r);
@@ -1889,7 +1865,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private tableColumn(b: CstBuilder<CstNode>, r: TokenReader) {
+	private tableColumn(b: CstBuilder, r: TokenReader) {
 		const start = b.start("TableColumn");
 		this.identifier(b, r, "ColumnName");
 		if (r.peekIf(SqlTokenType.Identifier)) {
@@ -1915,7 +1891,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private columnType(b: CstBuilder<CstNode>, r: TokenReader) {
+	private columnType(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ColumnType");
 
 		{
@@ -1950,7 +1926,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private columnConstraint(b: CstBuilder<CstNode>, r: TokenReader) {
+	private columnConstraint(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ColumnConstraint");
 		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
@@ -2077,7 +2053,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private tableConstraint(b: CstBuilder<CstNode>, r: TokenReader) {
+	private tableConstraint(b: CstBuilder, r: TokenReader) {
 		const start = b.start("TableConstraint");
 		if (r.peekIf(SqlKeywords.CONSTRAINT)) {
 			b.token(r.consume());
@@ -2158,7 +2134,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private referencesClause(b: CstBuilder<CstNode>, r: TokenReader) {
+	private referencesClause(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ReferencesClause");
 		b.token(r.consume());
 		this.identifier(b, r, "ObjectName");
@@ -2256,7 +2232,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private conflictAction(b: CstBuilder<CstNode>, r: TokenReader) {
+	private conflictAction(b: CstBuilder, r: TokenReader) {
 		if (r.peekIf(SqlKeywords.ROLLBACK)) {
 			b.start("RollbackOption");
 			b.token(r.consume());
@@ -2282,7 +2258,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		}
 	}
 
-	private pragmaValue(b: CstBuilder<CstNode>, r: TokenReader) {
+	private pragmaValue(b: CstBuilder, r: TokenReader) {
 		const start = b.start("PragmaValue");
 		if (r.peekIf((token) => token.is(SqlTokenType.Operator) && token.is("+"))) {
 			b.start("Expression");
@@ -2312,7 +2288,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private expressionList(b: CstBuilder<CstNode>, r: TokenReader) {
+	private expressionList(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ExpressionList");
 		do {
 			this.expression(b, r);
@@ -2325,7 +2301,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private expression(b: CstBuilder<CstNode>, r: TokenReader, precedence = 0) {
+	private expression(b: CstBuilder, r: TokenReader, precedence = 0) {
 		if (precedence === 0) {
 			b.start("Expression");
 		}
@@ -2745,7 +2721,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return current;
 	}
 
-	private expressionValue(b: CstBuilder<CstNode>, r: TokenReader) {
+	private expressionValue(b: CstBuilder, r: TokenReader) {
 		if (r.peekIf(SqlKeywords.NULL)) {
 			b.start("NullLiteral");
 			b.token(r.consume());
@@ -2962,7 +2938,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		}
 	}
 
-	private sortColumn(b: CstBuilder<CstNode>, r: TokenReader) {
+	private sortColumn(b: CstBuilder, r: TokenReader) {
 		const start = b.start("SortColumn");
 		this.expression(b, r);
 		if (r.peekIf(SqlKeywords.COLLATE)) {
@@ -2981,7 +2957,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private columnList(b: CstBuilder<CstNode>, r: TokenReader) {
+	private columnList(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ColumnList");
 		do {
 			this.identifier(b, r, "ColumnName");
@@ -2994,7 +2970,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private columnReference(b: CstBuilder<CstNode>, r: TokenReader) {
+	private columnReference(b: CstBuilder, r: TokenReader) {
 		const start = b.start("ColumnReference");
 		const ident1 = this.identifier(b, r, "ColumnName");
 		if (r.peekIf(SqlTokenType.Dot)) {
@@ -3011,7 +2987,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private identifier(b: CstBuilder<CstNode>, r: TokenReader, name: string) {
+	private identifier(b: CstBuilder, r: TokenReader, name: string) {
 		const start = b.start(name);
 		if (r.peekIf([SqlTokenType.Identifier, SqlTokenType.String])) {
 			b.value(dequote(b.token(r.consume()).text));
@@ -3021,13 +2997,13 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private numericLiteral(b: CstBuilder<CstNode>, r: TokenReader) {
+	private numericLiteral(b: CstBuilder, r: TokenReader) {
 		const start = b.start("NumericLiteral");
 		b.value(b.token(r.consume(SqlTokenType.Numeric)).text.toLowerCase());
 		return b.end(start);
 	}
 
-	private stringLiteral(b: CstBuilder<CstNode>, r: TokenReader) {
+	private stringLiteral(b: CstBuilder, r: TokenReader) {
 		const start = b.start("StringLiteral");
 		if (
 			r.peekIf((token) => token.is(SqlTokenType.Identifier) && token.is(/^"/))
@@ -3039,7 +3015,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private blobLiteral(b: CstBuilder<CstNode>, r: TokenReader) {
+	private blobLiteral(b: CstBuilder, r: TokenReader) {
 		const start = b.start("BlobLiteral");
 		const token = r.consume(SqlTokenType.Blob);
 		b.token(token);
@@ -3047,7 +3023,7 @@ export class Sqlite3Parser<CstNode = Element> extends Parser<CstNode> {
 		return b.end(start);
 	}
 
-	private booleanLiteral(b: CstBuilder<CstNode>, r: TokenReader) {
+	private booleanLiteral(b: CstBuilder, r: TokenReader) {
 		const start = b.start("BooleanLiteral");
 		if (r.peekIf([SqlKeywords.TRUE, SqlKeywords.FALSE])) {
 			b.value(b.token(r.consume()).text.toUpperCase());

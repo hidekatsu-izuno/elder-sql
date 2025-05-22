@@ -3,13 +3,14 @@ import fs, { readFileSync } from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import type { Element } from "domhandler";
-import { AggregateParseError } from "../../src/parser.ts";
+import * as cheerio from "cheerio";
+import {
+	AggregateParseError,
+	CstBuilder,
+	type CstNode,
+} from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { writeDebugFile } from "../utils/debug.ts";
-import { DomhandlerCstBuilder } from "../../src/cst/domhandler_cst_builder.ts";
-import { JsonCstBuilder, type Element as Element2 } from "../../src/cst/json_cst_builder.ts";
-import * as cheerio from 'cheerio';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,52 +50,54 @@ suite("test sqlite3 parser", () => {
 				path.join(__dirname, "scripts", `${target}.sql`),
 				"utf8",
 			);
-			let node: Element;
+			let actual: CstNode;
 			try {
-				node = new Sqlite3Parser().parse(script);
+				actual = new Sqlite3Parser().parse(script);
 			} catch (err) {
 				if (target === "unknown" && err instanceof AggregateParseError) {
-					node = err.node;
+					actual = err.node;
 				} else {
 					throw err;
 				}
 			}
-			const actual = new DomhandlerCstBuilder({ trivia: false }).toString(node);
-			writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actual);
+			const actualXml = CstBuilder.toXMLString(actual, { trivia: false });
+			writeDebugFile(
+				`dump/sqlite3/parser/${target}.xml`,
+				actualXml,
+			);
 
-			let node2: Element2;
-			try {
-				node2 = new Sqlite3Parser<Element2>({
-					builderFactory() {
-						return new JsonCstBuilder();
-					}
-				}).parse(script);
-			} catch (err) {
-				if (target === "unknown" && err instanceof AggregateParseError) {
-					node2 = err.node;
-				} else {
-					throw err;
-				}
-			}
-			const actual2 = new JsonCstBuilder({ trivia: false }).toString(node2);
-			writeDebugFile(`dump/sqlite3/parser/${target}.json`, actual2);
+			const actualJson = CstBuilder.toJSONString(actual, { trivia: false });
+			writeDebugFile(
+				`dump/sqlite3/parser/${target}.json`,
+				CstBuilder.toJSONString(actual, { trivia: false }),
+			);
 
-			const expected = fs.readFileSync(
+			const expectedXml = fs.readFileSync(
 				path.join(__dirname, "parser", `${target}.xml`),
 				"utf8",
 			);
+			const expectedJson = fs.readFileSync(
+				path.join(__dirname, "parser", `${target}.json`),
+				"utf8",
+			);
 
-			assert.equal(actual, expected);
+			assert.equal(actualXml, expectedXml);
+			assert.equal(actualJson, expectedJson);
 		});
 	}
 
 	test("perforance test", () => {
 		let time1 = Date.now();
-		JSON.parse(readFileSync(`dump/sqlite3/parser/select.json`, { encoding: "utf8" }));
+		CstBuilder.parseJSON(
+			readFileSync(`dump/sqlite3/parser/select.json`, { encoding: "utf8" }),
+		);
 		time1 = Date.now() - time1;
 
 		let time2 = Date.now();
-		cheerio.load(readFileSync(`dump/sqlite3/parser/select.xml`, { encoding: "utf8" }), { xml: true });
+		cheerio.load(
+			readFileSync(`dump/sqlite3/parser/select.xml`, { encoding: "utf8" }),
+			{ xml: true },
+		);
 		time2 = Date.now() - time2;
 
 		assert.equal(time1, time2);

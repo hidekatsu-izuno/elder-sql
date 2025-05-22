@@ -1,16 +1,16 @@
 <node type="Script">
-  <node type="SavepointStatement">
-    <token type="Identifier" value="SAVEPOINT">SAVEPOINT</token>
-    <node type="SavepointName" value="sect1">
-      <token type="Identifier">sect1</token>
-    </node>
-  </node>
-  <token type="SemiColon">;</token>
-  <node type="SavepointStatement">
-    <token type="Identifier" value="SAVEPOINT">SAVEPOINT</token>
-    <node type="SavepointName" value="sect2">
-      <token type="Identifier">sect2</token>
-    </node>
-  </node>
-  <token type="EoF"></token>
+	<node type="SavepointStatement">
+		<token type="Identifier">SAVEPOINT</token>
+		<node type="SavepointName" value="sect1">
+			<token type="Identifier">sect1</token>
+		</node>
+	</node>
+	<token type="SemiColon">;</token>
+	<node type="SavepointStatement">
+		<token type="Identifier">SAVEPOINT</token>
+		<node type="SavepointName" value="sect2">
+			<token type="Identifier">sect2</token>
+		</node>
+	</node>
+	<token type="EoF"></token>
 </node>
