@@ -1,6 +1,7 @@
+import type { CstNode } from "../cst.ts"
 import type { Token } from "../lexer.ts";
 import { ParseError, TokenReader } from "../lexer.ts";
-import type { CstBuilder, CstNode } from "../parser.ts";
+import type { CstBuilder } from "../parser.ts";
 import { AggregateParseError, Parser } from "../parser.ts";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";

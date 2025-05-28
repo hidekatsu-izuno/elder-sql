@@ -1,4 +1,5 @@
-import type { CstNode, Parser } from "./parser.ts";
+import type { CstNode } from "./cst.ts"
+import type { Parser } from "./parser.ts";
 
 export declare type ResolverOptions = {
 	global?: FromObject[];

@@ -1,5 +1,5 @@
-import { type Lexer, type Token, TokenType } from "./lexer.ts";
-import { escapeXml } from "./utils.ts";
+import { CstNode } from "./cst.ts"
+import type { Lexer, Token } from "./lexer.ts";
 
 export declare type ParserOptions = {
 	[key: string]: string;
@@ -43,18 +43,7 @@ export declare type CstBuilderOptions = {
 	marker?: boolean;
 };
 
-export type CstAttributes = {
-	type: string;
-	value?: string | number | boolean;
-};
-
-export interface CstNode extends Array<CstAttributes | CstNode | string> {
-	parent?: CstNode;
-	0: string;
-	1: CstAttributes;
-}
-
-const EMPTY_NODE: CstNode = ["node", { type: "" }];
+const EMPTY_NODE = new CstNode("node", { type: "" });
 export class CstBuilder {
 	root: CstNode;
 	current: CstNode;
@@ -75,15 +64,14 @@ export class CstBuilder {
 	}
 
 	start(type: string, value?: string | number | boolean) {
-		const elem: CstNode = ["node", { type }];
+		const elem = new CstNode("node", { type });
 		if (value != null) {
-			elem[1].value = value;
+			elem.attrs.value = value;
 		}
 		if (this.current === EMPTY_NODE) {
 			this.root = elem;
 		} else {
-			this.current.push(elem);
-			elem.parent = this.current;
+			this.current.append(elem);
 		}
 		this.current = elem;
 		return this.current;
@@ -91,52 +79,43 @@ export class CstBuilder {
 
 	type(type: string, context?: CstNode) {
 		const current = context ?? this.current;
-		current[1].type = type;
+		current.attrs.type = type;
 		return current[1].type;
 	}
 
 	value(value: string | number | boolean, context?: CstNode) {
 		const current = context ?? this.current;
-		current[1].value = value.toString();
+		current.attrs.value = value.toString();
 		return current[1].value;
 	}
 
 	append(child: CstNode, context?: CstNode) {
 		const current = context ?? this.current;
-		if (child.parent) {
-			const index = child.parent.indexOf(child);
-			if (index !== -1) {
-				child.parent.splice(index, 1);
-			}
-		}
-		current.push(child);
-		child.parent = current;
+		current.append(child);
 		return child;
 	}
 
 	token(token: Token, context?: CstNode) {
-		const elem: CstNode = ["token", { type: token.type.name }];
+		const elem = new CstNode("token", { type: token.type.name });
 		if (this.options.trivia) {
 			for (const skip of token.preskips) {
-				const trivia: CstNode = ["trivia", { type: skip.type.name }];
+				const trivia =  new CstNode("trivia", { type: skip.type.name });
 				if (skip.text) {
-					trivia.push(skip.text);
+					trivia.append(skip.text);
 				}
-				elem.push(trivia);
-				trivia.parent = elem;
+				elem.append(trivia);
 			}
 		}
 		if (token.text) {
-			elem.push(token.text);
+			elem.append(token.text);
 		}
 		if (this.options.trivia) {
 			for (const skip of token.postskips) {
-				const trivia: CstNode = ["trivia", { type: skip.type.name }];
+				const trivia = new CstNode("trivia", { type: skip.type.name });
 				if (skip.text) {
-					trivia.push(skip.text);
+					trivia.append(skip.text);
 				}
-				elem.push(trivia);
-				trivia.parent = elem;
+				elem.append(trivia);
 			}
 		}
 		if (
@@ -147,8 +126,7 @@ export class CstBuilder {
 				(token.preskips.length !== 0 || token.postskips.length !== 0))
 		) {
 			const current = context ?? this.current;
-			current.push(elem);
-			elem.parent = current;
+			current.append(elem);
 		}
 		return token;
 	}
@@ -157,152 +135,13 @@ export class CstBuilder {
 		if (start && start !== this.current) {
 			throw new Error("Start and end elements do not match");
 		}
-		if (this.current.parent) {
+		const parent = this.current.parent;
+		if (parent) {
 			const current = this.current;
-			this.current = this.current.parent;
+			this.current = parent;
 			return current;
 		} else {
 			return this.root;
 		}
-	}
-
-	static parseJSON(text: string) {
-		const node = JSON.parse(text);
-		function traverse(current: CstNode) {
-			for (let i = 2; i < current.length; i++) {
-				const child = current[i];
-				if (Array.isArray(child)) {
-					child.parent = current;
-					traverse(child);
-				}
-			}
-		}
-		traverse(node);
-		return node;
-	}
-
-	static toJSONString(node: CstNode, options?: CstBuilderOptions) {
-		let out = "";
-		function print(elem: CstNode, indent: number) {
-			for (let i = 0; i < indent; i++) {
-				out += "\t";
-			}
-			out += `[${JSON.stringify(elem[0])}, { "type": ${JSON.stringify(elem[1].type)}`;
-			if (elem[1].value != null) {
-				out += `, "value": ${JSON.stringify(elem[1].value)}`;
-			}
-			out += " }";
-			for (let i = 2; i < elem.length; i++) {
-				const child = elem[i];
-				if (Array.isArray(child)) {
-					const token = child[0] === "token";
-					const trivia = child[0] === "trivia";
-					const marker = token && child.length <= 1;
-					if (
-						(token && options?.token === false) ||
-						(trivia && options?.trivia === false) ||
-						(marker && options?.marker === false)
-					) {
-						continue;
-					}
-					out += ",\n";
-					print(child, indent + 1);
-				} else {
-					out += ",";
-					if (elem[0] === "node") {
-						out += "\n";
-						for (let i = 0; i < indent + 1; i++) {
-							out += "\t";
-						}
-					} else {
-						out += " ";
-					}
-					out += JSON.stringify(child);
-				}
-			}
-			if (elem[0] === "node") {
-				out += "\n";
-				for (let i = 0; i < indent; i++) {
-					out += "\t";
-				}
-			}
-			out += "]";
-		}
-		print(node, 0);
-		return out;
-	}
-
-	static toXMLString(node: CstNode, options?: CstBuilderOptions) {
-		let out = "";
-		function print(elem: CstNode, indent: number) {
-			for (let i = 0; i < indent; i++) {
-				out += "\t";
-			}
-			out += `<${escapeXml(elem[0])} type="${escapeXml(elem[1].type)}"`;
-			if (elem[1].value != null) {
-				out += ` value="${escapeXml(elem[1].value.toString())}"`;
-			}
-			out += ">";
-			for (let i = 2; i < elem.length; i++) {
-				const child = elem[i];
-				if (Array.isArray(child)) {
-					const token = child[0] === "token";
-					const trivia = child[0] === "trivia";
-					const marker = token && child.length <= 1;
-					if (
-						(token && options?.token === false) ||
-						(trivia && options?.trivia === false) ||
-						(marker && options?.marker === false)
-					) {
-						continue;
-					}
-					out += "\n";
-					print(child, indent + 1);
-				} else {
-					if (elem[0] === "node") {
-						out += "\n";
-						for (let i = 0; i < indent + 1; i++) {
-							out += "\t";
-						}
-					}
-					out += escapeXml(child.toString());
-				}
-			}
-			if (elem[0] === "node") {
-				out += "\n";
-				for (let i = 0; i < indent; i++) {
-					out += "\t";
-				}
-			}
-			out += `</${escapeXml(elem[0])}>`;
-		}
-		print(node, 0);
-		return out;
-	}
-
-	static toTextString(node: CstNode, options?: CstBuilderOptions) {
-		let out = "";
-		function print(elem: CstNode, indent: number) {
-			for (let i = 2; i < elem.length; i++) {
-				const child = elem[i];
-				if (Array.isArray(child)) {
-					const token = child[0] === "token";
-					const trivia = child[0] === "trivia";
-					const marker = token && child.length <= 1;
-					if (
-						(token && options?.token === false) ||
-						(trivia && options?.trivia === false) ||
-						(marker && options?.marker === false)
-					) {
-						continue;
-					}
-					print(child, indent + 1);
-				} else {
-					out += child.toString();
-				}
-			}
-		}
-		print(node, 0);
-		return out;
 	}
 }

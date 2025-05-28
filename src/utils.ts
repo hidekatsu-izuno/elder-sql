@@ -207,3 +207,35 @@ export function isJSExpression(text: string) {
 	const result = parseExpressionAt(text, 0, acornOption);
 	return result.end === text.length;
 }
+
+export class LRUMap<K, V> extends Map<K, V> {
+	private capacity;
+
+	constructor(capacity: number) {
+		super();
+		this.capacity = capacity;
+	}
+
+	set(key: K, value: V) {
+        super.set(key, value);
+        if (this.size > this.capacity) {
+            for (const key of this.keys()) {
+				this.delete(key);
+			}
+        }
+        return this;
+    }
+
+	get(key: K) {
+		if (!super.has(key)) {
+			return;
+		}
+
+        const value = super.get(key);
+        this.delete(key);
+		if (value !== undefined) {
+	        super.set(key, value);
+		}
+        return value;
+    }
+}

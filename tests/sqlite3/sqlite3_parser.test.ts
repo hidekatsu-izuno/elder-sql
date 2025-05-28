@@ -1,16 +1,14 @@
 import assert from "node:assert/strict";
-import fs, { readFileSync } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import * as cheerio from "cheerio";
 import {
 	AggregateParseError,
-	CstBuilder,
-	type CstNode,
 } from "../../src/parser.ts";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { writeDebugFile } from "../utils/debug.ts";
+import type { CstNode } from "../../src/cst.ts"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,13 +58,13 @@ suite("test sqlite3 parser", () => {
 					throw err;
 				}
 			}
-			const actualXml = CstBuilder.toXMLString(actual, { trivia: false });
+			const actualXml = actual.toXMLString({ trivia: false });
 			writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actualXml);
 
-			const actualJson = CstBuilder.toJSONString(actual, { trivia: false });
+			const actualJson = actual.toJSONString({ trivia: false });
 			writeDebugFile(
 				`dump/sqlite3/parser/${target}.json`,
-				CstBuilder.toJSONString(actual, { trivia: false }),
+				actual.toJSONString({ trivia: false }),
 			);
 
 			const expectedXml = fs.readFileSync(

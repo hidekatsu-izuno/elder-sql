@@ -1,4 +1,4 @@
-import type { CstNode } from "../parser.ts";
+import type { CstNode } from "../cst.ts"
 import type { FromObject, ResolverOptions } from "../resolver.ts";
 import { Resolver } from "../resolver.ts";
 import { Sqlite3Parser } from "./sqlite3_parser.ts";
