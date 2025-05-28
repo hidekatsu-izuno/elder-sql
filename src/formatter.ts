@@ -3,7 +3,7 @@ import {
 	AggregateParseError,
 	type Parser,
 } from "./parser.ts";
-import type { CstNode } from "./cst.ts"
+import { CstNode } from "./cst.ts"
 
 export declare type FormatActionType =
 	| "reset"
@@ -45,7 +45,7 @@ export abstract class Formatter {
 
 	format(script: string | CstNode, filename?: string): string {
 		let node: CstNode | undefined;
-		if (Array.isArray(script)) {
+		if (script instanceof CstNode) {
 			node = script;
 		} else {
 			try {
@@ -86,12 +86,12 @@ export abstract class Formatter {
 				out.control(before);
 			}
 		}
-		if (node[1].type === "LineComment") {
+		if (node.attrs.type === "LineComment") {
 			out.write(node.text(), true);
 			out.control("softbreak");
 		} else if (
-			node[1].type === "BlockComment" ||
-			node[1].type === "HintComment"
+			node.attrs.type === "BlockComment" ||
+			node.attrs.type === "HintComment"
 		) {
 			const segments = node.text().split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
@@ -100,17 +100,16 @@ export abstract class Formatter {
 				}
 				out.write(segments[i], true);
 			}
-		} else if (node[1].type === "WhiteSpace" || node[1].type === "LineBreak") {
+		} else if (node.attrs.type === "WhiteSpace" || node.attrs.type === "LineBreak") {
 			// no handle
-		} else if (node[1].type === "EoF") {
+		} else if (node.attrs.type === "EoF") {
 			out.write("", false);
-		} else if (node[1].type === "Unknown") {
+		} else if (node.attrs.type === "Unknown") {
 			out.write(this.concatNode(node, out).trim(), false);
 			out.control("break");
 		} else {
-			for (let i = 2; i < node.length; i++) {
-				const child = node[i];
-				if (Array.isArray(child)) {
+			for (const child of node.childNodes) {
+				if (child instanceof CstNode) {
 					this.formatElement(child, out);
 				} else {
 					out.write(child.toString(), false);
@@ -130,10 +129,9 @@ export abstract class Formatter {
 
 	private concatNode(node: CstNode, out: FormatWriter) {
 		let text = "";
-		for (let i = 2; i < node.length; i++) {
-			const child = node[i];
-			if (Array.isArray(child)) {
-				if (child[1].type === "LineBreak") {
+		for (const child of node.childNodes) {
+			if (child instanceof CstNode) {
+				if (child.attrs.type === "LineBreak") {
 					text += out.eol;
 				} else {
 					text += this.concatNode(child, out);

@@ -62,17 +62,14 @@ export abstract class Resolver {
 
 	protected abstract extractNode(statement: CstNode): FromObject | undefined;
 
-	private findStatement(elem: CstNode): CstNode | undefined {
-		if (/(\\s|^)Statement(\\s|$)/.test(elem[1].type)) {
-			return elem;
+	private findStatement(node: CstNode): CstNode | undefined {
+		if (/(\\s|^)Statement(\\s|$)/.test(node.attrs.type)) {
+			return node;
 		} else {
-			for (let i = 2; i < elem.length; i++) {
-				const child = elem[i];
-				if (Array.isArray(child)) {
-					const result = this.findStatement(child);
-					if (result) {
-						return result;
-					}
+			for (const child of node.children) {
+				const result = this.findStatement(child);
+				if (result) {
+					return result;
 				}
 			}
 		}

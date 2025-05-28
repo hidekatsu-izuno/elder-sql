@@ -185,6 +185,10 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         return this[0];
     }
 
+    set name(value: string) {
+        this[0] = value;
+    }
+
     get attrs(): CstAttrs {
         return this[1];
     }
@@ -193,12 +197,19 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         return this[1][KEY_PARENT];
     }
 
-    attr(name: string, value?: string | number | boolean) {
-        if (value === undefined) {
-            return this[1][name];
-        } else {
-            this[1][name] = value;
+    get children() {
+        const result = [];
+        for (let i = 2; i < this.length; i++) {
+            const node = this[i];
+            if (node instanceof CstNode) {
+                result.push(node);
+            }
         }
+        return result;
+    }
+
+    get childNodes() {
+        return this.slice(2);
     }
 
     append(node: CstNode | string) {
