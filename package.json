@@ -121,6 +121,7 @@
 	"dependencies": {
 		"acorn": "^8.14.1",
 		"cheerio": "^1.0.0",
-		"css-select": "^5.1.0"
+		"css-select": "^5.1.0",
+		"css-what": "^6.1.0"
 	}
 }

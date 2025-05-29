@@ -1,5 +1,6 @@
 import type { Options } from "css-select";
-import { compile, is, selectAll, selectOne } from "css-select";
+import { AttributeAction, parse, SelectorType, stringify, type PseudoSelector, type Selector } from "css-what";
+import { compile, selectAll, selectOne } from "css-select";
 import { escapeXml, LRUMap } from "./utils.ts"
 
 export type CstAttrs = {
@@ -15,6 +16,7 @@ export type CstPrintOptions = {
 };
 
 const KEY_PARENT = Symbol.for("parent");
+const KEY_TYPECACHE = Symbol.for("typecache");
 
 class CstNodeAdapter implements NonNullable<Options<CstNode, CstNode>["adapter"]> {
     static OPTIONS: Options<CstNode, CstNode> = {
@@ -136,49 +138,105 @@ class CstNodeAdapter implements NonNullable<Options<CstNode, CstNode>["adapter"]
     }
 }
 
-const SELECT_CACHE = new LRUMap<string, ReturnType<typeof compile<CstNode, CstNode>>>(256);
+const SELECTOR_CACHE = new LRUMap<string, ReturnType<typeof compile<CstNode, CstNode>>>(256);
 
-function getSelector(pattern: string) {
-    let selector = SELECT_CACHE.get(pattern);
+function getSeletor(pattern: string) {
+    let selector = SELECTOR_CACHE.get(pattern);
     if (!selector) {
-        selector = compile<CstNode, CstNode>(pattern, CstNodeAdapter.OPTIONS);
-        SELECT_CACHE.set(pattern, selector);
+        const parsed = parse(pattern);
+        selector = compile<CstNode, CstNode>(parsed, CstNodeAdapter.OPTIONS);
+        SELECTOR_CACHE.set(pattern, selector);
     }
     return selector;
 }
 
+function getTypeCache(node: CstNode) {
+    let typecache = node[1][KEY_TYPECACHE];
+    if (!typecache) {
+        typecache = {};
+        for (let i = 2; i < node.length; i++) {
+            const child = node[i];
+            if (child instanceof CstNode) {
+                const type = child.attrs.type;
+                if (type != null) {
+                    let values = typecache[type];
+                    if (!values) {
+                        values = [child];
+                        typecache[type] = values;
+                    } else {
+                        values.push(child);
+                    }
+                }
+            }
+        }
+        node[1][KEY_TYPECACHE] = typecache;
+    }
+    return typecache;
+}
+
 export class CstNode extends Array<CstAttrs | CstNode | string> {
-    static parseJSON(text: string) {
-        const node = JSON.parse(text);
-        function traverse(current: unknown) {
-            if (Array.isArray(current) 
-                && current.length >= 2
-                && typeof current[0] === "string"
-                && typeof current[1]?.type === "string"
+    static parseJSON(source: any): CstNode {
+        const node = typeof source === "string" ? JSON.parse(source, (key, value) => {
+            if (value?.constructor === Object) {
+                return Object.keys(value)
+                    .filter(key => key === "type" || key === "value")
+                    .reduce((obj: any, key: string) => {
+                        obj[key] = value[key];
+                        return obj;
+                    }, {});
+            }
+            return value;
+        }) : source;
+
+        function traverse(current: Array<unknown>) {
+            if (current.length < 2 || typeof current[0] !== "string") {
+                throw new SyntaxError();
+            }
+
+            if (
+                current.length >= 2 &&
+                typeof current[0] === "string" &&
+                current[1]?.constructor === Object &&
+                typeof (current[1] as Record<string, any>)?.type === "string"
             ) {
-                Object.setPrototypeOf(current, CstNode);
+                Object.setPrototypeOf(current, CstNode.prototype);
                 for (let i = 2; i < current.length; i++) {
                     const child = current[i];
-                    traverse(child);
-                    child[1][KEY_PARENT] = current;
+                    if (Array.isArray(child)) {
+                        traverse(child);
+                        child[1][KEY_PARENT] = current;
+                    } else if (typeof child !== "string") {
+                        throw new SyntaxError();
+                    }
                 }
-            } else if (typeof current !== "string") {
+            } else  {
                 throw new SyntaxError();
             }
         }
-        traverse(node);
-        return node;
+
+        if (Array.isArray(node)) {
+            traverse(node);
+        } else {
+            throw new SyntaxError();
+        }
+        return node as CstNode;
     }
 
 	0: string;
 	1: CstAttrs & {
-        [KEY_PARENT]?: CstNode;
+        [KEY_PARENT]?: CstNode,
+        [KEY_TYPECACHE]?: Record<string, CstNode[]>,
     };
 
-    constructor(name: string, attrs: CstAttrs) {
-        super(name, attrs);
-        this[0] = name;
-        this[1] = attrs;
+    constructor(name: string, attrs: CstAttrs, ...childNodes: (CstNode | string)[]) {
+        super(name, attrs, ...childNodes);
+        if (this.name === undefined) {
+            this[0] = name;
+            this[1] = attrs;
+            for (let i = 0; i < childNodes.length; i++) {
+                this[i + 2] = childNodes[i];
+            }
+        }
     }
 
     get name() {
@@ -198,7 +256,7 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
     }
 
     get children() {
-        const result = [];
+        const result: CstNode[] = [];
         for (let i = 2; i < this.length; i++) {
             const node = this[i];
             if (node instanceof CstNode) {
@@ -229,15 +287,18 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
     }
 
     is(selector: string) {
-        return getSelector(selector)(this);
+        const compiled = getSeletor(selector);
+        return compiled(this);
     }
 
     selectOne(selector: string): CstNode | undefined {
-        return selectOne<CstNode, CstNode>(getSelector(selector), this, CstNodeAdapter.OPTIONS) ?? undefined;
+        const compiled = getSeletor(selector);
+        return selectOne<CstNode, CstNode>(compiled, this, CstNodeAdapter.OPTIONS) ?? undefined;
     }
 
     selectAll(selector: string): CstNode[] {
-        return selectAll<CstNode, CstNode>(getSelector(selector), this, CstNodeAdapter.OPTIONS);
+        const compiled = getSeletor(selector);
+        return selectAll<CstNode, CstNode>(compiled, this, CstNodeAdapter.OPTIONS);
     }
 
     toJSONString(options?: CstPrintOptions) {
