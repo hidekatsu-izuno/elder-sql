@@ -1,7 +1,7 @@
 import type { Options } from "css-select";
 import { AttributeAction, parse, SelectorType, stringify, type PseudoSelector, type Selector } from "css-what";
 import { compile, selectAll, selectOne } from "css-select";
-import { escapeXml, LRUMap } from "./utils.ts"
+import { escapeXml, CacheMap } from "./utils.ts"
 
 export type CstAttrs = {
 	type: string;
@@ -16,7 +16,6 @@ export type CstPrintOptions = {
 };
 
 const KEY_PARENT = Symbol.for("parent");
-const KEY_TYPECACHE = Symbol.for("typecache");
 
 class CstNodeAdapter implements NonNullable<Options<CstNode, CstNode>["adapter"]> {
     static OPTIONS: Options<CstNode, CstNode> = {
@@ -138,7 +137,8 @@ class CstNodeAdapter implements NonNullable<Options<CstNode, CstNode>["adapter"]
     }
 }
 
-const SELECTOR_CACHE = new LRUMap<string, ReturnType<typeof compile<CstNode, CstNode>>>(256);
+declare type CompiledQuery = ReturnType<typeof compile<CstNode, CstNode>>;
+const SELECTOR_CACHE = new CacheMap<string, CompiledQuery>(256);
 
 function getSeletor(pattern: string) {
     let selector = SELECTOR_CACHE.get(pattern);
@@ -150,28 +150,33 @@ function getSeletor(pattern: string) {
     return selector;
 }
 
-function getTypeCache(node: CstNode) {
-    let typecache = node[1][KEY_TYPECACHE];
-    if (!typecache) {
-        typecache = {};
+declare type NodeCache = { types: Record<string, CstNode[]>, children: CstNode[] };
+const NODE_CACHE = new WeakMap<CstNode, NodeCache>();
+
+function getNodeCache(node: CstNode) {
+    let cache = NODE_CACHE.get(node);
+    if (!cache) {
+        cache = { types: {}, children: [] };
         for (let i = 2; i < node.length; i++) {
             const child = node[i];
             if (child instanceof CstNode) {
+                cache.children.push(child);
+
                 const type = child.attrs.type;
                 if (type != null) {
-                    let values = typecache[type];
+                    let values = cache.types[type];
                     if (!values) {
                         values = [child];
-                        typecache[type] = values;
+                        cache.types[type] = values;
                     } else {
                         values.push(child);
                     }
                 }
             }
         }
-        node[1][KEY_TYPECACHE] = typecache;
+        NODE_CACHE.set(node, cache);
     }
-    return typecache;
+    return cache;
 }
 
 export class CstNode extends Array<CstAttrs | CstNode | string> {
@@ -225,17 +230,14 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
 	0: string;
 	1: CstAttrs & {
         [KEY_PARENT]?: CstNode,
-        [KEY_TYPECACHE]?: Record<string, CstNode[]>,
     };
 
     constructor(name: string, attrs: CstAttrs, ...childNodes: (CstNode | string)[]) {
-        super(name, attrs, ...childNodes);
-        if (this.name === undefined) {
-            this[0] = name;
-            this[1] = attrs;
-            for (let i = 0; i < childNodes.length; i++) {
-                this[i + 2] = childNodes[i];
-            }
+        super(2 + childNodes.length);
+        this[0] = name;
+        this[1] = attrs;
+        for (let i = 0; i < childNodes.length; i++) {
+            this[i + 2] = childNodes[i];
         }
     }
 
@@ -255,15 +257,12 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         return this[1][KEY_PARENT];
     }
 
+    get types(): Record<string, CstNode[]> {
+        return getNodeCache(this).types;
+    }
+
     get children() {
-        const result: CstNode[] = [];
-        for (let i = 2; i < this.length; i++) {
-            const node = this[i];
-            if (node instanceof CstNode) {
-                result.push(node);
-            }
-        }
-        return result;
+        return getNodeCache(this).children;
     }
 
     get childNodes() {
@@ -299,6 +298,10 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
     selectAll(selector: string): CstNode[] {
         const compiled = getSeletor(selector);
         return selectAll<CstNode, CstNode>(compiled, this, CstNodeAdapter.OPTIONS);
+    }
+
+    text() {
+        return this.toPlainString();
     }
 
     toJSONString(options?: CstPrintOptions) {
@@ -400,7 +403,7 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         return out;
     }
 
-    text(options?: CstPrintOptions) {
+    toPlainString(options?: CstPrintOptions) {
         let out = "";
         function print(elem: CstNode, indent: number) {
             for (let i = 2; i < elem.length; i++) {

@@ -208,7 +208,7 @@ export function isJSExpression(text: string) {
 	return result.end === text.length;
 }
 
-export class LRUMap<K, V> extends Map<K, V> {
+export class CacheMap<K, V> extends Map<K, V> {
 	private capacity;
 
 	constructor(capacity: number) {
