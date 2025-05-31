@@ -66,7 +66,7 @@ export class CstBuilder {
 	start(type: string, value?: string | number | boolean) {
 		const elem = new CstNode("node", { type });
 		if (value != null) {
-			elem.attrs.value = value;
+			elem[1].value = value;
 		}
 		if (this.current === EMPTY_NODE) {
 			this.root = elem;
@@ -79,13 +79,13 @@ export class CstBuilder {
 
 	type(type: string, context?: CstNode) {
 		const current = context ?? this.current;
-		current.attrs.type = type;
+		current[1].type = type;
 		return current[1].type;
 	}
 
 	value(value: string | number | boolean, context?: CstNode) {
 		const current = context ?? this.current;
-		current.attrs.value = value.toString();
+		current[1].value = value.toString();
 		return current[1].value;
 	}
 

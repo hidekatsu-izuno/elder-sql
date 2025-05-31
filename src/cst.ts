@@ -162,7 +162,7 @@ function getNodeCache(node: CstNode) {
             if (child instanceof CstNode) {
                 cache.children.push(child);
 
-                const type = child.attrs.type;
+                const type = child.type;
                 if (type != null) {
                     let values = cache.types[type];
                     if (!values) {
@@ -184,9 +184,20 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         const node = typeof source === "string" ? JSON.parse(source, (key, value) => {
             if (value?.constructor === Object) {
                 return Object.keys(value)
-                    .filter(key => key === "type" || key === "value")
                     .reduce((obj: any, key: string) => {
-                        obj[key] = value[key];
+                        if (key === "type") {
+                            if (typeof value[key] === "string") {
+                                obj[key] = value[key];
+                            } else {
+                                obj[key] = "";
+                            }
+                        } else if (key === "value") {
+                            if (typeof value[key] === "string" || 
+                                typeof value[key] === "number" || 
+                                typeof value[key] === "boolean") {
+                                obj[key] = value[key];
+                            }
+                        }
                         return obj;
                     }, {});
             }
@@ -249,16 +260,16 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
         this[0] = value;
     }
 
-    get attrs(): CstAttrs {
-        return this[1];
+    get type(): string {
+        return this[1].type;
+    }
+
+    get value(): string | number | boolean | undefined {
+        return this[1].value;
     }
 
     get parent(): CstNode | undefined {
         return this[1][KEY_PARENT];
-    }
-
-    get types(): Record<string, CstNode[]> {
-        return getNodeCache(this).types;
     }
 
     get children() {

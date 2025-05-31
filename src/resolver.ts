@@ -63,7 +63,7 @@ export abstract class Resolver {
 	protected abstract extractNode(statement: CstNode): FromObject | undefined;
 
 	private findStatement(node: CstNode): CstNode | undefined {
-		if (/(\\s|^)Statement(\\s|$)/.test(node.attrs.type)) {
+		if (/(\\s|^)Statement(\\s|$)/.test(node.type)) {
 			return node;
 		} else {
 			for (const child of node.children) {

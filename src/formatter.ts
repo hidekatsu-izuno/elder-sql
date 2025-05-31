@@ -86,12 +86,12 @@ export abstract class Formatter {
 				out.control(before);
 			}
 		}
-		if (node.attrs.type === "LineComment") {
+		if (node.type === "LineComment") {
 			out.write(node.text(), true);
 			out.control("softbreak");
 		} else if (
-			node.attrs.type === "BlockComment" ||
-			node.attrs.type === "HintComment"
+			node.type === "BlockComment" ||
+			node.type === "HintComment"
 		) {
 			const segments = node.text().split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
@@ -100,11 +100,11 @@ export abstract class Formatter {
 				}
 				out.write(segments[i], true);
 			}
-		} else if (node.attrs.type === "WhiteSpace" || node.attrs.type === "LineBreak") {
+		} else if (node.type === "WhiteSpace" || node.type === "LineBreak") {
 			// no handle
-		} else if (node.attrs.type === "EoF") {
+		} else if (node.type === "EoF") {
 			out.write("", false);
-		} else if (node.attrs.type === "Unknown") {
+		} else if (node.type === "Unknown") {
 			out.write(this.concatNode(node, out).trim(), false);
 			out.control("break");
 		} else {
@@ -131,7 +131,7 @@ export abstract class Formatter {
 		let text = "";
 		for (const child of node.childNodes) {
 			if (child instanceof CstNode) {
-				if (child.attrs.type === "LineBreak") {
+				if (child.type === "LineBreak") {
 					text += out.eol;
 				} else {
 					text += this.concatNode(child, out);
