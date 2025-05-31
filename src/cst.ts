@@ -137,7 +137,7 @@ class CstNodeAdapter implements NonNullable<Options<CstNode, CstNode>["adapter"]
     }
 }
 
-declare type CompiledQuery = ReturnType<typeof compile<CstNode, CstNode>>;
+export declare type CompiledQuery = ReturnType<typeof compile<CstNode, CstNode>>;
 const SELECTOR_CACHE = new CacheMap<string, CompiledQuery>(256);
 
 function getSeletor(pattern: string) {
