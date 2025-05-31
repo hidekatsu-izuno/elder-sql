@@ -217,25 +217,25 @@ export class CacheMap<K, V> extends Map<K, V> {
 	}
 
 	set(key: K, value: V) {
-        super.set(key, value);
-        if (this.size > this.capacity) {
-            for (const key of this.keys()) {
+		super.set(key, value);
+		if (this.size > this.capacity) {
+			for (const key of this.keys()) {
 				this.delete(key);
 			}
-        }
-        return this;
-    }
+		}
+		return this;
+	}
 
 	get(key: K) {
 		if (!super.has(key)) {
 			return;
 		}
 
-        const value = super.get(key);
-        this.delete(key);
+		const value = super.get(key);
+		this.delete(key);
 		if (value !== undefined) {
-	        super.set(key, value);
+			super.set(key, value);
 		}
-        return value;
-    }
+		return value;
+	}
 }

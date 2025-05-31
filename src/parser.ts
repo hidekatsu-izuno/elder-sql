@@ -1,4 +1,4 @@
-import { CstNode } from "./cst.ts"
+import { CstNode } from "./cst.ts";
 import type { Lexer, Token } from "./lexer.ts";
 
 export declare type ParserOptions = {
@@ -99,7 +99,7 @@ export class CstBuilder {
 		const elem = new CstNode("token", { type: token.type.name });
 		if (this.options.trivia) {
 			for (const skip of token.preskips) {
-				const trivia =  new CstNode("trivia", { type: skip.type.name });
+				const trivia = new CstNode("trivia", { type: skip.type.name });
 				if (skip.text) {
 					trivia.append(skip.text);
 				}

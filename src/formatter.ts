@@ -1,9 +1,6 @@
 import { EOL } from "node:os";
-import {
-	AggregateParseError,
-	type Parser,
-} from "./parser.ts";
-import { CstNode } from "./cst.ts"
+import { CstNode } from "./cst.ts";
+import { AggregateParseError, type Parser } from "./parser.ts";
 
 export declare type FormatActionType =
 	| "reset"
@@ -89,10 +86,7 @@ export abstract class Formatter {
 		if (node.type === "LineComment") {
 			out.write(node.text(), true);
 			out.control("softbreak");
-		} else if (
-			node.type === "BlockComment" ||
-			node.type === "HintComment"
-		) {
+		} else if (node.type === "BlockComment" || node.type === "HintComment") {
 			const segments = node.text().split(/\r\n?|\n/g);
 			for (let i = 0; i < segments.length; i++) {
 				if (i > 0) {
