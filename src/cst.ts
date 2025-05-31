@@ -273,10 +273,6 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
     }
 
     get children() {
-        return getNodeCache(this).children;
-    }
-
-    get childNodes() {
         return this.slice(2);
     }
 

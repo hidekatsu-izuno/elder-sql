@@ -108,7 +108,7 @@ export abstract class Formatter {
 			out.write(this.concatNode(node, out).trim(), false);
 			out.control("break");
 		} else {
-			for (const child of node.childNodes) {
+			for (const child of node.children) {
 				if (child instanceof CstNode) {
 					this.formatElement(child, out);
 				} else {
@@ -129,7 +129,7 @@ export abstract class Formatter {
 
 	private concatNode(node: CstNode, out: FormatWriter) {
 		let text = "";
-		for (const child of node.childNodes) {
+		for (const child of node.children) {
 			if (child instanceof CstNode) {
 				if (child.type === "LineBreak") {
 					text += out.eol;

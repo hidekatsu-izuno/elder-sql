@@ -1,10 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
-import {
-    type CompiledQuery,
-	CstNode
-} from "../src/cst.ts";
-import { selectOne } from "css-select"
+import { CstNode } from "../src/cst.ts";
 
 suite("test cst", () => {
     test("test selectOne/selectAll", () => {
@@ -26,7 +22,7 @@ suite("test cst", () => {
         assert.equal(cst.selectOne("> node[type=b]"), cst.children[1]);
         assert.equal(cst.selectOne("> *[type=b]"), cst.children[1]);
         assert.equal(cst.selectOne("> [type=b][value=b2]"), cst.children[2]);
-        assert.equal(cst.selectOne("> [type=b] > [type=ba]"), cst.children[2].children[1]);
+        assert.equal(cst.selectOne("> [type=b] > [type=ba]"), (cst.children[2] as CstNode).children[1]);
 
         assert.deepEqual(cst.selectAll("> [type=b]"), [
             cst.children[1],
@@ -35,7 +31,7 @@ suite("test cst", () => {
         assert.deepEqual(cst.selectAll("[type=b]"), [
             cst.children[1],
             cst.children[2],
-            cst.children[2].children[0],
+            (cst.children[2] as CstNode).children[0],
         ]);
 
     })

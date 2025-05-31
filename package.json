@@ -114,7 +114,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/node": "^22.15.23",
+		"@types/node": "^22.15.29",
 		"commit-and-tag-version": "^12.5.1",
 		"typescript": "^5.8.3"
 	},

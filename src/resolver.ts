@@ -1,4 +1,4 @@
-import type { CstNode } from "./cst.ts"
+import { CstNode } from "./cst.ts"
 import type { Parser } from "./parser.ts";
 
 export declare type ResolverOptions = {
@@ -67,9 +67,11 @@ export abstract class Resolver {
 			return node;
 		} else {
 			for (const child of node.children) {
-				const result = this.findStatement(child);
-				if (result) {
-					return result;
+				if (child instanceof CstNode) {
+					const result = this.findStatement(child);
+					if (result) {
+						return result;
+					}
 				}
 			}
 		}
