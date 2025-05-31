@@ -1,13 +1,5 @@
 import type { Options } from "css-select";
 import { compile, selectAll, selectOne } from "css-select";
-import {
-	AttributeAction,
-	type PseudoSelector,
-	type Selector,
-	SelectorType,
-	parse,
-	stringify,
-} from "css-what";
 import { CacheMap, escapeXml } from "./utils.ts";
 
 export type CstAttrs = {
@@ -154,43 +146,10 @@ const SELECTOR_CACHE = new CacheMap<string, CompiledQuery>(256);
 function getSeletor(pattern: string) {
 	let selector = SELECTOR_CACHE.get(pattern);
 	if (!selector) {
-		const parsed = parse(pattern);
-		selector = compile<CstNode, CstNode>(parsed, CstNodeAdapter.OPTIONS);
+		selector = compile<CstNode, CstNode>(pattern, CstNodeAdapter.OPTIONS);
 		SELECTOR_CACHE.set(pattern, selector);
 	}
 	return selector;
-}
-
-declare type NodeCache = {
-	types: Record<string, CstNode[]>;
-	children: CstNode[];
-};
-const NODE_CACHE = new WeakMap<CstNode, NodeCache>();
-
-function getNodeCache(node: CstNode) {
-	let cache = NODE_CACHE.get(node);
-	if (!cache) {
-		cache = { types: {}, children: [] };
-		for (let i = 2; i < node.length; i++) {
-			const child = node[i];
-			if (child instanceof CstNode) {
-				cache.children.push(child);
-
-				const type = child.type;
-				if (type != null) {
-					let values = cache.types[type];
-					if (!values) {
-						values = [child];
-						cache.types[type] = values;
-					} else {
-						values.push(child);
-					}
-				}
-			}
-		}
-		NODE_CACHE.set(node, cache);
-	}
-	return cache;
 }
 
 export class CstNode extends Array<CstAttrs | CstNode | string> {
@@ -276,10 +235,6 @@ export class CstNode extends Array<CstAttrs | CstNode | string> {
 
 	get name() {
 		return this[0];
-	}
-
-	set name(value: string) {
-		this[0] = value;
 	}
 
 	get type(): string {
