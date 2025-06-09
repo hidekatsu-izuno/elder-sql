@@ -90,23 +90,6 @@ export function escapeRegExp(text: string) {
 	return text.replace(/[.*+?^=!:${}()|[\]/\\]/g, "\\$&");
 }
 
-export function escapeXml(text: string, options?: { control?: boolean }) {
-	const re = options?.control ? /[&<>"\p{C}]/gu : /[&<>"]/g;
-	return text.replace(re, (m) => {
-		switch (m) {
-			case "&":
-				return "&amp;";
-			case "<":
-				return "&lt;";
-			case ">":
-				return "&gt;";
-			case '"':
-				return "&quot;";
-		}
-		return `&#x${m.charCodeAt(0).toString(16)};`;
-	});
-}
-
 export function compareVersion(version1 = "0", version2 = "0") {
 	const v1 = toVersionObject(version1);
 	const v2 = toVersionObject(version2);
@@ -154,25 +137,6 @@ function toVersionObject(text: string) {
 		}
 	}
 	return vparts;
-}
-
-export function unescapeXml(text: string) {
-	return text.replace(/&(amp|lt|gt|quot|#x[0-9A-Fa-f]+|#[0-9]+);/g, (m) => {
-		switch (m) {
-			case "&amp;":
-				return "&";
-			case "&lt;":
-				return "<";
-			case "&gt;":
-				return ">";
-			case "&quot;":
-				return '"';
-		}
-		const code = m.startsWith("&#x")
-			? Number.parseInt(m.substring(2), 16)
-			: Number.parseInt(m.substring(1), 10);
-		return String.fromCharCode(code);
-	});
 }
 
 const sandboxProxies = new WeakMap();

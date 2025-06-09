@@ -1,5 +1,5 @@
-import { CstNode } from "./cst.ts";
-import type { Parser } from "./parser.ts";
+import { CstNode } from "elder-parse";
+import type { Parser } from "elder-parse";
 
 export declare type ResolverOptions = {
 	global?: FromObject[];

@@ -1,4 +1,5 @@
-import { Formatter, type FormatterOptions } from "../formatter.ts";
+import type { FormatterOptions } from "elder-parse";
+import { Formatter } from "elder-parse";
 import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
 export class Sqlite3Formatter extends Formatter {

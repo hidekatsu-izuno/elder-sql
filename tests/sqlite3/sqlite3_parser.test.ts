@@ -3,8 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import type { CstNode } from "../../src/cst.ts";
-import { AggregateParseError } from "../../src/parser.ts";
+import type { CstNode } from "elder-parse";
+import { AggregateParseError } from "elder-parse";
 import { Sqlite3Parser } from "../../src/sqlite3/sqlite3_parser.ts";
 import { writeDebugFile } from "../utils/debug.ts";
 

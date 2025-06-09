@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Token } from "../../src/lexer.ts";
+import type { Token } from "elder-parse";
 
 export function getRootDir() {
 	let current = process.cwd();
@@ -25,7 +25,7 @@ export function writeDebugFile(
 
 export function toJSScript(target: Token | Token[]) {
 	let imports = "";
-	imports += 'import { SourceLocation, Token } from "../../../src/lexer.ts"\n';
+	imports += 'import { SourceLocation, Token } from "elder-parse"\n';
 	imports +=
 		'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
 	return `${imports}\nexport default ${toJSString(target)}\n`;

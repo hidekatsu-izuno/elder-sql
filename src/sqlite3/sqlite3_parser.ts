@@ -1,8 +1,8 @@
-import type { CstNode } from "../cst.ts";
-import type { Token } from "../lexer.ts";
-import { ParseError, TokenReader } from "../lexer.ts";
-import type { CstBuilder } from "../parser.ts";
-import { AggregateParseError, Parser } from "../parser.ts";
+import type { CstNode } from "elder-parse";
+import type { Token } from "elder-parse";
+import { ParseError, TokenReader } from "elder-parse";
+import type { CstBuilder } from "elder-parse";
+import { AggregateParseError, Parser } from "elder-parse";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { dequote } from "../utils.ts";
 import { Sqlite3Lexer } from "./sqlite3_lexer.ts";

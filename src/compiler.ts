@@ -1,5 +1,5 @@
-import { type Lexer, type Token, TokenType } from "./lexer.ts";
-import { TokenReader } from "./lexer.ts";
+import type { Lexer, Token } from "elder-parse";
+import { TokenReader, TokenType } from "elder-parse";
 import { MssqlLexer } from "./mssql/mssql_lexer.ts";
 import { MysqlLexer } from "./mysql/mysql_lexer.ts";
 import { OracleLexer } from "./oracle/oracle_lexer.ts";

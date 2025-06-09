@@ -1,9 +1,8 @@
 import {
-	type Keyword,
 	Lexer,
 	type LexerOptions,
 	type Token,
-} from "../lexer.ts";
+} from "elder-parse";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 
 const keywords = new SqlKeywords();

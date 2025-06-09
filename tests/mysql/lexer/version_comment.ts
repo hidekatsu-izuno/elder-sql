@@ -1,4 +1,4 @@
-import { SourceLocation, Token } from "../../../src/lexer.ts";
+import { SourceLocation, Token } from "elder-parse";
 import { SqlKeywords, SqlTokenType } from "../../../src/sql.ts";
 
 export default [

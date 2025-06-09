@@ -3,7 +3,7 @@ import {
 	Lexer,
 	type LexerOptions,
 	type Token,
-} from "../lexer.ts";
+} from "elder-parse";
 import { SqlKeywords, SqlTokenType } from "../sql.ts";
 import { compareVersion, escapeRegExp } from "../utils.ts";
 

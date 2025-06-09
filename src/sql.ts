@@ -1,4 +1,4 @@
-import { Keyword, KeywordMap, TokenType } from "./lexer.ts";
+import { Keyword, KeywordMap, TokenType } from "elder-parse";
 
 export class SqlTokenType extends TokenType {
 	static WhiteSpace = new TokenType("WhiteSpace", { skip: true });
