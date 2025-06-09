@@ -2,8 +2,12 @@ import { EOL } from "node:os";
 import { CstNode } from "./cst.ts";
 import { AggregateParseError, type Parser } from "./parser.ts";
 
+
+export declare type ContentActionType = 
+	"multiline" | "noprint";
+
 export declare type FormatActionType =
-	| "reset"
+	"reset"
 	| "indent"
 	| "unindent"
 	| "softbreak"
@@ -13,6 +17,7 @@ export declare type FormatActionType =
 
 export declare type FormatPattern = {
 	pattern: string;
+	content?: ContentActionType;
 	before?: FormatActionType | FormatActionType[];
 	after?: FormatActionType | FormatActionType[];
 };
@@ -65,10 +70,12 @@ export abstract class Formatter {
 
 	private formatElement(node: CstNode, out: FormatWriter) {
 		let before: FormatActionType | FormatActionType[] | undefined;
+		let content: ContentActionType | undefined
 		let after: FormatActionType | FormatActionType[] | undefined;
 		for (const item of this.patterns) {
 			if (node.is(item.pattern)) {
 				before = item.before;
+				content = item.content;
 				after = item.after;
 				break;
 			}
@@ -83,31 +90,33 @@ export abstract class Formatter {
 				out.control(before);
 			}
 		}
-		if (node.type === "LineComment") {
-			out.write(node.text(), true);
-			out.control("softbreak");
-		} else if (node.type === "BlockComment" || node.type === "HintComment") {
-			const segments = node.text().split(/\r\n?|\n/g);
-			for (let i = 0; i < segments.length; i++) {
-				if (i > 0) {
-					out.control("break");
-				}
-				out.write(segments[i], true);
-			}
-		} else if (node.type === "WhiteSpace" || node.type === "LineBreak") {
+		if (content === "noprint") {
 			// no handle
-		} else if (node.type === "EoF") {
-			out.write("", false);
-		} else if (node.type === "Unknown") {
-			out.write(this.concatNode(node, out).trim(), false);
-			out.control("break");
-		} else {
-			for (const child of node.children) {
-				if (child instanceof CstNode) {
-					this.formatElement(child, out);
-				} else {
-					out.write(child.toString(), false);
+		} else if (content === "multiline") {
+			const segments = node.text().split(/\r\n?|\n/g);
+			let first = true;
+			for (const segment of segments) {
+				if (segment) {
+					if (first) {
+						first = false;
+					} else {
+						out.control("break");
+					}
+					out.write(segment, true);
 				}
+			}
+		} else {
+			const children = node.children;
+			if (children.length) {
+				for (const child of children) {
+					if (child instanceof CstNode) {
+						this.formatElement(child, out);
+					} else {
+						out.write(child.toString(), false);
+					}
+				}
+			} else {
+				out.write("", false);
 			}
 		}
 		if (after) {
@@ -119,22 +128,6 @@ export abstract class Formatter {
 				out.control(after);
 			}
 		}
-	}
-
-	private concatNode(node: CstNode, out: FormatWriter) {
-		let text = "";
-		for (const child of node.children) {
-			if (child instanceof CstNode) {
-				if (child.type === "LineBreak") {
-					text += out.eol;
-				} else {
-					text += this.concatNode(child, out);
-				}
-			} else {
-				text += child.toString();
-			}
-		}
-		return text;
 	}
 }
 
@@ -240,30 +233,43 @@ class FormatWriter {
 				const depth = this.line[0].depth;
 
 				let first = true;
-				let width = this.indentWidth * (depth + (first ? 0 : 1));
-				let text = this.indent.repeat(depth + (first ? 0 : 1));
+				let width = 0;
+				let text = "";
 				for (let i = 0; i < this.line.length; i++) {
 					const item = this.line[i];
-					const nospace = i === 0 || item.nospace;
+					if (!item.text) {
+						continue;
+					}
+
+					if (first) {
+						width = this.indentWidth * depth;
+						text = this.indent.repeat(depth);
+					}
+
+					const nospace = first || item.nospace;
 					if (width + item.text.length + (nospace ? 0 : 1) < this.printWidth) {
 						width += (nospace ? 0 : 1) + item.text.length;
 						text += (nospace ? "" : " ") + item.text;
 					} else {
 						this.text += text + this.eol;
-						first = false;
 
 						width =
-							this.indentWidth * (depth + (first ? 0 : 1)) +
-							(nospace ? 0 : 1) +
+							this.indentWidth * (depth + 1) +
 							item.text.length;
 						text =
-							this.indent.repeat(depth + (first ? 0 : 1)) +
-							(nospace ? "" : " ") +
+							this.indent.repeat(depth + 1) +
 							item.text;
 					}
+					first = false;
 				}
-				this.text += text;
+				if (text) {
+					this.text += text;
+				} else {
+					breakCount = 0;
+				}
 				this.line.length = 0;
+			} else {
+				breakCount = 0;
 			}
 
 			if (breakCount > 2) {

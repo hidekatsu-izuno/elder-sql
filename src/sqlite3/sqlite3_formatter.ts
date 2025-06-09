@@ -11,6 +11,10 @@ export class Sqlite3Formatter extends Formatter {
 					before: "nospace",
 					after: ["reset", "break"],
 				},
+				{ pattern: "[type=Unknown]", before: "reset", content: "multiline", },
+				{ pattern: "[type=WhiteSpace]", content: "noprint" },
+				{ pattern: "[type=LineComment]", after: "softbreak" },
+				{ pattern: ":is([type=BlockComment],[type=HintComment])", content: "multiline" },
 				{ pattern: "[type=EoF]", before: "nospace", after: "break" },
 				{
 					pattern: "[type=Delimiter]",
@@ -23,8 +27,10 @@ export class Sqlite3Formatter extends Formatter {
 						":is([type=BlockComment], [type=HintComment]) + [type=LineBreak]",
 						":is([type=BlockComment], [type=HintComment]) + [type=WhiteSpace] + [type=LineBreak]",
 					].join(","),
+					content: "noprint",
 					after: "break",
 				},
+				{ pattern: "[type=LineBreak]", content: "noprint" },
 				{
 					pattern: [
 						"[type=CreateViewStatement] > [type=SelectStatement]",
