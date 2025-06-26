@@ -4,7 +4,7 @@ import { MssqlLexer } from "./mssql/mssql_lexer.ts";
 import { MysqlLexer } from "./mysql/mysql_lexer.ts";
 import { OracleLexer } from "./oracle/oracle_lexer.ts";
 import { PostgresLexer } from "./postgres/postgres_lexer.ts";
-import { SqlKeywords, SqlTokenType } from "./sql.ts";
+import { SqlLexer } from "./sql.ts";
 import { Sqlite3Lexer } from "./sqlite3/sqlite3_lexer.ts";
 import { isJSExpression, isJSIdentifier } from "./utils.ts";
 
@@ -13,7 +13,7 @@ export type ElderSqlCompilerOptions = {
 	lexer?: Record<string, any>;
 };
 
-const ElderSqlTokenType = {
+const ElderSqlLexer = {
 	Import: new TokenType("Import"),
 	Define: new TokenType("Define"),
 	If: new TokenType("If"),
@@ -68,7 +68,7 @@ export class ElderSqlCompiler {
 				}
 			}
 			segment.push(token);
-			if (token.is(SqlTokenType.Delimiter) || token.is(SqlTokenType.EoF)) {
+			if (token.is(SqlLexer.Delimiter) || token.is(SqlLexer.EoF)) {
 				text += this.compileSegment(segment);
 				segment.length = 0;
 			}
@@ -81,7 +81,7 @@ export class ElderSqlCompiler {
 		let text = "";
 
 		const tr = new TokenReader(segment);
-		while (tr.peekIf(ElderSqlTokenType.Import)) {
+		while (tr.peekIf(ElderSqlLexer.Import)) {
 			const importToken = tr.peek();
 			const m = /^\/\*#import[ \t](.*?)\*\/$/su.exec(importToken.text);
 			if (!m) {
@@ -89,13 +89,13 @@ export class ElderSqlCompiler {
 			}
 
 			tr.consume();
-			if (tr.peek()?.preskips[0]?.is(SqlTokenType.LineBreak)) {
+			if (tr.peek()?.preskips[0]?.is(SqlLexer.LineBreak)) {
 				tr.peek().preskips.shift();
 			}
 
 			text += `import ${m[1]};/\n`;
 		}
-		if (tr.peekIf(ElderSqlTokenType.Define)) {
+		if (tr.peekIf(ElderSqlLexer.Define)) {
 			const defineToken = tr.peek();
 			const m = /^\/\*#define[ \t]([^\r\n]*)\r?\n(.*?)\*\/$/su.exec(
 				defineToken.text,
@@ -109,7 +109,7 @@ export class ElderSqlCompiler {
 			}
 
 			tr.consume();
-			if (tr.peek()?.preskips[0]?.is(SqlTokenType.LineBreak)) {
+			if (tr.peek()?.preskips[0]?.is(SqlLexer.LineBreak)) {
 				tr.peek().preskips.shift();
 			}
 
@@ -121,7 +121,7 @@ export class ElderSqlCompiler {
 			const blocks = [];
 			let buffer = "";
 			while (tr.peek()) {
-				if (tr.peekIf(ElderSqlTokenType.If)) {
+				if (tr.peekIf(ElderSqlLexer.If)) {
 					const token = tr.peek();
 					const m = /^\/\*#if[ \t](.*)\*\/$/s.exec(token.text);
 					if (!m) {
@@ -143,12 +143,12 @@ export class ElderSqlCompiler {
 					}
 
 					text += `  ${"  ".repeat(blocks.length)}if (sandbox(${expr})) {\n`;
-					blocks.push(ElderSqlTokenType.If);
-				} else if (tr.peekIf(ElderSqlTokenType.Elif)) {
+					blocks.push(ElderSqlLexer.If);
+				} else if (tr.peekIf(ElderSqlLexer.Elif)) {
 					const token = tr.peek();
 					if (
-						blocks[blocks.length - 1] !== ElderSqlTokenType.If &&
-						blocks[blocks.length - 1] !== ElderSqlTokenType.Elif
+						blocks[blocks.length - 1] !== ElderSqlLexer.If &&
+						blocks[blocks.length - 1] !== ElderSqlLexer.Elif
 					) {
 						throw tr.createParseError();
 					}
@@ -173,11 +173,11 @@ export class ElderSqlCompiler {
 
 					blocks.pop();
 					text += `  ${"  ".repeat(blocks.length)}} else if (${expr}) {\n`;
-					blocks.push(ElderSqlTokenType.Elif);
-				} else if (tr.peekIf(ElderSqlTokenType.Else)) {
+					blocks.push(ElderSqlLexer.Elif);
+				} else if (tr.peekIf(ElderSqlLexer.Else)) {
 					if (
-						blocks[blocks.length - 1] !== ElderSqlTokenType.If &&
-						blocks[blocks.length - 1] !== ElderSqlTokenType.Elif
+						blocks[blocks.length - 1] !== ElderSqlLexer.If &&
+						blocks[blocks.length - 1] !== ElderSqlLexer.Elif
 					) {
 						throw tr.createParseError();
 					}
@@ -194,8 +194,8 @@ export class ElderSqlCompiler {
 
 					blocks.pop();
 					text += `  ${"  ".repeat(blocks.length)}} else {\n`;
-					blocks.push(ElderSqlTokenType.Else);
-				} else if (tr.peekIf(ElderSqlTokenType.For)) {
+					blocks.push(ElderSqlLexer.Else);
+				} else if (tr.peekIf(ElderSqlLexer.For)) {
 					const token = tr.peek();
 					const m = /^\/\*#for[ \t\r\n]([^:]+):(.*)\*\/$/s.exec(token.text);
 					if (!m) {
@@ -226,13 +226,13 @@ export class ElderSqlCompiler {
 					}
 
 					text += `  ${"  ".repeat(blocks.length)}(${expr}).forEach((${index ? `${ident}, ${index}` : ident}) => {\n`;
-					blocks.push(ElderSqlTokenType.For);
+					blocks.push(ElderSqlLexer.For);
 					const depth = blocks.reduce(
-						(n, t) => (t === ElderSqlTokenType.For ? n + 1 : n),
+						(n, t) => (t === ElderSqlLexer.For ? n + 1 : n),
 						0,
 					);
 					text += `  ${"  ".repeat(blocks.length)}const ctx${depth} = {...ctx${depth - 1}, ${index ? `${ident}, ${index}` : ident}};\n`;
-				} else if (tr.peekIf(ElderSqlTokenType.End)) {
+				} else if (tr.peekIf(ElderSqlLexer.End)) {
 					const token = tr.consume();
 
 					for (const skip of token.preskips) {
@@ -244,42 +244,42 @@ export class ElderSqlCompiler {
 					}
 
 					if (
-						blocks[blocks.length - 1] === ElderSqlTokenType.If ||
-						blocks[blocks.length - 1] === ElderSqlTokenType.Elif ||
-						blocks[blocks.length - 1] === ElderSqlTokenType.Else
+						blocks[blocks.length - 1] === ElderSqlLexer.If ||
+						blocks[blocks.length - 1] === ElderSqlLexer.Elif ||
+						blocks[blocks.length - 1] === ElderSqlLexer.Else
 					) {
 						blocks.pop();
 						text += `  ${"  ".repeat(blocks.length)}}\n`;
-					} else if (blocks[blocks.length - 1] === ElderSqlTokenType.For) {
+					} else if (blocks[blocks.length - 1] === ElderSqlLexer.For) {
 						blocks.pop();
 						text += `  ${"  ".repeat(blocks.length)}})\n`;
 					} else {
 						throw tr.createParseError();
 					}
-				} else if (tr.peekIf(ElderSqlTokenType.BindVariable)) {
+				} else if (tr.peekIf(ElderSqlLexer.BindVariable)) {
 					const token = tr.peek();
 					const m = /^\/\*#\{(.*)\}\*\/$/s.exec(token.text);
 					if (!m) {
 						throw tr.createParseError();
 					}
 
-					const isInOperator = tr.peek(-1)?.is(SqlKeywords.IN);
+					const isInOperator = tr.peek(-1)?.is(SqlLexer.IN);
 
 					const expr = m[1].trim();
 					tr.consume();
 					if (tr.peek()?.preskips.length === 0) {
-						if (tr.peekIf(SqlTokenType.LeftParen)) {
+						if (tr.peekIf(SqlLexer.LeftParen)) {
 							tr.consume();
 							let depth = 0;
 							while (
 								tr.peek() &&
-								!tr.peekIf(SqlTokenType.Delimiter) &&
-								!tr.peekIf(SqlTokenType.EoF)
+								!tr.peekIf(SqlLexer.Delimiter) &&
+								!tr.peekIf(SqlLexer.EoF)
 							) {
-								if (tr.peekIf(SqlTokenType.LeftParen)) {
+								if (tr.peekIf(SqlLexer.LeftParen)) {
 									tr.consume();
 									depth++;
-								} else if (tr.peekIf(SqlTokenType.RightParen)) {
+								} else if (tr.peekIf(SqlLexer.RightParen)) {
 									tr.consume();
 									if (depth === 0) {
 										break;
@@ -291,26 +291,25 @@ export class ElderSqlCompiler {
 							}
 						} else if (
 							tr.peekIf(
-								(token) =>
-									token.is(SqlTokenType.Operator) && token.is(["+", "-"]),
-								SqlTokenType.Numeric,
+								(token) => token.is(SqlLexer.Operator) && token.is(["+", "-"]),
+								SqlLexer.Numeric,
 							)
 						) {
 							tr.consume();
 							tr.consume();
 						} else if (
-							tr.peekIf(SqlTokenType.String) ||
-							tr.peekIf(SqlTokenType.Numeric) ||
-							tr.peekIf(SqlKeywords.TRUE) ||
-							tr.peekIf(SqlKeywords.FALSE) ||
-							tr.peekIf(SqlKeywords.NULL)
+							tr.peekIf(SqlLexer.String) ||
+							tr.peekIf(SqlLexer.Numeric) ||
+							tr.peekIf(SqlLexer.TRUE) ||
+							tr.peekIf(SqlLexer.FALSE) ||
+							tr.peekIf(SqlLexer.NULL)
 						) {
 							tr.consume();
 						}
 					}
 
 					const depth = blocks.reduce(
-						(n, t) => (t === ElderSqlTokenType.For ? n + 1 : n),
+						(n, t) => (t === ElderSqlLexer.For ? n + 1 : n),
 						0,
 					);
 					for (const skip of token.preskips) {
@@ -329,7 +328,7 @@ export class ElderSqlCompiler {
 						text += `  ${"  ".repeat(blocks.length)}args.push((new Function("ctx", ${JSON.stringify(`with (ctx) return (${expr})`)}))(ctx${depth}));\n`;
 						text += `  ${"  ".repeat(blocks.length)}text += "?";\n`;
 					}
-				} else if (tr.peekIf(ElderSqlTokenType.ReplacementVariable)) {
+				} else if (tr.peekIf(ElderSqlLexer.ReplacementVariable)) {
 					const token = tr.peek();
 					const m = /^\/\*\$\{(.*)\}\*\/$/s.exec(token.text);
 					if (!m) {
@@ -347,7 +346,7 @@ export class ElderSqlCompiler {
 						buffer = "";
 					}
 					const depth = blocks.reduce(
-						(n, t) => (t === ElderSqlTokenType.For ? n + 1 : n),
+						(n, t) => (t === ElderSqlLexer.For ? n + 1 : n),
 						0,
 					);
 					text += `  ${"  ".repeat(blocks.length)}text += (new Function("ctx", ${JSON.stringify(`with (ctx) return (${repl})`)}))(ctx${depth});\n`;
@@ -374,31 +373,31 @@ export class ElderSqlCompiler {
 	}
 
 	private getElderSqlType(token: Token) {
-		if (token.is(SqlTokenType.BlockComment)) {
+		if (token.is(SqlLexer.BlockComment)) {
 			if (/^\/\*#import[ \t\r\n]/s.test(token.text)) {
-				return ElderSqlTokenType.Define;
+				return ElderSqlLexer.Define;
 			} else if (/^\/\*#define[ \t]/s.test(token.text)) {
-				return ElderSqlTokenType.Define;
+				return ElderSqlLexer.Define;
 			} else if (/^\/\*#if[ \t\r\n]/s.test(token.text)) {
-				return ElderSqlTokenType.If;
+				return ElderSqlLexer.If;
 			} else if (/^\/\*#elif[ \t\r\n]/s.test(token.text)) {
-				return ElderSqlTokenType.Elif;
+				return ElderSqlLexer.Elif;
 			} else if (/^\/\*#else([ \t\r\n]|\*\/$)/s.test(token.text)) {
-				return ElderSqlTokenType.Else;
+				return ElderSqlLexer.Else;
 			} else if (/^\/\*#for[ \t\r\n]/s.test(token.text)) {
-				return ElderSqlTokenType.For;
+				return ElderSqlLexer.For;
 			} else if (/^\/\*#end([ \t\r\n]|\*\/$)/s.test(token.text)) {
-				return ElderSqlTokenType.End;
+				return ElderSqlLexer.End;
 			} else if (/^\/\*:/s.test(token.text)) {
-				return ElderSqlTokenType.TypeHint;
+				return ElderSqlLexer.TypeHint;
 			} else if (/^\/\*#\{.*\}\*\/$/s.test(token.text)) {
-				return ElderSqlTokenType.BindVariable;
+				return ElderSqlLexer.BindVariable;
 			} else if (/^\/\*\$\{.*\}\*\/$/s.test(token.text)) {
-				return ElderSqlTokenType.ReplacementVariable;
+				return ElderSqlLexer.ReplacementVariable;
 			}
-		} else if (token.is(SqlTokenType.LineComment)) {
+		} else if (token.is(SqlLexer.LineComment)) {
 			if (token.text.startsWith("--#")) {
-				return ElderSqlTokenType.Comment;
+				return ElderSqlLexer.Comment;
 			}
 		}
 		return undefined;

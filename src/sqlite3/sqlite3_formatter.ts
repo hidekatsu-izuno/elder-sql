@@ -1,8 +1,9 @@
 import type { FormatterOptions } from "elder-parse";
 import { Formatter } from "elder-parse";
+import type { Sqlite3Lexer } from "./sqlite3_lexer.ts";
 import { Sqlite3Parser } from "./sqlite3_parser.ts";
 
-export class Sqlite3Formatter extends Formatter {
+export class Sqlite3Formatter extends Formatter<Sqlite3Lexer> {
 	constructor(options: FormatterOptions = {}) {
 		super(
 			options.parser ?? new Sqlite3Parser(options),

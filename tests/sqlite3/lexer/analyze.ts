@@ -1,54 +1,52 @@
 import { SourceLocation, Token } from "elder-parse";
-import { SqlKeywords, SqlTokenType } from "../../../src/sql.ts";
+import { SqlLexer } from "../../../src/sql.ts";
 
 export default [
-	new Token(SqlTokenType.Identifier, "analyze", {
-		keyword: SqlKeywords.ANALYZE,
+	new Token(SqlLexer.Identifier, "analyze", {
+		keyword: SqlLexer.ANALYZE,
 		location: new SourceLocation(0, 1, 0),
 	}),
-	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeywords.MAIN,
+	new Token(SqlLexer.Identifier, "main", {
+		keyword: SqlLexer.MAIN,
 		preskips: [
-			new Token(SqlTokenType.WhiteSpace, " ", {
+			new Token(SqlLexer.WhiteSpace, " ", {
 				location: new SourceLocation(7, 1, 7),
 			}),
 		],
 		location: new SourceLocation(8, 1, 8),
 	}),
-	new Token(SqlTokenType.SemiColon, ";", {
-		eos: true,
+	new Token(SqlLexer.SemiColon, ";", {
+		location: new SourceLocation(12, 1, 12),
+	}),
+	new Token(SqlLexer.EoS, "", {
 		postskips: [
-			new Token(SqlTokenType.LineBreak, "\n", {
+			new Token(SqlLexer.LineBreak, "\n", {
 				location: new SourceLocation(13, 1, 13),
 			}),
 		],
-		location: new SourceLocation(12, 1, 12),
 	}),
-	new Token(SqlTokenType.Identifier, "ANALYZE", {
-		keyword: SqlKeywords.ANALYZE,
+	new Token(SqlLexer.Identifier, "ANALYZE", {
+		keyword: SqlLexer.ANALYZE,
 		location: new SourceLocation(14, 2, 1),
 	}),
-	new Token(SqlTokenType.Identifier, "main", {
-		keyword: SqlKeywords.MAIN,
+	new Token(SqlLexer.Identifier, "main", {
+		keyword: SqlLexer.MAIN,
 		preskips: [
-			new Token(SqlTokenType.WhiteSpace, " ", {
+			new Token(SqlLexer.WhiteSpace, " ", {
 				location: new SourceLocation(21, 2, 8),
 			}),
 		],
 		location: new SourceLocation(22, 2, 9),
 	}),
-	new Token(SqlTokenType.Dot, ".", { location: new SourceLocation(26, 2, 13) }),
-	new Token(SqlTokenType.Identifier, "test", {
-		keyword: SqlKeywords.TEST,
+	new Token(SqlLexer.Dot, ".", { location: new SourceLocation(26, 2, 13) }),
+	new Token(SqlLexer.Identifier, "test", {
+		keyword: SqlLexer.TEST,
 		postskips: [
-			new Token(SqlTokenType.LineBreak, "\n", {
+			new Token(SqlLexer.LineBreak, "\n", {
 				location: new SourceLocation(31, 2, 18),
 			}),
 		],
 		location: new SourceLocation(27, 2, 14),
 	}),
-	new Token(SqlTokenType.EoF, "", {
-		eos: true,
-		location: new SourceLocation(32, 3, 1),
-	}),
+	new Token(SqlLexer.EoF, "", { location: new SourceLocation(32, 3, 1) }),
 ];

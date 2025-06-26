@@ -26,8 +26,7 @@ export function writeDebugFile(
 export function toJSScript(target: Token | Token[]) {
 	let imports = "";
 	imports += 'import { SourceLocation, Token } from "elder-parse"\n';
-	imports +=
-		'import { SqlTokenType, SqlKeywords } from "../../../src/sql.ts"\n';
+	imports += 'import { SqlLexer } from "../../../src/sql.ts"\n';
 	return `${imports}\nexport default ${toJSString(target)}\n`;
 }
 
@@ -53,7 +52,7 @@ export function toJSString(
 		text += `\n${" ".repeat(space * 2)}]`;
 	} else {
 		text += `${" ".repeat(space * 2)}new Token(`;
-		text += `SqlTokenType.${target.type.name}`;
+		text += `SqlLexer.${target.type.name}`;
 		text += `, ${JSON.stringify(target.text)}`;
 		if (
 			target.keyword ||
@@ -64,10 +63,7 @@ export function toJSString(
 			text += ", { ";
 			const elems: string[] = [];
 			if (target.keyword) {
-				elems.push(`keyword: SqlKeywords.${target.keyword.name}`);
-			}
-			if (target.eos) {
-				elems.push(`eos: ${target.eos}`);
+				elems.push(`keyword: SqlLexer.${target.keyword.name}`);
 			}
 			if (target.preskips.length) {
 				elems.push(

@@ -1,7 +1,7 @@
 import { Lexer, TokenType } from "elder-parse";
 
 export class SqlLexer extends Lexer {
-	static EoS = new TokenType("EoS", { marker: true });
+	static EoS = new TokenType("EoS", { marker: true, separator: true });
 	static WhiteSpace = new TokenType("WhiteSpace", { skip: true });
 	static LineComment = new TokenType("LineComment", { skip: true });
 	static BlockComment = new TokenType("BlockComment", { skip: true });

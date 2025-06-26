@@ -48,7 +48,7 @@ suite("test sqlite3 parser", () => {
 			);
 			let actual: CstNode;
 			try {
-				actual = new Sqlite3Parser().parse(script);
+				actual = new Sqlite3Parser({ trivia: false }).parse(script);
 			} catch (err) {
 				if (target === "unknown" && err instanceof AggregateParseError) {
 					actual = err.node;
@@ -56,25 +56,13 @@ suite("test sqlite3 parser", () => {
 					throw err;
 				}
 			}
-			const actualXml = actual.toXMLString({ trivia: false });
-			writeDebugFile(`dump/sqlite3/parser/${target}.xml`, actualXml);
 
-			const actualJson = actual.toJSONString({ trivia: false });
-			writeDebugFile(
-				`dump/sqlite3/parser/${target}.json`,
-				actual.toJSONString({ trivia: false }),
-			);
-
-			const expectedXml = fs.readFileSync(
-				path.join(__dirname, "parser", `${target}.xml`),
-				"utf8",
-			);
+			const actualJson = actual.toJSONString();
+			writeDebugFile(`dump/sqlite3/parser/${target}.json`, actualJson);
 			const expectedJson = fs.readFileSync(
 				path.join(__dirname, "parser", `${target}.json`),
 				"utf8",
 			);
-
-			assert.equal(actualXml, expectedXml);
 			assert.equal(actualJson, expectedJson);
 		});
 	}
