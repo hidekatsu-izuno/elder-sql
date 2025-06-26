@@ -1,5 +1,5 @@
+import { SqlParser } from "../parser.ts";
 import { OracleLexer } from "./oracle_lexer.ts";
-import { SqlParser } from "../parser.ts"
 
 export class OracleParser extends SqlParser {
 	constructor(options: Record<string, any> = {}) {

@@ -62,7 +62,7 @@ export function toJSString(
 			target.location
 		) {
 			text += ", { ";
-			const elems = new Array<string>();
+			const elems: string[] = [];
 			if (target.keyword) {
 				elems.push(`keyword: SqlKeywords.${target.keyword.name}`);
 			}

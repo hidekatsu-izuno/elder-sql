@@ -5,183 +5,186 @@ import {
 	SourceLocation,
 	Token,
 } from "elder-parse";
-import { SqlKeywords, SqlTokenType } from "../sql.ts";
+import { SqlLexer } from "../sql.ts";
 
-const keywords = new SqlKeywords();
-keywords.options(SqlKeywords.ACCESS).reserved = true;
-keywords.options(SqlKeywords.ADD).reserved = true;
-keywords.options(SqlKeywords.ALL).reserved = true;
-keywords.options(SqlKeywords.ALTER).reserved = true;
-keywords.options(SqlKeywords.AND).reserved = true;
-keywords.options(SqlKeywords.ANY).reserved = true;
-keywords.options(SqlKeywords.AS).reserved = true;
-keywords.options(SqlKeywords.ASC).reserved = true;
-keywords.options(SqlKeywords.AT).reserved = true;
-keywords.options(SqlKeywords.AUDIT).reserved = true;
-keywords.options(SqlKeywords.BEGIN).reserved = true;
-keywords.options(SqlKeywords.BETWEEN).reserved = true;
-keywords.options(SqlKeywords.BY).reserved = true;
-keywords.options(SqlKeywords.CASE).reserved = true;
-keywords.options(SqlKeywords.CHAR).reserved = true;
-keywords.options(SqlKeywords.CHECK).reserved = true;
-keywords.options(SqlKeywords.CLUSTER).reserved = true;
-keywords.options(SqlKeywords.CLUSTERS).reserved = true;
-keywords.options(SqlKeywords.COLAUTH).reserved = true;
-keywords.options(SqlKeywords.COLUMN).reserved = true;
-keywords.options(SqlKeywords.COLUMNS).reserved = true;
-keywords.options(SqlKeywords.COMMENT).reserved = true;
-keywords.options(SqlKeywords.COMPRESS).reserved = true;
-keywords.options(SqlKeywords.CONNECT).reserved = true;
-keywords.options(SqlKeywords.CRASH).reserved = true;
-keywords.options(SqlKeywords.CREATE).reserved = true;
-keywords.options(SqlKeywords.CURRENT).reserved = true;
-keywords.options(SqlKeywords.CURSOR).reserved = true;
-keywords.options(SqlKeywords.DATE).reserved = true;
-keywords.options(SqlKeywords.DECIMAL).reserved = true;
-keywords.options(SqlKeywords.DECLARE).reserved = true;
-keywords.options(SqlKeywords.DEFAULT).reserved = true;
-keywords.options(SqlKeywords.DELETE).reserved = true;
-keywords.options(SqlKeywords.DESC).reserved = true;
-keywords.options(SqlKeywords.DISTINCT).reserved = true;
-keywords.options(SqlKeywords.DROP).reserved = true;
-keywords.options(SqlKeywords.ELSE).reserved = true;
-keywords.options(SqlKeywords.END).reserved = true;
-keywords.options(SqlKeywords.EXCEPTION).reserved = true;
-keywords.options(SqlKeywords.EXCLUSIVE).reserved = true;
-keywords.options(SqlKeywords.EXISTS).reserved = true;
-keywords.options(SqlKeywords.FETCH).reserved = true;
-keywords.options(SqlKeywords.FILE).reserved = true;
-keywords.options(SqlKeywords.FLOAT).reserved = true;
-keywords.options(SqlKeywords.FOR).reserved = true;
-keywords.options(SqlKeywords.FROM).reserved = true;
-keywords.options(SqlKeywords.FUNCTION).reserved = true;
-keywords.options(SqlKeywords.GOTO).reserved = true;
-keywords.options(SqlKeywords.GRANT).reserved = true;
-keywords.options(SqlKeywords.GROUP).reserved = true;
-keywords.options(SqlKeywords.HAVING).reserved = true;
-keywords.options(SqlKeywords.IDENTIFIED).reserved = true;
-keywords.options(SqlKeywords.IF).reserved = true;
-keywords.options(SqlKeywords.IMMEDIATE).reserved = true;
-keywords.options(SqlKeywords.IN).reserved = true;
-keywords.options(SqlKeywords.INCREMENT).reserved = true;
-keywords.options(SqlKeywords.INDEX).reserved = true;
-keywords.options(SqlKeywords.INDEXES).reserved = true;
-keywords.options(SqlKeywords.INITIAL).reserved = true;
-keywords.options(SqlKeywords.INSERT).reserved = true;
-keywords.options(SqlKeywords.INTEGER).reserved = true;
-keywords.options(SqlKeywords.INTERSECT).reserved = true;
-keywords.options(SqlKeywords.INTO).reserved = true;
-keywords.options(SqlKeywords.IS).reserved = true;
-keywords.options(SqlKeywords.LEVEL).reserved = true;
-keywords.options(SqlKeywords.LIKE).reserved = true;
-keywords.options(SqlKeywords.LOCK).reserved = true;
-keywords.options(SqlKeywords.LONG).reserved = true;
-keywords.options(SqlKeywords.MAXEXTENTS).reserved = true;
-keywords.options(SqlKeywords.MINUS).reserved = true;
-keywords.options(SqlKeywords.MLSLABEL).reserved = true;
-keywords.options(SqlKeywords.MODE).reserved = true;
-keywords.options(SqlKeywords.MODIFY).reserved = true;
-keywords.options(SqlKeywords.NOAUDIT).reserved = true;
-keywords.options(SqlKeywords.NOCOMPRESS).reserved = true;
-keywords.options(SqlKeywords.NOT).reserved = true;
-keywords.options(SqlKeywords.NOWAIT).reserved = true;
-keywords.options(SqlKeywords.NULL).reserved = true;
-keywords.options(SqlKeywords.NUMBER).reserved = true;
-keywords.options(SqlKeywords.OF).reserved = true;
-keywords.options(SqlKeywords.OFFLINE).reserved = true;
-keywords.options(SqlKeywords.ON).reserved = true;
-keywords.options(SqlKeywords.ONLINE).reserved = true;
-keywords.options(SqlKeywords.OPTION).reserved = true;
-keywords.options(SqlKeywords.OR).reserved = true;
-keywords.options(SqlKeywords.ORDER).reserved = true;
-keywords.options(SqlKeywords.OVERLAPS).reserved = true;
-keywords.options(SqlKeywords.PCTFREE).reserved = true;
-keywords.options(SqlKeywords.PRIOR).reserved = true;
-keywords.options(SqlKeywords.PROCEDURE).reserved = true;
-keywords.options(SqlKeywords.PUBLIC).reserved = true;
-keywords.options(SqlKeywords.RAW).reserved = true;
-keywords.options(SqlKeywords.RENAME).reserved = true;
-keywords.options(SqlKeywords.RESOURCE).reserved = true;
-keywords.options(SqlKeywords.REVOKE).reserved = true;
-keywords.options(SqlKeywords.ROW).reserved = true;
-keywords.options(SqlKeywords.ROWID).reserved = true;
-keywords.options(SqlKeywords.ROWNUM).reserved = true;
-keywords.options(SqlKeywords.ROWS).reserved = true;
-keywords.options(SqlKeywords.SELECT).reserved = true;
-keywords.options(SqlKeywords.SESSION).reserved = true;
-keywords.options(SqlKeywords.SET).reserved = true;
-keywords.options(SqlKeywords.SHARE).reserved = true;
-keywords.options(SqlKeywords.SIZE).reserved = true;
-keywords.options(SqlKeywords.SMALLINT).reserved = true;
-keywords.options(SqlKeywords.SQL).reserved = true;
-keywords.options(SqlKeywords.START).reserved = true;
-keywords.options(SqlKeywords.SUBTYPE).reserved = true;
-keywords.options(SqlKeywords.SUCCESSFUL).reserved = true;
-keywords.options(SqlKeywords.SYNONYM).reserved = true;
-keywords.options(SqlKeywords.SYSDATE).reserved = true;
-keywords.options(SqlKeywords.TABAUTH).reserved = true;
-keywords.options(SqlKeywords.TABLE).reserved = true;
-keywords.options(SqlKeywords.THEN).reserved = true;
-keywords.options(SqlKeywords.TO).reserved = true;
-keywords.options(SqlKeywords.TRIGGER).reserved = true;
-keywords.options(SqlKeywords.TYPE).reserved = true;
-keywords.options(SqlKeywords.UID).reserved = true;
-keywords.options(SqlKeywords.UNION).reserved = true;
-keywords.options(SqlKeywords.UNIQUE).reserved = true;
-keywords.options(SqlKeywords.UPDATE).reserved = true;
-keywords.options(SqlKeywords.USER).reserved = true;
-keywords.options(SqlKeywords.VALIDATE).reserved = true;
-keywords.options(SqlKeywords.VALUES).reserved = true;
-keywords.options(SqlKeywords.VARCHAR).reserved = true;
-keywords.options(SqlKeywords.VARCHAR2).reserved = true;
-keywords.options(SqlKeywords.VIEW).reserved = true;
-keywords.options(SqlKeywords.VIEWS).reserved = true;
-keywords.options(SqlKeywords.WHEN).reserved = true;
-keywords.options(SqlKeywords.WHENEVER).reserved = true;
-keywords.options(SqlKeywords.WHERE).reserved = true;
-keywords.options(SqlKeywords.WITH).reserved = true;
+const DefaultReservedSet = new Set([
+	SqlLexer.ACCESS,
+	SqlLexer.ADD,
+	SqlLexer.ALL,
+	SqlLexer.ALTER,
+	SqlLexer.AND,
+	SqlLexer.ANY,
+	SqlLexer.AS,
+	SqlLexer.ASC,
+	SqlLexer.AT,
+	SqlLexer.AUDIT,
+	SqlLexer.BEGIN,
+	SqlLexer.BETWEEN,
+	SqlLexer.BY,
+	SqlLexer.CASE,
+	SqlLexer.CHAR,
+	SqlLexer.CHECK,
+	SqlLexer.CLUSTER,
+	SqlLexer.CLUSTERS,
+	SqlLexer.COLAUTH,
+	SqlLexer.COLUMN,
+	SqlLexer.COLUMNS,
+	SqlLexer.COMMENT,
+	SqlLexer.COMPRESS,
+	SqlLexer.CONNECT,
+	SqlLexer.CRASH,
+	SqlLexer.CREATE,
+	SqlLexer.CURRENT,
+	SqlLexer.CURSOR,
+	SqlLexer.DATE,
+	SqlLexer.DECIMAL,
+	SqlLexer.DECLARE,
+	SqlLexer.DEFAULT,
+	SqlLexer.DELETE,
+	SqlLexer.DESC,
+	SqlLexer.DISTINCT,
+	SqlLexer.DROP,
+	SqlLexer.ELSE,
+	SqlLexer.END,
+	SqlLexer.EXCEPTION,
+	SqlLexer.EXCLUSIVE,
+	SqlLexer.EXISTS,
+	SqlLexer.FETCH,
+	SqlLexer.FILE,
+	SqlLexer.FLOAT,
+	SqlLexer.FOR,
+	SqlLexer.FROM,
+	SqlLexer.FUNCTION,
+	SqlLexer.GOTO,
+	SqlLexer.GRANT,
+	SqlLexer.GROUP,
+	SqlLexer.HAVING,
+	SqlLexer.IDENTIFIED,
+	SqlLexer.IF,
+	SqlLexer.IMMEDIATE,
+	SqlLexer.IN,
+	SqlLexer.INCREMENT,
+	SqlLexer.INDEX,
+	SqlLexer.INDEXES,
+	SqlLexer.INITIAL,
+	SqlLexer.INSERT,
+	SqlLexer.INTEGER,
+	SqlLexer.INTERSECT,
+	SqlLexer.INTO,
+	SqlLexer.IS,
+	SqlLexer.LEVEL,
+	SqlLexer.LIKE,
+	SqlLexer.LOCK,
+	SqlLexer.LONG,
+	SqlLexer.MAXEXTENTS,
+	SqlLexer.MINUS,
+	SqlLexer.MLSLABEL,
+	SqlLexer.MODE,
+	SqlLexer.MODIFY,
+	SqlLexer.NOAUDIT,
+	SqlLexer.NOCOMPRESS,
+	SqlLexer.NOT,
+	SqlLexer.NOWAIT,
+	SqlLexer.NULL,
+	SqlLexer.NUMBER,
+	SqlLexer.OF,
+	SqlLexer.OFFLINE,
+	SqlLexer.ON,
+	SqlLexer.ONLINE,
+	SqlLexer.OPTION,
+	SqlLexer.OR,
+	SqlLexer.ORDER,
+	SqlLexer.OVERLAPS,
+	SqlLexer.PCTFREE,
+	SqlLexer.PRIOR,
+	SqlLexer.PROCEDURE,
+	SqlLexer.PUBLIC,
+	SqlLexer.RAW,
+	SqlLexer.RENAME,
+	SqlLexer.RESOURCE,
+	SqlLexer.REVOKE,
+	SqlLexer.ROW,
+	SqlLexer.ROWID,
+	SqlLexer.ROWNUM,
+	SqlLexer.ROWS,
+	SqlLexer.SELECT,
+	SqlLexer.SESSION,
+	SqlLexer.SET,
+	SqlLexer.SHARE,
+	SqlLexer.SIZE,
+	SqlLexer.SMALLINT,
+	SqlLexer.SQL,
+	SqlLexer.START,
+	SqlLexer.SUBTYPE,
+	SqlLexer.SUCCESSFUL,
+	SqlLexer.SYNONYM,
+	SqlLexer.SYSDATE,
+	SqlLexer.TABAUTH,
+	SqlLexer.TABLE,
+	SqlLexer.THEN,
+	SqlLexer.TO,
+	SqlLexer.TRIGGER,
+	SqlLexer.TYPE,
+	SqlLexer.UID,
+	SqlLexer.UNION,
+	SqlLexer.UNIQUE,
+	SqlLexer.UPDATE,
+	SqlLexer.USER,
+	SqlLexer.VALIDATE,
+	SqlLexer.VALUES,
+	SqlLexer.VARCHAR,
+	SqlLexer.VARCHAR2,
+	SqlLexer.VIEW,
+	SqlLexer.VIEWS,
+	SqlLexer.WHEN,
+	SqlLexer.WHENEVER,
+	SqlLexer.WHERE,
+	SqlLexer.WITH,
+]);
 
-keywords.options(SqlKeywords.ANALYTIC).objectStart = true;
-keywords.options(SqlKeywords.ATTRIBUTE).objectStart = true;
-keywords.options(SqlKeywords.AUDIT).objectStart = true;
-keywords.options(SqlKeywords.CLUSTER).objectStart = true;
-keywords.options(SqlKeywords.CONTEXT).objectStart = true;
-keywords.options(SqlKeywords.CONTROLFILE).objectStart = true;
-keywords.options(SqlKeywords.DATABASE).objectStart = true;
-keywords.options(SqlKeywords.DIMENSION).objectStart = true;
-keywords.options(SqlKeywords.DIRECTORY).objectStart = true;
-keywords.options(SqlKeywords.DISKGROUP).objectStart = true;
-keywords.options(SqlKeywords.EDITION).objectStart = true;
-keywords.options(SqlKeywords.FLASHBACK).objectStart = true;
-keywords.options(SqlKeywords.FUNCTION).objectStart = true;
-keywords.options(SqlKeywords.HIERARCHY).objectStart = true;
-keywords.options(SqlKeywords.INDEX).objectStart = true;
-keywords.options(SqlKeywords.INDEXTYPE).objectStart = true;
-keywords.options(SqlKeywords.INMEMORY).objectStart = true;
-keywords.options(SqlKeywords.JAVA).objectStart = true;
-keywords.options(SqlKeywords.LIBRARY).objectStart = true;
-keywords.options(SqlKeywords.LOCKDOWN).objectStart = true;
-keywords.options(SqlKeywords.MATERIALIZED).objectStart = true;
-keywords.options(SqlKeywords.OPERATOR).objectStart = true;
-keywords.options(SqlKeywords.OUTLINE).objectStart = true;
-keywords.options(SqlKeywords.PACKAGE).objectStart = true;
-keywords.options(SqlKeywords.PFILE).objectStart = true;
-keywords.options(SqlKeywords.PLUGGABLE).objectStart = true;
-keywords.options(SqlKeywords.PROCEDURE).objectStart = true;
-keywords.options(SqlKeywords.PROFILE).objectStart = true;
-keywords.options(SqlKeywords.RESTORE).objectStart = true;
-keywords.options(SqlKeywords.ROLE).objectStart = true;
-keywords.options(SqlKeywords.ROLLBACK).objectStart = true;
-keywords.options(SqlKeywords.SCHEMA).objectStart = true;
-keywords.options(SqlKeywords.SEQUENCE).objectStart = true;
-keywords.options(SqlKeywords.SPFILE).objectStart = true;
-keywords.options(SqlKeywords.SYNONYM).objectStart = true;
-keywords.options(SqlKeywords.TABLE).objectStart = true;
-keywords.options(SqlKeywords.TABLESPACE).objectStart = true;
-keywords.options(SqlKeywords.TRIGGER).objectStart = true;
-keywords.options(SqlKeywords.TYPE).objectStart = true;
-keywords.options(SqlKeywords.USER).objectStart = true;
-keywords.options(SqlKeywords.VIEW).objectStart = true;
+const ObjectStartSet = new Set([
+	SqlLexer.ANALYTIC,
+	SqlLexer.ATTRIBUTE,
+	SqlLexer.AUDIT,
+	SqlLexer.CLUSTER,
+	SqlLexer.CONTEXT,
+	SqlLexer.CONTROLFILE,
+	SqlLexer.DATABASE,
+	SqlLexer.DIMENSION,
+	SqlLexer.DIRECTORY,
+	SqlLexer.DISKGROUP,
+	SqlLexer.EDITION,
+	SqlLexer.FLASHBACK,
+	SqlLexer.FUNCTION,
+	SqlLexer.HIERARCHY,
+	SqlLexer.INDEX,
+	SqlLexer.INDEXTYPE,
+	SqlLexer.INMEMORY,
+	SqlLexer.JAVA,
+	SqlLexer.LIBRARY,
+	SqlLexer.LOCKDOWN,
+	SqlLexer.MATERIALIZED,
+	SqlLexer.OPERATOR,
+	SqlLexer.OUTLINE,
+	SqlLexer.PACKAGE,
+	SqlLexer.PFILE,
+	SqlLexer.PLUGGABLE,
+	SqlLexer.PROCEDURE,
+	SqlLexer.PROFILE,
+	SqlLexer.RESTORE,
+	SqlLexer.ROLE,
+	SqlLexer.ROLLBACK,
+	SqlLexer.SCHEMA,
+	SqlLexer.SEQUENCE,
+	SqlLexer.SPFILE,
+	SqlLexer.SYNONYM,
+	SqlLexer.TABLE,
+	SqlLexer.TABLESPACE,
+	SqlLexer.TRIGGER,
+	SqlLexer.TYPE,
+	SqlLexer.USER,
+	SqlLexer.VIEW,
+]);
 
 const CommandPattern = new RegExp(
 	`(${[
@@ -250,91 +253,82 @@ const Mode = {
 export declare type OracleLexerOptions = LexerOptions & {};
 
 export class OracleLexer extends Lexer {
-	private reserved = new Set<Keyword>();
-
 	constructor(options: OracleLexerOptions = {}) {
 		super(
 			"oracle",
 			[
-				{ type: SqlTokenType.HintComment, re: /\/\*\+.*?\*\//sy, skip: true },
-				{ type: SqlTokenType.BlockComment, re: /\/\*.*?\*\//sy, skip: true },
-				{ type: SqlTokenType.LineComment, re: /--.*/y, skip: true },
+				{ type: SqlLexer.HintComment, re: /\/\*\+.*?\*\//sy },
+				{ type: SqlLexer.BlockComment, re: /\/\*.*?\*\//sy },
+				{ type: SqlLexer.LineComment, re: /--.*/y },
 				{
-					type: SqlTokenType.LineBreak,
+					type: SqlLexer.LineBreak,
 					re: /\n|\r\n?/y,
-					skip: true,
-					separator: true,
 				},
 				{
-					type: SqlTokenType.WhiteSpace,
+					type: SqlLexer.WhiteSpace,
 					re: /[ \f\t\v\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/y,
-					skip: true,
 				},
 				{
-					type: SqlTokenType.Delimiter,
+					type: SqlLexer.Delimiter,
 					re: /(?<=^|[\r\n])[ \t]*([./]|R(UN)?)[ \t]*(\n|\r\n?|$)/iy,
-					separator: true,
 					onMatch: (state, token) => this.onMatchDelimiter(state, token),
 				},
 				{
-					type: SqlTokenType.Command,
+					type: SqlLexer.Command,
 					re: (state) => (state.mode === Mode.INITIAL ? CommandPattern : false),
 					onMatch: (state, token) => this.onMatchCommand(state, token),
 					onUnmatch: (state) => this.onUnmatchCommand(state),
 				},
 				{
-					type: SqlTokenType.SemiColon,
+					type: SqlLexer.SemiColon,
 					re: /;/y,
-					separator: true,
 					onMatch: (state, token) => this.onMatchSemiColon(state, token),
 				},
-				{ type: SqlTokenType.LeftBrace, re: /\{/y, separator: true },
-				{ type: SqlTokenType.RightBrace, re: /\}/y, separator: true },
+				{ type: SqlLexer.LeftBrace, re: /\{/y },
+				{ type: SqlLexer.RightBrace, re: /\}/y },
 				{
-					type: SqlTokenType.Operator,
+					type: SqlLexer.Operator,
 					re: /[（(][＋+][）)]|\.\./y,
-					separator: true,
 				},
-				{ type: SqlTokenType.LeftParen, re: /[（(]/y, separator: true },
-				{ type: SqlTokenType.RightParen, re: /[）)]/y, separator: true },
-				{ type: SqlTokenType.Comma, re: /[，,]/y, separator: true },
+				{ type: SqlLexer.LeftParen, re: /[（(]/y },
+				{ type: SqlLexer.RightParen, re: /[）)]/y },
+				{ type: SqlLexer.Comma, re: /[，,]/y },
 				{
-					type: SqlTokenType.Label,
+					type: SqlLexer.Label,
 					re: /<<[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*>>/y,
 				},
 				{
-					type: SqlTokenType.Numeric,
+					type: SqlLexer.Numeric,
 					re: /0[xX][0-9a-fA-F]+|([0-9]+(\.[0-9]+)?|(\.[0-9]+))([eE][+-]?[0-9]+)?/y,
 				},
-				{ type: SqlTokenType.Dot, re: /[．.]/y, separator: true },
-				{ type: SqlTokenType.String, re: /[ＮｎNn]?'([^']|'')*'/y },
+				{ type: SqlLexer.Dot, re: /[．.]/y },
+				{ type: SqlLexer.String, re: /[ＮｎNn]?'([^']|'')*'/y },
 				{
-					type: SqlTokenType.String,
+					type: SqlLexer.String,
 					re: /[ＮｎNn]?[Qq]'(?:\[.*?\]|\{.*?\}|\(.*?\)|([^ \t\r\n]).*?\1)'/my,
 				},
-				{ type: SqlTokenType.Identifier, re: /"([^"]|"")*"/y },
-				{ type: SqlTokenType.BindVariable, re: /\?/y },
+				{ type: SqlLexer.Identifier, re: /"([^"]|"")*"/y },
+				{ type: SqlLexer.BindVariable, re: /\?/y },
 				{
-					type: SqlTokenType.BindVariable,
+					type: SqlLexer.BindVariable,
 					re: /[：:][a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 				},
 				{
-					type: SqlTokenType.Operator,
-					separator: true,
+					type: SqlLexer.Operator,
 					re: /｜｜|\|\||＜＞|<>|[＝＜＞！＾：=<>!^:][＝=]?|[％～＆｜＊／＋－%~&|*/+-]/y,
 				},
 				{
-					type: SqlTokenType.Identifier,
+					type: SqlLexer.Identifier,
 					re: /[a-zA-Z\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF][a-zA-Z0-9_$#\u8000-\uFFEE\uFFF0-\uFFFD\uFFFF]*/y,
 					onMatch: (state, token) => this.onMatchIdentifier(state, token),
 				},
 			],
 			options,
 		);
+	}
 
-		if (!this.options.keywords) {
-			this.options.keywords = keywords;
-		}
+	reserved(keyword: Keyword) {
+		return keyword.reserved || DefaultReservedSet.has(keyword);
 	}
 
 	protected initState(state: Record<string, any>) {
@@ -343,14 +337,13 @@ export class OracleLexer extends Lexer {
 
 	private onMatchDelimiter(state: Record<string, any>, token: Token) {
 		state.mode = Mode.INITIAL;
-		token.eos = true;
 
 		const m = /^([ \t\f]*)([^ \t\f\r\n]+)([ \t\f]*)(\r?\n)?$/.exec(token.text);
 		if (m) {
 			let location = token.location;
 			if (m[1]) {
 				token.preskips.push(
-					new Token(SqlTokenType.WhiteSpace, m[1], {
+					new Token(SqlLexer.WhiteSpace, m[1], {
 						location,
 					}),
 				);
@@ -375,7 +368,7 @@ export class OracleLexer extends Lexer {
 			}
 			if (m[3]) {
 				token.postskips.push(
-					new Token(SqlTokenType.WhiteSpace, m[3], {
+					new Token(SqlLexer.WhiteSpace, m[3], {
 						location,
 					}),
 				);
@@ -390,18 +383,20 @@ export class OracleLexer extends Lexer {
 			}
 			if (m[4]) {
 				token.postskips.push(
-					new Token(SqlTokenType.LineBreak, m[4], {
+					new Token(SqlLexer.LineBreak, m[4], {
 						location,
 					}),
 				);
 			}
 		}
+
+		return [token, new Token(SqlLexer.EoF, "")];
 	}
 
 	private onMatchSemiColon(state: Record<string, any>, token: Token) {
 		if (state.mode !== Mode.SQL_PROC) {
 			state.mode = Mode.INITIAL;
-			token.eos = true;
+			return [token, new Token(SqlLexer.EoS, "")];
 		}
 	}
 
@@ -420,14 +415,14 @@ export class OracleLexer extends Lexer {
 			const m = re.exec(token.text);
 			if (m) {
 				const type = m[1]
-					? SqlTokenType.LineBreak
+					? SqlLexer.LineBreak
 					: m[2]
-						? SqlTokenType.WhiteSpace
+						? SqlLexer.WhiteSpace
 						: m[3]
-							? SqlTokenType.String
+							? SqlLexer.String
 							: pos === 0
-								? SqlTokenType.Command
-								: SqlTokenType.Identifier;
+								? SqlLexer.Command
+								: SqlLexer.Identifier;
 
 				if (token.location) {
 					location = new SourceLocation(
@@ -442,10 +437,7 @@ export class OracleLexer extends Lexer {
 					location,
 				});
 
-				if (
-					type === SqlTokenType.WhiteSpace ||
-					type === SqlTokenType.LineBreak
-				) {
+				if (type === SqlLexer.WhiteSpace || type === SqlLexer.LineBreak) {
 					skips.push(newToken);
 				} else {
 					newToken.preskips = skips;
@@ -462,7 +454,7 @@ export class OracleLexer extends Lexer {
 		if (skips.length > 0) {
 			tokens[tokens.length - 1].postskips = skips;
 		}
-		tokens.push(new Token(SqlTokenType.EoF, "", { eos: true }));
+		tokens.push(new Token(SqlLexer.EoF, ""));
 
 		return tokens;
 	}
@@ -476,11 +468,11 @@ export class OracleLexer extends Lexer {
 	private onMatchIdentifier(state: Record<string, any>, token: Token) {
 		if (token.keyword) {
 			if (state.mode === Mode.SQL_START) {
-				if (token.keyword === SqlKeywords.CREATE) {
+				if (token.keyword === SqlLexer.CREATE) {
 					state.mode = Mode.SQL_OBJECT_DEF;
 				} else if (
-					token.keyword === SqlKeywords.DECLARE ||
-					token.keyword === SqlKeywords.BEGIN
+					token.keyword === SqlLexer.DECLARE ||
+					token.keyword === SqlLexer.BEGIN
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {
@@ -488,15 +480,15 @@ export class OracleLexer extends Lexer {
 				}
 			} else if (
 				state.mode === Mode.SQL_OBJECT_DEF &&
-				this.options.keywords?.options(token.keyword).objectStart
+				ObjectStartSet.has(token.keyword)
 			) {
 				if (
-					token.keyword === SqlKeywords.FUNCTION ||
-					token.keyword === SqlKeywords.LIBRARY ||
-					token.keyword === SqlKeywords.PACKAGE ||
-					token.keyword === SqlKeywords.PROCEDURE ||
-					token.keyword === SqlKeywords.TRIGGER ||
-					token.keyword === SqlKeywords.TYPE
+					token.keyword === SqlLexer.FUNCTION ||
+					token.keyword === SqlLexer.LIBRARY ||
+					token.keyword === SqlLexer.PACKAGE ||
+					token.keyword === SqlLexer.PROCEDURE ||
+					token.keyword === SqlLexer.TRIGGER ||
+					token.keyword === SqlLexer.TYPE
 				) {
 					state.mode = Mode.SQL_PROC;
 				} else {

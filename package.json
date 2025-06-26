@@ -40,7 +40,9 @@
 		"url": "https://github.com/hidekatsu-izuno/elder-sql/issues"
 	},
 	"homepage": "https://github.com/hidekatsu-izuno/elder-sql#readme",
-	"keywords": ["sql"],
+	"keywords": [
+		"sql"
+	],
 	"exports": {
 		".": {
 			"import": {
@@ -111,14 +113,13 @@
 		"./package.json": "./package.json"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/node": "^22.15.30",
+		"@biomejs/biome": "2.0.5",
+		"@types/node": "^22.15.33",
 		"commit-and-tag-version": "^12.5.1",
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
 		"acorn": "^8.15.0",
-		"css-select": "^5.1.0",
-		"elder-parse": "^0.2.1"
+		"elder-parse": "^0.3.7"
 	}
 }

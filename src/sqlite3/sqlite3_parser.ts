@@ -1,5 +1,5 @@
+import { SqlParser } from "../parser.ts";
 import { Sqlite3Lexer } from "./sqlite3_lexer.ts";
-import { SqlParser } from "../parser.ts"
 
 export class Sqlite3Parser extends SqlParser {
 	compileOptions: Set<string>;

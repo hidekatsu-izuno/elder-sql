@@ -1,5 +1,5 @@
+import { SqlParser } from "../parser.ts";
 import { MssqlLexer } from "./mssql_lexer.ts";
-import { SqlParser } from "../parser.ts"
 
 export class MssqlParser extends SqlParser {
 	constructor(options: Record<string, any> = {}) {

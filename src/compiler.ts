@@ -52,7 +52,7 @@ export class ElderSqlCompiler {
 		let text = "";
 
 		const tokens = this.lexer.lex(input.replace(/^--\*/gm, "   "), source);
-		const segment = new Array<Token>();
+		const segment: Token[] = [];
 		for (const token of tokens) {
 			for (let i = 0; i < token.preskips.length; i++) {
 				const skipToken = token.preskips[i];
