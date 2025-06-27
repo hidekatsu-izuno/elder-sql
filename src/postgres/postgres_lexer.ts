@@ -209,7 +209,7 @@ export class PostgresLexer extends Lexer {
 		);
 	}
 
-	reserved(keyword: Keyword) {
+	isReserved(keyword: Keyword) {
 		return keyword.reserved || DefaultReservedSet.has(keyword);
 	}
 

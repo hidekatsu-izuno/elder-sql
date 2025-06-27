@@ -327,8 +327,8 @@ export class OracleLexer extends Lexer {
 		);
 	}
 
-	reserved(keyword: Keyword) {
-		return keyword.reserved || DefaultReservedSet.has(keyword);
+	isReserved(keyword: Keyword) {
+		return super.isReserved(keyword) || DefaultReservedSet.has(keyword);
 	}
 
 	protected initState(state: Record<string, any>) {

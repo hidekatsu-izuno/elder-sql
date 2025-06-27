@@ -333,8 +333,8 @@ export class MssqlLexer extends Lexer {
 		);
 	}
 
-	reserved(keyword: Keyword) {
-		return keyword.reserved || DefaultReservedSet.has(keyword);
+	isReserved(keyword: Keyword) {
+		return super.isReserved(keyword) || DefaultReservedSet.has(keyword);
 	}
 
 	private onMatchBlockComment(state: Record<string, any>, token: Token) {

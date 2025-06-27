@@ -464,9 +464,9 @@ export class MysqlLexer extends Lexer {
 		}
 	}
 
-	reserved(keyword: Keyword) {
+	isReserved(keyword: Keyword) {
 		return (
-			keyword.reserved ||
+			super.isReserved(keyword) ||
 			DefaultReservedSet.has(keyword) ||
 			this.reservedSet.has(keyword)
 		);
