@@ -24,7 +24,7 @@ export function writeDebugFile(
 }
 
 export function toJSScript(target: Token | Token[]) {
-	let imports = "";
+	let imports = "// biome-ignore format: auto generated\n";
 	imports += 'import { SourceLocation, Token } from "elder-parse"\n';
 	imports += 'import { SqlLexer } from "../../../src/sql.ts"\n';
 	return `${imports}\nexport default ${toJSString(target)}\n`;
