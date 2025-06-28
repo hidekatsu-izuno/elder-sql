@@ -1,3 +1,4 @@
+// biome-ignore format: auto generated
 import { SourceLocation, Token } from "elder-parse"
 import { SqlLexer } from "../../../src/sql.ts"
 

@@ -18,7 +18,7 @@ export default [
     new Token(SqlLexer.Identifier, "DROP", { keyword: SqlLexer.DROP, location: new SourceLocation(45, 3, 1)}),
     new Token(SqlLexer.Identifier, "VIEW", { keyword: SqlLexer.VIEW, preskips: [new Token(SqlLexer.WhiteSpace, " ", { location: new SourceLocation(49, 3, 5)})], location: new SourceLocation(50, 3, 6)}),
     new Token(SqlLexer.Identifier, "IF", { keyword: SqlLexer.IF, preskips: [new Token(SqlLexer.WhiteSpace, " ", { location: new SourceLocation(54, 3, 10)})], location: new SourceLocation(55, 3, 11)}),
-    new Token(SqlLexer.Identifier, "EXISTS", { keyword: SqlLexer.EXISTS, preskips: [new Token(SqlLexer.WhiteSpace, " ", { location: new SourceLocation(57, 3, 13)})], location: new SourceLocation(58, 3, 14)}),
+    new Token(SqlLexer.Reserved, "EXISTS", { keyword: SqlLexer.EXISTS, preskips: [new Token(SqlLexer.WhiteSpace, " ", { location: new SourceLocation(57, 3, 13)})], location: new SourceLocation(58, 3, 14)}),
     new Token(SqlLexer.Identifier, "main", { keyword: SqlLexer.MAIN, preskips: [new Token(SqlLexer.WhiteSpace, " ", { location: new SourceLocation(64, 3, 20)})], location: new SourceLocation(65, 3, 21)}),
     new Token(SqlLexer.Dot, ".", { location: new SourceLocation(69, 3, 25)}),
     new Token(SqlLexer.Identifier, "v_sample", { location: new SourceLocation(70, 3, 26)}),

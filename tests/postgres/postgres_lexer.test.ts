@@ -4,7 +4,7 @@ import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { PostgresLexer } from "../../src/postgres/postgres_lexer.ts";
-import { toJSScript, writeDebugFile } from "../utils/debug.ts";
+import { toJSScript, toJSString, writeDebugFile } from "../utils/debug.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +26,7 @@ suite("test postgres lexer", () => {
 			writeDebugFile(`dump/postgres/lexer/${target}.ts`, toJSScript(tokens));
 
 			const expected = (await import(`./lexer/${target}.ts`)).default;
-			assert.deepEqual(tokens, expected);
+			assert.equal(toJSString(tokens), toJSString(expected));
 		});
 	}
 });
