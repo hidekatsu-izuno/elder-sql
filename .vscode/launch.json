@@ -2,12 +2,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Launch via NPM",
-			"request": "launch",
+			"name": "node test",
 			"type": "node",
-			"runtimeExecutable": "npm",
-			"runtimeArgs": ["run", "test"],
-			"skipFiles": ["<node_internals>/**"]
+			"request": "launch",
+			"runtimeExecutable": "node",
+			"runtimeArgs": [
+				"--disable-warning=ExperimentalWarning",
+				"--experimental-strip-types",
+				"--test",
+				"'tests/**/postgres*.test.ts'"
+			],
+			"skipFiles": [
+				"<node_internals>/**"
+			],
 		}
+
 	]
 }

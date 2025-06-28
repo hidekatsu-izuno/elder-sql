@@ -139,7 +139,7 @@ const Mode = {
 
 export declare type PostgresLexerOptions = LexerOptions;
 
-export class PostgresLexer extends Lexer {
+export class PostgresLexer extends SqlLexer {
 	constructor(options: PostgresLexerOptions = {}) {
 		super(
 			"postgres",
@@ -272,7 +272,6 @@ export class PostgresLexer extends Lexer {
 			tokens[tokens.length - 1].postskips = skips;
 		}
 		tokens.push(new Token(SqlLexer.EoS, ""));
-		tokens.push(new Token(SqlLexer.EoF, ""));
 
 		return tokens;
 	}

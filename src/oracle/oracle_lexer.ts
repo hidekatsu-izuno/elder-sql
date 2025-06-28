@@ -252,7 +252,7 @@ const Mode = {
 
 export declare type OracleLexerOptions = LexerOptions & {};
 
-export class OracleLexer extends Lexer {
+export class OracleLexer extends SqlLexer {
 	constructor(options: OracleLexerOptions = {}) {
 		super(
 			"oracle",

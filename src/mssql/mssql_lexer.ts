@@ -254,7 +254,7 @@ const Mode = {
 const BLOCK_COMMENT_START = /\/\*.*?\*\//sy;
 const BLOCK_COMMENT_PART = /.*?(?<!\/)\*\//sy;
 
-export class MssqlLexer extends Lexer {
+export class MssqlLexer extends SqlLexer {
 	constructor(options: { [key: string]: any } = {}) {
 		super(
 			"mssql",

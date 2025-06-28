@@ -290,7 +290,7 @@ export declare type MysqlLexerOptions = LexerOptions & {
 	version?: string;
 };
 
-export class MysqlLexer extends Lexer {
+export class MysqlLexer extends SqlLexer {
 	private reservedSet = new Set<Keyword>();
 	private reCommandPattern = new RegExp(
 		`^(${CommandPattern})\\b.*?(;|$)`,
