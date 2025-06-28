@@ -4,8 +4,7 @@
 			["token", { "type": "Reserved" }, "SELECT"],
 			["node", { "type": "SelectColumnList" },
 				["node", { "type": "SelectColumn" },
-					["node", { "type": "Expression" }
-					]
+					["node", { "type": "Expression" }]
 				]
 			]
 		],
@@ -16,10 +15,11 @@
 			["token", { "type": "Numeric" }, "2"],
 			["token", { "type": "Numeric" }, "3"],
 			["token", { "type": "Reserved" }, "CREATE"],
-			["token", { "type": "Reserved" }, "TABLE"]
+			["token", { "type": "Reserved" }, "TABLE"],
+			["token", { "type": "SemiColon" }, ";"]
 		]
 	],
-	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "Unknown" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["token", { "type": "BindVariable" }, "@aaa"],
@@ -27,8 +27,9 @@
 		["token", { "type": "Reserved" }, "FROM"],
 		["token", { "type": "Error" }, "#"],
 		["token", { "type": "Error" }, "#"],
-		["token", { "type": "Error" }, "#"]
+		["token", { "type": "Error" }, "#"],
+		["token", { "type": "SemiColon" }, ";"]
 	],
-	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

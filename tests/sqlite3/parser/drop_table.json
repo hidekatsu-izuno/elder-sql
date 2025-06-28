@@ -2,23 +2,25 @@
 	["node", { "type": "DropTableStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "type": "ObjectName", "value": "t_sample" },
+		["node", { "value": "t_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropTableStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "t_sample" },
+		["node", { "value": "t_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropTableStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "TABLE"],
@@ -26,14 +28,15 @@
 			["token", { "type": "Identifier" }, "IF"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "t_sample" },
+		["node", { "value": "t_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

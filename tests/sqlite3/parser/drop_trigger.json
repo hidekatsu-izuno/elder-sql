@@ -2,23 +2,25 @@
 	["node", { "type": "DropTriggerStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "ObjectName", "value": "r_sample" },
+		["node", { "value": "r_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "r_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropTriggerStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "r_sample" },
+		["node", { "value": "r_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "r_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropTriggerStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "TRIGGER"],
@@ -26,14 +28,15 @@
 			["token", { "type": "Identifier" }, "IF"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "r_sample" },
+		["node", { "value": "r_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "r_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

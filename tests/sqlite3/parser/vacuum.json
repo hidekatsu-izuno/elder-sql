@@ -3,31 +3,34 @@
 		["token", { "type": "Identifier" }, "VACUUM"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "VacuumStatement" },
 		["token", { "type": "Identifier" }, "VACUUM"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "VacuumStatement" },
 		["token", { "type": "Identifier" }, "VACUUM"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Reserved" }, "INTO"],
 		["node", { "type": "FileName" },
-			["node", { "type": "StringLiteral", "value": "database.dat" },
+			["node", { "value": "database.dat", "type": "StringLiteral" },
 				["token", { "type": "String" }, "'database.dat'"]
 			]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "VacuumStatement" },
 		["token", { "type": "Identifier" }, "VACUUM"],
 		["token", { "type": "Reserved" }, "INTO"],
 		["node", { "type": "FileName" },
-			["node", { "type": "StringLiteral", "value": "database.dat" },
+			["node", { "value": "database.dat", "type": "StringLiteral" },
 				["token", { "type": "Identifier" }, "\"database.dat\""]
 			]
 		]

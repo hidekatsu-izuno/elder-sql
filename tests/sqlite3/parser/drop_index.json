@@ -2,23 +2,25 @@
 	["node", { "type": "DropIndexStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "INDEX"],
-		["node", { "type": "ObjectName", "value": "i_sample" },
+		["node", { "value": "i_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "i_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropIndexStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "INDEX"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "i_sample" },
+		["node", { "value": "i_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "i_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropIndexStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "INDEX"],
@@ -26,14 +28,15 @@
 			["token", { "type": "Identifier" }, "IF"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "i_sample" },
+		["node", { "value": "i_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "i_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

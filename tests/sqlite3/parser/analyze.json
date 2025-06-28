@@ -1,18 +1,19 @@
 ["node", { "type": "Script" },
 	["node", { "type": "AnalyzeStatement" },
 		["token", { "type": "Identifier" }, "analyze"],
-		["node", { "type": "ObjectName", "value": "main" },
+		["node", { "value": "main", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "main"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AnalyzeStatement" },
 		["token", { "type": "Identifier" }, "ANALYZE"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "test" },
+		["node", { "value": "test", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "test"]
 		]
 	],

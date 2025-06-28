@@ -3,7 +3,7 @@
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "ValuesClause" },
@@ -12,7 +12,7 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -23,15 +23,16 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "ValuesClause" },
@@ -40,13 +41,13 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "String" }, "'2'"]
 							]
 						],
@@ -63,6 +64,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
@@ -73,16 +75,16 @@
 				]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["token", { "type": "LeftParen" }, "("],
 			["node", { "type": "ColumnList" },
-				["node", { "type": "ColumnName", "value": "a" },
+				["node", { "value": "a", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "a"]
 				]
 			],
@@ -93,7 +95,7 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -104,6 +106,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
@@ -114,20 +117,20 @@
 				]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["token", { "type": "Reserved" }, "AS"],
-			["node", { "type": "ObjectAlias", "value": "sample2" },
+			["node", { "value": "sample2", "type": "ObjectAlias" },
 				["token", { "type": "Identifier" }, "sample2"]
 			],
 			["token", { "type": "LeftParen" }, "("],
 			["node", { "type": "ColumnList" },
-				["node", { "type": "ColumnName", "value": "a" },
+				["node", { "value": "a", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "a"]
 				],
 				["token", { "type": "Comma" }, ","],
-				["node", { "type": "ColumnName", "value": "b" },
+				["node", { "value": "b", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "b"]
 				]
 			],
@@ -138,13 +141,13 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "Identifier" }, "\"2\""]
 							]
 						]
@@ -155,6 +158,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
@@ -165,28 +169,28 @@
 				]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["token", { "type": "Reserved" }, "AS"],
-			["node", { "type": "ObjectAlias", "value": "sample2" },
+			["node", { "value": "sample2", "type": "ObjectAlias" },
 				["token", { "type": "Identifier" }, "sample2"]
 			],
 			["token", { "type": "LeftParen" }, "("],
 			["node", { "type": "ColumnList" },
-				["node", { "type": "ColumnName", "value": "a" },
+				["node", { "value": "a", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "a"]
 				],
 				["token", { "type": "Comma" }, ","],
-				["node", { "type": "ColumnName", "value": "b" },
+				["node", { "value": "b", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "b"]
 				],
 				["token", { "type": "Comma" }, ","],
-				["node", { "type": "ColumnName", "value": "c" },
+				["node", { "value": "c", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "c"]
 				]
 			],
@@ -197,19 +201,19 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "Identifier" }, "\"2\""]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "BooleanLiteral", "value": "TRUE" },
+							["node", { "value": "TRUE", "type": "BooleanLiteral" },
 								["token", { "type": "Identifier" }, "TRUE"]
 							]
 						]
@@ -219,19 +223,19 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "String" }, "'2'"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "BooleanLiteral", "value": "FALSE" },
+							["node", { "value": "FALSE", "type": "BooleanLiteral" },
 								["token", { "type": "Identifier" }, "FALSE"]
 							]
 						]
@@ -242,6 +246,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
@@ -252,7 +257,7 @@
 				]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "ValuesClause" },
@@ -261,13 +266,13 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "Identifier" }, "\"2\""]
 							]
 						],
@@ -283,19 +288,19 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "String" }, "'2'"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "BooleanLiteral", "value": "TRUE" },
+							["node", { "value": "TRUE", "type": "BooleanLiteral" },
 								["token", { "type": "Identifier" }, "TRUE"]
 							]
 						]
@@ -305,19 +310,19 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "Identifier" }, "\"2\""]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "BooleanLiteral", "value": "FALSE" },
+							["node", { "value": "FALSE", "type": "BooleanLiteral" },
 								["token", { "type": "Identifier" }, "FALSE"]
 							]
 						]
@@ -328,6 +333,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
@@ -338,11 +344,11 @@
 				]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "SelectStatement" },
@@ -351,7 +357,7 @@
 					["node", { "type": "SelectColumnList" },
 						["node", { "type": "SelectColumn" },
 							["node", { "type": "Expression" },
-								["node", { "type": "NumericLiteral", "value": "1" },
+								["node", { "value": "1", "type": "NumericLiteral" },
 									["token", { "type": "Numeric" }, "1"]
 								]
 							]
@@ -362,11 +368,12 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "DefaultValuesOption" },
@@ -376,15 +383,16 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "SelectStatement" },
@@ -393,7 +401,7 @@
 					["node", { "type": "SelectColumnList" },
 						["node", { "type": "SelectColumn" },
 							["node", { "type": "Expression" },
-								["node", { "type": "NumericLiteral", "value": "1" },
+								["node", { "value": "1", "type": "NumericLiteral" },
 									["token", { "type": "Numeric" }, "1"]
 								]
 							]
@@ -404,7 +412,7 @@
 						["node", { "type": "FromObjectList" },
 							["node", { "type": "FromObject" },
 								["node", { "type": "ObjectReference" },
-									["node", { "type": "ObjectName", "value": "sample2" },
+									["node", { "value": "sample2", "type": "ObjectName" },
 										["token", { "type": "Identifier" }, "sample2"]
 									]
 								]
@@ -416,22 +424,23 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["node", { "type": "ReplaceOption" },
 				["token", { "type": "Identifier" }, "REPLACE"]
 			],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["token", { "type": "LeftParen" }, "("],
 			["node", { "type": "ColumnList" },
-				["node", { "type": "ColumnName", "value": "a" },
+				["node", { "value": "a", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "a"]
 				]
 			],
@@ -442,7 +451,7 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -453,12 +462,13 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "WithClause" },
 			["token", { "type": "Identifier" }, "WITH"],
 			["node", { "type": "CommonTableList" },
 				["node", { "type": "CommonTable" },
-					["node", { "type": "ObjectName", "value": "X" },
+					["node", { "value": "X", "type": "ObjectName" },
 						["token", { "type": "Identifier" }, "X"]
 					],
 					["token", { "type": "Reserved" }, "AS"],
@@ -469,12 +479,12 @@
 							["node", { "type": "SelectColumnList" },
 								["node", { "type": "SelectColumn" },
 									["node", { "type": "Expression" },
-										["node", { "type": "NumericLiteral", "value": "1" },
+										["node", { "value": "1", "type": "NumericLiteral" },
 											["token", { "type": "Numeric" }, "1"]
 										]
 									],
 									["token", { "type": "Reserved" }, "AS"],
-									["node", { "type": "ColumnAlias", "value": "Y" },
+									["node", { "value": "Y", "type": "ColumnAlias" },
 										["token", { "type": "Identifier" }, "Y"]
 									]
 								]
@@ -488,11 +498,11 @@
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "SelectStatement" },
@@ -502,7 +512,7 @@
 						["node", { "type": "SelectColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "type": "ColumnName", "value": "Y" },
+									["node", { "value": "Y", "type": "ColumnName" },
 										["token", { "type": "Identifier" }, "Y"]
 									]
 								]
@@ -514,7 +524,7 @@
 						["node", { "type": "FromObjectList" },
 							["node", { "type": "FromObject" },
 								["node", { "type": "ObjectReference" },
-									["node", { "type": "ObjectName", "value": "X" },
+									["node", { "value": "X", "type": "ObjectName" },
 										["token", { "type": "Identifier" }, "X"]
 									]
 								]
@@ -526,15 +536,16 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "SelectStatement" },
@@ -542,7 +553,7 @@
 					["token", { "type": "Identifier" }, "WITH"],
 					["node", { "type": "CommonTableList" },
 						["node", { "type": "CommonTable" },
-							["node", { "type": "ObjectName", "value": "X" },
+							["node", { "value": "X", "type": "ObjectName" },
 								["token", { "type": "Identifier" }, "X"]
 							],
 							["token", { "type": "Reserved" }, "AS"],
@@ -553,12 +564,12 @@
 									["node", { "type": "SelectColumnList" },
 										["node", { "type": "SelectColumn" },
 											["node", { "type": "Expression" },
-												["node", { "type": "NumericLiteral", "value": "1" },
+												["node", { "value": "1", "type": "NumericLiteral" },
 													["token", { "type": "Numeric" }, "1"]
 												]
 											],
 											["token", { "type": "Reserved" }, "AS"],
-											["node", { "type": "ColumnAlias", "value": "Y" },
+											["node", { "value": "Y", "type": "ColumnAlias" },
 												["token", { "type": "Identifier" }, "Y"]
 											]
 										]
@@ -575,7 +586,7 @@
 						["node", { "type": "SelectColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "type": "ColumnName", "value": "Y" },
+									["node", { "value": "Y", "type": "ColumnName" },
 										["token", { "type": "Identifier" }, "Y"]
 									]
 								]
@@ -587,7 +598,7 @@
 						["node", { "type": "FromObjectList" },
 							["node", { "type": "FromObject" },
 								["node", { "type": "ObjectReference" },
-									["node", { "type": "ObjectName", "value": "X" },
+									["node", { "value": "X", "type": "ObjectName" },
 										["token", { "type": "Identifier" }, "X"]
 									]
 								]
@@ -599,15 +610,16 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "ValuesClause" },
@@ -616,13 +628,13 @@
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ExpressionList" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Expression" },
-							["node", { "type": "StringLiteral", "value": "2" },
+							["node", { "value": "2", "type": "StringLiteral" },
 								["token", { "type": "String" }, "'2'"]
 							]
 						],
@@ -649,15 +661,16 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "SelectStatement" },
@@ -667,7 +680,7 @@
 						["node", { "type": "SelectColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "type": "ColumnName", "value": "Y" },
+									["node", { "value": "Y", "type": "ColumnName" },
 										["token", { "type": "Identifier" }, "Y"]
 									]
 								]
@@ -679,7 +692,7 @@
 						["node", { "type": "FromObjectList" },
 							["node", { "type": "FromObject" },
 								["node", { "type": "ObjectReference" },
-									["node", { "type": "ObjectName", "value": "X" },
+									["node", { "value": "X", "type": "ObjectName" },
 										["token", { "type": "Identifier" }, "X"]
 									]
 								]
@@ -694,7 +707,7 @@
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
 							["node", { "type": "ColumnReference" },
-								["node", { "type": "ColumnName", "value": "Y" },
+								["node", { "value": "Y", "type": "ColumnName" },
 									["token", { "type": "Identifier" }, "Y"]
 								]
 							]
@@ -703,12 +716,12 @@
 					["token", { "type": "Comma" }, ","],
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Reserved" }, "AS"],
-						["node", { "type": "ColumnAlias", "value": "Z" },
+						["node", { "value": "Z", "type": "ColumnAlias" },
 							["token", { "type": "Identifier" }, "Z"]
 						]
 					]
@@ -717,11 +730,12 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "InsertStatement" },
 		["node", { "type": "InsertClause" },
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "INTO"],
-			["node", { "type": "ObjectName", "value": "sample" },
+			["node", { "value": "sample", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "DefaultValuesOption" },
@@ -733,12 +747,12 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "type": "NumericLiteral", "value": "1" },
+							["node", { "value": "1", "type": "NumericLiteral" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						],
 						["token", { "type": "Reserved" }, "AS"],
-						["node", { "type": "ColumnAlias", "value": "Z" },
+						["node", { "value": "Z", "type": "ColumnAlias" },
 							["token", { "type": "Identifier" }, "Z"]
 						]
 					],
@@ -753,5 +767,6 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

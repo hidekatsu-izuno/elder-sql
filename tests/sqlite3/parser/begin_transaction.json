@@ -3,11 +3,13 @@
 		["token", { "type": "Identifier" }, "BEGIN"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["token", { "type": "Reserved" }, "TRANSACTION"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "DeferredOption" },
@@ -15,6 +17,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "ImmediateOption" },
@@ -22,6 +25,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "ExclusiveOption" },
@@ -29,6 +33,7 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "DeferredOption" },
@@ -37,6 +42,7 @@
 		["token", { "type": "Reserved" }, "TRANSACTION"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "ImmediateOption" },
@@ -45,6 +51,7 @@
 		["token", { "type": "Reserved" }, "TRANSACTION"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "BeginTransactionStatement" },
 		["token", { "type": "Identifier" }, "BEGIN"],
 		["node", { "type": "ExclusiveOption" },

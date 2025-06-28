@@ -2,23 +2,25 @@
 	["node", { "type": "DropViewStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "VIEW"],
-		["node", { "type": "ObjectName", "value": "v_sample" },
+		["node", { "value": "v_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropViewStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "VIEW"],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "v_sample" },
+		["node", { "value": "v_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DropViewStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Identifier" }, "VIEW"],
@@ -26,14 +28,15 @@
 			["token", { "type": "Identifier" }, "IF"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "type": "SchemaName", "value": "main" },
+		["node", { "value": "main", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "v_sample" },
+		["node", { "value": "v_sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

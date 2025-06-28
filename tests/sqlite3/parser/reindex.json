@@ -3,20 +3,22 @@
 		["token", { "type": "Identifier" }, "REINDEX"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "ReindexStatement" },
 		["token", { "type": "Identifier" }, "REINDEX"],
-		["node", { "type": "ObjectName", "value": "test_collation" },
+		["node", { "value": "test_collation", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "test_collation"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "ReindexStatement" },
 		["token", { "type": "Identifier" }, "REINDEX"],
-		["node", { "type": "SchemaName", "value": "test" },
+		["node", { "value": "test", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "type": "ObjectName", "value": "sample" },
+		["node", { "value": "sample", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "sample"]
 		]
 	],

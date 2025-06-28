@@ -1,14 +1,15 @@
 ["node", { "type": "Script" },
 	["node", { "type": "SavepointStatement" },
 		["token", { "type": "Identifier" }, "SAVEPOINT"],
-		["node", { "type": "SavepointName", "value": "sect1" },
+		["node", { "value": "sect1", "type": "SavepointName" },
 			["token", { "type": "Identifier" }, "sect1"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "SavepointStatement" },
 		["token", { "type": "Identifier" }, "SAVEPOINT"],
-		["node", { "type": "SavepointName", "value": "sect2" },
+		["node", { "value": "sect2", "type": "SavepointName" },
 			["token", { "type": "Identifier" }, "sect2"]
 		]
 	],

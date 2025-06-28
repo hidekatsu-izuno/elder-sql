@@ -21,7 +21,7 @@ export abstract class SqlParser extends Parser<SqlLexer> {
 		const root = b.start("Script");
 		while (r.peek()) {
 			try {
-				if (r.peekIf([SqlLexer.SemiColon, SqlLexer.Delimiter, SqlLexer.EoF])) {
+				if (r.peekIf([SqlLexer.SemiColon, SqlLexer.Delimiter, SqlLexer.EoS, SqlLexer.EoF])) {
 					b.token(r.consume());
 				} else if (r.peekIf(SqlLexer.Command)) {
 					this.command(b, r);
@@ -58,6 +58,9 @@ export abstract class SqlParser extends Parser<SqlLexer> {
 				b.token(r.consume());
 			}
 			node = b.end();
+		} else if (r.peekIf(SqlLexer.EoS)) {
+			// If we're at EoS, consume it to prevent infinite loop
+			b.token(r.consume());
 		}
 		b.current = b.root;
 		return node;

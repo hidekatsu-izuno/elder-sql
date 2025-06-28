@@ -3,15 +3,18 @@
 		["token", { "type": "Reserved" }, "COMMIT"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CommitTransactionStatement" },
 		["token", { "type": "Reserved" }, "COMMIT"],
 		["token", { "type": "Reserved" }, "TRANSACTION"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CommitTransactionStatement" },
 		["token", { "type": "Identifier" }, "END"]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CommitTransactionStatement" },
 		["token", { "type": "Identifier" }, "END"],
 		["token", { "type": "Reserved" }, "TRANSACTION"]

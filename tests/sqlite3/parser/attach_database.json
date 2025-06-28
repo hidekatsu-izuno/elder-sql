@@ -4,33 +4,35 @@
 		["token", { "type": "Identifier" }, "DATABASE"],
 		["node", { "type": "Database" },
 			["node", { "type": "Expression" },
-				["node", { "type": "StringLiteral", "value": ":memory:" },
+				["node", { "value": ":memory:", "type": "StringLiteral" },
 					["token", { "type": "String" }, "':memory:'"]
 				]
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "mem_db" },
+		["node", { "value": "mem_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "mem_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AttachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "ATTACH"],
 		["token", { "type": "Identifier" }, "DATABASE"],
 		["node", { "type": "Database" },
 			["node", { "type": "Expression" },
-				["node", { "type": "StringLiteral", "value": "new_database.db" },
+				["node", { "value": "new_database.db", "type": "StringLiteral" },
 					["token", { "type": "String" }, "'new_database.db'"]
 				]
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AttachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "ATTACH"],
 		["token", { "type": "Identifier" }, "DATABASE"],
@@ -44,7 +46,7 @@
 					["node", { "type": "FunctionArgumentList" },
 						["node", { "type": "Argument" },
 							["node", { "type": "Expression" },
-								["node", { "type": "StringLiteral", "value": "new_database" },
+								["node", { "value": "new_database", "type": "StringLiteral" },
 									["token", { "type": "String" }, "'new_database'"]
 								]
 							]
@@ -52,7 +54,7 @@
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "Argument" },
 							["node", { "type": "Expression" },
-								["node", { "type": "StringLiteral", "value": ".db" },
+								["node", { "value": ".db", "type": "StringLiteral" },
 									["token", { "type": "String" }, "'.db'"]
 								]
 							]
@@ -63,11 +65,12 @@
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AttachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "ATTACH"],
 		["token", { "type": "Identifier" }, "DATABASE"],
@@ -78,7 +81,7 @@
 					["node", { "type": "Expression" },
 						["node", { "type": "ConcatenateOperation" },
 							["node", { "type": "ConcatenateOperation" },
-								["node", { "type": "StringLiteral", "value": "database_" },
+								["node", { "value": "database_", "type": "StringLiteral" },
 									["token", { "type": "String" }, "'database_'"]
 								],
 								["token", { "type": "Operator" }, "||"],
@@ -90,7 +93,7 @@
 									["node", { "type": "FunctionArgumentList" },
 										["node", { "type": "Argument" },
 											["node", { "type": "Expression" },
-												["node", { "type": "StringLiteral", "value": "%Y%m%d" },
+												["node", { "value": "%Y%m%d", "type": "StringLiteral" },
 													["token", { "type": "String" }, "'%Y%m%d'"]
 												]
 											]
@@ -98,7 +101,7 @@
 										["token", { "type": "Comma" }, ","],
 										["node", { "type": "Argument" },
 											["node", { "type": "Expression" },
-												["node", { "type": "StringLiteral", "value": "now" },
+												["node", { "value": "now", "type": "StringLiteral" },
 													["token", { "type": "String" }, "'now'"]
 												]
 											]
@@ -108,7 +111,7 @@
 								]
 							],
 							["token", { "type": "Operator" }, "||"],
-							["node", { "type": "StringLiteral", "value": ".db" },
+							["node", { "value": ".db", "type": "StringLiteral" },
 								["token", { "type": "String" }, "'.db'"]
 							]
 						]
@@ -118,46 +121,49 @@
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AttachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "ATTACH"],
 		["node", { "type": "Database" },
 			["node", { "type": "Expression" },
-				["node", { "type": "StringLiteral", "value": "new_database.db" },
+				["node", { "value": "new_database.db", "type": "StringLiteral" },
 					["token", { "type": "String" }, "'new_database.db'"]
 				]
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "AttachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "ATTACH"],
 		["node", { "type": "Database" },
 			["node", { "type": "Expression" },
 				["node", { "type": "ConcatenateOperation" },
-					["node", { "type": "StringLiteral", "value": "database_" },
+					["node", { "value": "database_", "type": "StringLiteral" },
 						["token", { "type": "String" }, "'database_'"]
 					],
 					["token", { "type": "Operator" }, "||"],
-					["node", { "type": "StringLiteral", "value": ".db" },
+					["node", { "value": ".db", "type": "StringLiteral" },
 						["token", { "type": "String" }, "'.db'"]
 					]
 				]
 			]
 		],
 		["token", { "type": "Reserved" }, "AS"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["token", { "type": "EoF" }]
 ]

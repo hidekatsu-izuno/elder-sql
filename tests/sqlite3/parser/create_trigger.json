@@ -2,19 +2,19 @@
 	["node", { "type": "CreateTriggerStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "ObjectName", "value": "update_customer_address" },
+		["node", { "value": "update_customer_address", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "update_customer_address"]
 		],
 		["node", { "type": "UpdateOnClause" },
 			["token", { "type": "Reserved" }, "UPDATE"],
 			["node", { "type": "ColumnList" },
 				["token", { "type": "Identifier" }, "OF"],
-				["node", { "type": "ColumnName", "value": "address" },
+				["node", { "value": "address", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "address"]
 				]
 			],
 			["token", { "type": "Reserved" }, "ON"],
-			["node", { "type": "ObjectName", "value": "customers" },
+			["node", { "value": "customers", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "customers"]
 			]
 		],
@@ -29,25 +29,25 @@
 				["node", { "type": "UpdateStatement" },
 					["node", { "type": "UpdateClause" },
 						["token", { "type": "Reserved" }, "UPDATE"],
-						["node", { "type": "ObjectName", "value": "orders" },
+						["node", { "value": "orders", "type": "ObjectName" },
 							["token", { "type": "Identifier" }, "orders"]
 						],
 						["node", { "type": "SetClause" },
 							["token", { "type": "Reserved" }, "SET"],
 							["node", { "type": "UpdateColumnList" },
 								["node", { "type": "UpdateColumn" },
-									["node", { "type": "ColumnName", "value": "address" },
+									["node", { "value": "address", "type": "ColumnName" },
 										["token", { "type": "Identifier" }, "address"]
 									],
 									["token", { "type": "Operator" }, "="],
 									["node", { "type": "ColumnValue" },
 										["node", { "type": "Expression" },
 											["node", { "type": "ColumnReference" },
-												["node", { "type": "ObjectName", "value": "new" },
+												["node", { "value": "new", "type": "ObjectName" },
 													["token", { "type": "Identifier" }, "new"]
 												],
 												["token", { "type": "Dot" }, "."],
-												["node", { "type": "ColumnName", "value": "address" },
+												["node", { "value": "address", "type": "ColumnName" },
 													["token", { "type": "Identifier" }, "address"]
 												]
 											]
@@ -61,17 +61,17 @@
 							["node", { "type": "Expression" },
 								["node", { "type": "EqualOperation" },
 									["node", { "type": "ColumnReference" },
-										["node", { "type": "ColumnName", "value": "customer_name" },
+										["node", { "value": "customer_name", "type": "ColumnName" },
 											["token", { "type": "Identifier" }, "customer_name"]
 										]
 									],
 									["token", { "type": "Operator" }, "="],
 									["node", { "type": "ColumnReference" },
-										["node", { "type": "ObjectName", "value": "old" },
+										["node", { "value": "old", "type": "ObjectName" },
 											["token", { "type": "Identifier" }, "old"]
 										],
 										["token", { "type": "Dot" }, "."],
-										["node", { "type": "ColumnName", "value": "name" },
+										["node", { "value": "name", "type": "ColumnName" },
 											["token", { "type": "Identifier" }, "name"]
 										]
 									]
@@ -86,13 +86,14 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CreateTriggerStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["node", { "type": "TemporaryOption" },
 			["token", { "type": "Identifier" }, "TEMP"]
 		],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "ObjectName", "value": "ex1" },
+		["node", { "value": "ex1", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "ex1"]
 		],
 		["node", { "type": "InsertOnClause" },
@@ -101,11 +102,11 @@
 			],
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "ON"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "tab1" },
+			["node", { "value": "tab1", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "tab1"]
 			]
 		],
@@ -116,12 +117,12 @@
 					["node", { "type": "InsertClause" },
 						["token", { "type": "Reserved" }, "INSERT"],
 						["token", { "type": "Reserved" }, "INTO"],
-						["node", { "type": "ObjectName", "value": "sample" },
+						["node", { "value": "sample", "type": "ObjectName" },
 							["token", { "type": "Identifier" }, "sample"]
 						],
 						["token", { "type": "LeftParen" }, "("],
 						["node", { "type": "ColumnList" },
-							["node", { "type": "ColumnName", "value": "x" },
+							["node", { "value": "x", "type": "ColumnName" },
 								["token", { "type": "Identifier" }, "x"]
 							]
 						],
@@ -133,11 +134,11 @@
 								["node", { "type": "ExpressionList" },
 									["node", { "type": "Expression" },
 										["node", { "type": "ColumnReference" },
-											["node", { "type": "ObjectName", "value": "NEW" },
+											["node", { "value": "NEW", "type": "ObjectName" },
 												["token", { "type": "Identifier" }, "NEW"]
 											],
 											["token", { "type": "Dot" }, "."],
-											["node", { "type": "ColumnName", "value": "x" },
+											["node", { "value": "x", "type": "ColumnName" },
 												["token", { "type": "Identifier" }, "x"]
 											]
 										]
@@ -154,10 +155,11 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CreateTriggerStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "ObjectName", "value": "cust_addr_chng" },
+		["node", { "value": "cust_addr_chng", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "cust_addr_chng"]
 		],
 		["node", { "type": "UpdateOnClause" },
@@ -168,12 +170,12 @@
 			["token", { "type": "Reserved" }, "UPDATE"],
 			["node", { "type": "ColumnList" },
 				["token", { "type": "Identifier" }, "OF"],
-				["node", { "type": "ColumnName", "value": "cust_addr" },
+				["node", { "value": "cust_addr", "type": "ColumnName" },
 					["token", { "type": "Identifier" }, "cust_addr"]
 				]
 			],
 			["token", { "type": "Reserved" }, "ON"],
-			["node", { "type": "ObjectName", "value": "customer_address" },
+			["node", { "value": "customer_address", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "customer_address"]
 			]
 		],
@@ -183,25 +185,25 @@
 				["node", { "type": "UpdateStatement" },
 					["node", { "type": "UpdateClause" },
 						["token", { "type": "Reserved" }, "UPDATE"],
-						["node", { "type": "ObjectName", "value": "customer" },
+						["node", { "value": "customer", "type": "ObjectName" },
 							["token", { "type": "Identifier" }, "customer"]
 						],
 						["node", { "type": "SetClause" },
 							["token", { "type": "Reserved" }, "SET"],
 							["node", { "type": "UpdateColumnList" },
 								["node", { "type": "UpdateColumn" },
-									["node", { "type": "ColumnName", "value": "cust_addr" },
+									["node", { "value": "cust_addr", "type": "ColumnName" },
 										["token", { "type": "Identifier" }, "cust_addr"]
 									],
 									["token", { "type": "Operator" }, "="],
 									["node", { "type": "ColumnValue" },
 										["node", { "type": "Expression" },
 											["node", { "type": "ColumnReference" },
-												["node", { "type": "ObjectName", "value": "NEW" },
+												["node", { "value": "NEW", "type": "ObjectName" },
 													["token", { "type": "Identifier" }, "NEW"]
 												],
 												["token", { "type": "Dot" }, "."],
-												["node", { "type": "ColumnName", "value": "cust_addr" },
+												["node", { "value": "cust_addr", "type": "ColumnName" },
 													["token", { "type": "Identifier" }, "cust_addr"]
 												]
 											]
@@ -215,17 +217,17 @@
 							["node", { "type": "Expression" },
 								["node", { "type": "EqualOperation" },
 									["node", { "type": "ColumnReference" },
-										["node", { "type": "ColumnName", "value": "cust_id" },
+										["node", { "value": "cust_id", "type": "ColumnName" },
 											["token", { "type": "Identifier" }, "cust_id"]
 										]
 									],
 									["token", { "type": "Operator" }, "="],
 									["node", { "type": "ColumnReference" },
-										["node", { "type": "ObjectName", "value": "OLD" },
+										["node", { "value": "OLD", "type": "ObjectName" },
 											["token", { "type": "Identifier" }, "OLD"]
 										],
 										["token", { "type": "Dot" }, "."],
-										["node", { "type": "ColumnName", "value": "cust_id" },
+										["node", { "value": "cust_id", "type": "ColumnName" },
 											["token", { "type": "Identifier" }, "cust_id"]
 										]
 									]
@@ -240,13 +242,14 @@
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "CreateTriggerStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["node", { "type": "TemporaryOption" },
 			["token", { "type": "Identifier" }, "TEMP"]
 		],
 		["token", { "type": "Identifier" }, "TRIGGER"],
-		["node", { "type": "ObjectName", "value": "ex2" },
+		["node", { "value": "ex2", "type": "ObjectName" },
 			["token", { "type": "Identifier" }, "ex2"]
 		],
 		["node", { "type": "InsertOnClause" },
@@ -255,11 +258,11 @@
 			],
 			["token", { "type": "Reserved" }, "INSERT"],
 			["token", { "type": "Reserved" }, "ON"],
-			["node", { "type": "SchemaName", "value": "main" },
+			["node", { "value": "main", "type": "SchemaName" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "type": "ObjectName", "value": "tab1" },
+			["node", { "value": "tab1", "type": "ObjectName" },
 				["token", { "type": "Identifier" }, "tab1"]
 			]
 		],
@@ -270,7 +273,7 @@
 					["node", { "type": "DeleteClause" },
 						["token", { "type": "Reserved" }, "DELETE"],
 						["token", { "type": "Reserved" }, "FROM"],
-						["node", { "type": "ObjectName", "value": "sample" },
+						["node", { "value": "sample", "type": "ObjectName" },
 							["token", { "type": "Identifier" }, "sample"]
 						],
 						["node", { "type": "WhereClause" },
@@ -278,16 +281,16 @@
 							["node", { "type": "Expression" },
 								["node", { "type": "EqualOperation" },
 									["node", { "type": "ColumnReference" },
-										["node", { "type": "ObjectName", "value": "OLD" },
+										["node", { "value": "OLD", "type": "ObjectName" },
 											["token", { "type": "Identifier" }, "OLD"]
 										],
 										["token", { "type": "Dot" }, "."],
-										["node", { "type": "ColumnName", "value": "x" },
+										["node", { "value": "x", "type": "ColumnName" },
 											["token", { "type": "Identifier" }, "x"]
 										]
 									],
 									["token", { "type": "Operator" }, "="],
-									["node", { "type": "NumericLiteral", "value": "1" },
+									["node", { "value": "1", "type": "NumericLiteral" },
 										["token", { "type": "Numeric" }, "1"]
 									]
 								]

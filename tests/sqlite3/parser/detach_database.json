@@ -2,14 +2,15 @@
 	["node", { "type": "DetachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "DETACH"],
 		["token", { "type": "Identifier" }, "DATABASE"],
-		["node", { "type": "SchemaName", "value": "mem_db" },
+		["node", { "value": "mem_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "mem_db"]
 		]
 	],
 	["token", { "type": "SemiColon" }, ";"],
+	["token", { "type": "EoS" }],
 	["node", { "type": "DetachDatabaseStatement" },
 		["token", { "type": "Identifier" }, "DETACH"],
-		["node", { "type": "SchemaName", "value": "new_db" },
+		["node", { "value": "new_db", "type": "SchemaName" },
 			["token", { "type": "Identifier" }, "new_db"]
 		]
 	],
