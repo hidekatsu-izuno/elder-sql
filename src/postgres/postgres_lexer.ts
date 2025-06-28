@@ -1,6 +1,5 @@
 import {
 	type Keyword,
-	Lexer,
 	type LexerOptions,
 	SourceLocation,
 	Token,

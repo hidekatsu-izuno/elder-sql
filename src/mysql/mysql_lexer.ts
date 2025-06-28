@@ -1,4 +1,4 @@
-import { type Keyword, Lexer, type LexerOptions, Token } from "elder-parse";
+import { type Keyword, type LexerOptions, Token } from "elder-parse";
 import { SqlLexer } from "../sql.ts";
 import { compareVersion, escapeRegExp } from "../utils.ts";
 
