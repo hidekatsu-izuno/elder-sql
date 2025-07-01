@@ -8,7 +8,7 @@
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "a", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "a" },
 									["token", { "type": "Identifier" }, "a"]
 								]
 							]
@@ -18,7 +18,7 @@
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "b", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "b" },
 									["token", { "type": "Identifier" }, "b"]
 								]
 							]
@@ -30,7 +30,7 @@
 					["node", { "type": "FromObjectList" },
 						["node", { "type": "FromObject" },
 							["node", { "type": "ObjectReference" },
-								["node", { "value": "t1", "type": "ObjectName" },
+								["node", { "type": "ObjectName", "value": "t1" },
 									["token", { "type": "Identifier" }, "t1"]
 								]
 							]
@@ -42,12 +42,12 @@
 					["node", { "type": "Expression" },
 						["node", { "type": "EqualOperation" },
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "a", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "a" },
 									["token", { "type": "Identifier" }, "a"]
 								]
 							],
 							["token", { "type": "Operator" }, "="],
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -70,7 +70,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "AllColumnsOption" },
-							["node", { "value": "t1", "type": "SchemaName" },
+							["node", { "type": "SchemaName", "value": "t1" },
 								["token", { "type": "Identifier" }, "t1"]
 							],
 							["token", { "type": "Dot" }, "."],
@@ -80,7 +80,7 @@
 					["token", { "type": "Comma" }, ","],
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "AllColumnsOption" },
-							["node", { "value": "t2", "type": "SchemaName" },
+							["node", { "type": "SchemaName", "value": "t2" },
 								["token", { "type": "Identifier" }, "t2"]
 							],
 							["token", { "type": "Dot" }, "."],
@@ -93,7 +93,7 @@
 					["node", { "type": "FromObjectList" },
 						["node", { "type": "FromObject" },
 							["node", { "type": "ObjectReference" },
-								["node", { "value": "t1", "type": "ObjectName" },
+								["node", { "type": "ObjectName", "value": "t1" },
 									["token", { "type": "Identifier" }, "t1"]
 								]
 							]
@@ -101,7 +101,7 @@
 						["token", { "type": "Comma" }, ","],
 						["node", { "type": "FromObject" },
 							["node", { "type": "ObjectReference" },
-								["node", { "value": "t2", "type": "ObjectName" },
+								["node", { "type": "ObjectName", "value": "t2" },
 									["token", { "type": "Identifier" }, "t2"]
 								]
 							]
@@ -114,32 +114,32 @@
 						["node", { "type": "AndOperation" },
 							["node", { "type": "EqualOperation" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "t1", "type": "ObjectName" },
+									["node", { "type": "ObjectName", "value": "t1" },
 										["token", { "type": "Identifier" }, "t1"]
 									],
 									["token", { "type": "Dot" }, "."],
-									["node", { "value": "a", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "a" },
 										["token", { "type": "Identifier" }, "a"]
 									]
 								],
 								["token", { "type": "Operator" }, "="],
-								["node", { "value": "1", "type": "NumericLiteral" },
+								["node", { "type": "NumericLiteral", "value": "1" },
 									["token", { "type": "Numeric" }, "1"]
 								]
 							],
 							["token", { "type": "Reserved" }, "AND"],
 							["node", { "type": "GreaterThanOperation" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "t1", "type": "ObjectName" },
+									["node", { "type": "ObjectName", "value": "t1" },
 										["token", { "type": "Identifier" }, "t1"]
 									],
 									["token", { "type": "Dot" }, "."],
-									["node", { "value": "b", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "b" },
 										["token", { "type": "Identifier" }, "b"]
 									]
 								],
 								["token", { "type": "Operator" }, ">"],
-								["node", { "value": "2", "type": "NumericLiteral" },
+								["node", { "type": "NumericLiteral", "value": "2" },
 									["token", { "type": "Numeric" }, "2"]
 								]
 							]

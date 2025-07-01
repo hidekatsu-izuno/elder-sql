@@ -2,7 +2,7 @@
 	["node", { "type": "CreateViewStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["token", { "type": "Identifier" }, "VIEW"],
-		["node", { "value": "v_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "v_sample" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		],
 		["token", { "type": "Reserved" }, "AS"],
@@ -12,7 +12,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -31,16 +31,16 @@
 			["token", { "type": "Reserved" }, "NOT"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "v_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "v_sample" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "ColumnList" },
-			["node", { "value": "x", "type": "ColumnName" },
+			["node", { "type": "ColumnName", "value": "x" },
 				["token", { "type": "Identifier" }, "x"]
 			]
 		],
@@ -52,7 +52,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -69,11 +69,11 @@
 			["token", { "type": "Identifier" }, "TEMP"]
 		],
 		["token", { "type": "Identifier" }, "VIEW"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "v_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "v_sample" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		],
 		["token", { "type": "Reserved" }, "AS"],
@@ -83,7 +83,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -100,24 +100,24 @@
 			["token", { "type": "Reserved" }, "TEMPORARY"]
 		],
 		["token", { "type": "Identifier" }, "VIEW"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "v_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "v_sample" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "ColumnList" },
-			["node", { "value": "a", "type": "ColumnName" },
+			["node", { "type": "ColumnName", "value": "a" },
 				["token", { "type": "Identifier" }, "a"]
 			],
 			["token", { "type": "Comma" }, ","],
-			["node", { "value": "b", "type": "ColumnName" },
+			["node", { "type": "ColumnName", "value": "b" },
 				["token", { "type": "Identifier" }, "b"]
 			],
 			["token", { "type": "Comma" }, ","],
-			["node", { "value": "c", "type": "ColumnName" },
+			["node", { "type": "ColumnName", "value": "c" },
 				["token", { "type": "Identifier" }, "c"]
 			]
 		],
@@ -129,7 +129,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]
@@ -137,7 +137,7 @@
 					["token", { "type": "Comma" }, ","],
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "2", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "2" },
 								["token", { "type": "Numeric" }, "2"]
 							]
 						]
@@ -145,7 +145,7 @@
 					["token", { "type": "Comma" }, ","],
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "3", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "3" },
 								["token", { "type": "Numeric" }, "3"]
 							]
 						]
@@ -167,11 +167,11 @@
 			["token", { "type": "Reserved" }, "NOT"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "v_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "v_sample" },
 			["token", { "type": "Identifier" }, "v_sample"]
 		],
 		["token", { "type": "Reserved" }, "AS"],
@@ -181,7 +181,7 @@
 				["node", { "type": "SelectColumnList" },
 					["node", { "type": "SelectColumn" },
 						["node", { "type": "Expression" },
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]

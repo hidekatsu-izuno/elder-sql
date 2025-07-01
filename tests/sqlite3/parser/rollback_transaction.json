@@ -14,7 +14,7 @@
 		["token", { "type": "Identifier" }, "ROLLBACK"],
 		["token", { "type": "Reserved" }, "TRANSACTION"],
 		["token", { "type": "Reserved" }, "TO"],
-		["node", { "value": "sect1", "type": "SavepointName" },
+		["node", { "type": "SavepointName", "value": "sect1" },
 			["token", { "type": "Identifier" }, "sect1"]
 		]
 	],
@@ -25,7 +25,7 @@
 		["token", { "type": "Reserved" }, "TRANSACTION"],
 		["token", { "type": "Reserved" }, "TO"],
 		["token", { "type": "Identifier" }, "SAVEPOINT"],
-		["node", { "value": "sect1", "type": "SavepointName" },
+		["node", { "type": "SavepointName", "value": "sect1" },
 			["token", { "type": "Identifier" }, "sect1"]
 		]
 	],

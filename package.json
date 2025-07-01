@@ -120,6 +120,6 @@
 	},
 	"dependencies": {
 		"acorn": "^8.15.0",
-		"elder-parse": "^0.3.8"
+		"elder-parse": "^0.3.9"
 	}
 }

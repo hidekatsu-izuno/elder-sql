@@ -1,7 +1,7 @@
 ["node", { "type": "Script" },
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "analysis_limit", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "analysis_limit" },
 			["token", { "type": "Identifier" }, "analysis_limit"]
 		]
 	],
@@ -9,12 +9,12 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "analysis_limit", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "analysis_limit" },
 			["token", { "type": "Identifier" }, "analysis_limit"]
 		],
 		["token", { "type": "Operator" }, "="],
 		["node", { "type": "PragmaValue" },
-			["node", { "value": "3", "type": "NumericLiteral" },
+			["node", { "type": "NumericLiteral", "value": "3" },
 				["token", { "type": "Numeric" }, "3"]
 			]
 		]
@@ -23,11 +23,11 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "application_id", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "application_id" },
 			["token", { "type": "Identifier" }, "application_id"]
 		]
 	],
@@ -35,11 +35,11 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "application_id", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "application_id" },
 			["token", { "type": "Identifier" }, "application_id"]
 		],
 		["token", { "type": "Operator" }, "="],
@@ -47,7 +47,7 @@
 			["node", { "type": "Expression" },
 				["node", { "type": "UnaryMinusOperation" },
 					["token", { "type": "Operator" }, "-"],
-					["node", { "value": "3", "type": "NumericLiteral" },
+					["node", { "type": "NumericLiteral", "value": "3" },
 						["token", { "type": "Numeric" }, "3"]
 					]
 				]
@@ -58,11 +58,11 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "Test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "Test" },
 			["token", { "type": "Identifier" }, "Test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "auto_vacuum", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "auto_vacuum" },
 			["token", { "type": "Identifier" }, "auto_vacuum"]
 		]
 	],
@@ -70,16 +70,16 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "Test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "Test" },
 			["token", { "type": "Identifier" }, "Test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "auto_vacuum", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "auto_vacuum" },
 			["token", { "type": "Identifier" }, "auto_vacuum"]
 		],
 		["token", { "type": "Operator" }, "="],
 		["node", { "type": "PragmaValue" },
-			["node", { "value": "NONE", "type": "PragmaLiteral" },
+			["node", { "type": "PragmaLiteral", "value": "NONE" },
 				["token", { "type": "Identifier" }, "NONE"]
 			]
 		]
@@ -88,7 +88,7 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "pragma"],
-		["node", { "value": "automatic_index", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "automatic_index" },
 			["token", { "type": "Identifier" }, "automatic_index"]
 		]
 	],
@@ -96,12 +96,12 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "pragma"],
-		["node", { "value": "automatic_index", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "automatic_index" },
 			["token", { "type": "Identifier" }, "automatic_index"]
 		],
 		["token", { "type": "Operator" }, "="],
 		["node", { "type": "PragmaValue" },
-			["node", { "value": "true", "type": "PragmaLiteral" },
+			["node", { "type": "PragmaLiteral", "value": "true" },
 				["token", { "type": "Identifier" }, "true"]
 			]
 		]
@@ -110,18 +110,18 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "PragmaStatement" },
 		["token", { "type": "Identifier" }, "PRAGMA"],
-		["node", { "value": "test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "index_info", "type": "PragmaName" },
+		["node", { "type": "PragmaName", "value": "index_info" },
 			["token", { "type": "Identifier" }, "index_info"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "PragmaArgumentList" },
 			["node", { "type": "PragmaArgument" },
 				["node", { "type": "PragmaValue" },
-					["node", { "value": "test.pk_test", "type": "StringLiteral" },
+					["node", { "type": "StringLiteral", "value": "test.pk_test" },
 						["token", { "type": "String" }, "'test.pk_test'"]
 					]
 				]

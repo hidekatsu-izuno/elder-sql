@@ -9,12 +9,15 @@
 			"runtimeArgs": [
 				"--disable-warning=ExperimentalWarning",
 				"--experimental-strip-types",
-				"--test",
-				"'tests/**/postgres*.test.ts'"
+				"--test"
 			],
+			"cwd": "${workspaceFolder}",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
+			"args": [
+				"'tests/sqlite3/sqlite3_formatter.test.ts'"
+			]
 		}
 
 	]

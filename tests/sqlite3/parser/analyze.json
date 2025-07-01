@@ -1,7 +1,7 @@
 ["node", { "type": "Script" },
 	["node", { "type": "AnalyzeStatement" },
 		["token", { "type": "Identifier" }, "analyze"],
-		["node", { "value": "main", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		]
 	],
@@ -9,11 +9,11 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "AnalyzeStatement" },
 		["token", { "type": "Identifier" }, "ANALYZE"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "test", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		]
 	],

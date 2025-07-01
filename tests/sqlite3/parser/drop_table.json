@@ -2,7 +2,7 @@
 	["node", { "type": "DropTableStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "t_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "t_sample" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],
@@ -11,11 +11,11 @@
 	["node", { "type": "DropTableStatement" },
 		["token", { "type": "Identifier" }, "DROP"],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "t_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "t_sample" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],
@@ -28,11 +28,11 @@
 			["token", { "type": "Identifier" }, "IF"],
 			["token", { "type": "Reserved" }, "EXISTS"]
 		],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "t_sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "t_sample" },
 			["token", { "type": "Identifier" }, "t_sample"]
 		]
 	],

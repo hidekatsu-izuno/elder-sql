@@ -1,7 +1,7 @@
 ["node", { "type": "Script" },
 	["node", { "type": "ReleaseSavepointStatement" },
 		["token", { "type": "Identifier" }, "RELEASE"],
-		["node", { "value": "sect1", "type": "SavepointName" },
+		["node", { "type": "SavepointName", "value": "sect1" },
 			["token", { "type": "Identifier" }, "sect1"]
 		]
 	],
@@ -10,7 +10,7 @@
 	["node", { "type": "ReleaseSavepointStatement" },
 		["token", { "type": "Identifier" }, "RELEASE"],
 		["token", { "type": "Identifier" }, "SAVEPOINT"],
-		["node", { "value": "sect1", "type": "SavepointName" },
+		["node", { "type": "SavepointName", "value": "sect1" },
 			["token", { "type": "Identifier" }, "sect1"]
 		]
 	],

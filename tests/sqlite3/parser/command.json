@@ -1,10 +1,10 @@
 ["node", { "type": "Script" },
 	["node", { "type": "CommandStatement" },
-		["node", { "value": ".print", "type": "CommandName" },
+		["node", { "type": "CommandName", "value": ".print" },
 			["token", { "type": "Command" }, ".print"]
 		],
 		["node", { "type": "CommandArgumentList" },
-			["node", { "value": "test", "type": "CommandArgument" },
+			["node", { "type": "CommandArgument", "value": "test" },
 				["token", { "type": "Identifier" }, "test"]
 			]
 		]
@@ -16,7 +16,7 @@
 			["node", { "type": "SelectColumnList" },
 				["node", { "type": "SelectColumn" },
 					["node", { "type": "Expression" },
-						["node", { "value": "1", "type": "NumericLiteral" },
+						["node", { "type": "NumericLiteral", "value": "1" },
 							["token", { "type": "Numeric" }, "1"]
 						]
 					]
@@ -33,22 +33,22 @@
 				["node", { "type": "SelectColumn" },
 					["node", { "type": "Expression" },
 						["node", { "type": "AddOperation" },
-							["node", { "value": "2", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "2" },
 								["token", { "type": "Numeric" }, "2"]
 							],
 							["token", { "type": "Operator" }, "+"],
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "x", "type": "ObjectName" },
+								["node", { "type": "ObjectName", "value": "x" },
 									["token", { "type": "Identifier" }, "x"]
 								],
 								["token", { "type": "Dot" }, "."],
-								["node", { "value": "print", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "print" },
 									["token", { "type": "Identifier" }, "print"]
 								]
 							]
 						]
 					],
-					["node", { "value": "test", "type": "ColumnAlias" },
+					["node", { "type": "ColumnAlias", "value": "test" },
 						["token", { "type": "Identifier" }, "test"]
 					]
 				]
@@ -63,7 +63,7 @@
 			["node", { "type": "SelectColumnList" },
 				["node", { "type": "SelectColumn" },
 					["node", { "type": "Expression" },
-						["node", { "value": "3", "type": "NumericLiteral" },
+						["node", { "type": "NumericLiteral", "value": "3" },
 							["token", { "type": "Numeric" }, "3"]
 						]
 					]
@@ -79,7 +79,7 @@
 			["node", { "type": "SelectColumnList" },
 				["node", { "type": "SelectColumn" },
 					["node", { "type": "Expression" },
-						["node", { "value": "4", "type": "NumericLiteral" },
+						["node", { "type": "NumericLiteral", "value": "4" },
 							["token", { "type": "Numeric" }, "4"]
 						]
 					]

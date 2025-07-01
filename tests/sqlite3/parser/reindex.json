@@ -6,7 +6,7 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "ReindexStatement" },
 		["token", { "type": "Identifier" }, "REINDEX"],
-		["node", { "value": "test_collation", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "test_collation" },
 			["token", { "type": "Identifier" }, "test_collation"]
 		]
 	],
@@ -14,11 +14,11 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "ReindexStatement" },
 		["token", { "type": "Identifier" }, "REINDEX"],
-		["node", { "value": "test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "sample", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "sample" },
 			["token", { "type": "Identifier" }, "sample"]
 		]
 	],

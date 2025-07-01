@@ -6,7 +6,7 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "VacuumStatement" },
 		["token", { "type": "Identifier" }, "VACUUM"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		]
 	],
@@ -14,12 +14,12 @@
 	["token", { "type": "EoS" }],
 	["node", { "type": "VacuumStatement" },
 		["token", { "type": "Identifier" }, "VACUUM"],
-		["node", { "value": "main", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "main" },
 			["token", { "type": "Identifier" }, "main"]
 		],
 		["token", { "type": "Reserved" }, "INTO"],
 		["node", { "type": "FileName" },
-			["node", { "value": "database.dat", "type": "StringLiteral" },
+			["node", { "type": "StringLiteral", "value": "database.dat" },
 				["token", { "type": "String" }, "'database.dat'"]
 			]
 		]
@@ -30,7 +30,7 @@
 		["token", { "type": "Identifier" }, "VACUUM"],
 		["token", { "type": "Reserved" }, "INTO"],
 		["node", { "type": "FileName" },
-			["node", { "value": "database.dat", "type": "StringLiteral" },
+			["node", { "type": "StringLiteral", "value": "database.dat" },
 				["token", { "type": "Identifier" }, "\"database.dat\""]
 			]
 		]

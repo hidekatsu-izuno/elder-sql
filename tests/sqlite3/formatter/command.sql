@@ -2,6 +2,7 @@
 .print test
 */
 .print test
+
 select
   1;
 

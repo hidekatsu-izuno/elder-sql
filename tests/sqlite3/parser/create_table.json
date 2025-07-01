@@ -2,21 +2,21 @@
 	["node", { "type": "CreateTableStatement" },
 		["token", { "type": "Reserved" }, "CREATE"],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "test", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "test" },
 			["token", { "type": "Identifier" }, "test"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "table_1", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "table_1" },
 			["token", { "type": "Identifier" }, "table_1"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "TableColumnList" },
 			["node", { "type": "TableColumn" },
-				["node", { "value": "text_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "text_column" },
 					["token", { "type": "Identifier" }, "text_column"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "TEXT", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "TEXT" },
 						["token", { "type": "Identifier" }, "TEXT"]
 					]
 				],
@@ -35,51 +35,51 @@
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "num_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "num_column" },
 					["token", { "type": "Identifier" }, "num_column"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "NUMERIC", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
 						["token", { "type": "Identifier" }, "NUMERIC"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "int_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "int_column" },
 					["token", { "type": "Identifier" }, "int_column"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "INTEGER", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
 						["token", { "type": "Identifier" }, "INTEGER"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "real_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "real_column" },
 					["token", { "type": "Identifier" }, "real_column"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "INTEGER", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
 						["token", { "type": "Identifier" }, "INTEGER"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "blob_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "blob_column" },
 					["token", { "type": "Identifier" }, "blob_column"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "BLOB", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "BLOB" },
 						["token", { "type": "Identifier" }, "BLOB"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "no_affinity_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "no_affinity_column" },
 					["token", { "type": "Identifier" }, "no_affinity_column"]
 				]
 			]
@@ -94,17 +94,17 @@
 			["token", { "type": "Identifier" }, "temp"]
 		],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "table_2", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "table_2" },
 			["token", { "type": "Identifier" }, "table_2"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "TableColumnList" },
 			["node", { "type": "TableColumn" },
-				["node", { "value": "text_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "text_column" },
 					["token", { "type": "Identifier" }, "\"text_column\""]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "TEXT", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "TEXT" },
 						["token", { "type": "Identifier" }, "TEXT"]
 					]
 				],
@@ -117,11 +117,11 @@
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "num_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "num_column" },
 					["token", { "type": "Identifier" }, "[num_column]"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "NUMERIC", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
 						["token", { "type": "Identifier" }, "NUMERIC"]
 					]
 				],
@@ -134,40 +134,40 @@
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "int_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "int_column" },
 					["token", { "type": "Identifier" }, "`int_column`"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "INTEGER", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
 						["token", { "type": "Identifier" }, "INTEGER"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "real_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "real_column" },
 					["token", { "type": "Identifier" }, "\"real_column\""]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "INTEGER", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "INTEGER" },
 						["token", { "type": "Identifier" }, "INTEGER"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "blob_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "blob_column" },
 					["token", { "type": "Identifier" }, "[blob_column]"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "BLOB", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "BLOB" },
 						["token", { "type": "Identifier" }, "BLOB"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "no_affinity_column", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "no_affinity_column" },
 					["token", { "type": "Identifier" }, "`no_affinity_column`"]
 				]
 			],
@@ -181,7 +181,7 @@
 						["node", { "type": "SortColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "text_column", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "text_column" },
 										["token", { "type": "Identifier" }, "text_column"]
 									]
 								]
@@ -191,7 +191,7 @@
 						["node", { "type": "SortColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "num_column", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "num_column" },
 										["token", { "type": "Identifier" }, "num_column"]
 									]
 								]
@@ -212,28 +212,28 @@
 			["token", { "type": "Reserved" }, "temporary"]
 		],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "table_3", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "table_3" },
 			["token", { "type": "Identifier" }, "table_3"]
 		],
 		["token", { "type": "LeftParen" }, "("],
 		["node", { "type": "TableColumnList" },
 			["node", { "type": "TableColumn" },
-				["node", { "value": "col_1", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "col_1" },
 					["token", { "type": "Identifier" }, "col_1"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "TEXT", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "TEXT" },
 						["token", { "type": "Identifier" }, "TEXT"]
 					]
 				]
 			],
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableColumn" },
-				["node", { "value": "col_2", "type": "ColumnName" },
+				["node", { "type": "ColumnName", "value": "col_2" },
 					["token", { "type": "Identifier" }, "col_2"]
 				],
 				["node", { "type": "ColumnType" },
-					["node", { "value": "NUMERIC", "type": "TypeName" },
+					["node", { "type": "TypeName", "value": "NUMERIC" },
 						["token", { "type": "Identifier" }, "NUMERIC"]
 					]
 				]
@@ -241,7 +241,7 @@
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableConstraint" },
 				["token", { "type": "Reserved" }, "CONSTRAINT"],
-				["node", { "value": "c_001", "type": "ConstraintName" },
+				["node", { "type": "ConstraintName", "value": "c_001" },
 					["token", { "type": "Identifier" }, "c_001"]
 				],
 				["node", { "type": "UniqueConstraint" },
@@ -251,7 +251,7 @@
 						["node", { "type": "SortColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "col_1", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "col_1" },
 										["token", { "type": "Identifier" }, "col_1"]
 									]
 								]
@@ -261,7 +261,7 @@
 						["node", { "type": "SortColumn" },
 							["node", { "type": "Expression" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "col_2", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "col_2" },
 										["token", { "type": "Identifier" }, "col_2"]
 									]
 								]
@@ -281,7 +281,7 @@
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableConstraint" },
 				["token", { "type": "Reserved" }, "CONSTRAINT"],
-				["node", { "value": "c_002", "type": "ConstraintName" },
+				["node", { "type": "ConstraintName", "value": "c_002" },
 					["token", { "type": "Identifier" }, "c_002"]
 				],
 				["node", { "type": "CheckConstraint" },
@@ -291,19 +291,19 @@
 						["node", { "type": "GreaterThanOperation" },
 							["node", { "type": "AddOperation" },
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "col_1", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "col_1" },
 										["token", { "type": "Identifier" }, "col_1"]
 									]
 								],
 								["token", { "type": "Operator" }, "+"],
 								["node", { "type": "ColumnReference" },
-									["node", { "value": "col_2", "type": "ColumnName" },
+									["node", { "type": "ColumnName", "value": "col_2" },
 										["token", { "type": "Identifier" }, "col_2"]
 									]
 								]
 							],
 							["token", { "type": "Operator" }, ">"],
-							["node", { "value": "0", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "0" },
 								["token", { "type": "Numeric" }, "0"]
 							]
 						]
@@ -314,7 +314,7 @@
 			["token", { "type": "Comma" }, ","],
 			["node", { "type": "TableConstraint" },
 				["token", { "type": "Reserved" }, "CONSTRAINT"],
-				["node", { "value": "c_003", "type": "ConstraintName" },
+				["node", { "type": "ConstraintName", "value": "c_003" },
 					["token", { "type": "Identifier" }, "c_003"]
 				],
 				["node", { "type": "ForeignKeyConstraint" },
@@ -322,27 +322,27 @@
 					["token", { "type": "Identifier" }, "KEY"],
 					["token", { "type": "LeftParen" }, "("],
 					["node", { "type": "ColumnList" },
-						["node", { "value": "col_1", "type": "ColumnName" },
+						["node", { "type": "ColumnName", "value": "col_1" },
 							["token", { "type": "Identifier" }, "col_1"]
 						],
 						["token", { "type": "Comma" }, ","],
-						["node", { "value": "col_2", "type": "ColumnName" },
+						["node", { "type": "ColumnName", "value": "col_2" },
 							["token", { "type": "Identifier" }, "col_2"]
 						]
 					],
 					["token", { "type": "RightParen" }, ")"],
 					["node", { "type": "ReferencesClause" },
 						["token", { "type": "Reserved" }, "REFERENCES"],
-						["node", { "value": "table_1", "type": "ObjectName" },
+						["node", { "type": "ObjectName", "value": "table_1" },
 							["token", { "type": "Identifier" }, "table_1"]
 						],
 						["token", { "type": "LeftParen" }, "("],
 						["node", { "type": "ColumnList" },
-							["node", { "value": "text_column", "type": "ColumnName" },
+							["node", { "type": "ColumnName", "value": "text_column" },
 								["token", { "type": "Identifier" }, "text_column"]
 							],
 							["token", { "type": "Comma" }, ","],
-							["node", { "value": "num_column", "type": "ColumnName" },
+							["node", { "type": "ColumnName", "value": "num_column" },
 								["token", { "type": "Identifier" }, "num_column"]
 							]
 						],
@@ -390,12 +390,12 @@
 			["token", { "type": "Identifier" }, "VIRTUAL"]
 		],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "tablename", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "tablename" },
 			["token", { "type": "Identifier" }, "tablename"]
 		],
 		["node", { "type": "UsingModuleClause" },
 			["token", { "type": "Reserved" }, "USING"],
-			["node", { "value": "modulename", "type": "ModuleName" },
+			["node", { "type": "ModuleName", "value": "modulename" },
 				["token", { "type": "Identifier" }, "modulename"]
 			]
 		]
@@ -408,16 +408,16 @@
 			["token", { "type": "Identifier" }, "VIRTUAL"]
 		],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "temp", "type": "SchemaName" },
+		["node", { "type": "SchemaName", "value": "temp" },
 			["token", { "type": "Identifier" }, "temp"]
 		],
 		["token", { "type": "Dot" }, "."],
-		["node", { "value": "t1", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "t1" },
 			["token", { "type": "Identifier" }, "t1"]
 		],
 		["node", { "type": "UsingModuleClause" },
 			["token", { "type": "Reserved" }, "USING"],
-			["node", { "value": "csv", "type": "ModuleName" },
+			["node", { "type": "ModuleName", "value": "csv" },
 				["token", { "type": "Identifier" }, "csv"]
 			],
 			["token", { "type": "LeftParen" }, "("],
@@ -439,12 +439,12 @@
 			["token", { "type": "Identifier" }, "VIRTUAL"]
 		],
 		["token", { "type": "Reserved" }, "TABLE"],
-		["node", { "value": "email", "type": "ObjectName" },
+		["node", { "type": "ObjectName", "value": "email" },
 			["token", { "type": "Identifier" }, "email"]
 		],
 		["node", { "type": "UsingModuleClause" },
 			["token", { "type": "Reserved" }, "USING"],
-			["node", { "value": "fts5", "type": "ModuleName" },
+			["node", { "type": "ModuleName", "value": "fts5" },
 				["token", { "type": "Identifier" }, "fts5"]
 			],
 			["token", { "type": "LeftParen" }, "("],

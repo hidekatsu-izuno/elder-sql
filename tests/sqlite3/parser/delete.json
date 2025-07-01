@@ -3,7 +3,7 @@
 		["node", { "type": "DeleteClause" },
 			["token", { "type": "Reserved" }, "DELETE"],
 			["token", { "type": "Reserved" }, "FROM"],
-			["node", { "value": "sample", "type": "ObjectName" },
+			["node", { "type": "ObjectName", "value": "sample" },
 				["token", { "type": "Identifier" }, "sample"]
 			]
 		]
@@ -14,11 +14,11 @@
 		["node", { "type": "DeleteClause" },
 			["token", { "type": "Reserved" }, "DELETE"],
 			["token", { "type": "Reserved" }, "FROM"],
-			["node", { "value": "main", "type": "SchemaName" },
+			["node", { "type": "SchemaName", "value": "main" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "value": "sample", "type": "ObjectName" },
+			["node", { "type": "ObjectName", "value": "sample" },
 				["token", { "type": "Identifier" }, "sample"]
 			]
 		]
@@ -30,7 +30,7 @@
 			["token", { "type": "Identifier" }, "WITH"],
 			["node", { "type": "CommonTableList" },
 				["node", { "type": "CommonTable" },
-					["node", { "value": "X", "type": "ObjectName" },
+					["node", { "type": "ObjectName", "value": "X" },
 						["token", { "type": "Identifier" }, "X"]
 					],
 					["token", { "type": "Reserved" }, "AS"],
@@ -41,12 +41,12 @@
 							["node", { "type": "SelectColumnList" },
 								["node", { "type": "SelectColumn" },
 									["node", { "type": "Expression" },
-										["node", { "value": "1", "type": "NumericLiteral" },
+										["node", { "type": "NumericLiteral", "value": "1" },
 											["token", { "type": "Numeric" }, "1"]
 										]
 									],
 									["token", { "type": "Reserved" }, "AS"],
-									["node", { "value": "Y", "type": "ColumnAlias" },
+									["node", { "type": "ColumnAlias", "value": "Y" },
 										["token", { "type": "Identifier" }, "Y"]
 									]
 								]
@@ -60,11 +60,11 @@
 		["node", { "type": "DeleteClause" },
 			["token", { "type": "Reserved" }, "DELETE"],
 			["token", { "type": "Reserved" }, "FROM"],
-			["node", { "value": "main", "type": "SchemaName" },
+			["node", { "type": "SchemaName", "value": "main" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "value": "sample", "type": "ObjectName" },
+			["node", { "type": "ObjectName", "value": "sample" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "WhereClause" },
@@ -72,7 +72,7 @@
 				["node", { "type": "Expression" },
 					["node", { "type": "EqualOperation" },
 						["node", { "type": "ColumnReference" },
-							["node", { "value": "x", "type": "ColumnName" },
+							["node", { "type": "ColumnName", "value": "x" },
 								["token", { "type": "Identifier" }, "x"]
 							]
 						],
@@ -86,7 +86,7 @@
 										["node", { "type": "SelectColumn" },
 											["node", { "type": "Expression" },
 												["node", { "type": "ColumnReference" },
-													["node", { "value": "Y", "type": "ColumnName" },
+													["node", { "type": "ColumnName", "value": "Y" },
 														["token", { "type": "Identifier" }, "Y"]
 													]
 												]
@@ -98,7 +98,7 @@
 										["node", { "type": "FromObjectList" },
 											["node", { "type": "FromObject" },
 												["node", { "type": "ObjectReference" },
-													["node", { "value": "X", "type": "ObjectName" },
+													["node", { "type": "ObjectName", "value": "X" },
 														["token", { "type": "Identifier" }, "X"]
 													]
 												]
@@ -120,11 +120,11 @@
 		["node", { "type": "DeleteClause" },
 			["token", { "type": "Reserved" }, "DELETE"],
 			["token", { "type": "Reserved" }, "FROM"],
-			["node", { "value": "main", "type": "SchemaName" },
+			["node", { "type": "SchemaName", "value": "main" },
 				["token", { "type": "Identifier" }, "main"]
 			],
 			["token", { "type": "Dot" }, "."],
-			["node", { "value": "sample", "type": "ObjectName" },
+			["node", { "type": "ObjectName", "value": "sample" },
 				["token", { "type": "Identifier" }, "sample"]
 			],
 			["node", { "type": "WhereClause" },
@@ -133,24 +133,24 @@
 					["node", { "type": "AndOperation" },
 						["node", { "type": "EqualOperation" },
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "x", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "x" },
 									["token", { "type": "Identifier" }, "x"]
 								]
 							],
 							["token", { "type": "Operator" }, "="],
-							["node", { "value": "3", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "3" },
 								["token", { "type": "Numeric" }, "3"]
 							]
 						],
 						["token", { "type": "Reserved" }, "AND"],
 						["node", { "type": "EqualOperation" },
 							["node", { "type": "ColumnReference" },
-								["node", { "value": "y", "type": "ColumnName" },
+								["node", { "type": "ColumnName", "value": "y" },
 									["token", { "type": "Identifier" }, "y"]
 								]
 							],
 							["token", { "type": "Operator" }, "="],
-							["node", { "value": "1", "type": "NumericLiteral" },
+							["node", { "type": "NumericLiteral", "value": "1" },
 								["token", { "type": "Numeric" }, "1"]
 							]
 						]

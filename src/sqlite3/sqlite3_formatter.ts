@@ -8,11 +8,6 @@ export class Sqlite3Formatter extends Formatter<Sqlite3Lexer> {
 		super(
 			options.parser ?? new Sqlite3Parser(options),
 			[
-				{
-					pattern: "[type=Script] > [type=SemiColon]",
-					before: "nospace",
-					after: ["reset", "break"],
-				},
 				{ pattern: "[type=Unknown]", before: "reset", content: "multiline" },
 				{ pattern: "[type=WhiteSpace]", content: "noprint" },
 				{ pattern: "[type=LineComment]", after: "softbreak" },
@@ -36,6 +31,7 @@ export class Sqlite3Formatter extends Formatter<Sqlite3Lexer> {
 					after: "break",
 				},
 				{ pattern: "[type=LineBreak]", content: "noprint" },
+				{ pattern: "[type=EoS]", content: "noprint", after: ["reset", "break"] },
 				{
 					pattern: [
 						"[type=CreateViewStatement] > [type=SelectStatement]",
